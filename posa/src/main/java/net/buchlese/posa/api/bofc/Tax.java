@@ -1,17 +1,29 @@
 package net.buchlese.posa.api.bofc;
 
 public enum Tax {
-	FULL("f"),
-	HALF("h"),
-	NONE("0"); // gutschein verkauft
+	FULL("f", "19 %", 4400),
+	HALF("h", "7 %", 4300),
+	NONE("0", "0 %", 4200); // gutschein verkauft
 	
 	private String dbKey;
-	Tax(String key) {
+	private String accText;
+	private int account;
+	Tax(String key, String accTxt, int acc) {
 		this.dbKey = key;
+		this.account = acc;
+		this.accText = accTxt;
 	}
 	
 	public String getDbKey() {
 		return dbKey;
+	}
+
+	public String getAccountText() {
+		return accText;
+	}
+
+	public int getAccount() {
+		return account;
 	}
 
 	public static Tax fromDbKey(String dbKey) {

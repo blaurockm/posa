@@ -1,5 +1,10 @@
 package net.buchlese.posa.resources;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.util.List;
 
 import javax.ws.rs.GET;
@@ -7,9 +12,13 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.StreamingOutput;
 
 import net.buchlese.posa.api.bofc.PosCashBalance;
+import net.buchlese.posa.core.AccountingExport;
 import net.buchlese.posa.core.CashBalance;
 import net.buchlese.posa.jdbi.bofc.PosCashBalanceDAO;
 import net.buchlese.posa.jdbi.bofc.PosTicketDAO;
@@ -35,9 +44,35 @@ public class PosCashBalanceResource {
 	}
 
 	@GET
-	@Path("all")
+	@Path("/all")
 	public List<PosCashBalance> fetchAll(@QueryParam("date") Optional<String> date)  {
-		return dao.fetchAll();
+		return dao.fetchAllAfter(date.or(new DateTime().minusMonths(1).toString("yyyyMMdd")));
+	}
+
+	@GET
+	@Path("/notexported")
+	public List<PosCashBalance> fetchNotExported()  {
+		return dao.fetchNotExported();
+	}
+
+	@GET
+	@Path("/fibuexport")
+	@Produces(MediaType.TEXT_PLAIN)
+	public Response  fibuExport()  {
+		StreamingOutput stream = new StreamingOutput() {
+			@Override
+			public void write(OutputStream os) throws IOException,  WebApplicationException {
+				Writer writer = new BufferedWriter(new OutputStreamWriter(os));
+				List<PosCashBalance> bals = dao.fetchNotExported();
+				for (PosCashBalance bal : bals) {
+					String buchung = AccountingExport.accountingExport(bal);
+					System.out.println(buchung);
+					writer.write(buchung);
+				}
+				writer.flush();
+			}
+		};
+		return Response.ok(stream).build();		
 	}
 
 	@GET

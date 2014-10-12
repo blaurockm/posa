@@ -39,7 +39,7 @@ public class ArticleGroup {
 	@JsonProperty
 	private Double marge;
 	@JsonProperty
-	private String account;
+	private Integer account;
 	public String getMatch() {
 		return match;
 	}
@@ -70,10 +70,10 @@ public class ArticleGroup {
 	public void setMarge(Double marge) {
 		this.marge = marge;
 	}
-	public String getAccount() {
+	public Integer getAccount() {
 		return account;
 	}
-	public void setAccount(String account) {
+	public void setAccount(Integer account) {
 		this.account = account;
 	}
 	
