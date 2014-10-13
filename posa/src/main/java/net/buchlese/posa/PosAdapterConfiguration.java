@@ -2,6 +2,7 @@ package net.buchlese.posa;
 
 import io.dropwizard.Configuration;
 import io.dropwizard.db.DataSourceFactory;
+import io.dropwizard.server.SimpleServerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,6 +32,9 @@ public class PosAdapterConfiguration extends Configuration {
     private String name;
     
     public PosAdapterConfiguration() {
+    	SimpleServerFactory server = new SimpleServerFactory();
+    	server.setApplicationContextPath("/");
+		setServerFactory(server);
     	this.posDb = new DataSourceFactory();
     	this.posDb.setDriverClass("net.sourceforge.jtds.jdbc.Driver");
     	

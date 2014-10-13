@@ -62,7 +62,6 @@ public class PosAdapterApplication extends Application<PosAdapterConfiguration> 
 
 	@Override
 	public void run(PosAdapterConfiguration config, Environment environment) throws Exception {
-
 		ArticleGroup.injectMappings(config.getArticleGroupMappings());
 		
 	    final DBIFactory posDbfactory = new DBIFactory();
@@ -91,7 +90,7 @@ public class PosAdapterApplication extends Application<PosAdapterConfiguration> 
 	    environment.jersey().register(new PosTicketResource(posTicketDao, posCashBalanceDao));
 	    environment.jersey().register(new PosCashBalanceResource(posCashBalanceDao, posTicketDao, posTxDao));
 
-	    environment.jersey().register(new AppResource(config, posCashBalanceDao));
+	    environment.jersey().register(new AppResource(config));
 
 	    syncTimer = new Timer("DBsyncTimer");
 		syncLock = new ReentrantLock();
