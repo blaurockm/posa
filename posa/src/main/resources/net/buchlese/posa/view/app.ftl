@@ -155,7 +155,7 @@ registry: "dijit/registry"
 		<script src="//ajax.googleapis.com/ajax/libs/dojo/1.10.1/dojo/dojo.js"></script>
 		<script>
 			require(["posa/app", "dijit/layout/BorderContainer", "dijit/layout/TabContainer", 
-			         "dijit/layout/ContentPane", "dojox/data/FlickrRestStore", "dijit/form/Select", "dojo/domReady!"], function(demoApp) {
+			         "dijit/layout/ContentPane", "dijit/form/Select", "dojo/domReady!"], function(demoApp) {
 				demoApp.init();
 			});
 		</script>

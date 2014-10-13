@@ -24,7 +24,7 @@ public class AppResource {
 
 	@GET
 	public View getApp(@HeaderParam("user-agent") String userAgent ) {
-		if (userAgent.matches("Android") ||
+		if (userAgent.matches("Android.*Mobile") ||
 			userAgent.matches("iPhone") ||
 			userAgent.matches("iPad")) {
 			return getMobile();
