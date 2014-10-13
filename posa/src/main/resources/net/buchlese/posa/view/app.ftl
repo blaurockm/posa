@@ -48,12 +48,12 @@ registry: "dijit/registry"
 						<tr><td>Gutscheine eingelöst</td><td id="tradeinEUR" style="text-align:right"></td></tr>
 						<tr><td>Gutscheine verkauft</td><td id="tradeoutEUR" style="text-align:right"></td></tr>
 					</table>
-					<span id="umsatzEUR" style="font-size:80%" >
+					<span style="font-size:80%">
 					<p>
-					<table width="90%" id="gutscheineInGrp">
+					<table width="90%" id="gutscheineInGrp" >
 					</table>
 					<p>
-					<table width="90%" id="gutscheineOutGrp">
+					<table width="90%" id="gutscheineOutGrp"  >
 					</table>
 					</span>
 				</div>

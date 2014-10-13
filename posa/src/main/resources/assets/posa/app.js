@@ -1,8 +1,9 @@
 // dependencies
 define(["dojo/dom", "dojo/dom-construct", "dojo/store/JsonRest", "dojox/charting/Chart", 
-        "dojox/charting/action2d/Tooltip", "dojox/charting/plot2d/Pie", "dojox/grid/DataGrid","dojo/data/ObjectStore"
+        "dojox/charting/action2d/Tooltip", "dojox/charting/plot2d/Pie", "dojox/grid/DataGrid",
+        "dojo/data/ObjectStore", "dojo/store/Memory"
         ],
-function(dom, domConstruct, JsonRest, Chart, Tooltip, Pie, DataGrid, ObjectStore) {
+function(dom, domConstruct, JsonRest, Chart, Tooltip, Pie, DataGrid, ObjectStore, Memory) {
 	
 	// ein paar variablen definieren
 	var store = new JsonRest({
@@ -22,13 +23,7 @@ function(dom, domConstruct, JsonRest, Chart, Tooltip, Pie, DataGrid, ObjectStore
     },
  
     initUi = function() {
-        // summary:
-        //      create and setup the UI with layout and widgets
-//        lightbox = new LightboxNano({});
-        // Set the theme
-        // Create the chart within it's "holding" node
-//        pieChart.setTheme(dojox.charting.themes.Claro);
-
+    	//      create and setup the UI with layout and widgets
         // Add the only/default plot
     	wgrpKuchen.addPlot("default", {
             type: Pie,
@@ -38,28 +33,37 @@ function(dom, domConstruct, JsonRest, Chart, Tooltip, Pie, DataGrid, ObjectStore
         });
     	var tip = new Tooltip(wgrpKuchen, "default");
     	
-        txGridUi = new DataGrid( {store: new ObjectStore( {objectStore: txStore  } ),
-        	query: { date: "today" },
-            structure: [
+        txGridUi = new DataGrid( {structure: [
                 { name: "Belegnummer", field: "belegNr", width: "90px"},
                 { name: "Warengruppe", field: "articleGroupKey", width: "120px"},
                 { name: "Beschreibung", field: "description", width: "300px"},
                 { name: "Anzahl", field: "count", width: "40px"},
-                { name: "Einzel", field: "sellingPrice", width: "50px"},
-                { name: "Gesamt", field: "total", width: "50px"},
+                { name: "Einzel", field: "sellingPrice", styles: 'text-align: right;', width: "50px", formatter: formatMoney },
+                { name: "Gesamt", field: "total",styles: 'text-align: right;', width: "50px" , formatter: formatMoney},
                 { name: "Steuer", field: "tax", width: "40px"},
                 { name: "Typ", field: "type", width: "75px"},
-                { name: "Uhrzeit", field: "timestamp", width: "100px"}]
+                { name: "Uhrzeit", field: "timestamp", width: "90px", formatter : formatDate}]
         }, "txGrid");
-        tickGridUi = new DataGrid( {store: new ObjectStore( {objectStore: tickStore  } ),
-        	query: { date: "today" },
+        txGridUi.startup();
+        tickGridUi = new DataGrid( {
             structure: [
                 { name: "Belegnummer", field: "belegNr", width: "90px"},
-                { name: "Gesamt", field: "total", width: "50px"},
+                { name: "Gesamt", field: "total", styles: 'text-align: right;',width: "50px", formatter: formatMoney},
                 { name: "Typ", field: "paymentMethod", width: "75px"},
-                { name: "Uhrzeit", field: "timestamp", width: "100px"}]
+                { name: "Uhrzeit", field: "timestamp", width: "90px", formatter : formatDate}]
         }, "tickGrid");
+        tickGridUi.startup();
     },
+    renderTable = function(tablenode, map) {
+//       domConstruct.empty(tablenode);
+       for (var cgrpo in map) {
+    	   if (map.hasOwnProperty(cgrpo)) {
+    		    var tro = domConstruct.create("tr", null,  tablenode);
+    		    domConstruct.create("td", { innerHTML: cgrpo, style : 'width: 50%;' }, tro);
+    		    domConstruct.create("td", { innerHTML: map[cgrpo].formatMoney(), style : 'text-align: right;'  }, tro);
+    	   }
+       }
+    }
     update = function() {
       // Get an object by identity
   	  store.get("today").then(function(balance){
@@ -84,25 +88,8 @@ function(dom, domConstruct, JsonRest, Chart, Tooltip, Pie, DataGrid, ObjectStore
   	       dom.byId("tradeoutEUR").innerHTML = balance.couponTradeOut.formatMoney();
   	       dom.byId("tradeinEUR").innerHTML = balance.couponTradeIn.formatMoney();
 
-  	       domConstruct.empty("gutscheineOutGrp");
-  	       var tableOutNode = dom.byId("gutscheineOutGrp");
-  	       for (var cgrpo in balance.newCoupon) {
-  	    	   if (balance.newCoupon.hasOwnProperty(cgrpo)) {
- 	    		    var tro = domConstruct.create("tr", tableOutNode);
-  	    		    domConstruct.create("td", { innerHTML: cgrpo }, tro);
-  	    		    domConstruct.create("td", { innerHTML: balance.newCoupon[cgrpo].formatMoney(), style  : {"text-align" : "right" } }, tro);
-  	    	   }
-  	       }
-
-  	       domConstruct.empty("gutscheineInGrp");
-  	       var tableInNode = dom.byId("gutscheineInGrp");
-  	       for (var cgrpi in balance.oldCoupon)   {
-  	    	   if (balance.oldCoupon.hasOwnProperty(cgrpi)) {
- 	    		    var tri = domConstruct.create("tr", {}, tableInNode);
-  	    		    domConstruct.create("td", { innerHTML: cgrpi, style : { width : "50%" } }, tri);
-  	    		    domConstruct.create("td", {style  : {"text-align" : "right" },  innerHTML: balance.oldCoupon[cgrpi].formatMoney() }, tri);
-  	    	   }
-  	       }
+  	       renderTable(dom.byId("gutscheineOutGrp"), balance.newCoupon);
+  	       renderTable(dom.byId("gutscheineInGrp"), balance.oldCoupon);
 
   	       var chartData = [];
   	       for (var grp in balance.articleGroupBalance) {
@@ -113,16 +100,26 @@ function(dom, domConstruct, JsonRest, Chart, Tooltip, Pie, DataGrid, ObjectStore
   	       // Add the series of data
   	       wgrpKuchen.addSeries("Warengruppen",chartData);
   	       wgrpKuchen.render();
-  	       
-  	       
-  	       txGridUi.startup();
   	  });
-    },
-    renderItem = function(item, refNode, posn) {
-        // summary:
-        //      Create HTML string to represent the given item
+  	  
+  	  txStore.get("today").then(function(txdata){
+          dataStore = new ObjectStore({ objectStore:new Memory({ data: txdata}) });
+          txGridUi.setStore(dataStore);
+  	  });
+      tickStore.get("today").then(function(tickdata) {
+          dataStore = new ObjectStore({ objectStore:new Memory({ data: tickdata}) });
+          tickGridUi.setStore(dataStore);
+  	  });
+  	  
     };
     
+    
+    formatMoney = function(n){
+    	return n.formatMoney();
+	};
+	formatDate = function(d) {
+		return new Date(d).toLocaleTimeString();
+	}
     return {
         init: function() {
             // proceed directly with startup
@@ -131,7 +128,8 @@ function(dom, domConstruct, JsonRest, Chart, Tooltip, Pie, DataGrid, ObjectStore
             dashboardupdate = window.setInterval(update, 5 * 60 * 1000);
         }
     };
-});
+    
+}); // end of define
 
 
 Number.prototype.formatMoney = function(c, d, t){
