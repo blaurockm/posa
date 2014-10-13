@@ -40,5 +40,8 @@ public interface PosTxDAO {
 	 " ean = :ean, isbn = :isbn, matchcode = :matchCode,  tax = :tax, txtype = :type, " + 
 	 " tobeignored = :toBeIgnored, tobecheckedagain = :toBeCheckedAgain where id = :id ")
 	void update(@Valid @BindBean PosTx checker);
+
+	@SqlQuery("select * from postx where belegnr = :belegNr and belegidx = :lfdNummer")
+	PosTx fetch(@Bind("belegNr") int belegNr, @Bind("lfdNummer") int lfdNummer);
 	
 }

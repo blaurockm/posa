@@ -46,9 +46,10 @@ public class SynchronizePosTicket extends AbstractSynchronizer {
 		return res;
 	}
 
-	public void updateExistingTickets(List<PosTicket> oldTicketsToCheck) throws Exception {
-		for (PosTicket checker : oldTicketsToCheck) {
-			KassenBeleg orig = belegDao.fetch(checker.getBelegNr());
+	public void updateExistingTickets() throws Exception {
+		List<KassenBeleg> lastBelege = belegDao.fetchLast();
+		for (KassenBeleg orig : lastBelege) {
+			PosTicket checker = ticketDAO.fetch(orig.getBelegnr());
 			if (updateTicket(orig, checker)) {
 				// es hat sich was geändert;
 				ticketDAO.update(checker);

@@ -55,7 +55,7 @@ function(dom, domConstruct, JsonRest, Chart, Tooltip, Pie, DataGrid, ObjectStore
         tickGridUi.startup();
     },
     renderTable = function(tablenode, map) {
-//       domConstruct.empty(tablenode);
+       domConstruct.empty(tablenode);
        for (var cgrpo in map) {
     	   if (map.hasOwnProperty(cgrpo)) {
     		    var tro = domConstruct.create("tr", null,  tablenode);

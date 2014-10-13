@@ -43,4 +43,7 @@ public interface PosTicketDAO {
 	" where id = :id ")
 	void update(@Valid @BindBean PosTicket checker);
 
+	@SqlQuery("select * from posticket where belegnr = :belegnr")
+	PosTicket fetch(@Bind("belegnr") long belegnr);
+
 }

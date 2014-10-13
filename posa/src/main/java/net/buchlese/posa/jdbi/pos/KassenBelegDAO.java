@@ -16,7 +16,10 @@ public interface KassenBelegDAO {
 	
 	@SqlQuery("select * from [dbo].kassenbelege where datum > :datum order by datum asc")
 	List<KassenBeleg> fetchAllAfter(@Bind("datum") DateTime maxDatum);
-	
+
+	@SqlQuery("select top 10 * from [dbo].kassenbelege order by datum desc ")
+	List<KassenBeleg> fetchLast();
+
 	@SqlQuery("select * from [dbo].posakassvorg where belegnr = :belegnr and kassennr = :kassennr ")
 	List<KassenVorgang> fetchForBeleg(@BindBean KassenBeleg beleg);
 

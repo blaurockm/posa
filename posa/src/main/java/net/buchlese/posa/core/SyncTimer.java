@@ -1,12 +1,8 @@
 package net.buchlese.posa.core;
 
-import java.util.LinkedList;
-import java.util.List;
 import java.util.TimerTask;
 import java.util.concurrent.locks.Lock;
 
-import net.buchlese.posa.api.bofc.PosTicket;
-import net.buchlese.posa.api.bofc.PosTx;
 import net.buchlese.posa.jdbi.bofc.PosCashBalanceDAO;
 import net.buchlese.posa.jdbi.bofc.PosTicketDAO;
 import net.buchlese.posa.jdbi.bofc.PosTxDAO;
@@ -24,8 +20,6 @@ public class SyncTimer extends TimerTask {
 	private final DBI posDBI;
 	private final Logger logger;
 	private final Lock syncLock;
-	private final LinkedList<PosTx> lruCacheTx;
-	private final LinkedList<PosTicket> lruCacheTicket;
 	
 
 	public SyncTimer(Lock l, DBI bofcDBI, DBI posDBI) {
@@ -33,8 +27,6 @@ public class SyncTimer extends TimerTask {
 		this.bofcDBI = bofcDBI;
 		this.posDBI = posDBI;
 		logger = LoggerFactory.getLogger(SyncTimer.class);
-		lruCacheTx = new LinkedList<>();
-		lruCacheTicket = new LinkedList<>();
 	}
 
 	@Override
@@ -53,19 +45,11 @@ public class SyncTimer extends TimerTask {
 	    	SynchronizePosTicket snycTickets = new SynchronizePosTicket(posTicketDao, belegDao);
 	    	SynchronizePosCashBalance syncBalance = new SynchronizePosCashBalance(posCashBalanceDao, posTicketDao, posTxDao, abschlussDao);
 
-	    	List<PosTx> newTx = syncTx.fetchNewTx();
-	    	syncTx.updateExistingTx(lruCacheTx);
-	    	lruCacheTx.addAll(newTx); // die neuen werden hinten angestellt
-	    	while (lruCacheTx.size() > 30) {
-	    		lruCacheTx.removeFirst(); // solange wir mehr als 30 Elemente haben, dioe ersten wegwerfen
-	    	}
+	    	syncTx.fetchNewTx();
+	    	syncTx.updateExistingTx();
 
-	    	List<PosTicket> newTickets = snycTickets.fetchNewTickets();
-	    	snycTickets.updateExistingTickets(lruCacheTicket);
-	    	lruCacheTicket.addAll(newTickets); // die neuen werden hinten angestellt
-	    	while (lruCacheTicket.size() > 30) {
-	    		lruCacheTicket.removeFirst(); // solange wir mehr als 30 Elemente haben, dioe ersten wegwerfen
-	    	}
+	    	snycTickets.fetchNewTickets();
+	    	snycTickets.updateExistingTickets();
 
 	    	syncBalance.execute();
 	    } catch (Throwable t) {

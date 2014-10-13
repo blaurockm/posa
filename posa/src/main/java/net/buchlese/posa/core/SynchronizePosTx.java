@@ -58,10 +58,11 @@ public class SynchronizePosTx extends AbstractSynchronizer {
 		return res;
 	}
 	
-	public void updateExistingTx(List<PosTx> lastImportedTx) throws Exception {
+	public void updateExistingTx() throws Exception {
 		// alte Kassenvorgänge nochmals prüfen
-		for (PosTx checker : lastImportedTx) {
-			KassenVorgang orig = vorgangsDao.fetch(checker.getBelegNr(), checker.getBelegIdx());
+    	List<KassenVorgang> lastVorg = vorgangsDao.fetchLast();
+		for (KassenVorgang orig: lastVorg) {
+			PosTx checker = txDAO.fetch(orig.getBelegNr(), orig.getLfdNummer());
 			if (updateTx(orig, checker)) {
 				// es hat sich was geändert;
 				checker.setToBeCheckedAgain(false); // ist diese Entscheidung richtig? Man kann nur einmal korrigieren

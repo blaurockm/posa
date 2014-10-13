@@ -21,6 +21,9 @@ public interface KassenVorgangDAO {
 	@SqlQuery("select * from [dbo].posakassvorg where datum> :datum order by datum asc ")
 	List<KassenVorgang> fetchAllAfter(@Bind("datum") DateTime maxDatum);
 
+	@SqlQuery("select top 10 * from [dbo].posakassvorg order by datum desc ")
+	List<KassenVorgang> fetchLast();
+
 	@SqlQuery("select sum(zahlungsbetrag) from [dbo].kassenbelege where belegnr = :belegnr")
 	BigDecimal fetchZahlbetrag(@Bind("belegnr") int belegNr);
 
