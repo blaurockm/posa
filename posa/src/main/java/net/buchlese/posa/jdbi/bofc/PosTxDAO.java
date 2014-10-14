@@ -12,6 +12,7 @@ import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.BindBean;
 import org.skife.jdbi.v2.sqlobject.SqlBatch;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
+import org.skife.jdbi.v2.sqlobject.SqlUpdate;
 import org.skife.jdbi.v2.sqlobject.customizers.BatchChunkSize;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 
@@ -20,7 +21,7 @@ public interface PosTxDAO {
 
 	@SqlBatch("insert into postx (id, belegnr, belegidx, sellingprice, purchaseprice, articlegroupkey, articleid, articlekey, total, description, count, ean, isbn, matchcode,  tax, txtype, timest, tobeignored, tobecheckedagain) " +
 	" values (:id, :belegNr, :belegIdx, :sellingPrice, :purchasePrice, :articleGroupKey, :articleId, :articleKey, :total, :description, :count, :ean, :isbn, :matchCode, :tax, :type, :timestamp, :toBeIgnored, :toBeCheckedAgain)")
-	@BatchChunkSize(1000)
+	@BatchChunkSize(500)
 	void insertAll(@Valid @BindBean Iterator<PosTx> transactions);
 
 	@SqlQuery("select max(timest) from postx")
@@ -35,7 +36,7 @@ public interface PosTxDAO {
 	@SqlQuery("select * from postx where tobecheckedAgain = 1 and timest > :datum")
 	List<PosTx> fetchRevisitations(@Bind("datum") DateTime datum);
 
-	@SqlBatch("update postx set sellingprice = :sellingPrice, purchaseprice = :purchasePrice, articlegroupkey = :articleGroupKey, " +
+	@SqlUpdate("update postx set sellingprice = :sellingPrice, purchaseprice = :purchasePrice, articlegroupkey = :articleGroupKey, " +
 	 " articleid = :articleId, articlekey = :articleKey, total = :total, description = :description, count = :count, " +
 	 " ean = :ean, isbn = :isbn, matchcode = :matchCode,  tax = :tax, txtype = :type, " + 
 	 " tobeignored = :toBeIgnored, tobecheckedagain = :toBeCheckedAgain where id = :id ")

@@ -23,10 +23,10 @@ public class AppResource {
 	}
 
 	@GET
-	public View getApp(@HeaderParam("User-Agent") String userAgent ) {
-		if (userAgent.matches("Android.*Mobile") ||
-			userAgent.matches("iPhone") ||
-			userAgent.matches("iPad")) {
+	public View getApp(@HeaderParam("user-agent") String userAgent ) {
+		if (userAgent.contains("Android") ||
+			userAgent.contains("iPhone") ||
+			userAgent.contains("iPad")) {
 			return getMobile();
 		}
 		return getDesktop();
