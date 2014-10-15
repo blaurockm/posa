@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.util.EnumMap;
 import java.util.Map;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.DateTime;
 
@@ -14,6 +16,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+@XmlRootElement(name = "CashBlance")
 public class PosCashBalance {
 	@NotEmpty
 	@JsonProperty
