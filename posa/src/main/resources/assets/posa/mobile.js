@@ -37,7 +37,6 @@ function(dom, domConstruct, JsonRest, Chart, Tooltip, Pie) {
        }
     }
     update = function() {
-      // Get an object by identity
   	  store.get("today").then(function(balance){
  	       dom.byId("balanceDate").innerHTML = new Date(balance.creationtime).toLocaleDateString() + " " + new Date(balance.creationtime).toLocaleTimeString();
   	       dom.byId("firstTicket").innerHTML = balance.firstBelegNr;
@@ -73,7 +72,21 @@ function(dom, domConstruct, JsonRest, Chart, Tooltip, Pie) {
   	       wgrpKuchen.addSeries("Warengruppen",chartData);
   	       wgrpKuchen.render();
   	  });
-  	  
+      // Get an object by identity
+	  store.get("thisweek").then(function(balance){
+ 	       dom.byId("thisweekrevenueEUR").innerHTML = balance.revenue.formatMoney();
+ 	       dom.byId("thisweekprofitEUR").innerHTML = balance.profit.formatMoney();
+	  });
+	  store.get("lastweek").then(function(balance){
+	       dom.byId("lastweekrevenueEUR").innerHTML = balance.revenue.formatMoney();
+	       dom.byId("lastweekprofitEUR").innerHTML = balance.profit.formatMoney();
+	  });
+
+	  store.get("thismonth").then(function(balance){
+	       dom.byId("thismonthrevenueEUR").innerHTML = balance.revenue.formatMoney();
+	       dom.byId("thismonthprofitEUR").innerHTML = balance.profit.formatMoney();
+	  });
+
     };
     
     

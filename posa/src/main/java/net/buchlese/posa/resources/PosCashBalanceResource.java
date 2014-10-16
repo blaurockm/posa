@@ -86,6 +86,30 @@ public class PosCashBalanceResource {
 			PosCashBalance bal = balCOmp.computeBalance(startOfToday, today);
 			return bal;
 		}
+		if ("thisweek".equals(date)) {
+			// wir berechnen den von heute...
+			DateTime today = new DateTime();
+			DateTime startOfToday = today.hourOfDay().setCopy(0).dayOfWeek().setCopy(1); // stunde 0 und wochentag 0
+			CashBalance balCOmp = new CashBalance(txDao, ticketDao);
+			PosCashBalance bal = balCOmp.computeBalance(startOfToday, today);
+			return bal;
+		}
+		if ("lastweek".equals(date)) {
+			// wir berechnen den von heute...
+			DateTime today = new DateTime().minusWeeks(1).hourOfDay().setCopy(23).dayOfWeek().setCopy(7); // letzter tag und letzte stunde
+			DateTime startOfToday = today.hourOfDay().setCopy(0).dayOfWeek().setCopy(1); // stunde 0 und wochentag 1
+			CashBalance balCOmp = new CashBalance(txDao, ticketDao);
+			PosCashBalance bal = balCOmp.computeBalance(startOfToday, today);
+			return bal;
+		}
+		if ("thismonth".equals(date)) {
+			// wir berechnen den von heute...
+			DateTime today = new DateTime();
+			DateTime startOfToday = today.hourOfDay().setCopy(0).dayOfMonth().setCopy(1); // stunde 0 und monats-ersten
+			CashBalance balCOmp = new CashBalance(txDao, ticketDao);
+			PosCashBalance bal = balCOmp.computeBalance(startOfToday, today);
+			return bal;
+		}
 		PosCashBalance bal = dao.fetchForDate(date);
 		if (recreate.isPresent() && recreate.get()) {
 			CashBalance balCOmp = new CashBalance(txDao, ticketDao);
