@@ -7,12 +7,12 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 
 import org.joda.time.DateTime;
+import org.junit.Test;
 
-import junit.framework.TestCase;
 
+public class SerializationTest {
 
-public class SerializationTest extends TestCase {
-
+	@Test
     public void testApp() throws Exception {
     	PosCashBalance bal = new PosCashBalance();
     	bal.setCreationtime(new DateTime());

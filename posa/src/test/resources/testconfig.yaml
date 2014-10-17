@@ -1,0 +1,50 @@
+#bofcDb:
+  # the name of your JDBC driver
+  #driverClass: org.h2.Driver
+
+  # the username
+  #user: sa
+
+  # the password
+  #password: 
+
+  # the JDBC URL
+  #url: jdbc:h2:~/backoffice
+  
+posDb:
+  # the name of your JDBC driver
+  driverClass: net.sourceforge.jtds.jdbc.Driver
+
+  # the username
+  user: sa
+  password: master
+
+#  user: fibu
+#  password: kasse2fibu
+  
+  # the JDBC URL
+  #####  lokale datenbank
+#  url: jdbc:jtds:sqlserver://localhost:1433/librasbak
+  ##### im gschaeft Sulz
+  url: jdbc:jtds:sqlserver://localhost:7891/libras
+  ##### im gschaeft Dornhan
+#  url: jdbc:jtds:sqlserver://localhost:7890/libras
+
+
+articleGroupMappings:
+  lotto:  { match : 'A00008TD', text : 'Lotto',  key : 'lotto', type : 'GOOD', marge : 0.05, account : '3631' }
+  rubbellose: { match : 'A000082V', text : 'Rubbel-Lose',key : 'rubbellose', type: 'GOOD', marge : 0.02, account : '3632' }
+  tickets: { match : 'A00008JI|[Rr]eservix|KKF.*',key : 'tickets', text : 'Reservix-Karten', type: 'GOOD', marge : 0.1, account : '1372' }  
+  gutschJacob: { match : 'A000083V', text : 'Gutscheine Jacob',key : 'gutschJacob', type : 'COUPON', account : '1373' }
+  gutschSchul: { match : 'A00008OO', text : 'Schulgutschein',key : 'gutschSchul', type : 'COUPON', account : '1373' }
+  gutschDorn: { match : 'A00008BX', text : 'Gutschein and. Filiale',key : 'gutschDorn', type : 'COUPON', account : '1371' }
+  gutschSulz: { match : 'A00020TT', text : 'Gutschein and. Filiale',key : 'gutschSulz', type : 'COUPON', account : '1373' }
+  zeitschrift: { match : 'A000082U', text : 'Zeitschriften',key : 'zeitschrift', type : 'GOOD' }
+  gutsch: { match : 'Gutschein', text : 'Gutschein',key : 'gutsch', type : 'COUPON', account : '1371' }
+  anzahlung: { match : 'Anzahlung', text : 'Anzahlung',key : 'anzahlung', type : 'COUPON' }
+  karten: { match : '/k.*', text : 'Karten',key : 'karten', type : 'GOOD', marge : 0.5 }
+  editio: { match : '/a.*', text : 'Edition',key : 'editio', type : 'GOOD', marge : 0.5 }
+  book: { match : 'mwst=2', text : 'Bücher',key : 'book', type : 'GOOD', marge : 0.3 }
+  nonbook: { match : 'mwst=1', text : 'NonBook',key : 'nonbook', type : 'GOOD', marge : 0.5 }
+  
+name: Test-Kasse  

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<CashBlance>
+    <abschlussId>20141018</abschlussId>
+    <cancelledticketCount>0</cancelledticketCount>
+    <creationtime>2014-10-17T22:25:14.922+02:00</creationtime>
+    <exported>false</exported>
+    <firstBelegNr>0</firstBelegNr>
+    <firstCovered>2014-10-16T22:25:14.969+02:00</firstCovered>
+    <id>0</id>
+    <lastBelegNr>0</lastBelegNr>
+    <lastCovered>2014-10-18T22:25:14.969+02:00</lastCovered>
+    <paymentMethodBalance/>
+    <taxBalance>
+        <entry>
+            <key>FULL</key>
+            <value>555</value>
+        </entry>
+    </taxBalance>
+    <ticketCount>23</ticketCount>
+</CashBlance>

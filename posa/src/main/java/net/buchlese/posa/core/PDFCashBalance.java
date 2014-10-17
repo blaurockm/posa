@@ -14,7 +14,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamSource;
 
-import net.buchlese.posa.PosAdapterApplication;
+import net.buchlese.posa.PosAdapterConfiguration;
 import net.buchlese.posa.api.bofc.PosCashBalance;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
@@ -36,11 +36,11 @@ public class PDFCashBalance {
 
     	try {
     	    // Step 3: Construct fop with desired output format
-    	    Fop fop = PosAdapterApplication.getFopFactory().newFop(MimeConstants.MIME_PDF, out);
+    	    Fop fop = PosAdapterConfiguration.getFopFactory().newFop(MimeConstants.MIME_PDF, out);
 
     	    // Step 4: Setup JAXP using identity transformer
     	    TransformerFactory factory = TransformerFactory.newInstance();
-    	    Transformer transformer = factory.newTransformer(new StreamSource(PDFCashBalance.class.getResourceAsStream("xsl/cashBalance.xsl")));
+    	    Transformer transformer = factory.newTransformer(new StreamSource(PDFCashBalance.class.getResourceAsStream("/xsl/cashBalance.xsl")));
     	    		
     	    // Step 5: Setup input and output for XSLT transformation
     	    // Setup input stream

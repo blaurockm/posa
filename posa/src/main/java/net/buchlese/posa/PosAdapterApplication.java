@@ -41,7 +41,6 @@ public class PosAdapterApplication extends Application<PosAdapterConfiguration> 
 
 	private Timer syncTimer;
 	private Lock syncLock;
-	private static FopFactory fopFactory;
 	
 	public static void main(String[] args) throws Exception {
 		new PosAdapterApplication().run(args);
@@ -60,9 +59,6 @@ public class PosAdapterApplication extends Application<PosAdapterConfiguration> 
 	    		return configuration.getBackOfficeDB();
 	    	}
 	    });	
-    	// Step 1: Construct a FopFactory by specifying a reference to the configuration file
-    	// (reuse if you plan to render multiple documents!)
-    	fopFactory = FopFactory.newInstance();
 	}
 
 	@Override
@@ -105,7 +101,4 @@ public class PosAdapterApplication extends Application<PosAdapterConfiguration> 
 		
 	}
 	
-	public static FopFactory getFopFactory() {
-		return fopFactory;
-	}
 }
