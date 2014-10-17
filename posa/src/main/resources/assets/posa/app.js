@@ -53,6 +53,28 @@ function(dom, domConstruct, JsonRest, Chart, Tooltip, Pie, DataGrid, ObjectStore
                 { name: "Uhrzeit", field: "timestamp", width: "90px", formatter : formatDate}]
         }, "tickGrid");
         tickGridUi.startup();
+        balGridUi = new DataGrid( {
+            structure: [
+                { name: "Datum", field: "abschlussId", width: "90px"},
+                { name: "WoTag", field: "lastCovered", width: "90px", formatter : function(v) { return new Date(v).getDay() } },
+                { name: "Umsatz", field: "revenue", styles: 'text-align: right;',width: "90px", formatter: formatMoney},
+                { name: "Ges. Gewinn", field: "profit", styles: 'text-align: right;',width: "90px", formatter: formatMoney},
+                { name: "check", field: "checked", width: "50px", type: dojox.grid.cells.Bool, editable: true },
+                { name: "FiBu", field: "exported", width: "50px", type: dojox.grid.cells.Bool, editable: true},
+                { name: "zur FiBu am", field: "exportDate", width: "120px", formatter : formatDateTime},
+                { name: "Erzeugt am", field: "creationtime", width: "120px", formatter : formatDateTime}],
+               rowSelector : '20px',
+               selectionMode : 'single',
+               autoWidth : true
+        }, "balGrid");
+        balGridUi.startup();
+        
+    },
+    updateBalGrid = function(newVal ) {
+    	  store.query({"date": newVal}).then(function(balances){
+              var dataStore = new ObjectStore({ objectStore:new Memory({ data: balances}) });
+              balGridUi.setStore(dataStore);
+    	  });
     },
     renderTable = function(tablenode, map) {
        domConstruct.empty(tablenode);
@@ -103,11 +125,11 @@ function(dom, domConstruct, JsonRest, Chart, Tooltip, Pie, DataGrid, ObjectStore
   	  });
   	  
   	  txStore.get("today").then(function(txdata){
-          dataStore = new ObjectStore({ objectStore:new Memory({ data: txdata}) });
+          var dataStore = new ObjectStore({ objectStore:new Memory({ data: txdata}) });
           txGridUi.setStore(dataStore);
   	  });
       tickStore.get("today").then(function(tickdata) {
-          dataStore = new ObjectStore({ objectStore:new Memory({ data: tickdata}) });
+          var dataStore = new ObjectStore({ objectStore:new Memory({ data: tickdata}) });
           tickGridUi.setStore(dataStore);
   	  });
   	  
@@ -120,12 +142,19 @@ function(dom, domConstruct, JsonRest, Chart, Tooltip, Pie, DataGrid, ObjectStore
 	formatDate = function(d) {
 		return new Date(d).toLocaleTimeString();
 	}
+	formatDateTime = function(d) {
+		if (d == undefined || d == null) {
+			return "--";
+		}
+		return new Date(d).toLocaleDateString() + " um " + new Date(d).toLocaleTimeString();
+	}
     return {
-        init: function() {
+        init: function(registry) {
             // proceed directly with startup
             startup();
             update();
             dashboardupdate = window.setInterval(update, 5 * 60 * 1000);
+            registry.byId("balPeriod").on("change", updateBalGrid);
         }
     };
     

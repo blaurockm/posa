@@ -43,10 +43,56 @@ public class PosCashBalanceResource {
 		this.txDao = txdao;
 	}
 
+	private static String IDFORMAT = "yyyyMMdd";
+	
 	@GET
-	@Path("/all")
 	public List<PosCashBalance> fetchAll(@QueryParam("date") Optional<String> date)  {
-		return dao.fetchAllAfter(date.or(new DateTime().minusMonths(1).toString("yyyyMMdd")));
+		String from = date.or(new DateTime().minusMonths(1).toString(IDFORMAT)); // wenn nix da ist, die von vor einem Monat
+		Optional<String> till = Optional.absent();
+		if (date.isPresent()) {
+			if (date.get().equals("thisweek")) {
+				from = new DateTime().dayOfWeek().withMinimumValue().toString(IDFORMAT);
+				till = Optional.of(new DateTime().dayOfWeek().withMaximumValue().toString(IDFORMAT));
+			}
+			if (date.get().equals("lastweek")) {
+				from = new DateTime().minusWeeks(1).dayOfWeek().withMinimumValue().toString(IDFORMAT);
+				till = Optional.of(new DateTime().minusWeeks(1).dayOfWeek().withMaximumValue().toString(IDFORMAT));
+			}
+			if (date.get().equals("thismonth")) {
+				from = new DateTime().dayOfMonth().withMinimumValue().toString(IDFORMAT);
+				till = Optional.of(new DateTime().dayOfMonth().withMaximumValue().toString(IDFORMAT));
+			}
+			if (date.get().equals("lastmonth")) {
+				from = new DateTime().minusMonths(1).dayOfMonth().withMinimumValue().toString(IDFORMAT);
+				till = Optional.of(new DateTime().minusMonths(1).dayOfMonth().withMaximumValue().toString(IDFORMAT));
+			}
+			if (date.get().equals("thisquarter")) {
+				int quarter = (new DateTime().getMonthOfYear() / 3);
+				from = new DateTime().monthOfYear().setCopy(quarter*3).dayOfMonth().withMinimumValue().toString(IDFORMAT);
+				till = Optional.of(new DateTime().monthOfYear().setCopy(quarter*3+2).dayOfMonth().withMaximumValue().toString(IDFORMAT));
+			}
+			if (date.get().equals("lastquarter")) {
+				int quarter = (new DateTime().getMonthOfYear() / 3);
+				if (quarter >= 1) {
+					quarter--;
+					from = new DateTime().monthOfYear().setCopy(quarter*3).dayOfMonth().withMinimumValue().toString(IDFORMAT);
+					till = Optional.of(new DateTime().monthOfYear().setCopy(quarter*3+2).dayOfMonth().withMaximumValue().toString(IDFORMAT));
+				} else {
+					int year = new DateTime().getYear();
+					from = new DateTime(year-1,10,1,0,0).toString(IDFORMAT);
+					till = Optional.of(new DateTime(year-1,12,31,23,0).toString(IDFORMAT));
+				}
+			}
+			if (date.get().equals("thisyear")) {
+				from = new DateTime().dayOfYear().withMinimumValue().toString(IDFORMAT);
+				till = Optional.of(new DateTime().toString(IDFORMAT));
+			}
+			if (date.get().equals("lastyear")) {
+				from = new DateTime().minusYears(1).dayOfYear().withMinimumValue().toString(IDFORMAT);
+				till = Optional.of(new DateTime().minusYears(1).dayOfYear().withMaximumValue().toString(IDFORMAT));
+			}
+		}
+		return dao.fetchAllAfter(from, till);
 	}
 
 	@GET

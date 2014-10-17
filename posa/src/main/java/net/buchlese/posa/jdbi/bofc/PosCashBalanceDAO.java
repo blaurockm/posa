@@ -11,10 +11,12 @@ import org.skife.jdbi.v2.sqlobject.SqlQuery;
 import org.skife.jdbi.v2.sqlobject.SqlUpdate;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 
+import com.google.common.base.Optional;
+
 @RegisterMapper(PosCashBalanceMapper.class)
 public interface PosCashBalanceDAO {
-	@SqlQuery("select * from poscashbalance where abschlussid >= :date")
-	List<PosCashBalance> fetchAllAfter(@Bind("date") String date);
+	@SqlQuery("select * from poscashbalance where abschlussid >= :date and abschlussid <= :datetill")
+	List<PosCashBalance> fetchAllAfter(@Bind("date") String date, @Bind("datetill") Optional<String> datetill);
 
 	@SqlQuery("select * from poscashbalance where exported = 0 and abschlussid >= '20140810'")
 	List<PosCashBalance> fetchNotExported();

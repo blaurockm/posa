@@ -8,6 +8,8 @@ import java.util.Map;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import net.buchlese.posa.core.Validator;
+
 import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.DateTime;
 
@@ -91,6 +93,10 @@ public class PosCashBalance {
 		return om.readValue(origAbschluss, Map.class);
 	}
 
+	public boolean getChecked() {
+		return Validator.validBalance(this);
+	}
+	
 	public long getId() {
 		return id;
 	}
