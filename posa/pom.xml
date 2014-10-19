@@ -72,6 +72,12 @@
 			<groupId>org.apache.xmlgraphics</groupId>
 			<artifactId>fop</artifactId>
 			<version>1.0</version>
+			<exclusions>
+			   <exclusion>
+			      <artifactId>xalan</artifactId>
+			      <groupId>xalan</groupId>
+			   </exclusion>
+			</exclusions>
 		</dependency>
 	</dependencies>
 

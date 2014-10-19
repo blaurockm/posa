@@ -18,7 +18,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-@XmlRootElement(name = "CashBlance")
+@XmlRootElement(name = "CashBalance")
 public class PosCashBalance {
 	@NotEmpty
 	@JsonProperty

@@ -1,20 +1,99 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<CashBlance>
+<CashBalance>
     <abschlussId>20141018</abschlussId>
+    <absorption>75612</absorption>
+    <articleGroupBalance>
+        <entry>
+            <key>books</key>
+            <value>21555</value>
+        </entry>
+        <entry>
+            <key>nonbook</key>
+            <value>2155</value>
+        </entry>
+        <entry>
+            <key>Schokolade</key>
+            <value>860</value>
+        </entry>
+        <entry>
+            <key>Tickets</key>
+            <value>3600</value>
+        </entry>
+        <entry>
+            <key>Rubbellose</key>
+            <value>500</value>
+        </entry>
+        <entry>
+            <key>Lotto</key>
+            <value>1765</value>
+        </entry>
+    </articleGroupBalance>
     <cancelledticketCount>0</cancelledticketCount>
-    <creationtime>2014-10-17T22:25:14.922+02:00</creationtime>
+    <cashIn>666</cashIn>
+    <cashOut>767</cashOut>
+    <creationtime>2014-10-18T18:10:48.025+02:00</creationtime>
     <exported>false</exported>
     <firstBelegNr>0</firstBelegNr>
-    <firstCovered>2014-10-16T22:25:14.969+02:00</firstCovered>
+    <firstCovered>2014-10-17T12:10:48.132+02:00</firstCovered>
+    <firstTimestamp>2014-10-18T05:10:48.150+02:00</firstTimestamp>
     <id>0</id>
     <lastBelegNr>0</lastBelegNr>
-    <lastCovered>2014-10-18T22:25:14.969+02:00</lastCovered>
-    <paymentMethodBalance/>
+    <lastCovered>2014-10-19T12:10:48.150+02:00</lastCovered>
+    <lastTimestamp>2014-10-18T14:10:48.150+02:00</lastTimestamp>
+    <newCoupon>
+        <entry>
+            <key>Gutsch</key>
+            <value>21555</value>
+        </entry>
+    </newCoupon>
+    <oldCoupon>
+        <entry>
+            <key>GutschJacob</key>
+            <value>21555</value>
+        </entry>
+        <entry>
+            <key>gutsch</key>
+            <value>1765</value>
+        </entry>
+        <entry>
+            <key>Gutsch Dorn</key>
+            <value>1765</value>
+        </entry>
+    </oldCoupon>
+    <payedInvoices>
+        <entry>
+            <key>asdasd</key>
+            <value>1765</value>
+        </entry>
+        <entry>
+            <key>uhuhuh</key>
+            <value>21555</value>
+        </entry>
+    </payedInvoices>
+    <paymentMethodBalance>
+        <entry>
+            <key>TELE</key>
+            <value>1765</value>
+        </entry>
+        <entry>
+            <key>CASH</key>
+            <value>21555</value>
+        </entry>
+    </paymentMethodBalance>
+    <revenue>123450</revenue>
     <taxBalance>
+        <entry>
+            <key>HALF</key>
+            <value>555</value>
+        </entry>
         <entry>
             <key>FULL</key>
             <value>555</value>
         </entry>
+        <entry>
+            <key>NONE</key>
+            <value>555</value>
+        </entry>
     </taxBalance>
     <ticketCount>23</ticketCount>
-</CashBlance>
+</CashBalance>

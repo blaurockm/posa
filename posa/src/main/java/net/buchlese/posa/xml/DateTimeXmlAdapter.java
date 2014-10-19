@@ -10,7 +10,7 @@ public class DateTimeXmlAdapter   extends XmlAdapter<String, DateTime>{
 	}
 
 	public String marshal(DateTime v) throws Exception {
-		return v.toString();
+		return v.toString("CCYY-MM-dd'T'hh:mm:ss"); // xalan exslt-functions needs it this way...
 	}
 
 }
