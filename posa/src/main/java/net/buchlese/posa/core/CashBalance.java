@@ -107,12 +107,12 @@ public class CashBalance {
 				.collect(Collectors.groupingBy(PosTx::getArticleGroupKey, 
 						Collectors.reducing(0l,
 								PosTx::getTotal, Long::sum)));
-		balance.setNewCoupon(cashIn);
+		balance.setCashIn(cashIn);
 		Map<String, Long> cashOut = txs.stream().filter(t -> t.getType().equals(TxType.CASHOUT))
 				.collect(Collectors.groupingBy(PosTx::getArticleGroupKey, 
 						Collectors.reducing(0l,
 								PosTx::getTotal, Long::sum)));
-		balance.setNewCoupon(cashOut);
+		balance.setCashOut(cashOut);
 
 		balance.setGoodsOut(txs.stream().filter(t -> t.getType().equals(TxType.SELL)).mapToLong(PosTx::getTotal).sum());
 

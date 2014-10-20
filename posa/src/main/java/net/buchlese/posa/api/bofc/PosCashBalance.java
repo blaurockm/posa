@@ -99,8 +99,17 @@ public class PosCashBalance {
 		return om.readValue(origAbschluss, Map.class);
 	}
 
+	@JsonIgnore
+	private boolean checked;
+	
+	@JsonProperty("checked")
 	public boolean getChecked() {
 		return Validator.validBalance(this);
+	}
+	
+	@JsonIgnore
+	public void setChecked() {
+		
 	}
 	
 	public long getId() {

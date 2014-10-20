@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
@@ -36,6 +37,12 @@ public class KassenVorgangResource {
 		return dao.fetchAllAfter(new DateTime().minusMonths(2));
 	}
 	
+	@Path("/{nr}/{idx}")
+	@GET
+	public KassenVorgang fetchAll(@PathParam("nr") long belegnr,@PathParam("idx") int idx) {
+		return dao.fetch(belegnr, idx);
+	}
+
 	
 	
 }

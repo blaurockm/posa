@@ -141,7 +141,7 @@ registry: "dijit/registry"
 
   		    <!--  die technisches brimborium -->
 			<div id="adminTab" data-dojo-type="dijit/layout/ContentPane" data-dojo-props='title:"Technisches", style:"padding:10px;display:none;"'>
-				<form method="POST" action="http://localhost:8081/tasks/synchronize" target="syncresult">
+				<form method="POST" action="http://localhost:8080/admin/tasks/synchronize" target="syncresult">
 					<input type="submit" value="Jetzt synchronisieren!" />
 				</form>
 				<div class="boardlet">

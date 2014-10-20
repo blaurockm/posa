@@ -109,7 +109,7 @@
                   </fo:table-cell>
                   <fo:table-cell>
                      <fo:block text-align="right">
-                        <xsl:value-of select="format-number((couponTradeIn - couponTradeOut) div 100, '###.###,00 EUR', 'euro')" />
+                        <xsl:value-of select="format-number((couponTradeIn + couponTradeOut) div 100, '###.###,00 EUR', 'euro')" />
                      </fo:block>
                   </fo:table-cell>
                </fo:table-row>

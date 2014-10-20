@@ -135,17 +135,18 @@ public class SynchronizePosTx extends AbstractSynchronizer {
 				// buchen wir es in voller Höhe, oder nur einen Teil davon? 
 				// wir müssen uns den Beleg dazu angucken
 				// gefährlich, hier gehen wir davon aus, dass gutscheine nur in zusammenhang mit anderen Tx angenommen werden.. 
-				BigDecimal sumGesamtBeleg = vorgangsDao.fetchBelegSumOhne(vorg.getBelegNr(), vorg.getLfdNummer());
+				BigDecimal sumWarenBetrag = vorgangsDao.fetchBelegSumOhne(vorg.getBelegNr(), vorg.getLfdNummer());
 				BigDecimal amountPayed = vorgangsDao.fetchZahlbetrag(vorg.getBelegNr());
-				if (sumGesamtBeleg == null || amountPayed == null) {
+				if (sumWarenBetrag == null || amountPayed == null) {
 					tx.setToBeCheckedAgain(true); // hier stimmt was nicht, später nochmal angucken
 				} else {
 					// der Gutschein ist teil eines belges, es wurde was damit bezahlt
-					if (sumGesamtBeleg.compareTo(vorg.getGesamt().abs()) <0  &&  amountPayed.intValue() == 0) {
+					BigDecimal gutschBetrag = vorg.getGesamt().abs();
+					if (sumWarenBetrag.compareTo(gutschBetrag) <0  &&  amountPayed.intValue() == 0) {
 						// es wurde nichts ausbezahlt, wir haben nur einen Teil des Gutscheins eingelöst.
-						changed |= updMoney(tx::setPurchasePrice, tx.getPurchasePrice(), vorg.getGesamt());
-						changed |= updMoney(tx::setSellingPrice, tx.getSellingPrice(), sumGesamtBeleg);  // der Betrag der damit gezahlt wurde
-						changed |= updMoney(tx::setTotal, tx.getTotal(), sumGesamtBeleg.negate());
+						changed |= updMoney(tx::setPurchasePrice, tx.getPurchasePrice(), gutschBetrag.negate());
+						changed |= updMoney(tx::setSellingPrice, tx.getSellingPrice(), sumWarenBetrag);  // der Betrag der damit gezahlt wurde
+						changed |= updMoney(tx::setTotal, tx.getTotal(), sumWarenBetrag.negate());
 						nototalset = false;
 					}
 				}
