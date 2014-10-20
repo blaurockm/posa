@@ -20,6 +20,7 @@ import javax.ws.rs.core.StreamingOutput;
 import net.buchlese.posa.api.bofc.PosCashBalance;
 import net.buchlese.posa.core.AccountingExport;
 import net.buchlese.posa.core.CashBalance;
+import net.buchlese.posa.core.PDFCashBalance;
 import net.buchlese.posa.jdbi.bofc.PosCashBalanceDAO;
 import net.buchlese.posa.jdbi.bofc.PosTicketDAO;
 import net.buchlese.posa.jdbi.bofc.PosTxDAO;
@@ -123,7 +124,26 @@ public class PosCashBalanceResource {
 
 	@GET
 	@Path("/{date}")
-	public PosCashBalance fetchForDate(@PathParam("date") String date, @QueryParam("recreate") Optional<Boolean> recreate)  {
+	public PosCashBalance fetchForDate(@PathParam("date") String date)  {
+		PosCashBalance bal = fetchBalanceForDate(date);
+		return bal;
+	}
+
+	@Produces({"application/pdf"})
+	@GET
+	@Path("/pdf/{date}")
+	public Response fetchPdfForDate(@PathParam("date") String date)  {
+		byte[] pdf;
+		try {
+			pdf = PDFCashBalance.create(fetchBalanceForDate(date));
+			return Response.ok(pdf, "application/pdf").build();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return Response.serverError().build();
+		}
+	}
+
+	private PosCashBalance fetchBalanceForDate(String date) {
 		if ("today".equals(date)) {
 			// wir berechnen den von heute...
 			DateTime today = new DateTime();
@@ -157,16 +177,9 @@ public class PosCashBalanceResource {
 			return bal;
 		}
 		PosCashBalance bal = dao.fetchForDate(date);
-		if (recreate.isPresent() && recreate.get()) {
-			CashBalance balCOmp = new CashBalance(txDao, ticketDao);
-			PosCashBalance newBal = balCOmp.computeBalance(bal.getFirstCovered(), bal.getLastCovered());
-			newBal.setAbschlussId(bal.getAbschlussId());
-			newBal.setAbsorption(bal.getAbsorption());
-			newBal.setOrigAbschluss(bal.getOrigAbschluss());
-			return newBal;
-		}
 		return bal;
 	}
+
 
 
 }

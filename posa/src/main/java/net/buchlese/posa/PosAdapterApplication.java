@@ -33,7 +33,6 @@ import net.buchlese.posa.resources.PosTicketResource;
 import net.buchlese.posa.resources.PosTxResource;
 import net.buchlese.posa.resources.SynchronizeTask;
 
-import org.apache.fop.apps.FopFactory;
 import org.skife.jdbi.v2.DBI;
 
 

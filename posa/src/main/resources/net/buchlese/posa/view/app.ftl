@@ -107,7 +107,8 @@ registry: "dijit/registry"
 						<span data-dojo-value="thisyear">diesem Jahr</span>
 						<span data-dojo-value="lastyear">letztem Jahr</span>
 					 </div> </h2>
-	           <div id="balGrid" style="height:60%; width:50%"></div>
+	           <div id="balGrid" style="height:30%; width:50%"></div>
+	           <iframe id="balpdf" style="height:60%; width:100%; background-color:#eeeeee;"></iframe>
 			</div>
 
   		    <!--  die Gutscheine -->

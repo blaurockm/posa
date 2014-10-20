@@ -1,18 +1,13 @@
 package net.buchlese.posa.api.bofc;
 
-import io.dropwizard.testing.junit.DropwizardAppRule;
-
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.buchlese.posa.PosAdapterApplication;
-import net.buchlese.posa.PosAdapterConfiguration;
 import net.buchlese.posa.core.PDFCashBalance;
 
 import org.apache.commons.io.FileUtils;
 import org.joda.time.DateTime;
-import org.junit.ClassRule;
 import org.junit.Test;
 
 import com.google.common.io.Resources;

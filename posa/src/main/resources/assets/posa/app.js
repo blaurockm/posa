@@ -1,9 +1,9 @@
 // dependencies
-define(["dojo/dom", "dojo/dom-construct", "dojo/store/JsonRest", "dojox/charting/Chart", 
+define(["dojo/dom", "dojo/dom-construct", "dojo/store/JsonRest", "dojo/request/iframe", "dojox/charting/Chart", 
         "dojox/charting/action2d/Tooltip", "dojox/charting/plot2d/Pie", "dojox/grid/DataGrid",
         "dojo/data/ObjectStore", "dojo/store/Memory"
         ],
-function(dom, domConstruct, JsonRest, Chart, Tooltip, Pie, DataGrid, ObjectStore, Memory) {
+function(dom, domConstruct, JsonRest, iframe, Chart, Tooltip, Pie, DataGrid, ObjectStore, Memory) {
 	
 	// ein paar variablen definieren
 	var store = new JsonRest({
@@ -67,6 +67,17 @@ function(dom, domConstruct, JsonRest, Chart, Tooltip, Pie, DataGrid, ObjectStore
                selectionMode : 'single',
                autoWidth : true
         }, "balGrid");
+        balGridUi.on("RowClick", function(evt){
+            var idx = evt.rowIndex,
+                abschlussid = balGridUi.getItem(idx).abschlussId;
+            // The rowData is returned in an object, last is the last name, first is the first name
+            console.log("row-click-event " + idx + " : " + '/cashbalance/pdf/' + abschlussid );
+            var pdfembed = dom.byId("balpdf")
+            domConstruct.empty(pdfembed);
+            pdfembed.src = '/cashbalance/pdf/' + abschlussid;
+//            document.getElementById("results").innerHTML =
+//                "You have clicked on " + rowData.last + ", " + rowData.first + ".";
+        }, true);
         balGridUi.startup();
         
     },
@@ -96,6 +107,9 @@ function(dom, domConstruct, JsonRest, Chart, Tooltip, Pie, DataGrid, ObjectStore
   	       dom.byId("lastTicketDate").innerHTML = new Date(balance.lastTimestamp).toLocaleTimeString();
   	       dom.byId("ticketCount").innerHTML = balance.ticketCount;
 
+  	       if (balance.revenue == undefined) {
+  	    	   return;
+  	       }
   	       dom.byId("umsatzEUR").innerHTML = balance.revenue.formatMoney();
 
   	       dom.byId("goodsoutEUR").innerHTML = balance.goodsOut.formatMoney();
