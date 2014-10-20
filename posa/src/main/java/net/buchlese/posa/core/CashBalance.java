@@ -103,8 +103,16 @@ public class CashBalance {
 		balance.setCouponTradeOut(txs.stream().filter(t -> t.getType().equals(TxType.TRADEOUT)).mapToLong(PosTx::getTotal).sum());
 
 		// Bar ein und auszahlungen
-		balance.setCashIn(txs.stream().filter(t -> t.getType().equals(TxType.CASHIN)).mapToLong(PosTx::getTotal).sum());
-		balance.setCashOut(txs.stream().filter(t -> t.getType().equals(TxType.CASHOUT)).mapToLong(PosTx::getTotal).sum());
+		Map<String, Long> cashIn = txs.stream().filter(t -> t.getType().equals(TxType.CASHIN))
+				.collect(Collectors.groupingBy(PosTx::getArticleGroupKey, 
+						Collectors.reducing(0l,
+								PosTx::getTotal, Long::sum)));
+		balance.setNewCoupon(cashIn);
+		Map<String, Long> cashOut = txs.stream().filter(t -> t.getType().equals(TxType.CASHOUT))
+				.collect(Collectors.groupingBy(PosTx::getArticleGroupKey, 
+						Collectors.reducing(0l,
+								PosTx::getTotal, Long::sum)));
+		balance.setNewCoupon(cashOut);
 
 		balance.setGoodsOut(txs.stream().filter(t -> t.getType().equals(TxType.SELL)).mapToLong(PosTx::getTotal).sum());
 

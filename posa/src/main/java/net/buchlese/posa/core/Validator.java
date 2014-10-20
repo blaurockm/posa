@@ -10,7 +10,7 @@ public class Validator {
 		
 		// GoodsOut muss der Summe der TaxBalance entsprechen
 		long taxBalanceSum = balance.getTaxBalance().entrySet().stream().mapToLong(Map.Entry::getValue).sum();
-		if ( balance.getGoodsOut() != taxBalanceSum) {
+		if (balance.getRevenue() == null ||  balance.getGoodsOut() == null || balance.getGoodsOut() != taxBalanceSum) {
 			return false;
 		}
 
@@ -28,9 +28,11 @@ public class Validator {
 
 		// Summe der TxTypes muss der Umsatz entsprechen
 		long debitPay = balance.getPayedInvoices().entrySet().stream().mapToLong(Map.Entry::getValue).sum();
+		long cashIn = balance.getCashIn().entrySet().stream().mapToLong(Map.Entry::getValue).sum();
+		long cashOut = balance.getCashOut().entrySet().stream().mapToLong(Map.Entry::getValue).sum();
 		
 		
-		long rev = balance.getCashIn() + balance.getCashOut() + balance.getCouponTradeIn() +
+		long rev = cashIn + cashOut + balance.getCouponTradeIn() +
 				   balance.getCouponTradeOut() + balance.getGoodsOut() + debitPay;
 		
 		if ( balance.getRevenue() != rev) {

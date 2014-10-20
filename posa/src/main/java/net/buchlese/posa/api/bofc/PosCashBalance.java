@@ -43,13 +43,19 @@ public class PosCashBalance {
 	@JsonProperty
 	private Map<String, Long> payedInvoices;  // bezahlte rechnungen ( nr + betrag)
 	@JsonProperty
+	private Map<String, Long> createdInvoices;  // erstellte rechnungen ( nr + betrag)
+	@JsonProperty
 	private Long goodsOut;  // Warenverkäufe
 	@JsonProperty
-	private Long cashIn;  // Einzahlungen
+	private Map<String, Long> cashIn;  // Einzahlungen
 	@JsonProperty
-	private Long cashOut;  // Auszahlungen
+	private Map<String, Long> cashOut;  // Auszahlungen
 	@JsonProperty
 	private Long absorption;  // Abschöpfung
+	@JsonProperty
+	private Long cashStart;  // Kassen Anfangsbestand
+	@JsonProperty
+	private Long cashEnd;  // Kassen Endbestand
 	@JsonProperty
 	private Long revenue;     // Umsatz
 	@JsonProperty
@@ -151,18 +157,46 @@ public class PosCashBalance {
 	public void setPayedInvoices(Map<String, Long> payedInvoices) {
 		this.payedInvoices = payedInvoices;
 	}
-	public Long getCashIn() {
+	public Map<String, Long> getCreatedInvoices() {
+		return createdInvoices;
+	}
+
+	public void setCreatedInvoices(Map<String, Long> createdInvoices) {
+		this.createdInvoices = createdInvoices;
+	}
+
+	public Map<String, Long> getCashIn() {
 		return cashIn;
 	}
-	public void setCashIn(Long cashIn) {
+
+	public void setCashIn(Map<String, Long> cashIn) {
 		this.cashIn = cashIn;
 	}
-	public Long getCashOut() {
+
+	public Map<String, Long> getCashOut() {
 		return cashOut;
 	}
-	public void setCashOut(Long cashOut) {
+
+	public void setCashOut(Map<String, Long> cashOut) {
 		this.cashOut = cashOut;
 	}
+
+	public Long getCashStart() {
+		return cashStart;
+	}
+
+	public void setCashStart(Long cashStart) {
+		this.cashStart = cashStart;
+	}
+
+	public Long getCashEnd() {
+		return cashEnd;
+	}
+
+	public void setCashEnd(Long cashEnd) {
+		this.cashEnd = cashEnd;
+	}
+
 	public Long getAbsorption() {
 		return absorption;
 	}

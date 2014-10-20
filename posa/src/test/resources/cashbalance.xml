@@ -29,17 +29,32 @@
         </entry>
     </articleGroupBalance>
     <cancelledticketCount>0</cancelledticketCount>
-    <cashIn>666</cashIn>
-    <cashOut>767</cashOut>
-    <creationtime>2014-10-18T18:10:48.025+02:00</creationtime>
+    <cashIn>
+        <entry>
+            <key> einz 1</key>
+            <value>2312</value>
+        </entry>
+    </cashIn>
+    <cashOut>
+        <entry>
+            <key> ausz 2</key>
+            <value>456</value>
+        </entry>
+    </cashOut>
+    <couponTradeIn>25085</couponTradeIn>
+    <couponTradeOut>21555</couponTradeOut>
+    <goodsOut>21555</goodsOut>
+    <cashStart>21555</cashStart>
+    <cashEnd>21555</cashEnd>
+    <creationtime>2014-10-20T09:31:05</creationtime>
     <exported>false</exported>
     <firstBelegNr>0</firstBelegNr>
-    <firstCovered>2014-10-17T12:10:48.132+02:00</firstCovered>
-    <firstTimestamp>2014-10-18T05:10:48.150+02:00</firstTimestamp>
+    <firstCovered>2014-10-19T09:31:05</firstCovered>
+    <firstTimestamp>2014-10-20T02:31:05</firstTimestamp>
     <id>0</id>
     <lastBelegNr>0</lastBelegNr>
-    <lastCovered>2014-10-19T12:10:48.150+02:00</lastCovered>
-    <lastTimestamp>2014-10-18T14:10:48.150+02:00</lastTimestamp>
+    <lastCovered>2014-10-21T09:31:05</lastCovered>
+    <lastTimestamp>2014-10-20T11:31:05</lastTimestamp>
     <newCoupon>
         <entry>
             <key>Gutsch</key>
@@ -72,26 +87,26 @@
     </payedInvoices>
     <paymentMethodBalance>
         <entry>
-            <key>TELE</key>
-            <value>1765</value>
-        </entry>
-        <entry>
             <key>CASH</key>
             <value>21555</value>
+        </entry>
+        <entry>
+            <key>TELE</key>
+            <value>1765</value>
         </entry>
     </paymentMethodBalance>
     <revenue>123450</revenue>
     <taxBalance>
+        <entry>
+            <key>NONE</key>
+            <value>555</value>
+        </entry>
         <entry>
             <key>HALF</key>
             <value>555</value>
         </entry>
         <entry>
             <key>FULL</key>
-            <value>555</value>
-        </entry>
-        <entry>
-            <key>NONE</key>
             <value>555</value>
         </entry>
     </taxBalance>

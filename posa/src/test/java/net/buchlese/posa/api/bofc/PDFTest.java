@@ -24,8 +24,15 @@ public class PDFTest {
 		bal.setAbschlussId("20141018");
 		bal.setRevenue(123450l);
 		bal.setAbsorption(75612l);
-		bal.setCashIn(666l);
-		bal.setCashOut(767l);
+		Map<String,Long> cashIn = new HashMap<String, Long>();
+		cashIn.put(" einz 1", 2312l);
+		bal.setCashIn(cashIn);
+		Map<String,Long> cashOut = new HashMap<String, Long>();
+		cashOut.put(" ausz 2", 456l);
+		bal.setCashOut(cashOut);
+		bal.setGoodsOut(32123l);
+		bal.setCashStart(323l);
+		bal.setCashEnd(76542l);
 		bal.setCreationtime(new DateTime());
 		bal.setFirstCovered(new DateTime().minusHours(24));
 		bal.setLastCovered(new DateTime().plusHours(24));
@@ -53,9 +60,11 @@ public class PDFTest {
 		sm.put("gutsch", 1765l);
 		sm.put("Gutsch Dorn", 1765l);
 		bal.setOldCoupon(sm);
+		bal.setCouponTradeIn(21555l +1765l+1765l );
 		sm = new HashMap<String, Long>();
 		sm.put("Gutsch", 21555l);
 		bal.setNewCoupon(sm);
+		bal.setCouponTradeOut(21555l );
 
 		sm = new HashMap<String, Long>();
 		sm.put("books", 21555l);

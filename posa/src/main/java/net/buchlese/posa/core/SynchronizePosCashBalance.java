@@ -69,6 +69,8 @@ public class SynchronizePosCashBalance extends AbstractSynchronizer {
     	// revenue wird berechnet, das wird nicht aus dem abschluss übernommen
     	// balanceSheet natürlich ebenso
 		updMoney(bal::setAbsorption, bal.getAbsorption(), abschluss.getAbschoepfung());
+		updMoney(bal::setCashStart, bal.getCashStart(), abschluss.getAnfang());
+		updMoney(bal::setCashEnd, bal.getCashEnd(), abschluss.getBar());
 		try {
 			bal.setOrigAbschluss(om.writeValueAsString(abschluss));
 		} catch (JsonProcessingException e) {

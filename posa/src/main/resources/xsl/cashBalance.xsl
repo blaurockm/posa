@@ -68,7 +68,7 @@
                      <fo:block>Kassen-Anfangsbestand</fo:block>
                   </fo:table-cell>
                   <fo:table-cell>
-                     <fo:block>
+                     <fo:block text-align="right">
                         <xsl:value-of select="format-number(cashStart div 100, '###.###,00 EUR', 'euro')" />
                      </fo:block>
                   </fo:table-cell>
@@ -78,7 +78,7 @@
                      <fo:block>Kassen-Endbestand</fo:block>
                   </fo:table-cell>
                   <fo:table-cell>
-                     <fo:block>
+                     <fo:block text-align="right">
                         <xsl:value-of select="format-number(cashEnd div 100, '###.###,00 EUR', 'euro')" />
                      </fo:block>
                   </fo:table-cell>
@@ -88,7 +88,7 @@
                      <fo:block>Abschöpfung</fo:block>
                   </fo:table-cell>
                   <fo:table-cell>
-                     <fo:block>
+                     <fo:block text-align="right">
                         <xsl:value-of select="format-number(absorption div 100, '###.###,00 EUR', 'euro')" />
                      </fo:block>
                   </fo:table-cell>
@@ -98,7 +98,7 @@
                      <fo:block>Warenverkauf</fo:block>
                   </fo:table-cell>
                   <fo:table-cell>
-                     <fo:block>
+                     <fo:block text-align="right">
                         <xsl:value-of select="format-number(goodsOut div 100, '###.###,00 EUR', 'euro')" />
                      </fo:block>
                   </fo:table-cell>
@@ -108,8 +108,8 @@
                      <fo:block>Gutscheinsaldo</fo:block>
                   </fo:table-cell>
                   <fo:table-cell>
-                     <fo:block>
-                        <xsl:value-of select="format-number(couponSaldo div 100, '###.###,00 EUR', 'euro')" />
+                     <fo:block text-align="right">
+                        <xsl:value-of select="format-number((couponTradeIn - couponTradeOut) div 100, '###.###,00 EUR', 'euro')" />
                      </fo:block>
                   </fo:table-cell>
                </fo:table-row>
@@ -166,7 +166,14 @@
 
    <xsl:template name="sonstige">
       <fo:block font-size="10pt" padding="3mm" border-top-width="0.1mm" border-top-style="solid">
-         <fo:inline font-size="12pt">Sonstige Ein- und Ausgaben</fo:inline>
+         <fo:inline font-size="12pt">Sonstige Einnahmen</fo:inline>
+         <xsl:call-template name="tabelle">
+            <xsl:with-param name="tablenode" select="cashIn" />
+         </xsl:call-template>
+         <fo:inline font-size="12pt">Sonstige Ausgaben</fo:inline>
+         <xsl:call-template name="tabelle">
+            <xsl:with-param name="tablenode" select="cashOut" />
+         </xsl:call-template>
       </fo:block>
    </xsl:template>
 
