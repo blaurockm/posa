@@ -45,6 +45,7 @@ registry: "dijit/registry"
 						<tr><td>Geschätzer Gewinn</td><td id="profitEUR" style="text-align:right"></td></tr>
 						<tr><td>Auszahlungen</td><td id="payoutEUR" style="text-align:right"></td></tr>
 						<tr><td>Einzahlungen</td><td id="payinEUR" style="text-align:right"></td></tr>
+						<tr><td>Rechnungen bez.</td><td id="invPayedEUR" style="text-align:right"></td></tr>
 						<tr><td>Gutscheine eingelöst</td><td id="tradeinEUR" style="text-align:right"></td></tr>
 						<tr><td>Gutscheine verkauft</td><td id="tradeoutEUR" style="text-align:right"></td></tr>
 					</table>

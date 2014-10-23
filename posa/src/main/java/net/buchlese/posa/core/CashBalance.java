@@ -108,11 +108,15 @@ public class CashBalance {
 						Collectors.reducing(0l,
 								PosTx::getTotal, Long::sum)));
 		balance.setCashIn(cashIn);
+		
 		Map<String, Long> cashOut = txs.stream().filter(t -> t.getType().equals(TxType.CASHOUT))
 				.collect(Collectors.groupingBy(PosTx::getArticleGroupKey, 
 						Collectors.reducing(0l,
 								PosTx::getTotal, Long::sum)));
 		balance.setCashOut(cashOut);
+
+		balance.setCashInSum(txs.stream().filter(t -> t.getType().equals(TxType.CASHIN)).mapToLong(PosTx::getTotal).sum());
+		balance.setCashOutSum(txs.stream().filter(t -> t.getType().equals(TxType.CASHOUT)).mapToLong(PosTx::getTotal).sum());
 
 		balance.setGoodsOut(txs.stream().filter(t -> t.getType().equals(TxType.SELL)).mapToLong(PosTx::getTotal).sum());
 
@@ -137,7 +141,11 @@ public class CashBalance {
 						Collectors.reducing(0l,
 								PosTx::getTotal, Long::sum)));
 		balance.setPayedInvoices(debitPays);
-		
+
+		balance.setPayedInvoicesSum(txs.stream().filter(t -> t.getType().equals(TxType.DEBITPAY)).mapToLong(PosTx::getTotal).sum());
+
+//		balance.setCreatedInvoicesSum(txs.stream().filter(t -> t.getType().equals(TxType.DEBITPAY)).mapToLong(PosTx::getTotal).sum());
+
 		
 		balance.setCancelledticketCount(txs.size());
 		return balance;

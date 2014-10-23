@@ -31,6 +31,8 @@ public class PosCashBalance {
 	@JsonProperty
 	private Map<String, Long> articleGroupBalance;
 	@JsonProperty
+	private Long goodsOut;  // Warenverkäufe
+	@JsonProperty
 	private Map<PaymentMethod, Long> paymentMethodBalance = new EnumMap<PaymentMethod, Long>(PaymentMethod.class);
 	@JsonProperty
 	private Map<String, Long> newCoupon;  // neue Gutscheine (nr + betrag)
@@ -45,11 +47,17 @@ public class PosCashBalance {
 	@JsonProperty
 	private Map<String, Long> createdInvoices;  // erstellte rechnungen ( nr + betrag)
 	@JsonProperty
-	private Long goodsOut;  // Warenverkäufe
+	private Long payedInvoicesSum;  // Rechnungen bezahlt
+	@JsonProperty
+	private Long createdInvoicesSum;  // Rechnungen ausgestellt
 	@JsonProperty
 	private Map<String, Long> cashIn;  // Einzahlungen
 	@JsonProperty
 	private Map<String, Long> cashOut;  // Auszahlungen
+	@JsonProperty
+	private Long cashInSum;  // Rechnungen bezahlt
+	@JsonProperty
+	private Long cashOutSum;  // Rechnungen ausgestellt
 	@JsonProperty
 	private Long absorption;  // Abschöpfung
 	@JsonProperty
@@ -148,6 +156,38 @@ public class PosCashBalance {
 	public Long getProfit() {
 		return profit;
 	}
+	public Long getPayedInvoicesSum() {
+		return payedInvoicesSum;
+	}
+
+	public void setPayedInvoicesSum(Long payedInvoicesSum) {
+		this.payedInvoicesSum = payedInvoicesSum;
+	}
+
+	public Long getCreatedInvoicesSum() {
+		return createdInvoicesSum;
+	}
+
+	public void setCreatedInvoicesSum(Long createdInvoicesSum) {
+		this.createdInvoicesSum = createdInvoicesSum;
+	}
+
+	public Long getCashInSum() {
+		return cashInSum;
+	}
+
+	public void setCashInSum(Long cashInSum) {
+		this.cashInSum = cashInSum;
+	}
+
+	public Long getCashOutSum() {
+		return cashOutSum;
+	}
+
+	public void setCashOutSum(Long cashOutSum) {
+		this.cashOutSum = cashOutSum;
+	}
+
 	public void setProfit(Long profit) {
 		this.profit = profit;
 	}

@@ -54,8 +54,9 @@ function(dom, domConstruct, JsonRest, Chart, Tooltip, Pie) {
   	       if (balance.paymentMethodBalance.TELE != undefined) {
   	       	  dom.byId("teleEUR").innerHTML = balance.paymentMethodBalance["TELE"].formatMoney();
   	       }
-  	       dom.byId("payoutEUR").innerHTML = balance.cashOut.formatMoney();
-  	       dom.byId("payinEUR").innerHTML = balance.cashIn.formatMoney();
+  	       dom.byId("payoutEUR").innerHTML = balance.cashOutSum.formatMoney();
+  	       dom.byId("payinEUR").innerHTML = balance.cashInSum.formatMoney();
+  	       dom.byId("invPayedEUR").innerHTML = balance.payedInvoicesSum.formatMoney();
   	       dom.byId("tradeoutEUR").innerHTML = balance.couponTradeOut.formatMoney();
   	       dom.byId("tradeinEUR").innerHTML = balance.couponTradeIn.formatMoney();
 

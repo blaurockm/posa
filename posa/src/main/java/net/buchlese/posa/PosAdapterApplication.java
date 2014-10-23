@@ -14,6 +14,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import net.buchlese.posa.api.bofc.ArticleGroup;
+import net.buchlese.posa.core.PDFCashBalance;
 import net.buchlese.posa.core.SyncTimer;
 import net.buchlese.posa.jdbi.bofc.PayMethArgumentFactory;
 import net.buchlese.posa.jdbi.bofc.PosCashBalanceDAO;
@@ -63,6 +64,7 @@ public class PosAdapterApplication extends Application<PosAdapterConfiguration> 
 	@Override
 	public void run(PosAdapterConfiguration config, Environment environment) throws Exception {
 		ArticleGroup.injectMappings(config.getArticleGroupMappings());
+		PDFCashBalance.nameOfKasse = config.getName();
 		
 	    final DBIFactory posDbfactory = new DBIFactory();
 	    config.getPointOfSaleDB().setInitialSize(0); // lässt sich nicht über config einstellen

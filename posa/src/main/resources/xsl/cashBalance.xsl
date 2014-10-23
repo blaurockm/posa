@@ -3,6 +3,7 @@
           xmlns:date="http://exslt.org/dates-and-times"
           extension-element-prefixes="date">
    <xsl:output method="xml" version="1.0" indent="yes" encoding="UTF-8" />
+   <xsl:param name="name_of_kasse"/>
    <xsl:decimal-format name="euro" decimal-separator=',' grouping-separator='.' />
    <xsl:template match="/CashBalance">
       <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
@@ -47,7 +48,7 @@
    <xsl:template name="ueberschrift">
       <fo:block font-size="14pt" text-align="center" border-top-style="solid" border-bottom-style="solid" border-top-width="0.5mm"
          border-bottom-width="0.5mm" padding="3mm" span="all">
-         Kassenbericht ... vom
+         Kassenbericht <xsl:value-of select="$name_of_kasse" /> vom
          <xsl:value-of select="date:format-date(lastCovered, 'dd.MM.yyyy')" />
       </fo:block>
    </xsl:template>
@@ -224,7 +225,7 @@
             </fo:table>
          </xsl:when>
          <xsl:otherwise>
-            --
+            <fo:block>-</fo:block>
          </xsl:otherwise>
       </xsl:choose>
    </xsl:template>

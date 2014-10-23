@@ -1,5 +1,7 @@
 package net.buchlese.posa.core;
 
+
+
 import java.io.IOException;
 
 import javax.xml.bind.JAXBContext;
@@ -24,16 +26,18 @@ import org.apache.fop.apps.MimeConstants;
 
 public class PDFCashBalance {
 
+	public static String nameOfKasse ="Buchlese";
+	
+	
 	public static byte[] create(PosCashBalance bal) throws JAXBException, FOPException, TransformerException, IOException {
     	JAXBContext jc = JAXBContext.newInstance(new Class[] {PosCashBalance.class});
     	Marshaller m = jc.createMarshaller();
     	m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-    	m.marshal(bal, System.out);
     	
     	// Step 2: Set up output stream.
     	// Note: Using BufferedOutputStream for performance reasons (helpful with FileOutputStreams).
     	ByteArrayOutputStream out = new ByteArrayOutputStream();
-
+    	
     	try {
     	    // Step 3: Construct fop with desired output format
     	    Fop fop = PosAdapterConfiguration.getFopFactory().newFop(MimeConstants.MIME_PDF, out);
@@ -41,7 +45,7 @@ public class PDFCashBalance {
     	    // Step 4: Setup JAXP using identity transformer
     	    TransformerFactory factory = TransformerFactory.newInstance();
     	    Transformer transformer = factory.newTransformer(new StreamSource(PDFCashBalance.class.getResourceAsStream("/xsl/cashBalance.xsl")));
-    	    		
+    	    transformer.setParameter("name_of_kasse", nameOfKasse);
     	    // Step 5: Setup input and output for XSLT transformation
     	    // Setup input stream
     	    Source src = new JAXBSource(jc, bal);

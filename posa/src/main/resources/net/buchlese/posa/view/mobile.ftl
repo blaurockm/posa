@@ -65,6 +65,10 @@
 					<td id="payinEUR" style="text-align: right"></td>
 				</tr>
 				<tr>
+					<td>Rechnungen bez.</td>
+					<td id="invPayedEUR" style="text-align:right"></td>
+				</tr>
+				<tr>
 					<td>Gutscheine eingelöst</td>
 					<td id="tradeinEUR" style="text-align: right"></td>
 				</tr>

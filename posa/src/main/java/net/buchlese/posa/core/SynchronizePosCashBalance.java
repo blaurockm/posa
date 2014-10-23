@@ -70,7 +70,7 @@ public class SynchronizePosCashBalance extends AbstractSynchronizer {
     	// balanceSheet natürlich ebenso
 		updMoney(bal::setAbsorption, bal.getAbsorption(), abschluss.getAbschoepfung());
 		updMoney(bal::setCashStart, bal.getCashStart(), abschluss.getAnfang());
-		updMoney(bal::setCashEnd, bal.getCashEnd(), abschluss.getBar());
+		updMoney(bal::setCashEnd, bal.getCashEnd(), abschluss.getBar().subtract(abschluss.getAbschoepfung()));
 		try {
 			bal.setOrigAbschluss(om.writeValueAsString(abschluss));
 		} catch (JsonProcessingException e) {
