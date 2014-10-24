@@ -22,8 +22,8 @@ public interface PosTicketDAO {
 	@SqlQuery("select * from posticket")
 	List<PosTicket> fetchAll();
 
-	@SqlBatch("insert into posticket (id, belegnr, total, paymentmethod, cancelled, timest, tobecheckedagain) " +
-	" values (:id, :belegNr, :total, :paymentMethod, :cancelled, :timestamp, :toBeCheckedAgain)")
+	@SqlBatch("insert into posticket (id, belegnr, total, paymentmethod, cancelled, cancel, timest, tobecheckedagain) " +
+	" values (:id, :belegNr, :total, :paymentMethod, :cancelled, :cancel, :timestamp, :toBeCheckedAgain)")
 	@BatchChunkSize(700)
 	void insertAll(@Valid @BindBean Iterator<PosTicket> tickets);
 
@@ -33,13 +33,13 @@ public interface PosTicketDAO {
 	@SqlQuery("select max(id) from posticket")
 	Integer getMaxId();
 
-	@SqlQuery("select * from posticket where cancelled = 0 and timest between :vonDatum and :bisDatum")
+	@SqlQuery("select * from posticket where timest between :vonDatum and :bisDatum")
 	List<PosTicket> fetch(@Bind("vonDatum") DateTime vonDatum, @Bind("bisDatum") DateTime bisDatum);
 
 	@SqlQuery("select * from posticket where tobecheckedagain = 1 and timest > :datum")
 	List<PosTicket> fetchRevisitations(@Bind("datum") DateTime datum);
 
-	@SqlUpdate("update posticket set total = :total, paymentmethod = :paymentMethod, cancelled = :cancelled, tobecheckedagain = :toBeCheckedAgain " +
+	@SqlUpdate("update posticket set total = :total, paymentmethod = :paymentMethod, cancelled = :cancelled, tobecheckedagain = :toBeCheckedAgain, cancel = :cancel " +
 	" where id = :id ")
 	void update(@Valid @BindBean PosTicket checker);
 

@@ -18,6 +18,7 @@ public class PosTicketMapper implements ResultSetMapper<PosTicket> {
 		tx.setTotal(rs.getLong("total"));
 		tx.setBelegNr(rs.getLong("belegNr"));
 		tx.setCancelled(rs.getBoolean("cancelled"));
+		tx.setCancel(rs.getBoolean("cancel"));
 		tx.setPaymentMethod(PaymentMethod.fromDbKey(rs.getString("paymentMethod")));
 		tx.setTimestamp(new DateTime(rs.getTimestamp("timest")));
 		tx.setToBeCheckedAgain(rs.getBoolean("tobecheckedagain"));

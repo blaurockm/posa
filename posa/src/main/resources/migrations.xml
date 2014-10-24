@@ -41,6 +41,7 @@
          </column>
          <column name="total" type="bigint"/>
          <column name="cancelled" type="bool"/>
+         <column name="cancel" type="bool"/>
          <column name="paymentMethod" type="varchar(2)" />
          <column name="tobecheckedagain" type="bool"/>
          <column name="timest" type="DATETIME">

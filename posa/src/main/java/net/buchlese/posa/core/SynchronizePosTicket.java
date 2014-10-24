@@ -84,6 +84,7 @@ public class SynchronizePosTicket extends AbstractSynchronizer {
 		boolean changed = false;
 		changed |= updMoney(tx::setTotal, tx.getTotal(), beleg.getZahlungsBetrag());
 		changed |= updBool(tx::setCancelled, tx.isCancelled(), beleg.isStorniert());
+		changed |= updBool(tx::setCancel, tx.isCancel(), (beleg.getBemerkung() != null && beleg.getBemerkung().startsWith("STORNO")));
 		changed |= updEnum(tx::setPaymentMethod, tx.getPaymentMethod(), PaymentMethod.mappingFrom(beleg.getZahlungsart()));
 		changed |= updBool(tx::setToBeCheckedAgain, tx.isToBeCheckedAgain(), beleg.isGeparkt());
 		return changed;

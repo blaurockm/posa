@@ -20,6 +20,9 @@ public class PosTicket {
 	@JsonProperty
 	private boolean cancelled;
 
+	@JsonProperty
+	private boolean cancel;
+
 	@NotEmpty
 	@JsonProperty
 	private PaymentMethod paymentMethod;
@@ -69,6 +72,14 @@ public class PosTicket {
 
 	public void setTimestamp(DateTime timestamp) {
 		this.timestamp = timestamp;
+	}
+
+	public boolean isCancel() {
+		return cancel;
+	}
+
+	public void setCancel(boolean cancel) {
+		this.cancel = cancel;
 	}
 
 	public boolean isCancelled() {

@@ -52,7 +52,7 @@ public class CashBalance {
 		
 		List<PosTicket> tickets = ticketDAO.fetch(from, till);
 		
-		balance.setTicketCount(tickets.size());
+		balance.setTicketCount((int) tickets.stream().filter(t -> (t.isCancel() && t.isCancelled()) == false).count());
 
 		if (txs.isEmpty()) {
 			return balance;

@@ -65,32 +65,30 @@ registry: "dijit/registry"
 			
   		    <!--  die Kassenbelege -->
 			<div id="tickTab" data-dojo-type="dijit/layout/ContentPane" data-dojo-props='title:"Belege", style:"padding:10px;"'>
-			   <h2>Kassenbelege</h2>
-			   <p>von <div id="ticketPeriod" data-dojo-type="dijit/form/Select" data-dojo-props="value:'t'">
-						<span data-dojo-value="t">Heute</span>
-						<span data-dojo-value="y">Gestern</span>
-						<span data-dojo-value="tw">Dieser Woche</span>
-						<span data-dojo-value="lw">letzter Woche</span>
-						<span data-dojo-value="vlw">vorletzter Woche</span>
-						<span data-dojo-value="tm">diesem Monat</span>
-						<span data-dojo-value="lm">letztem Monat</span>
-					 </div> </p>
-	           <div id="tickGrid" style="height:100%"></div>
+			   <h2>Kassenbelege von <select id="ticketPeriod" data-dojo-type="dijit/form/ComboBox">
+			           <option value="today">Heute</option>
+			           <option value="yesterday">Gestern</option>
+			           <option value="preyesterday">Vorgestern</option>
+			           <option value="prepreyesterday">Vor 3 Tagen</option>
+			           <option value="preprepreyesterday">Vor 4 Tagen</option>
+			           <option value="todayLastWeek">gleicherWoTag letze Woche</option>
+			           <option value="yesterdayLastWeek">gestrigerWoTag letze Woche</option>
+					 </select> </h2>
+	           <div id="tickGrid" style="height:80%"></div>
 			</div>
 
   		    <!--  die Kassentransaktionen -->
 			<div id="txTab" data-dojo-type="dijit/layout/ContentPane" data-dojo-props='title:"Transaktionen", style:"padding:10px;"'>
-			   <h2>Kassentransaktionen</h2>
-			   <p>von <div id="txPeriod" data-dojo-type="dijit/form/Select" data-dojo-props="value:'t'">
-						<span data-dojo-value="t">Heute</span>
-						<span data-dojo-value="y">Gestern</span>
-						<span data-dojo-value="tw">Dieser Woche</span>
-						<span data-dojo-value="lw">letzter Woche</span>
-						<span data-dojo-value="vlw">vorletzter Woche</span>
-						<span data-dojo-value="tm">diesem Monat</span>
-						<span data-dojo-value="lm">letztem Monat</span>
-					 </div> </p>
-	           <div id="txGrid" style="height:100%"></div>
+			   <h2>Kassentransaktionen von <select id="txPeriod" data-dojo-type="dijit/form/ComboBox">
+			           <option value="today">Heute</option>
+			           <option value="yesterday">Gestern</option>
+			           <option value="preyesterday">Vorgestern</option>
+			           <option value="prepreyesterday">Vor 3 Tagen</option>
+			           <option value="preprepreyesterday">Vor 4 Tagen</option>
+			           <option value="todayLastWeek">gleicherWoTag letze Woche</option>
+			           <option value="yesterdayLastWeek">gestrigerWoTag letze Woche</option>
+					 </select> </h2>
+	           <div id="txGrid" style="height:80%"></div>
 			</div>
 
   		    <!--  die Kassentransaktionen -->
@@ -176,7 +174,7 @@ registry: "dijit/registry"
 		<script src="//ajax.googleapis.com/ajax/libs/dojo/1.10.1/dojo/dojo.js"></script>
 		<script>
 			require(["posa/app", "dijit/registry", "dojo/parser", "dijit/layout/BorderContainer", "dijit/layout/TabContainer", 
-			         "dijit/layout/ContentPane", "dijit/form/Select",  "dojo/domReady!"], function(demoApp, registry, parser) {
+			         "dijit/layout/ContentPane", "dijit/form/Select", "dijit/form/ComboBox", "dojo/domReady!"], function(demoApp, registry, parser) {
 				parser.parse();
 				demoApp.init(registry);
 			});

@@ -114,11 +114,11 @@ public class SynchronizePosTx extends AbstractSynchronizer {
 		changed |= updStr(tx::setArticleKey, tx.getArticleKey(), vorg.getArtikelNummer());
 		changed |= updEnum(tx::setTax, tx.getTax(), Tax.mappingFrom(vorg.getMWSt()));
 
-		boolean nototalset = true;
+		boolean stillnototalset = true;
 		TxType type = TxType.mappingFrom(vorg.getVorgangsArt());
 
 		if (group != null && "COUPON".equals(group.getType()) && 
-				type.equals(TxType.TRADEIN) == false &&  type.equals(TxType.TRADEIN) == false) {
+				type.equals(TxType.TRADEIN) == false &&  type.equals(TxType.TRADEOUT) == false) {
 			// es ist ein Gutschein irgendeiner art.
 			// aber ein nicht pos-systemgenerierter Gutschein
 			if (vorg.getGesamt().signum() < 0) {
@@ -142,19 +142,24 @@ public class SynchronizePosTx extends AbstractSynchronizer {
 				} else {
 					// der Gutschein ist teil eines belges, es wurde was damit bezahlt
 					BigDecimal gutschBetrag = vorg.getGesamt().abs();
-					if (sumWarenBetrag.compareTo(gutschBetrag) <0  &&  amountPayed.intValue() == 0) {
+					if (sumWarenBetrag.compareTo(gutschBetrag) <0  &&  amountPayed.movePointRight(2).intValue() == 0) {
 						// es wurde nichts ausbezahlt, wir haben nur einen Teil des Gutscheins eingelöst.
-						changed |= updMoney(tx::setPurchasePrice, tx.getPurchasePrice(), gutschBetrag.negate());
-						changed |= updMoney(tx::setSellingPrice, tx.getSellingPrice(), sumWarenBetrag);  // der Betrag der damit gezahlt wurde
-						changed |= updMoney(tx::setTotal, tx.getTotal(), sumWarenBetrag.negate());
-						nototalset = false;
+						int maxGutschIdx = vorgangsDao.fetchGutschForBeleg(vorg.getBelegNr()); // die IndexNummer des letzten Gutscheins im Beleg
+						if (vorg.getLfdNummer() == maxGutschIdx) {
+							// und wir sind der letzte Gutschein des Belegs, unser Betrag wird modifiziert
+							// alle anderen bleiben gleich..
+							changed |= updMoney(tx::setPurchasePrice, tx.getPurchasePrice(), gutschBetrag.negate());
+							changed |= updMoney(tx::setSellingPrice, tx.getSellingPrice(), sumWarenBetrag);  // der Betrag der damit gezahlt wurde
+							changed |= updMoney(tx::setTotal, tx.getTotal(), sumWarenBetrag.negate());
+							stillnototalset = false;
+						}
 					}
 				}
 			} 
 		}
 		changed |= updEnum(tx::setType, tx.getType(), type);
 		
-		if (nototalset) {
+		if (stillnototalset) {
 			changed |= updMoney(tx::setSellingPrice, tx.getSellingPrice(), vorg.getVK());
 			changed |= updMoney(tx::setTotal, tx.getTotal(), vorg.getGesamt());
 		}

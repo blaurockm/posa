@@ -4,8 +4,8 @@ import java.util.List;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import net.buchlese.posa.api.bofc.PosCashBalance;
@@ -29,12 +29,48 @@ public class PosTxResource {
 	}
 	
 	@GET
-	@Path("/{date}")
-	public List<PosTx> fetchAll(@PathParam("date") String date) {
+	public List<PosTx> fetchAll(@QueryParam("date") String date) {
 		if ("today".equals(date)) {
-			DateTime today = new DateTime();
-			DateTime startOfToday = today.hourOfDay().setCopy(0); // stunde 0
-			return dao.fetch(startOfToday, today);
+			DateTime refdate = new DateTime();
+			DateTime from = refdate.hourOfDay().withMinimumValue();
+			DateTime till = refdate.hourOfDay().withMaximumValue();
+			return dao.fetch(from, till);
+		}
+		if ("yesterday".equals(date)) {
+			DateTime refdate = new DateTime().minusDays(1);
+			DateTime from = refdate.hourOfDay().withMinimumValue();
+			DateTime till = refdate.hourOfDay().withMaximumValue();
+			return dao.fetch(from, till);
+		}
+		if ("preyesterday".equals(date)) {
+			DateTime refdate = new DateTime().minusDays(2);
+			DateTime from = refdate.hourOfDay().withMinimumValue();
+			DateTime till = refdate.hourOfDay().withMaximumValue();
+			return dao.fetch(from, till);
+		}
+		if ("prepreyesterday".equals(date)) {
+			DateTime refdate = new DateTime().minusDays(3);
+			DateTime from = refdate.hourOfDay().withMinimumValue();
+			DateTime till = refdate.hourOfDay().withMaximumValue();
+			return dao.fetch(from, till);
+		}
+		if ("preprepreyesterday".equals(date)) {
+			DateTime refdate = new DateTime().minusDays(4);
+			DateTime from = refdate.hourOfDay().withMinimumValue();
+			DateTime till = refdate.hourOfDay().withMaximumValue();
+			return dao.fetch(from, till);
+		}
+		if ("todayLastWeek".equals(date)) {
+			DateTime refdate = new DateTime().minusDays(8);
+			DateTime from = refdate.hourOfDay().withMinimumValue();
+			DateTime till = refdate.hourOfDay().withMaximumValue();
+			return dao.fetch(from, till);
+		}
+		if ("yesterdayLastWeek".equals(date)) {
+			DateTime refdate = new DateTime().minusDays(9);
+			DateTime from = refdate.hourOfDay().withMinimumValue();
+			DateTime till = refdate.hourOfDay().withMaximumValue();
+			return dao.fetch(from, till);
 		}
 		PosCashBalance bal = balDao.fetchForDate(date);
 		if (bal != null) {

@@ -50,6 +50,8 @@ function(dom, domConstruct, JsonRest, iframe, Chart, Tooltip, Pie, DataGrid, Obj
                 { name: "Belegnummer", field: "belegNr", width: "90px"},
                 { name: "Gesamt", field: "total", styles: 'text-align: right;',width: "50px", formatter: formatMoney},
                 { name: "Typ", field: "paymentMethod", width: "75px"},
+                { name: "Storno", field: "cancel", width: "50px", type: dojox.grid.cells.Bool, editable: true },
+                { name: "storniert", field: "cancelled", width: "50px", type: dojox.grid.cells.Bool, editable: true},
                 { name: "Uhrzeit", field: "timestamp", width: "90px", formatter : formatDate}]
         }, "tickGrid");
         tickGridUi.startup();
@@ -85,6 +87,18 @@ function(dom, domConstruct, JsonRest, iframe, Chart, Tooltip, Pie, DataGrid, Obj
     	  store.query({"date": newVal}).then(function(balances){
               var dataStore = new ObjectStore({ objectStore:new Memory({ data: balances}) });
               balGridUi.setStore(dataStore);
+    	  });
+    },
+    updateTickGrid = function(newVal ) {
+          tickStore.query({"date": newVal}).then(function(txdata){
+            var dataStore = new ObjectStore({ objectStore:new Memory({ data: txdata}) });
+            tickGridUi.setStore(dataStore);
+          });
+    },
+    updateTxGrid = function(newVal ) {
+    	  txStore.query({"date": newVal}).then(function(tickData){
+              var dataStore = new ObjectStore({ objectStore:new Memory({ data: tickData}) });
+              txGridUi.setStore(dataStore);
     	  });
     },
     renderTable = function(tablenode, map) {
@@ -139,14 +153,14 @@ function(dom, domConstruct, JsonRest, iframe, Chart, Tooltip, Pie, DataGrid, Obj
   	       wgrpKuchen.render();
   	  });
   	  
-  	  txStore.get("today").then(function(txdata){
-          var dataStore = new ObjectStore({ objectStore:new Memory({ data: txdata}) });
-          txGridUi.setStore(dataStore);
-  	  });
-      tickStore.get("today").then(function(tickdata) {
-          var dataStore = new ObjectStore({ objectStore:new Memory({ data: tickdata}) });
-          tickGridUi.setStore(dataStore);
-  	  });
+//  	  txStore.get("today").then(function(txdata){
+//          var dataStore = new ObjectStore({ objectStore:new Memory({ data: txdata}) });
+//          txGridUi.setStore(dataStore);
+//  	  });
+//      tickStore.get("today").then(function(tickdata) {
+//          var dataStore = new ObjectStore({ objectStore:new Memory({ data: tickdata}) });
+//          tickGridUi.setStore(dataStore);
+//  	  });
   	  
     };
     
@@ -170,6 +184,8 @@ function(dom, domConstruct, JsonRest, iframe, Chart, Tooltip, Pie, DataGrid, Obj
             update();
             dashboardupdate = window.setInterval(update, 5 * 60 * 1000);
             registry.byId("balPeriod").on("change", updateBalGrid);
+            registry.byId("ticketPeriod").on("change", updateTickGrid);
+            registry.byId("txPeriod").on("change", updateTxGrid);
         }
     };
     

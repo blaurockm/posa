@@ -18,6 +18,14 @@ public interface KassenVorgangDAO {
 	@SqlQuery("select * from [dbo].posakassvorg where belegnr = :belegnr and kassennr = :kassennr ")
 	List<KassenVorgang> fetchForBeleg(@BindBean KassenBeleg beleg);
 
+	/**
+	 * die indexnummer des letzten Gutscheins für diesen Beleg
+	 * @param belegNr
+	 * @return
+	 */
+	@SqlQuery("select max(lfdNummer) from [dbo].posakassvorg where belegnr = :belegnr and gesamt < 0 ")
+	int fetchGutschForBeleg(@Bind("belegnr")int belegNr);
+
 	@SqlQuery("select * from [dbo].posakassvorg where datum> :datum order by datum asc ")
 	List<KassenVorgang> fetchAllAfter(@Bind("datum") DateTime maxDatum);
 
