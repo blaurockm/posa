@@ -152,6 +152,7 @@
                      <dataSet>
                         <data>
                            <src>${project.build.directory}/${project.build.finalName}.jar</src>
+                           <dst>posa.jar</dst>
                            <type>file</type>
                            <mapper>
                               <type>perm</type>
@@ -159,13 +160,22 @@
                            </mapper>
                         </data>
                         <data>
-                           <src>${project.basedir}/src/deb/etc</src>
+                           <src>${project.basedir}/src/deb/etc/posa</src>
                            <type>directory</type>
                            <excludes>**/.svn,**/.svn/**,**/.git,**/.git/**</excludes>
                            <mapper>
                               <type>perm</type>
-                              <prefix>/etc</prefix>
+                              <prefix>/etc/posa</prefix>
                               <filemode>644</filemode>
+                           </mapper>
+                        </data>
+                        <data>
+                           <src>${project.basedir}/src/deb/etc/init.d/posa</src>
+                           <type>file</type>
+                           <mapper>
+                              <type>perm</type>
+                              <prefix>/etc/init.d</prefix>
+                              <filemode>755</filemode>
                            </mapper>
                         </data>
                         <data>

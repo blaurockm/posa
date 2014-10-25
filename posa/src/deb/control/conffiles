@@ -1,1 +1,2 @@
 /etc/posa/posa.yaml
+/var/lib/posa/backoffice.mv.db

@@ -1,35 +1,6 @@
-#bofcDb:
-  # the name of your JDBC driver
-  #driverClass: org.h2.Driver
+name: Test-Kasse  
 
-  # the username
-  #user: sa
-
-  # the password
-  #password: 
-
-  # the JDBC URL
-  #url: jdbc:h2:~/backoffice
-  
-posDb:
-  # the name of your JDBC driver
-  driverClass: net.sourceforge.jtds.jdbc.Driver
-
-  # the username
-  user: sa
-  password: master
-
-#  user: fibu
-#  password: kasse2fibu
-  
-  # the JDBC URL
-  #####  lokale datenbank
-#  url: jdbc:jtds:sqlserver://localhost:1433/librasbak
-  ##### im gschaeft Sulz
-  url: jdbc:jtds:sqlserver://localhost:7891/libras
-  ##### im gschaeft Dornhan
-#  url: jdbc:jtds:sqlserver://localhost:7890/libras
-
+kassenkonto: 1600
 
 articleGroupMappings:
   lotto:  { match : 'A00008TD', text : 'Lotto',  key : 'lotto', type : 'GOOD', marge : 0.05, account : '3631' }
@@ -46,4 +17,41 @@ articleGroupMappings:
   book: { match : 'mwst=2', text : 'Bücher',key : 'book', type : 'GOOD', marge : 0.3 }
   nonbook: { match : 'mwst=1', text : 'NonBook',key : 'nonbook', type : 'GOOD', marge : 0.5 }
   
-name: Test-Kasse  
+
+bofcDb:
+  # the name of your JDBC driver
+  driverClass: org.h2.Driver
+
+  # the username
+  user: sa
+
+  # the password
+  password: 
+
+  # the JDBC URL
+  url: jdbc:h2:/var/lib/posa/backoffice
+  
+posDb:
+  # the name of your JDBC driver
+  driverClass: net.sourceforge.jtds.jdbc.Driver
+
+  # the username
+  user: sa
+  password: master
+
+#  user: fibu
+#  password: kasse2fibu
+  
+  # the JDBC URL
+  url: jdbc:jtds:sqlserver://192.168.2.100:1433/libras
+
+
+logging:
+	appenders:
+      - type: file
+		threshold: ALL
+		currentLogFilename: /var/log/posa/posa.log
+		archivedLogFilenamePattern: /var/log/posa/posa-%d.log.gz
+		archivedFileCount: 5
+    level: INFO
+
