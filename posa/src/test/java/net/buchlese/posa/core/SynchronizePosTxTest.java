@@ -11,11 +11,11 @@ import net.buchlese.posa.jdbi.bofc.PosTxDAO;
 import net.buchlese.posa.jdbi.pos.KassenVorgangDAO;
 
 import org.joda.time.DateTime;
-import org.junit.Test;
+import org.junit.Ignore;
 
 public class SynchronizePosTxTest {
 
-	@Test
+	@Ignore
 	public void missingCentTest1() throws Exception {
 		
 		SynchronizePosTx sptx = new SynchronizePosTx(getTxDao(), getTicketDao());
