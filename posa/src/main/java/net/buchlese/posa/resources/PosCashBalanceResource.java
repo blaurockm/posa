@@ -132,15 +132,17 @@ public class PosCashBalanceResource {
 	@Produces({"application/pdf"})
 	@GET
 	@Path("/pdf/{date}")
-	public Response fetchPdfForDate(@PathParam("date") String date)  {
-		byte[] pdf;
-		try {
-			pdf = PDFCashBalance.create(fetchBalanceForDate(date));
-			return Response.ok(pdf, "application/pdf").build();
-		} catch (Exception e) {
-			e.printStackTrace();
-			return Response.serverError().build();
-		}
+	public StreamingOutput fetchPdfForDate(@PathParam("date") String date)  {
+	    return new StreamingOutput() {
+	        public void write(OutputStream output) throws IOException, WebApplicationException {
+	            try {
+	                PDFCashBalance generator = new PDFCashBalance(fetchBalanceForDate(date));
+	                generator.generatePDF(output);
+	            } catch (Exception e) {
+	                throw new WebApplicationException(e);
+	            }
+	        }
+	    };	
 	}
 
 	private PosCashBalance fetchBalanceForDate(String date) {

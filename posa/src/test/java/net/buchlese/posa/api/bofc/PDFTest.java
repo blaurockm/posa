@@ -1,12 +1,12 @@
 package net.buchlese.posa.api.bofc;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
 import net.buchlese.posa.core.PDFCashBalance;
 
-import org.apache.commons.io.FileUtils;
 import org.joda.time.DateTime;
 import org.junit.Test;
 
@@ -77,9 +77,9 @@ public class PDFTest {
 		
 		bal.setTicketCount(23);
 
-		byte[] pdf = PDFCashBalance.create(bal);
-
-		FileUtils.writeByteArrayToFile(new File("testCashBalance.pdf"), pdf);
+		PDFCashBalance pdfgen = new PDFCashBalance(bal);
+		
+		pdfgen.generatePDF(new FileOutputStream("testCashBalance.pdf"));
 	}
 
 	public static String resourceFilePath(String resourceClassPathLocation) {

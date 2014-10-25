@@ -50,7 +50,19 @@ public class SynchronizePosCashBalance extends AbstractSynchronizer {
 			}
 		}
 		
-		// TODO alle geänderten 
+		if (maxId.isPresent()) {
+			belege = abschlussDao.fetchAllModified(maxId.get());
+			for (KassenAbschluss abschluss : belege) {
+				PosCashBalance oldBal = cashBalanceDAO.fetchForDate(abschluss.getAbschlussid());
+				if (oldBal == null) {
+					PosCashBalance bal = createNewBalance(abschluss);
+					cashBalanceDAO.insert(bal);
+				} else {
+					updateBalance(abschluss, oldBal);
+					cashBalanceDAO.update(oldBal);
+				}
+			}
+		}
 	}
 
 

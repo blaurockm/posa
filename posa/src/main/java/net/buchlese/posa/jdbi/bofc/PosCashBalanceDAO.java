@@ -31,4 +31,9 @@ public interface PosCashBalanceDAO {
 	    " values (:id, :abschlussId, :revenue, :creationtime, :balanceSheet, :origAbschluss, :exported, :exportDate, :firstCovered, :lastCovered)")
 	void insert(@BindBean PosCashBalance cashBal);
 
+	@SqlUpdate("update poscashbalance set (revenue, creationtime, balancesheet, origsheet, exported, exportdate, firstCovered, lastCovered) " +
+		    " = (:revenue, :creationtime, :balanceSheet, :origAbschluss, :exported, :exportDate, :firstCovered, :lastCovered)" +
+		    " where  id = :id ")
+	void update(@BindBean PosCashBalance cashBal);
+
 }

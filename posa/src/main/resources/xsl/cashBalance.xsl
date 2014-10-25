@@ -60,7 +60,7 @@
             <xsl:value-of select="format-number(revenue div 100, '###.###,00 EUR', 'euro')" />
          </fo:inline>
 
-         <fo:table margin-top="1mm" margin-left="3mm">
+         <fo:table margin-top="1mm" margin-left="3mm" table-layout="fixed" width="11cm">
             <fo:table-column column-width="8cm" />
             <fo:table-column column-width="3cm" />
             <fo:table-body>
@@ -203,7 +203,7 @@
       <xsl:param name="tablenode" />
       <xsl:choose>
          <xsl:when test="count($tablenode/entry) > 0">
-            <fo:table margin-left="3mm" margin-top="1mm">
+            <fo:table margin-left="3mm" margin-top="1mm" table-layout="fixed"  width="7cm">
                <fo:table-column column-width="4.5cm" />
                <fo:table-column column-width="2.5cm" />
                <fo:table-body>
