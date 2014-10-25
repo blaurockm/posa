@@ -48,8 +48,8 @@
    <xsl:template name="ueberschrift">
       <fo:block font-size="14pt" text-align="center" border-top-style="solid" border-bottom-style="solid" border-top-width="0.5mm"
          border-bottom-width="0.5mm" padding="3mm" span="all">
-         Kassenbericht <xsl:value-of select="$name_of_kasse" /> vom
-         <xsl:value-of select="date:format-date(lastCovered, 'dd.MM.yyyy')" />
+         Kassenbericht <xsl:value-of select="$name_of_kasse" /> von 
+         <xsl:value-of select="date:format-date(lastCovered, 'EEEEE dd.MM.yyyy')" />
       </fo:block>
    </xsl:template>
 

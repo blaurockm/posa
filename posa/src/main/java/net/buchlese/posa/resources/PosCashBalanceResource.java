@@ -14,7 +14,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 
 import net.buchlese.posa.api.bofc.PosCashBalance;
@@ -48,85 +47,32 @@ public class PosCashBalanceResource {
 	
 	@GET
 	public List<PosCashBalance> fetchAll(@QueryParam("date") Optional<String> date)  {
-		String from = date.or(new DateTime().minusMonths(1).toString(IDFORMAT)); // wenn nix da ist, die von vor einem Monat
-		Optional<String> till = Optional.absent();
 		if (date.isPresent()) {
-			if (date.get().equals("thisweek")) {
-				from = new DateTime().dayOfWeek().withMinimumValue().toString(IDFORMAT);
-				till = Optional.of(new DateTime().dayOfWeek().withMaximumValue().toString(IDFORMAT));
-			}
-			if (date.get().equals("lastweek")) {
-				from = new DateTime().minusWeeks(1).dayOfWeek().withMinimumValue().toString(IDFORMAT);
-				till = Optional.of(new DateTime().minusWeeks(1).dayOfWeek().withMaximumValue().toString(IDFORMAT));
-			}
-			if (date.get().equals("thismonth")) {
-				from = new DateTime().dayOfMonth().withMinimumValue().toString(IDFORMAT);
-				till = Optional.of(new DateTime().dayOfMonth().withMaximumValue().toString(IDFORMAT));
-			}
-			if (date.get().equals("lastmonth")) {
-				from = new DateTime().minusMonths(1).dayOfMonth().withMinimumValue().toString(IDFORMAT);
-				till = Optional.of(new DateTime().minusMonths(1).dayOfMonth().withMaximumValue().toString(IDFORMAT));
-			}
-			if (date.get().equals("thisquarter")) {
-				int quarter = (new DateTime().getMonthOfYear() / 3);
-				from = new DateTime().monthOfYear().setCopy(quarter*3).dayOfMonth().withMinimumValue().toString(IDFORMAT);
-				till = Optional.of(new DateTime().monthOfYear().setCopy(quarter*3+2).dayOfMonth().withMaximumValue().toString(IDFORMAT));
-			}
-			if (date.get().equals("lastquarter")) {
-				int quarter = (new DateTime().getMonthOfYear() / 3);
-				if (quarter >= 1) {
-					quarter--;
-					from = new DateTime().monthOfYear().setCopy(quarter*3).dayOfMonth().withMinimumValue().toString(IDFORMAT);
-					till = Optional.of(new DateTime().monthOfYear().setCopy(quarter*3+2).dayOfMonth().withMaximumValue().toString(IDFORMAT));
-				} else {
-					int year = new DateTime().getYear();
-					from = new DateTime(year-1,10,1,0,0).toString(IDFORMAT);
-					till = Optional.of(new DateTime(year-1,12,31,23,0).toString(IDFORMAT));
-				}
-			}
-			if (date.get().equals("thisyear")) {
-				from = new DateTime().dayOfYear().withMinimumValue().toString(IDFORMAT);
-				till = Optional.of(new DateTime().toString(IDFORMAT));
-			}
-			if (date.get().equals("lastyear")) {
-				from = new DateTime().minusYears(1).dayOfYear().withMinimumValue().toString(IDFORMAT);
-				till = Optional.of(new DateTime().minusYears(1).dayOfYear().withMaximumValue().toString(IDFORMAT));
-			}
+			return fetchBalancesForDate(date.get());
 		}
-		return dao.fetchAllAfter(from, till);
+		return dao.fetchAllAfter(new DateTime().minusMonths(1).toString(IDFORMAT), Optional.absent());
 	}
 
 	@GET
-	@Path("/notexported")
-	public List<PosCashBalance> fetchNotExported()  {
-		return dao.fetchNotExported();
-	}
-
-	@GET
-	@Path("/fibuexport")
+	@Path("/fibuexport/{date}")
 	@Produces(MediaType.TEXT_PLAIN)
-	public Response  fibuExport()  {
-		StreamingOutput stream = new StreamingOutput() {
+	public StreamingOutput  fibuExport(@PathParam("date") String date)  {
+		return new StreamingOutput() {
 			@Override
 			public void write(OutputStream os) throws IOException,  WebApplicationException {
 				Writer writer = new BufferedWriter(new OutputStreamWriter(os));
-				List<PosCashBalance> bals = dao.fetchNotExported();
-				for (PosCashBalance bal : bals) {
-					String buchung = AccountingExport.accountingExport(bal);
-					System.out.println(buchung);
-					writer.write(buchung);
+				for (PosCashBalance bal : fetchBalancesForDate(date)) {
+					writer.write(AccountingExport.accountingExport(bal));
 				}
 				writer.flush();
 			}
 		};
-		return Response.ok(stream).build();		
 	}
 
 	@GET
 	@Path("/{date}")
 	public PosCashBalance fetchForDate(@PathParam("date") String date)  {
-		PosCashBalance bal = fetchBalanceForDate(date);
-		return bal;
+		return fetchBalanceForDate(date);
 	}
 
 	@Produces({"application/pdf"})
@@ -141,6 +87,7 @@ public class PosCashBalanceResource {
 	            } catch (Exception e) {
 	                throw new WebApplicationException(e);
 	            }
+                output.flush();
 	        }
 	    };	
 	}
@@ -182,6 +129,57 @@ public class PosCashBalanceResource {
 		return bal;
 	}
 
-
+	private List<PosCashBalance> fetchBalancesForDate(String date) {
+		String from = null;
+		String till = null;
+		if (date.equals("thisweek")) {
+			from = new DateTime().dayOfWeek().withMinimumValue().toString(IDFORMAT);
+			till = new DateTime().dayOfWeek().withMaximumValue().toString(IDFORMAT);
+		}
+		if (date.equals("lastweek")) {
+			from = new DateTime().minusWeeks(1).dayOfWeek().withMinimumValue().toString(IDFORMAT);
+			till = new DateTime().minusWeeks(1).dayOfWeek().withMaximumValue().toString(IDFORMAT);
+		}
+		if (date.equals("thismonth")) {
+			from = new DateTime().dayOfMonth().withMinimumValue().toString(IDFORMAT);
+			till = new DateTime().dayOfMonth().withMaximumValue().toString(IDFORMAT);
+		}
+		if (date.equals("lastmonth")) {
+			from = new DateTime().minusMonths(1).dayOfMonth().withMinimumValue().toString(IDFORMAT);
+			till = new DateTime().minusMonths(1).dayOfMonth().withMaximumValue().toString(IDFORMAT);
+		}
+		if (date.equals("thisquarter")) {
+			int quarter = (new DateTime().getMonthOfYear() / 3);
+			from = new DateTime().monthOfYear().setCopy(quarter*3).dayOfMonth().withMinimumValue().toString(IDFORMAT);
+			till = new DateTime().monthOfYear().setCopy(quarter*3+2).dayOfMonth().withMaximumValue().toString(IDFORMAT);
+		}
+		if (date.equals("lastquarter")) {
+			int quarter = (new DateTime().getMonthOfYear() / 3);
+			if (quarter >= 1) {
+				quarter--;
+				from = new DateTime().monthOfYear().setCopy(quarter*3).dayOfMonth().withMinimumValue().toString(IDFORMAT);
+				till = new DateTime().monthOfYear().setCopy(quarter*3+2).dayOfMonth().withMaximumValue().toString(IDFORMAT);
+			} else {
+				int year = new DateTime().getYear();
+				from = new DateTime(year-1,10,1,0,0).toString(IDFORMAT);
+				till = new DateTime(year-1,12,31,23,0).toString(IDFORMAT);
+			}
+		}
+		if (date.equals("thisyear")) {
+			from = new DateTime().dayOfYear().withMinimumValue().toString(IDFORMAT);
+			till = new DateTime().toString(IDFORMAT);
+		}
+		if (date.equals("lastyear")) {
+			from = new DateTime().minusYears(1).dayOfYear().withMinimumValue().toString(IDFORMAT);
+			till = new DateTime().minusYears(1).dayOfYear().withMaximumValue().toString(IDFORMAT);
+		}
+		if (date.equals("notexported")) {
+			return dao.fetchNotExported();
+		}
+		if (from == null) {
+			from = new DateTime().minusWeeks(1).dayOfWeek().withMinimumValue().toString(IDFORMAT);
+		}
+		return dao.fetchAllAfter(from, Optional.fromNullable(till));
+	}
 
 }

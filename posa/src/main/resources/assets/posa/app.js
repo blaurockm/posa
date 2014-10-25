@@ -1,9 +1,9 @@
 // dependencies
-define(["dojo/dom", "dojo/dom-construct", "dojo/store/JsonRest", "dojo/request/iframe", "dojox/charting/Chart", 
+define(["dojo/dom", "dojo/dom-construct", "dojo/store/JsonRest", "dijit/form/Button", "dojox/charting/Chart", 
         "dojox/charting/action2d/Tooltip", "dojox/charting/plot2d/Pie", "dojox/grid/DataGrid",
         "dojo/data/ObjectStore", "dojo/store/Memory"
         ],
-function(dom, domConstruct, JsonRest, iframe, Chart, Tooltip, Pie, DataGrid, ObjectStore, Memory) {
+function(dom, domConstruct, JsonRest, Button, Chart, Tooltip, Pie, DataGrid, ObjectStore, Memory) {
 	
 	// ein paar variablen definieren
 	var store = new JsonRest({
@@ -17,12 +17,7 @@ function(dom, domConstruct, JsonRest, iframe, Chart, Tooltip, Pie, DataGrid, Obj
 	  }),
     wgrpKuchen = new Chart("pieFan"),
 
-    startup = function() {
-        // create the data store
-        initUi();
-    },
- 
-    initUi = function() {
+    startup = function(registry) {
     	//      create and setup the UI with layout and widgets
         // Add the only/default plot
     	wgrpKuchen.addPlot("default", {
@@ -33,7 +28,7 @@ function(dom, domConstruct, JsonRest, iframe, Chart, Tooltip, Pie, DataGrid, Obj
         });
     	var tip = new Tooltip(wgrpKuchen, "default");
     	
-        txGridUi = new DataGrid( {structure: [
+        var txGridUi = new DataGrid( {structure: [
                 { name: "Belegnummer", field: "belegNr", width: "90px"},
                 { name: "Warengruppe", field: "articleGroupKey", width: "120px"},
                 { name: "Beschreibung", field: "description", width: "300px"},
@@ -43,9 +38,9 @@ function(dom, domConstruct, JsonRest, iframe, Chart, Tooltip, Pie, DataGrid, Obj
                 { name: "Steuer", field: "tax", width: "40px"},
                 { name: "Typ", field: "type", width: "75px"},
                 { name: "Uhrzeit", field: "timestamp", width: "90px", formatter : formatDate}]
-        }, "txGrid");
-        txGridUi.startup();
-        tickGridUi = new DataGrid( {
+        }, "txGrid").startup();
+        
+        var tickGridUi = new DataGrid( {
             structure: [
                 { name: "Belegnummer", field: "belegNr", width: "90px"},
                 { name: "Gesamt", field: "total", styles: 'text-align: right;',width: "50px", formatter: formatMoney},
@@ -53,8 +48,8 @@ function(dom, domConstruct, JsonRest, iframe, Chart, Tooltip, Pie, DataGrid, Obj
                 { name: "Storno", field: "cancel", width: "50px", type: dojox.grid.cells.Bool, editable: true },
                 { name: "storniert", field: "cancelled", width: "50px", type: dojox.grid.cells.Bool, editable: true},
                 { name: "Uhrzeit", field: "timestamp", width: "90px", formatter : formatDate}]
-        }, "tickGrid");
-        tickGridUi.startup();
+        }, "tickGrid").startup();
+        
         balGridUi = new DataGrid( {
             structure: [
                 { name: "Datum", field: "abschlussId", width: "90px"},
@@ -73,7 +68,7 @@ function(dom, domConstruct, JsonRest, iframe, Chart, Tooltip, Pie, DataGrid, Obj
             var idx = evt.rowIndex,
                 abschlussid = balGridUi.getItem(idx).abschlussId;
             // The rowData is returned in an object, last is the last name, first is the first name
-            console.log("row-click-event " + idx + " : " + '/cashbalance/pdf/' + abschlussid );
+//            console.log("row-click-event " + idx + " : " + '/cashbalance/pdf/' + abschlussid );
             var pdfembed = dom.byId("balpdf")
             domConstruct.empty(pdfembed);
             pdfembed.src = '/cashbalance/pdf/' + abschlussid;
@@ -82,6 +77,14 @@ function(dom, domConstruct, JsonRest, iframe, Chart, Tooltip, Pie, DataGrid, Obj
         }, true);
         balGridUi.startup();
         
+        var fibuExportButton = new Button({
+            label: "FiBu-Export",
+            onClick: function(){
+                var pdfembed = dom.byId("balpdf")
+                domConstruct.empty(pdfembed);
+                pdfembed.src = '/cashbalance/fibuexport/' + registry.byId("balPeriod").value;
+            }
+        }, "balExportButton").startup();
     },
     updateBalGrid = function(newVal ) {
     	  store.query({"date": newVal}).then(function(balances){
@@ -180,7 +183,7 @@ function(dom, domConstruct, JsonRest, iframe, Chart, Tooltip, Pie, DataGrid, Obj
     return {
         init: function(registry) {
             // proceed directly with startup
-            startup();
+            startup(registry);
             update();
             dashboardupdate = window.setInterval(update, 5 * 60 * 1000);
             registry.byId("balPeriod").on("change", updateBalGrid);

@@ -93,49 +93,24 @@ registry: "dijit/registry"
 
   		    <!--  die Kassentransaktionen -->
 			<div id="balTab" data-dojo-type="dijit/layout/ContentPane" data-dojo-props='title:"Kassenabschlüsse", style:"padding:10px;"'>
-			   <h2>Kassentransaktionen von <div id="balPeriod" data-dojo-type="dijit/form/Select">
+			   <h2>Kassenabschlüsse von <div id="balPeriod" data-dojo-type="dijit/form/Select">
 						<span data-dojo-value=" ">-- Zeitraum --</span>
 						<span data-dojo-value="thisweek">Dieser Woche</span>
 						<span data-dojo-value="lastweek">letzter Woche</span>
 						<span data-dojo-value="thismonth">diesem Monat</span>
 						<span data-dojo-value="lastmonth">letztem Monat</span>
 						<span data-dojo-value=""></span>
+						<span data-dojo-value="notExported">die der FiBu Unbekannten</span>
+						<span data-dojo-value=""></span>
 						<span data-dojo-value="thisquarter">diesem Quartal</span>
 						<span data-dojo-value="lastquarter">letztem Quartal</span>
 						<span data-dojo-value=""></span>
 						<span data-dojo-value="thisyear">diesem Jahr</span>
 						<span data-dojo-value="lastyear">letztem Jahr</span>
-					 </div> </h2>
-	           <div id="balGrid" style="height:30%; width:50%"></div>
+					 </div> <button id="balExportButton" type="button"></button> </h2>
+	           <div id="balGrid" style="height:30%; width:50%">
+	           </div>
 	           <iframe id="balpdf" style="height:60%; width:100%; background-color:#eeeeee;"></iframe>
-			</div>
-
-  		    <!--  die Gutscheine -->
-			<div id="gutscheinTab" data-dojo-type="dijit/layout/ContentPane" data-dojo-props='title:"Gutscheine", style:"padding:10px;display:none;"'>
-			   <h2>Gutscheine</h2>
-			   <p>von <div id="couponPeriod" data-dojo-type="dijit/form/Select">
-						<span data-dojo-value=" ">-- Zeitraum --</span>
-						<span data-dojo-value="tw"><b>Dieser Woche</b></span>
-						<span data-dojo-value="lw">letzter Woche</span>
-						<span data-dojo-value="vlw">vorletzter Woche</span>
-						<span data-dojo-value="tm">diesem Monat</span>
-						<span data-dojo-value="lm">letztem Monat</span>
-					 </div> </p>
-	           <p> Hier kommt das Grid </p>
-			</div>
-
-
-  		    <!--  die Rechnungen-->
-			<div id="rechnungsTab" data-dojo-type="dijit/layout/ContentPane" data-dojo-props='title:"Rechnungen", style:"padding:10px;display:none;"'>
-			   <h2>Rechnungen</h2>
-			   <p>von <div id="invoicePeriod" data-dojo-type="dijit/form/Select" data-dojo-props="value:'tw'">
-						<span data-dojo-value="tw"><b>Dieser Woche</b></span>
-						<span data-dojo-value="lw">letzter Woche</span>
-						<span data-dojo-value="vlw">vorletzter Woche</span>
-						<span data-dojo-value="tm">diesem Monat</span>
-						<span data-dojo-value="lm">letztem Monat</span>
-					 </div> </p>
-	           <p> Hier kommt das Grid </p>
 			</div>
 
   		    <!--  die technisches brimborium -->
