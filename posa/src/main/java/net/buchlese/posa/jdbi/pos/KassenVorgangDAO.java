@@ -32,7 +32,7 @@ public interface KassenVorgangDAO {
 	@SqlQuery("select top 10 * from [dbo].posakassvorg order by datum desc ")
 	List<KassenVorgang> fetchLast();
 
-	@SqlQuery("select sum(zahlungsbetrag) from [dbo].kassenbelege where belegnr = :belegnr")
+	@SqlQuery("select zahlungsbetrag from [dbo].kassenbelege where belegnr = :belegnr")
 	BigDecimal fetchZahlbetrag(@Bind("belegnr") int belegNr);
 
 	/**
