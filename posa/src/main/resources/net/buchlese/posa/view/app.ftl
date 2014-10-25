@@ -107,7 +107,7 @@ registry: "dijit/registry"
 						<span data-dojo-value=""></span>
 						<span data-dojo-value="thisyear">diesem Jahr</span>
 						<span data-dojo-value="lastyear">letztem Jahr</span>
-					 </div> <button id="balExportButton" type="button"></button> </h2>
+					 </div> <button id="balExportButton" type="button"></button> <button id="goryDetailsButton" type="button"></button> </h2>
 	           <div id="balGrid" style="height:30%; width:50%">
 	           </div>
 	           <iframe id="balpdf" style="height:60%; width:100%; background-color:#eeeeee;"></iframe>

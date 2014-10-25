@@ -48,8 +48,6 @@ public class CashBalance {
 		balance.setLastCovered(till);
 		
 		List<PosTx> txs = txDAO.fetch(from, till);
-		
-		
 		List<PosTicket> tickets = ticketDAO.fetch(from, till);
 		
 		balance.setTicketCount((int) tickets.stream().filter(t -> (t.isCancel() && t.isCancelled()) == false).count());

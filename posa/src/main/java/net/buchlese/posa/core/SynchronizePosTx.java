@@ -135,22 +135,23 @@ public class SynchronizePosTx extends AbstractSynchronizer {
 				// buchen wir es in voller Höhe, oder nur einen Teil davon? 
 				// wir müssen uns den Beleg dazu angucken
 				// gefährlich, hier gehen wir davon aus, dass gutscheine nur in zusammenhang mit anderen Tx angenommen werden.. 
-				BigDecimal sumWarenBetrag = vorgangsDao.fetchBelegSumOhne(vorg.getBelegNr(), vorg.getLfdNummer());
+				List<KassenVorgang> allVorgs = vorgangsDao.fetchForBeleg(vorg.getBelegNr(), vorg.getKassenNr());
+				java.util.Optional<BigDecimal> sumWarenBetrag = allVorgs.stream().map(KassenVorgang::getGesamt).reduce((a,b) -> b.add(b));
 				BigDecimal amountPayed = vorgangsDao.fetchZahlbetrag(vorg.getBelegNr());
-				if (sumWarenBetrag == null || amountPayed == null) {
+				if (sumWarenBetrag.isPresent() == false || amountPayed == null) {
 					tx.setToBeCheckedAgain(true); // hier stimmt was nicht, später nochmal angucken
 				} else {
 					// der Gutschein ist teil eines belges, es wurde was damit bezahlt
 					BigDecimal gutschBetrag = vorg.getGesamt().abs();
-					if (sumWarenBetrag.compareTo(gutschBetrag) <0  &&  amountPayed.movePointRight(2).intValue() == 0) {
+					if (sumWarenBetrag.get().compareTo(gutschBetrag) <0  &&  amountPayed.movePointRight(2).intValue() == 0) {
+						int maxGutschIdx = allVorgs.get(allVorgs.size()-1).getLfdNummer(); // die IndexNummer des letzten Gutscheins im Beleg
 						// es wurde nichts ausbezahlt, wir haben nur einen Teil des Gutscheins eingelöst.
-						int maxGutschIdx = vorgangsDao.fetchGutschForBeleg(vorg.getBelegNr()); // die IndexNummer des letzten Gutscheins im Beleg
 						if (vorg.getLfdNummer() == maxGutschIdx) {
 							// und wir sind der letzte Gutschein des Belegs, unser Betrag wird modifiziert
 							// alle anderen bleiben gleich..
 							changed |= updMoney(tx::setPurchasePrice, tx.getPurchasePrice(), gutschBetrag.negate());
-							changed |= updMoney(tx::setSellingPrice, tx.getSellingPrice(), sumWarenBetrag);  // der Betrag der damit gezahlt wurde
-							changed |= updMoney(tx::setTotal, tx.getTotal(), sumWarenBetrag.negate());
+							changed |= updMoney(tx::setSellingPrice, tx.getSellingPrice(), sumWarenBetrag.get());  // der Betrag der damit gezahlt wurde
+							changed |= updMoney(tx::setTotal, tx.getTotal(), sumWarenBetrag.get().negate());
 							stillnototalset = false;
 						}
 					}

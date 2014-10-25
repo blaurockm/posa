@@ -216,7 +216,7 @@
                         </fo:table-cell>
                         <fo:table-cell>
                            <fo:block text-align="right">
-                              <xsl:value-of select="format-number(value div 100, '###.###,00 EUR', 'euro')" />  
+                              <xsl:value-of select="format-number(value div 100, '###.###,00 €', 'euro')" />  
                            </fo:block>
                         </fo:table-cell>
                      </fo:table-row>

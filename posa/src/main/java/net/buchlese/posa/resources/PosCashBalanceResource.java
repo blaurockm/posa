@@ -20,6 +20,7 @@ import net.buchlese.posa.api.bofc.PosCashBalance;
 import net.buchlese.posa.core.AccountingExport;
 import net.buchlese.posa.core.CashBalance;
 import net.buchlese.posa.core.PDFCashBalance;
+import net.buchlese.posa.core.Validator;
 import net.buchlese.posa.jdbi.bofc.PosCashBalanceDAO;
 import net.buchlese.posa.jdbi.bofc.PosTicketDAO;
 import net.buchlese.posa.jdbi.bofc.PosTxDAO;
@@ -84,6 +85,23 @@ public class PosCashBalanceResource {
 	            try {
 	                PDFCashBalance generator = new PDFCashBalance(fetchBalanceForDate(date));
 	                generator.generatePDF(output);
+	            } catch (Exception e) {
+	                throw new WebApplicationException(e);
+	            }
+                output.flush();
+	        }
+	    };	
+	}
+
+	@Produces(MediaType.TEXT_PLAIN)
+	@GET
+	@Path("/extended/{date}")
+	public StreamingOutput fetchDetailsForDate(@PathParam("date") String date)  {
+	    return new StreamingOutput() {
+	        public void write(OutputStream output) throws IOException, WebApplicationException {
+	            try {
+	                Validator generator = new Validator(fetchBalanceForDate(date),txDao, ticketDao);
+	                generator.validateDetails(output);
 	            } catch (Exception e) {
 	                throw new WebApplicationException(e);
 	            }

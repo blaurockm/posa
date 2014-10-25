@@ -1,6 +1,5 @@
 package net.buchlese.posa.api.bofc;
 
-import java.io.File;
 import java.io.FileOutputStream;
 import java.util.HashMap;
 import java.util.Map;
@@ -10,12 +9,7 @@ import net.buchlese.posa.core.PDFCashBalance;
 import org.joda.time.DateTime;
 import org.junit.Test;
 
-import com.google.common.io.Resources;
-
 public class PDFTest {
-
-//	@ClassRule
-//	public static final DropwizardAppRule<PosAdapterConfiguration> RULE = new DropwizardAppRule<PosAdapterConfiguration>(PosAdapterApplication.class, resourceFilePath("testconfig.yaml"));
 
 
 	@Test
@@ -82,12 +76,5 @@ public class PDFTest {
 		pdfgen.generatePDF(new FileOutputStream("testCashBalance.pdf"));
 	}
 
-	public static String resourceFilePath(String resourceClassPathLocation) {
-		try {
-			return new File(Resources.getResource(resourceClassPathLocation).toURI()).getAbsolutePath();
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
 
 }

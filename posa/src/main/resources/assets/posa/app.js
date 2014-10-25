@@ -27,8 +27,9 @@ function(dom, domConstruct, JsonRest, Button, Chart, Tooltip, Pie, DataGrid, Obj
             radGrad: dojox.gfx.renderer == "vml" ? "fan" : "native"
         });
     	var tip = new Tooltip(wgrpKuchen, "default");
+    	currentBalance = null; // das aktuell ausgewählte Balance-Sheet
     	
-        var txGridUi = new DataGrid( {structure: [
+        txGridUi = new DataGrid( {structure: [
                 { name: "Belegnummer", field: "belegNr", width: "90px"},
                 { name: "Warengruppe", field: "articleGroupKey", width: "120px"},
                 { name: "Beschreibung", field: "description", width: "300px"},
@@ -38,9 +39,10 @@ function(dom, domConstruct, JsonRest, Button, Chart, Tooltip, Pie, DataGrid, Obj
                 { name: "Steuer", field: "tax", width: "40px"},
                 { name: "Typ", field: "type", width: "75px"},
                 { name: "Uhrzeit", field: "timestamp", width: "90px", formatter : formatDate}]
-        }, "txGrid").startup();
+        }, "txGrid");
+        txGridUi.startup();
         
-        var tickGridUi = new DataGrid( {
+        tickGridUi = new DataGrid( {
             structure: [
                 { name: "Belegnummer", field: "belegNr", width: "90px"},
                 { name: "Gesamt", field: "total", styles: 'text-align: right;',width: "50px", formatter: formatMoney},
@@ -48,7 +50,8 @@ function(dom, domConstruct, JsonRest, Button, Chart, Tooltip, Pie, DataGrid, Obj
                 { name: "Storno", field: "cancel", width: "50px", type: dojox.grid.cells.Bool, editable: true },
                 { name: "storniert", field: "cancelled", width: "50px", type: dojox.grid.cells.Bool, editable: true},
                 { name: "Uhrzeit", field: "timestamp", width: "90px", formatter : formatDate}]
-        }, "tickGrid").startup();
+        }, "tickGrid");
+        tickGridUi.startup();
         
         balGridUi = new DataGrid( {
             structure: [
@@ -65,15 +68,11 @@ function(dom, domConstruct, JsonRest, Button, Chart, Tooltip, Pie, DataGrid, Obj
                autoWidth : true
         }, "balGrid");
         balGridUi.on("RowClick", function(evt){
-            var idx = evt.rowIndex,
-                abschlussid = balGridUi.getItem(idx).abschlussId;
-            // The rowData is returned in an object, last is the last name, first is the first name
-//            console.log("row-click-event " + idx + " : " + '/cashbalance/pdf/' + abschlussid );
+            var idx = evt.rowIndex;
             var pdfembed = dom.byId("balpdf")
             domConstruct.empty(pdfembed);
-            pdfembed.src = '/cashbalance/pdf/' + abschlussid;
-//            document.getElementById("results").innerHTML =
-//                "You have clicked on " + rowData.last + ", " + rowData.first + ".";
+            currentBalance = balGridUi.getItem(idx); // globale speicherung
+            pdfembed.src = '/cashbalance/pdf/' + currentBalance.abschlussId;
         }, true);
         balGridUi.startup();
         
@@ -85,6 +84,16 @@ function(dom, domConstruct, JsonRest, Button, Chart, Tooltip, Pie, DataGrid, Obj
                 pdfembed.src = '/cashbalance/fibuexport/' + registry.byId("balPeriod").value;
             }
         }, "balExportButton").startup();
+        
+        var showGroyDetailsButton = new Button({
+            label: "schmutzige Details",
+            onClick: function(){
+                var pdfembed = dom.byId("balpdf")
+                domConstruct.empty(pdfembed);
+                pdfembed.src = '/cashbalance/extended/' + currentBalance.abschlussId;
+            }
+        }, "goryDetailsButton").startup();
+
     },
     updateBalGrid = function(newVal ) {
     	  store.query({"date": newVal}).then(function(balances){
@@ -155,16 +164,6 @@ function(dom, domConstruct, JsonRest, Button, Chart, Tooltip, Pie, DataGrid, Obj
   	       wgrpKuchen.addSeries("Warengruppen",chartData);
   	       wgrpKuchen.render();
   	  });
-  	  
-//  	  txStore.get("today").then(function(txdata){
-//          var dataStore = new ObjectStore({ objectStore:new Memory({ data: txdata}) });
-//          txGridUi.setStore(dataStore);
-//  	  });
-//      tickStore.get("today").then(function(tickdata) {
-//          var dataStore = new ObjectStore({ objectStore:new Memory({ data: tickdata}) });
-//          tickGridUi.setStore(dataStore);
-//  	  });
-  	  
     };
     
     
