@@ -148,7 +148,7 @@
                   <configuration>
                      <verbose>true</verbose>
                      <control>${project.base.dir}/src/deb/control</control>
-                     <deb>${project.build.directory}/posa_${project.version}_all.deb</deb>
+                 <!--   <deb>${project.build.directory}/posa_${project.version}_all.deb</deb> -->
                      <dataSet>
                         <data>
                            <src>${project.build.directory}/${project.build.finalName}.jar</src>
