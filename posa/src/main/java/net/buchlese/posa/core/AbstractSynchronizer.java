@@ -1,7 +1,7 @@
 package net.buchlese.posa.core;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
+import java.math.RoundingMode;
 import java.util.function.Consumer;
 
 import org.joda.time.DateTime;
@@ -18,7 +18,7 @@ public abstract class AbstractSynchronizer {
 			return false;
 		}
 		// wir runden hier, obwohl das eigentlich nicht nötig sein sollte, aber float in der DB ist unberechenbar
-		long v = val2.movePointRight(2).round(MathContext.UNLIMITED).longValue();
+		long v = val2.movePointRight(2).setScale(0, RoundingMode.HALF_UP).longValue();
 		if (val1 == null || val1.longValue() != v) {
 			c.accept(v);
 			return true;

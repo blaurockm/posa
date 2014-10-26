@@ -4,9 +4,14 @@ import io.dropwizard.jdbi.DBIFactory;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 
 import java.io.File;
+import java.math.RoundingMode;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import net.buchlese.posa.PosAdapterApplication;
 import net.buchlese.posa.PosAdapterConfiguration;
+import net.buchlese.posa.api.pos.KassenVorgang;
+import net.buchlese.posa.core.SynchronizePosTx;
 
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -34,7 +39,17 @@ public class TestBigDecimal {
 //	    final KassenBelegDAO belegDao = posDBI.onDemand(KassenBelegDAO.class);
 //	    final KassenAbschlussDAO abschlussDao = posDBI.onDemand(KassenAbschlussDAO.class);
 
-	    System.out.println(vorgangDao.fetchForBeleg(2700445, 1));
+	    List<KassenVorgang> vorgs = vorgangDao.fetchForBeleg(2701741, 1);
+		System.out.println(
+				vorgs.stream().map(KassenVorgang::getGesamt).map(b -> b.movePointRight(2).setScale(0, RoundingMode.HALF_UP)).
+				map(String::valueOf).collect(Collectors.joining("   ")))
+				;
+		
+		SynchronizePosTx s = new SynchronizePosTx(null, vorgangDao);
+		
+	    KassenVorgang vorg = vorgangDao.fetch(2701801, 4);
+		
+		s.createNewTx(vorg, 6767);
 	}
 	
 }

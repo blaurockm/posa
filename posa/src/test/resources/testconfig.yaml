@@ -24,9 +24,9 @@ posDb:
   
   # the JDBC URL
   #####  lokale datenbank
-  url: jdbc:jtds:sqlserver://localhost:1433/librasbak
+#  url: jdbc:jtds:sqlserver://localhost:1433/librasbak
   ##### im gschaeft Sulz
-#  url: jdbc:jtds:sqlserver://localhost:7891/libras
+  url: jdbc:jtds:sqlserver://localhost:7891/libras
   ##### im gschaeft Dornhan
 #  url: jdbc:jtds:sqlserver://localhost:7890/libras
 

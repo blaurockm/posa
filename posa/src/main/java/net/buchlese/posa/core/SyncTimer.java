@@ -53,7 +53,11 @@ public class SyncTimer extends TimerTask {
 
 	    	syncBalance.execute();
 	    } catch (Throwable t) {
-	    	logger.info("problem with auto-sync " + t.getMessage());
+	    	if (t instanceof NullPointerException) {
+	    		logger.error("error while sync ", t);
+	    	} else {
+	    		logger.info("problem with auto-sync " + t.getMessage());
+	    	}
 	    } finally {
 	    	syncLock.unlock();
 	    }

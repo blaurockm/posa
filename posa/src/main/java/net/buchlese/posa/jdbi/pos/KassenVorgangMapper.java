@@ -1,5 +1,6 @@
 package net.buchlese.posa.jdbi.pos;
 
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -50,7 +51,12 @@ public class KassenVorgangMapper implements ResultSetMapper<KassenVorgang> {
 //		[VK] [float] NULL,
 		vorg.setVK(rs.getBigDecimal("vk"));
 //		[Gesamt] [float] NULL,
-		vorg.setGesamt(rs.getBigDecimal("gesamt"));
+		BigDecimal gesamt = rs.getBigDecimal("gesamt");
+		if (gesamt != null) {
+			vorg.setGesamt(gesamt);
+		} else {
+			vorg.setGesamt(BigDecimal.ZERO);
+		}
 //		[Datum] [datetime] NULL,
 		vorg.setDatum(new DateTime(rs.getTimestamp("datum")));
 //		[LagerNummer] [nvarchar](6) NULL, -------------------

@@ -1,7 +1,7 @@
 package net.buchlese.posa.core;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.OptionalInt;
@@ -85,7 +85,7 @@ public class SynchronizePosTx extends AbstractSynchronizer {
 	}
 
 
-	private PosTx createNewTx(KassenVorgang vorg, long nextId) {
+	public PosTx createNewTx(KassenVorgang vorg, long nextId) {
 		PosTx tx = new PosTx();
 		tx.setId(nextId);
 		tx.setBelegNr(vorg.getBelegNr());
@@ -98,7 +98,7 @@ public class SynchronizePosTx extends AbstractSynchronizer {
 	}
 
 
-	private boolean updateTx(KassenVorgang vorg, PosTx tx) {
+	public boolean updateTx(KassenVorgang vorg, PosTx tx) {
 		boolean changed = false;
 		ArticleGroup group = ArticleGroupMapping.mappingFrom(vorg);
 		
@@ -138,22 +138,22 @@ public class SynchronizePosTx extends AbstractSynchronizer {
 				// wir müssen uns den Beleg dazu angucken
 				// gefährlich, hier gehen wir davon aus, dass gutscheine nur in zusammenhang mit anderen Tx angenommen werden.. 
 				List<KassenVorgang> allVorgs = vorgangsDao.fetchForBeleg(vorg.getBelegNr(), vorg.getKassenNr());
-				java.util.Optional<BigDecimal> sumWarenBetrag = allVorgs.stream().map(KassenVorgang::getGesamt).reduce((a,b) -> b.add(b));
+				BigDecimal sumWarenBetrag = allVorgs.stream().filter(v -> v.getLfdNummer() != vorg.getLfdNummer()).map(KassenVorgang::getGesamt).reduce(BigDecimal.ZERO, BigDecimal::add); // (a,b) -> a.add(b)
 				BigDecimal amountPayed = vorgangsDao.fetchZahlbetrag(vorg.getBelegNr());
-				if (sumWarenBetrag.isPresent() == false || amountPayed == null) {
+				if (amountPayed == null) {
 					tx.setToBeCheckedAgain(true); // hier stimmt was nicht, später nochmal angucken
 				} else {
 					// der Gutschein ist teil eines belges, es wurde was damit bezahlt
 					BigDecimal gutschBetrag = vorg.getGesamt().abs();
-					if (sumWarenBetrag.get().compareTo(gutschBetrag) <0  &&  amountPayed.movePointRight(2).round(MathContext.UNLIMITED).longValue() == 0l) {
-						OptionalInt maxGutschIdx = allVorgs.stream().filter(v -> (v.getGesamt().signum() < 0)).mapToInt(KassenVorgang::getLfdNummer).max(); // die IndexNummer des letzten Gutscheins im Beleg
+					if (sumWarenBetrag.compareTo(gutschBetrag) <0  &&  amountPayed.movePointRight(2).setScale(0,RoundingMode.HALF_UP).longValue() == 0l) {
+						OptionalInt maxGutschIdx = allVorgs.stream().filter(v -> (v.getIsbn() != null && v.getIsbn().startsWith("Gutschein"))).mapToInt(KassenVorgang::getLfdNummer).max(); // die IndexNummer des letzten Gutscheins im Beleg
 						// es wurde nichts ausbezahlt, wir haben nur einen Teil des Gutscheins eingelöst.
 						if (maxGutschIdx.isPresent() && vorg.getLfdNummer() == maxGutschIdx.getAsInt()) {
 							// und wir sind der letzte Gutschein des Belegs, unser Betrag wird modifiziert
 							// alle anderen bleiben gleich..
 							changed |= updMoney(tx::setPurchasePrice, tx.getPurchasePrice(), gutschBetrag.negate());
-							changed |= updMoney(tx::setSellingPrice, tx.getSellingPrice(), sumWarenBetrag.get());  // der Betrag der damit gezahlt wurde
-							changed |= updMoney(tx::setTotal, tx.getTotal(), sumWarenBetrag.get().negate());
+							changed |= updMoney(tx::setSellingPrice, tx.getSellingPrice(), sumWarenBetrag);  // der Betrag der damit gezahlt wurde
+							changed |= updMoney(tx::setTotal, tx.getTotal(), sumWarenBetrag.negate());
 							stillnototalset = false;
 						}
 					}
