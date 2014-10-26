@@ -38,10 +38,10 @@ public class SynchronizePosCashBalance extends AbstractSynchronizer {
 
 
 	public synchronized  void execute() throws Exception {
-		Optional<DateTime> maxId = Optional.fromNullable(cashBalanceDAO.getMaxDatum());
+		Optional<String> maxId = Optional.fromNullable(cashBalanceDAO.getMaxAbschlussId());
 
-		List<KassenAbschluss> belege = abschlussDao.fetchAllAfter(maxId.or(new DateTime(2014,1,1,0,0)).toString("yyyyMMdd"));
-
+		List<KassenAbschluss> belege = abschlussDao.fetchAllAfter(maxId.or("20140101"));
+		
 		// convert KassenVorgang to posTx
 		for (KassenAbschluss abschluss : belege) {
 			if (abschluss.getIst() != null) {
@@ -50,8 +50,9 @@ public class SynchronizePosCashBalance extends AbstractSynchronizer {
 			}
 		}
 		
-		if (maxId.isPresent()) {
-			belege = abschlussDao.fetchAllModified(maxId.get());
+		Optional<DateTime> maxCreTi = Optional.fromNullable(cashBalanceDAO.getMaxDatum());
+		if (maxCreTi.isPresent()) {
+			belege = abschlussDao.fetchAllModified(maxCreTi.get());
 			for (KassenAbschluss abschluss : belege) {
 				PosCashBalance oldBal = cashBalanceDAO.fetchForDate(abschluss.getAbschlussid());
 				if (oldBal == null) {

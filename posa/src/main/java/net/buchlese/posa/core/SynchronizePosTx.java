@@ -1,8 +1,10 @@
 package net.buchlese.posa.core;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.OptionalInt;
 
 import net.buchlese.posa.api.bofc.ArticleGroup;
 import net.buchlese.posa.api.bofc.PosTx;
@@ -143,10 +145,10 @@ public class SynchronizePosTx extends AbstractSynchronizer {
 				} else {
 					// der Gutschein ist teil eines belges, es wurde was damit bezahlt
 					BigDecimal gutschBetrag = vorg.getGesamt().abs();
-					if (sumWarenBetrag.get().compareTo(gutschBetrag) <0  &&  amountPayed.movePointRight(2).intValue() == 0) {
-						int maxGutschIdx = allVorgs.get(allVorgs.size()-1).getLfdNummer(); // die IndexNummer des letzten Gutscheins im Beleg
+					if (sumWarenBetrag.get().compareTo(gutschBetrag) <0  &&  amountPayed.movePointRight(2).round(MathContext.UNLIMITED).longValue() == 0l) {
+						OptionalInt maxGutschIdx = allVorgs.stream().filter(v -> (v.getGesamt().signum() < 0)).mapToInt(KassenVorgang::getLfdNummer).max(); // die IndexNummer des letzten Gutscheins im Beleg
 						// es wurde nichts ausbezahlt, wir haben nur einen Teil des Gutscheins eingelöst.
-						if (vorg.getLfdNummer() == maxGutschIdx) {
+						if (maxGutschIdx.isPresent() && vorg.getLfdNummer() == maxGutschIdx.getAsInt()) {
 							// und wir sind der letzte Gutschein des Belegs, unser Betrag wird modifiziert
 							// alle anderen bleiben gleich..
 							changed |= updMoney(tx::setPurchasePrice, tx.getPurchasePrice(), gutschBetrag.negate());

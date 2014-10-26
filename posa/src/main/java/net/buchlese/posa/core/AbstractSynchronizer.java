@@ -1,6 +1,7 @@
 package net.buchlese.posa.core;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.function.Consumer;
 
 import org.joda.time.DateTime;
@@ -16,7 +17,8 @@ public abstract class AbstractSynchronizer {
 			// wir haben keinen Wert und 0 steht schon drin, also nix machen...
 			return false;
 		}
-		long v = val2.movePointRight(2).longValue();
+		// wir runden hier, obwohl das eigentlich nicht nötig sein sollte, aber float in der DB ist unberechenbar
+		long v = val2.movePointRight(2).round(MathContext.UNLIMITED).longValue();
 		if (val1 == null || val1.longValue() != v) {
 			c.accept(v);
 			return true;
