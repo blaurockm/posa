@@ -1,7 +1,5 @@
 name: Test-Kasse  
 
-kassenkonto: 1600
-
 articleGroupMappings:
   lotto:  { match : 'A00008TD', text : 'Lotto',  key : 'lotto', type : 'GOOD', marge : 0.05, account : '3631' }
   rubbellose: { match : 'A000082V', text : 'Rubbel-Lose',key : 'rubbellose', type: 'GOOD', marge : 0.02, account : '3632' }
@@ -47,11 +45,12 @@ posDb:
 
 
 logging:
-	appenders:
+    appenders:
       - type: file
-		threshold: ALL
-		currentLogFilename: /var/log/posa/posa.log
-		archivedLogFilenamePattern: /var/log/posa/posa-%d.log.gz
-		archivedFileCount: 5
+        threshold: ALL
+        currentLogFilename: /var/log/posa/posa.log
+        archivedLogFilenamePattern: /var/log/posa/posa-%d.log.gz
+        archivedFileCount: 5
+
     level: INFO
 

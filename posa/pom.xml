@@ -194,6 +194,8 @@
                            <mapper>
                               <type>perm</type>
                               <prefix>/var</prefix>
+                              <user>pi</user>
+                              <group>pi</group>
                            </mapper>
                         </data>
                      </dataSet>
