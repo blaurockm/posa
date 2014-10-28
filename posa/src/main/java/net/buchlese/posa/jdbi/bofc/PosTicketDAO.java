@@ -6,6 +6,7 @@ import java.util.List;
 import javax.validation.Valid;
 
 import net.buchlese.posa.api.bofc.PosTicket;
+import net.buchlese.posa.api.bofc.PosTx;
 
 import org.joda.time.DateTime;
 import org.skife.jdbi.v2.sqlobject.Bind;
@@ -33,8 +34,23 @@ public interface PosTicketDAO {
 	@SqlQuery("select max(id) from posticket")
 	Integer getMaxId();
 
+	/**
+	 * Alle Belege die zu einem Abschluss gehören (zuordnung aufgrund des datums)
+	 * @param vonDatum
+	 * @param bisDatum
+	 * @return
+	 */
 	@SqlQuery("select * from posticket where timest between :vonDatum and :bisDatum")
 	List<PosTicket> fetch(@Bind("vonDatum") DateTime vonDatum, @Bind("bisDatum") DateTime bisDatum);
+
+	/**
+	 * Alle Tx die zu einem Abschluss gehören. Zuordnung aufgrund des Datums des Belegs
+	 * @param vonDatum
+	 * @param bisDatum
+	 * @return
+	 */
+	@SqlQuery("select postx.* from postx join posticket on posticket.belegnr = postx.belegnr where postx.tobeignored = 0 and posticket.timest between :vonDatum and :bisDatum")
+	List<PosTx> fetchTx(@Bind("vonDatum") DateTime vonDatum, @Bind("bisDatum") DateTime bisDatum);
 
 	@SqlQuery("select * from posticket where tobecheckedagain = 1 and timest > :datum")
 	List<PosTicket> fetchRevisitations(@Bind("datum") DateTime datum);

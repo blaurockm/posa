@@ -14,21 +14,18 @@ import net.buchlese.posa.api.bofc.PosTx;
 import net.buchlese.posa.api.bofc.Tax;
 import net.buchlese.posa.api.bofc.TxType;
 import net.buchlese.posa.jdbi.bofc.PosTicketDAO;
-import net.buchlese.posa.jdbi.bofc.PosTxDAO;
 
 import org.joda.time.DateTime;
 
 public class CashBalance {
 
-	private final PosTxDAO txDAO;
 	private final PosTicketDAO ticketDAO;
 
 	private final Comparator<PosTx> txComparator;
 
 
-	public CashBalance(PosTxDAO txDAO, PosTicketDAO ticketDAO) {
+	public CashBalance(PosTicketDAO ticketDAO) {
 		super();
-		this.txDAO = txDAO;
 		this.ticketDAO = ticketDAO;
 		txComparator = new Comparator<PosTx>() {
 			@Override
@@ -47,7 +44,7 @@ public class CashBalance {
 		balance.setFirstCovered(from);
 		balance.setLastCovered(till);
 		
-		List<PosTx> txs = txDAO.fetch(from, till);
+		List<PosTx> txs = ticketDAO.fetchTx(from, till);
 		List<PosTicket> tickets = ticketDAO.fetch(from, till);
 		
 		balance.setTicketCount((int) tickets.stream().filter(t -> (t.isCancel() && t.isCancelled()) == false).count());

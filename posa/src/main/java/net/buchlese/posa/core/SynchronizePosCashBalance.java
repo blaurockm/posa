@@ -8,7 +8,6 @@ import net.buchlese.posa.api.bofc.PosCashBalance;
 import net.buchlese.posa.api.pos.KassenAbschluss;
 import net.buchlese.posa.jdbi.bofc.PosCashBalanceDAO;
 import net.buchlese.posa.jdbi.bofc.PosTicketDAO;
-import net.buchlese.posa.jdbi.bofc.PosTxDAO;
 import net.buchlese.posa.jdbi.pos.KassenAbschlussDAO;
 
 import org.joda.time.DateTime;
@@ -21,17 +20,14 @@ public class SynchronizePosCashBalance extends AbstractSynchronizer {
 
 	private final PosCashBalanceDAO cashBalanceDAO;
 	private final PosTicketDAO ticketDAO;
-	private final PosTxDAO txDAO;
 	private final ObjectMapper om;
 
 	private final KassenAbschlussDAO abschlussDao;
 
 
-	public SynchronizePosCashBalance(PosCashBalanceDAO cashBalanceDAO, PosTicketDAO ticketDAO,
-			PosTxDAO txDAO, KassenAbschlussDAO abschlussDao) {
+	public SynchronizePosCashBalance(PosCashBalanceDAO cashBalanceDAO, PosTicketDAO ticketDAO, KassenAbschlussDAO abschlussDao) {
 		this.cashBalanceDAO = cashBalanceDAO;
 		this.ticketDAO = ticketDAO;
-		this.txDAO = txDAO;
 		this.abschlussDao = abschlussDao;
 		this.om = Jackson.newObjectMapper();
 	}
@@ -68,7 +64,7 @@ public class SynchronizePosCashBalance extends AbstractSynchronizer {
 
 
 	private PosCashBalance createNewBalance(KassenAbschluss abschluss) {
-		CashBalance balComp = new CashBalance(txDAO, ticketDAO);
+		CashBalance balComp = new CashBalance(ticketDAO);
 		PosCashBalance bal = balComp.computeBalance(abschluss.getVonDatum(), abschluss.getBisDatum());
 		updateBalance(abschluss, bal);
 		bal.setId(abschluss.getId());

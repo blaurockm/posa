@@ -12,17 +12,14 @@ import net.buchlese.posa.api.bofc.PosCashBalance;
 import net.buchlese.posa.api.bofc.PosTicket;
 import net.buchlese.posa.api.bofc.PosTx;
 import net.buchlese.posa.jdbi.bofc.PosTicketDAO;
-import net.buchlese.posa.jdbi.bofc.PosTxDAO;
 
 public class Validator {
 
 	private PosCashBalance balance;
-	private final PosTxDAO txDAO;
 	private final PosTicketDAO ticketDAO;
 	
-	public Validator(PosCashBalance balance, PosTxDAO txDAO, PosTicketDAO ticketDAO) {
+	public Validator(PosCashBalance balance, PosTicketDAO ticketDAO) {
 		this.balance = balance;
-		this.txDAO = txDAO;
 		this.ticketDAO = ticketDAO;
 	}
 
@@ -54,7 +51,7 @@ public class Validator {
 		}
 
 		w.write("Einzelcheck der Belege...\n ");
-		List<PosTx> txs = txDAO.fetch(balance.getFirstCovered(), balance.getLastCovered());
+		List<PosTx> txs = ticketDAO.fetchTx(balance.getFirstCovered(), balance.getLastCovered());
 		List<PosTicket> tickets = ticketDAO.fetch(balance.getFirstCovered(), balance.getLastCovered());
 		for (PosTicket ticket : tickets) {
 			w.write(" Check "); 
