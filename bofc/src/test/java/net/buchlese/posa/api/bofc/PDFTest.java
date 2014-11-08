@@ -4,7 +4,10 @@ import java.io.FileOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.buchlese.posa.core.PDFCashBalance;
+import net.buchlese.bofc.api.bofc.PaymentMethod;
+import net.buchlese.bofc.api.bofc.PosCashBalance;
+import net.buchlese.bofc.api.bofc.Tax;
+import net.buchlese.bofc.core.PDFCashBalance;
 
 import org.joda.time.DateTime;
 import org.junit.Test;

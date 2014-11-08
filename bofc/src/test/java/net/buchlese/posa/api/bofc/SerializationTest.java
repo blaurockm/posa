@@ -6,6 +6,9 @@ import java.util.Map;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 
+import net.buchlese.bofc.api.bofc.PosCashBalance;
+import net.buchlese.bofc.api.bofc.Tax;
+
 import org.joda.time.DateTime;
 import org.junit.Test;
 
