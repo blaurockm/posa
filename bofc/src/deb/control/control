@@ -1,0 +1,9 @@
+Package: posa
+Section: contrib/java
+Priority: optional
+Architecture: all
+Homepage: http://buchlese.net
+Depends: 
+Version: 0.1
+Maintainer: Markus Blaurock blaurock@buchlese.net
+Description: Adapter for Libras-Point Of Sale System

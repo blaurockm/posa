@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+   <changeSet id="initialise" author="mblaurock">
+      <createTable tableName="posTx">
+         <column name="id" type="numeric">
+            <constraints primaryKey="true" nullable="false" />
+         </column>
+         <column name="belegnr" type="int">
+            <constraints nullable="false" />
+         </column>
+         <column name="belegidx" type="int" />
+         <column name="ean" type="varchar(25)" />
+         <column name="isbn" type="varchar(25)" />
+         <column name="matchcode" type="varchar(70)" />
+         <column name="description" type="varchar(255)" />
+         <column name="count" type="int"/>
+         <column name="sellingPrice" type="bigint"/>
+         <column name="purchasePrice" type="bigint"/>
+         <column name="rebate" type="DOUBLE"/>
+         <column name="total" type="bigint"/>
+         <column name="tax" type="varchar(2)" />
+         <column name="txtype" type="varchar(2)" />
+         <column name="articleGroupKey" type="varchar(12)" />
+         <column name="articleId" type="numeric" />
+         <column name="articlekey" type="varchar(10)" />
+         <column name="tobeignored" type="bool"/>
+         <column name="tobecheckedagain" type="bool"/>
+         <column name="timest" type="DATETIME">
+            <constraints nullable="false" />
+         </column>
+      </createTable>
+      <createTable tableName="posTicket">
+         <column name="id" type="bigint" autoIncrement="true">
+            <constraints primaryKey="true" nullable="false" />
+         </column>
+         <column name="belegnr" type="int">
+            <constraints nullable="false" />
+         </column>
+         <column name="total" type="bigint"/>
+         <column name="cancelled" type="bool"/>
+         <column name="cancel" type="bool"/>
+         <column name="paymentMethod" type="varchar(2)" />
+         <column name="tobecheckedagain" type="bool"/>
+         <column name="timest" type="DATETIME">
+            <constraints nullable="false" />
+         </column>
+      </createTable>
+      <createTable tableName="posCashBalance">
+         <column name="id" type="bigint" autoIncrement="true">
+            <constraints primaryKey="true" nullable="false" />
+         </column>
+         <column name="abschlussid" type="varchar(10)">
+            <constraints nullable="false" />
+         </column>
+         <column name="revenue" type="bigint"/>
+         <column name="creationtime" type="DATETIME">
+            <constraints nullable="false" />
+         </column>
+         <column name="balanceSheet" type="clob"/>
+         <column name="origSheet" type="clob"/>
+         <column name="exported" type="boolean"/>
+         <column name="exportDate" type="DATETIME"/>
+         <column name="firstCovered" type="DATETIME"/>
+         <column name="lastCovered" type="DATETIME"/>
+      </createTable>
+   </changeSet>
+   
+</databaseChangeLog>
