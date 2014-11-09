@@ -29,7 +29,7 @@ import org.joda.time.DateTime;
 import com.google.common.base.Optional;
 
 @Path("/cashbalance")
-@Produces(MediaType.APPLICATION_JSON)
+@Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
 public class PosCashBalanceResource {
 
 	private final PosCashBalanceDAO dao;
@@ -192,7 +192,8 @@ public class PosCashBalanceResource {
 			return dao.fetchNotExported();
 		}
 		if (from == null) {
-			from = new DateTime().minusWeeks(1).dayOfWeek().withMinimumValue().toString(IDFORMAT);
+			from = date;
+			till = date;
 		}
 		return dao.fetchAllAfter(from, Optional.fromNullable(till));
 	}

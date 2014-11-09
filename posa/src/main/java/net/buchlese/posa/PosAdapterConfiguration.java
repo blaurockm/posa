@@ -11,6 +11,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.apache.fop.apps.FopFactory;
+import org.joda.time.LocalDate;
 
 import net.buchlese.posa.api.bofc.ArticleGroup;
 
@@ -45,6 +46,13 @@ public class PosAdapterConfiguration extends Configuration {
    
     @JsonProperty
     private String name;
+
+    @JsonProperty
+    private LocalDate syncStartDate;
+
+    @JsonProperty
+    private long idNumRangeStart;
+    
     
     public PosAdapterConfiguration() {
     	SimpleServerFactory server = new SimpleServerFactory();
@@ -58,6 +66,9 @@ public class PosAdapterConfiguration extends Configuration {
     	this.bofcDb.setUser("sa");
     	this.bofcDb.setPassword("");
     	this.bofcDb.setUrl("jdbc:h2:~/backoffice");
+    	
+    	this.idNumRangeStart = 10000000;
+    	this.syncStartDate = new LocalDate(2014,9,1);
     }
     
     public DataSourceFactory getPointOfSaleDB() {
@@ -75,4 +86,13 @@ public class PosAdapterConfiguration extends Configuration {
     public String getName() {
     	return name;
     }
+
+	public LocalDate getSyncStartDate() {
+		return syncStartDate;
+	}
+
+	public long getIdNumRangeStart() {
+		return idNumRangeStart;
+	}
+    
 }

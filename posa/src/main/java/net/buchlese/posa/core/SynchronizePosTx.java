@@ -15,6 +15,7 @@ import net.buchlese.posa.jdbi.bofc.PosTxDAO;
 import net.buchlese.posa.jdbi.pos.KassenVorgangDAO;
 
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 
 import com.google.common.base.Optional;
 
@@ -22,11 +23,13 @@ public class SynchronizePosTx extends AbstractSynchronizer {
 
 	private final PosTxDAO txDAO;
 	private final KassenVorgangDAO vorgangsDao;
+	private LocalDate syncStart;
 
 
-	public SynchronizePosTx(PosTxDAO txDAO, KassenVorgangDAO vorgangsDao) {
+	public SynchronizePosTx(PosTxDAO txDAO, KassenVorgangDAO vorgangsDao, LocalDate syncStart) {
 		this.txDAO = txDAO;
 		this.vorgangsDao = vorgangsDao;
+		this.syncStart = syncStart;
 	}
 
 
@@ -36,7 +39,7 @@ public class SynchronizePosTx extends AbstractSynchronizer {
 
 		long id = maxId.or(0);
 
-		List<KassenVorgang> vorgs = vorgangsDao.fetchAllAfter(maxDatum.or(new DateTime(2014,1,1,0,0)));
+		List<KassenVorgang> vorgs = vorgangsDao.fetchAllAfter(maxDatum.or(syncStart.toDateTimeAtStartOfDay()));
 
 		// Neue Kassenvorgänge holen und speichern
 		List<PosTx> res = new ArrayList<>();
@@ -65,7 +68,7 @@ public class SynchronizePosTx extends AbstractSynchronizer {
     	List<KassenVorgang> lastVorg = vorgangsDao.fetchLast();
 		for (KassenVorgang orig: lastVorg) {
 			PosTx checker = txDAO.fetch(orig.getBelegNr(), orig.getLfdNummer());
-			if (updateTx(orig, checker)) {
+			if (checker != null && updateTx(orig, checker)) {
 				// es hat sich was geändert;
 				checker.setToBeCheckedAgain(false); // ist diese Entscheidung richtig? Man kann nur einmal korrigieren
 				txDAO.update(checker);

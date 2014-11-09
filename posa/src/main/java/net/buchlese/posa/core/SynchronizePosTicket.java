@@ -10,6 +10,7 @@ import net.buchlese.posa.jdbi.bofc.PosTicketDAO;
 import net.buchlese.posa.jdbi.pos.KassenBelegDAO;
 
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 
 import com.google.common.base.Optional;
 
@@ -17,11 +18,13 @@ public class SynchronizePosTicket extends AbstractSynchronizer {
 
 	private final PosTicketDAO ticketDAO;
 	private final KassenBelegDAO belegDao;
+	private LocalDate syncStart;
 
 
-	public SynchronizePosTicket(PosTicketDAO txDAO, KassenBelegDAO vorgangsDao) {
+	public SynchronizePosTicket(PosTicketDAO txDAO, KassenBelegDAO vorgangsDao, LocalDate syncStart) {
 		this.ticketDAO = txDAO;
 		this.belegDao = vorgangsDao;
+		this.syncStart = syncStart;
 	}
 
 	public List<PosTicket> fetchNewTickets() throws Exception {
@@ -30,7 +33,7 @@ public class SynchronizePosTicket extends AbstractSynchronizer {
 
 		long id = maxId.or(0);
 
-		List<KassenBeleg> belege = belegDao.fetchAllAfter(maxDatum.or(new DateTime(2014,1,1,0,0)));
+		List<KassenBeleg> belege = belegDao.fetchAllAfter(maxDatum.or(syncStart.toDateTimeAtStartOfDay()));
 
 		// convert KassenVorgang to posTx
 		List<PosTicket> res = new ArrayList<>();
@@ -50,7 +53,7 @@ public class SynchronizePosTicket extends AbstractSynchronizer {
 		List<KassenBeleg> lastBelege = belegDao.fetchLast();
 		for (KassenBeleg orig : lastBelege) {
 			PosTicket checker = ticketDAO.fetch(orig.getBelegnr());
-			if (updateTicket(orig, checker)) {
+			if (checker != null && updateTicket(orig, checker)) {
 				// es hat sich was geändert;
 				ticketDAO.update(checker);
 			}

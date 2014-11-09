@@ -13,6 +13,7 @@ import net.buchlese.posa.PosAdapterConfiguration;
 import net.buchlese.posa.api.pos.KassenVorgang;
 import net.buchlese.posa.core.SynchronizePosTx;
 
+import org.joda.time.LocalDate;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.skife.jdbi.v2.DBI;
@@ -45,7 +46,7 @@ public class TestBigDecimal {
 				map(String::valueOf).collect(Collectors.joining("   ")))
 				;
 		
-		SynchronizePosTx s = new SynchronizePosTx(null, vorgangDao);
+		SynchronizePosTx s = new SynchronizePosTx(null, vorgangDao, LocalDate.now());
 		
 	    KassenVorgang vorg = vorgangDao.fetch(2701801, 4);
 		

@@ -17,7 +17,7 @@ import org.skife.jdbi.v2.sqlobject.SqlUpdate;
 import org.skife.jdbi.v2.sqlobject.customizers.BatchChunkSize;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 
-@RegisterMapper(PosTicketMapper.class)
+@RegisterMapper({PosTicketMapper.class, PosTxMapper.class})
 public interface PosTicketDAO {
 
 	@SqlQuery("select * from posticket")

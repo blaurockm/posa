@@ -19,16 +19,16 @@ posDb:
   user: sa
   password: master
 
-#  user: fibu
-#  password: kasse2fibu
+  user: fibu
+  password: kasse2fibu
   
   # the JDBC URL
   #####  lokale datenbank
 #  url: jdbc:jtds:sqlserver://localhost:1433/librasbak
   ##### im gschaeft Sulz
-  url: jdbc:jtds:sqlserver://localhost:7891/libras
+#  url: jdbc:jtds:sqlserver://localhost:7891/libras
   ##### im gschaeft Dornhan
-#  url: jdbc:jtds:sqlserver://localhost:7890/libras
+  url: jdbc:jtds:sqlserver://localhost:7890/libras
 
 
 articleGroupMappings:
@@ -47,3 +47,8 @@ articleGroupMappings:
   nonbook: { match : 'mwst=1', text : 'NonBook',key : 'nonbook', type : 'GOOD', marge : 0.5 }
   
 name: Test-Kasse  
+
+idNumRangeStart: 7000
+
+syncStartDate: 2014-10-01
+

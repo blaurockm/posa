@@ -30,43 +30,43 @@ public class PosTxResource {
 	
 	@GET
 	public List<PosTx> fetchAll(@QueryParam("date") String date) {
-		if ("today".equals(date)) {
+		if ("Heute".equals(date)) {
 			DateTime refdate = new DateTime();
 			DateTime from = refdate.hourOfDay().withMinimumValue();
 			DateTime till = refdate.hourOfDay().withMaximumValue();
 			return dao.fetch(from, till);
 		}
-		if ("yesterday".equals(date)) {
+		if ("Gestern".equals(date)) {
 			DateTime refdate = new DateTime().minusDays(1);
 			DateTime from = refdate.hourOfDay().withMinimumValue();
 			DateTime till = refdate.hourOfDay().withMaximumValue();
 			return dao.fetch(from, till);
 		}
-		if ("preyesterday".equals(date)) {
+		if ("Vorgestern".equals(date)) {
 			DateTime refdate = new DateTime().minusDays(2);
 			DateTime from = refdate.hourOfDay().withMinimumValue();
 			DateTime till = refdate.hourOfDay().withMaximumValue();
 			return dao.fetch(from, till);
 		}
-		if ("prepreyesterday".equals(date)) {
+		if ("Vor 3 Tagen".equals(date)) {
 			DateTime refdate = new DateTime().minusDays(3);
 			DateTime from = refdate.hourOfDay().withMinimumValue();
 			DateTime till = refdate.hourOfDay().withMaximumValue();
 			return dao.fetch(from, till);
 		}
-		if ("preprepreyesterday".equals(date)) {
+		if ("Vor 4 Tagen".equals(date)) {
 			DateTime refdate = new DateTime().minusDays(4);
 			DateTime from = refdate.hourOfDay().withMinimumValue();
 			DateTime till = refdate.hourOfDay().withMaximumValue();
 			return dao.fetch(from, till);
 		}
-		if ("todayLastWeek".equals(date)) {
+		if ("gleicherWoTag letze Woche".equals(date)) {
 			DateTime refdate = new DateTime().minusDays(8);
 			DateTime from = refdate.hourOfDay().withMinimumValue();
 			DateTime till = refdate.hourOfDay().withMaximumValue();
 			return dao.fetch(from, till);
 		}
-		if ("yesterdayLastWeek".equals(date)) {
+		if ("gestrigerWoTag letze Woche".equals(date)) {
 			DateTime refdate = new DateTime().minusDays(9);
 			DateTime from = refdate.hourOfDay().withMinimumValue();
 			DateTime till = refdate.hourOfDay().withMaximumValue();

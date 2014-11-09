@@ -11,6 +11,7 @@ import net.buchlese.posa.jdbi.bofc.PosTicketDAO;
 import net.buchlese.posa.jdbi.pos.KassenAbschlussDAO;
 
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -23,20 +24,22 @@ public class SynchronizePosCashBalance extends AbstractSynchronizer {
 	private final ObjectMapper om;
 
 	private final KassenAbschlussDAO abschlussDao;
+	private LocalDate syncStart;
 
 
-	public SynchronizePosCashBalance(PosCashBalanceDAO cashBalanceDAO, PosTicketDAO ticketDAO, KassenAbschlussDAO abschlussDao) {
+	public SynchronizePosCashBalance(PosCashBalanceDAO cashBalanceDAO, PosTicketDAO ticketDAO, KassenAbschlussDAO abschlussDao, LocalDate syncStart) {
 		this.cashBalanceDAO = cashBalanceDAO;
 		this.ticketDAO = ticketDAO;
 		this.abschlussDao = abschlussDao;
 		this.om = Jackson.newObjectMapper();
+		this.syncStart = syncStart;
 	}
 
 
 	public synchronized  void execute() throws Exception {
 		Optional<String> maxId = Optional.fromNullable(cashBalanceDAO.getMaxAbschlussId());
 
-		List<KassenAbschluss> belege = abschlussDao.fetchAllAfter(maxId.or("20140101"));
+		List<KassenAbschluss> belege = abschlussDao.fetchAllAfter(maxId.or(syncStart.toString("yyyyMMdd")));
 		
 		// convert KassenVorgang to posTx
 		for (KassenAbschluss abschluss : belege) {

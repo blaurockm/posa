@@ -10,6 +10,7 @@ import net.buchlese.posa.jdbi.pos.KassenAbschlussDAO;
 import net.buchlese.posa.jdbi.pos.KassenBelegDAO;
 import net.buchlese.posa.jdbi.pos.KassenVorgangDAO;
 
+import org.joda.time.LocalDate;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
 import org.slf4j.Logger;
@@ -20,13 +21,15 @@ public class SyncTimer extends TimerTask {
 	private final DBI posDBI;
 	private final Logger logger;
 	private final Lock syncLock;
+	private final LocalDate syncStart;
 	
 
-	public SyncTimer(Lock l, DBI bofcDBI, DBI posDBI) {
+	public SyncTimer(Lock l, DBI bofcDBI, DBI posDBI, LocalDate syncStart) {
 		this.syncLock = l;
 		this.bofcDBI = bofcDBI;
 		this.posDBI = posDBI;
 		logger = LoggerFactory.getLogger(SyncTimer.class);
+		this.syncStart = syncStart;
 	}
 
 	@Override
@@ -41,9 +44,9 @@ public class SyncTimer extends TimerTask {
     	    PosTicketDAO posTicketDao =  bofc.attach(PosTicketDAO.class);
     	    PosCashBalanceDAO posCashBalanceDao =  bofc.attach(PosCashBalanceDAO.class);
 
-    	    SynchronizePosTx syncTx = new SynchronizePosTx(posTxDao, vorgangDao);
-	    	SynchronizePosTicket snycTickets = new SynchronizePosTicket(posTicketDao, belegDao);
-	    	SynchronizePosCashBalance syncBalance = new SynchronizePosCashBalance(posCashBalanceDao, posTicketDao, abschlussDao);
+    	    SynchronizePosTx syncTx = new SynchronizePosTx(posTxDao, vorgangDao, syncStart);
+	    	SynchronizePosTicket snycTickets = new SynchronizePosTicket(posTicketDao, belegDao, syncStart);
+	    	SynchronizePosCashBalance syncBalance = new SynchronizePosCashBalance(posCashBalanceDao, posTicketDao, abschlussDao, syncStart);
 
 	    	syncTx.fetchNewTx();
 	    	syncTx.updateExistingTx();

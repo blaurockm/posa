@@ -14,6 +14,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import net.buchlese.posa.api.bofc.ArticleGroup;
+import net.buchlese.posa.core.H2TcpServerManager;
 import net.buchlese.posa.core.PDFCashBalance;
 import net.buchlese.posa.core.SyncTimer;
 import net.buchlese.posa.jdbi.bofc.PayMethArgumentFactory;
@@ -64,6 +65,9 @@ public class PosAdapterApplication extends Application<PosAdapterConfiguration> 
 	@Override
 	public void run(PosAdapterConfiguration config, Environment environment) throws Exception {
 		ArticleGroup.injectMappings(config.getArticleGroupMappings());
+		// H2 mixed Mode
+		environment.lifecycle().manage(new H2TcpServerManager());
+		
 		PDFCashBalance.nameOfKasse = config.getName();
 		
 	    final DBIFactory posDbfactory = new DBIFactory();
@@ -96,7 +100,7 @@ public class PosAdapterApplication extends Application<PosAdapterConfiguration> 
 
 	    syncTimer = new Timer("DBsyncTimer");
 		syncLock = new ReentrantLock();
-		SyncTimer syncTimerTask = new SyncTimer(syncLock, bofcDBI, posDBI);
+		SyncTimer syncTimerTask = new SyncTimer(syncLock, bofcDBI, posDBI, config.getSyncStartDate());
 		syncTimer.schedule(syncTimerTask, 5 * 60 * 1000, 3 * 60 * 1000);
 		environment.admin().addTask(new SynchronizeTask(syncTimerTask));
 		

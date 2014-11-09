@@ -11,6 +11,7 @@ import net.buchlese.posa.jdbi.bofc.PosTxDAO;
 import net.buchlese.posa.jdbi.pos.KassenVorgangDAO;
 
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import org.junit.Ignore;
 
 public class SynchronizePosTxTest {
@@ -18,7 +19,7 @@ public class SynchronizePosTxTest {
 	@Ignore
 	public void missingCentTest1() throws Exception {
 		
-		SynchronizePosTx sptx = new SynchronizePosTx(getTxDao(), getTicketDao());
+		SynchronizePosTx sptx = new SynchronizePosTx(getTxDao(), getTicketDao(), LocalDate.now());
 		sptx.fetchNewTx();
 	}
 	
