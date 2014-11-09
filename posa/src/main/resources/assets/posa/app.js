@@ -56,9 +56,8 @@ function(dom, domConstruct, JsonRest, Button, Chart, Tooltip, Pie, DataGrid, Obj
         balGridUi = new DataGrid( {
             structure: [
                 { name: "Datum", field: "abschlussId", width: "90px"},
-                { name: "WoTag", field: "lastCovered", width: "90px", formatter : function(v) { return new Date(v).getDay() } },
                 { name: "Umsatz", field: "revenue", styles: 'text-align: right;',width: "90px", formatter: formatMoney},
-                { name: "Ges. Gewinn", field: "profit", styles: 'text-align: right;',width: "90px", formatter: formatMoney},
+                { name: "Ges. Ertrag", field: "profit", styles: 'text-align: right;',width: "90px", formatter: formatMoney},
                 { name: "check", field: "checked", width: "50px", type: dojox.grid.cells.Bool, editable: true },
                 { name: "FiBu", field: "exported", width: "50px", type: dojox.grid.cells.Bool, editable: true},
                 { name: "zur FiBu am", field: "exportDate", width: "120px", formatter : formatDateTime},
@@ -67,13 +66,13 @@ function(dom, domConstruct, JsonRest, Button, Chart, Tooltip, Pie, DataGrid, Obj
                selectionMode : 'single',
                autoWidth : true
         }, "balGrid");
-        balGridUi.on("RowClick", function(evt){
-            var idx = evt.rowIndex;
-            var pdfembed = dom.byId("balpdf")
-            domConstruct.empty(pdfembed);
-            currentBalance = balGridUi.getItem(idx); // globale speicherung
-            pdfembed.src = '/cashbalance/pdf/' + currentBalance.abschlussId;
-        }, true);
+//        balGridUi.on("RowClick", function(evt){
+//            var idx = evt.rowIndex;
+//            var pdfembed = dom.byId("balpdf");
+//            domConstruct.empty(pdfembed);
+//            currentBalance = balGridUi.getItem(idx); // globale speicherung
+//            pdfembed.src = '/cashbalance/pdf/' + currentBalance.abschlussId;
+//        }, true);
         balGridUi.startup();
         
         var fibuExportButton = new Button({
@@ -168,6 +167,9 @@ function(dom, domConstruct, JsonRest, Button, Chart, Tooltip, Pie, DataGrid, Obj
     
     
     formatMoney = function(n){
+    	if (n == null) {
+    		return "(null)";
+    	}
     	return n.formatMoney();
 	};
 	formatDate = function(d) {
