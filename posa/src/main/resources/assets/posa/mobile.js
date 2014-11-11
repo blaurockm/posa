@@ -36,7 +36,7 @@ function(dom, domConstruct, JsonRest, Chart, Tooltip, Pie) {
     	   }
        }
     }
-    update = function() {
+    updatedash = function() {
   	  store.get("today").then(function(balance){
  	       dom.byId("balanceDate").innerHTML = new Date(balance.creationtime).toLocaleDateString() + " " + new Date(balance.creationtime).toLocaleTimeString();
   	       dom.byId("firstTicket").innerHTML = balance.firstBelegNr;
@@ -73,6 +73,9 @@ function(dom, domConstruct, JsonRest, Chart, Tooltip, Pie) {
   	       wgrpKuchen.addSeries("Warengruppen",chartData);
   	       wgrpKuchen.render();
   	  });
+    };
+    
+    updatecomp = function() {
       // Get an object by identity
 	  store.get("thisweek").then(function(balance){
  	       dom.byId("thisweekrevenueEUR").innerHTML = balance.revenue.formatMoney();
@@ -101,8 +104,9 @@ function(dom, domConstruct, JsonRest, Chart, Tooltip, Pie) {
         init: function() {
             // proceed directly with startup
             startup();
-            update();
-            dashboardupdate = window.setInterval(update, 5 * 60 * 1000);
+            updatedash(); // den hauptbildschirm gleich aktualisieren
+            window.setTimeout(updatecomp,1000); // die vergleichszeiträume mit etwas versatz und asynchron
+            // eine permanente aktualisierung brauchen wir online nicht.
         }
     };
     
