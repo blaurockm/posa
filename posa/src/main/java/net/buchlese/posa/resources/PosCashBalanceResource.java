@@ -121,7 +121,7 @@ public class PosCashBalanceResource {
 			DateTime today = new DateTime();
 			DateTime startOfToday = today.hourOfDay().setCopy(0).dayOfWeek().setCopy(1); // stunde 0 und wochentag 0
 			CashBalance balCOmp = new CashBalance(ticketDao);
-			PosCashBalance bal = balCOmp.computeBalance(startOfToday, today);
+			PosCashBalance bal = balCOmp.computeBalanceFast(startOfToday, today); // hier ist die geschwindigkeit wichtiger als die Genauigkeit
 			return bal;
 		}
 		if ("lastweek".equals(date)) {
@@ -129,7 +129,7 @@ public class PosCashBalanceResource {
 			DateTime today = new DateTime().minusWeeks(1).hourOfDay().setCopy(23).dayOfWeek().setCopy(7); // letzter tag und letzte stunde
 			DateTime startOfToday = today.hourOfDay().setCopy(0).dayOfWeek().setCopy(1); // stunde 0 und wochentag 1
 			CashBalance balCOmp = new CashBalance(ticketDao);
-			PosCashBalance bal = balCOmp.computeBalance(startOfToday, today);
+			PosCashBalance bal = balCOmp.computeBalanceFast(startOfToday, today); // hier ist die geschwindigkeit wichtiger als die Genauigkeit
 			return bal;
 		}
 		if ("thismonth".equals(date)) {
@@ -137,7 +137,7 @@ public class PosCashBalanceResource {
 			DateTime today = new DateTime();
 			DateTime startOfToday = today.hourOfDay().setCopy(0).dayOfMonth().setCopy(1); // stunde 0 und monats-ersten
 			CashBalance balCOmp = new CashBalance(ticketDao);
-			PosCashBalance bal = balCOmp.computeBalance(startOfToday, today);
+			PosCashBalance bal = balCOmp.computeBalanceFast(startOfToday, today); // hier ist die geschwindigkeit wichtiger als die Genauigkeit
 			return bal;
 		}
 		PosCashBalance bal = dao.fetchForDate(date);

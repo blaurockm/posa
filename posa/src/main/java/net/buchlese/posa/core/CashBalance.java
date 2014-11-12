@@ -35,17 +35,34 @@ public class CashBalance {
 		};
 	}
 
+	public PosCashBalance computeBalanceFast(DateTime from, DateTime till) {
+		List<PosTx> txs = ticketDAO.fetchTxfast(from, till);
+		List<PosTicket> tickets = ticketDAO.fetch(from, till);
+		return computeBalance(from, till, txs, tickets);
+	}	
 
 	public PosCashBalance computeBalance(DateTime from, DateTime till) {
+		List<PosTx> txs = ticketDAO.fetchTx(from, till);
+		List<PosTicket> tickets = ticketDAO.fetch(from, till);
+		return computeBalance(from, till, txs, tickets);
+	}
+
+	/**
+	 * Berechne die Summen für die geg Listen von Tickets und Transaktionen.
+	 * 
+	 * @param from   der Startzeitpunkt
+	 * @param till   der Endezeitpunkt
+	 * @param txs    die Liste der Transaktionen
+	 * @param tickets  die Liste der Belege
+	 * @return ein Tagesabschluss, Summen-Bildung
+	 */
+	public PosCashBalance computeBalance(DateTime from, DateTime till,List<PosTx> txs, List<PosTicket> tickets) {
 		PosCashBalance balance = new PosCashBalance();
 		balance.setCreationtime(new DateTime());
 		balance.setExported(false);
 		balance.setExportDate(null);
 		balance.setFirstCovered(from);
 		balance.setLastCovered(till);
-		
-		List<PosTx> txs = ticketDAO.fetchTx(from, till);
-		List<PosTicket> tickets = ticketDAO.fetch(from, till);
 		
 		balance.setTicketCount((int) tickets.stream().filter(t -> (t.isCancel() && t.isCancelled()) == false).count());
 

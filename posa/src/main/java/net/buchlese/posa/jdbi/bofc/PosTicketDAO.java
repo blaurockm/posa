@@ -52,6 +52,15 @@ public interface PosTicketDAO {
 	@SqlQuery("select postx.* from postx join posticket on posticket.belegnr = postx.belegnr where postx.tobeignored = 0 and posticket.timest between :vonDatum and :bisDatum")
 	List<PosTx> fetchTx(@Bind("vonDatum") DateTime vonDatum, @Bind("bisDatum") DateTime bisDatum);
 
+	/**
+	 * Alle Tx in dem geg. Zeitraum. Das enthält möglicherweise falsch zugeordnete Tx! FÜr einen exakten Wert nimm die obere Methode!
+	 * @param vonDatum
+	 * @param bisDatum
+	 * @return
+	 */
+	@SqlQuery("select postx.* from postx where timest between :vonDatum and :bisDatum")
+	List<PosTx> fetchTxfast(@Bind("vonDatum") DateTime vonDatum, @Bind("bisDatum") DateTime bisDatum);
+
 	@SqlQuery("select * from posticket where tobecheckedagain = 1 and timest > :datum")
 	List<PosTicket> fetchRevisitations(@Bind("datum") DateTime datum);
 
