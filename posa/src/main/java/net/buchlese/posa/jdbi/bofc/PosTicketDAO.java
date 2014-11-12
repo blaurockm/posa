@@ -58,7 +58,7 @@ public interface PosTicketDAO {
 	 * @param bisDatum
 	 * @return
 	 */
-	@SqlQuery("select postx.* from postx where timest between :vonDatum and :bisDatum")
+	@SqlQuery("select postx.* from postx where postx.tobeignored = 0 and timest between :vonDatum and :bisDatum")
 	List<PosTx> fetchTxfast(@Bind("vonDatum") DateTime vonDatum, @Bind("bisDatum") DateTime bisDatum);
 
 	@SqlQuery("select * from posticket where tobecheckedagain = 1 and timest > :datum")

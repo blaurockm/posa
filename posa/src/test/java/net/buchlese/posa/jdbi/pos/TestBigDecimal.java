@@ -15,6 +15,7 @@ import net.buchlese.posa.core.SynchronizePosTx;
 
 import org.joda.time.LocalDate;
 import org.junit.ClassRule;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.skife.jdbi.v2.DBI;
 
@@ -32,6 +33,7 @@ public class TestBigDecimal {
 		}
 	}
 
+	@Ignore
 	@Test
 	public void testReadFromDatabase() throws Exception {
 	    final DBIFactory posDbfactory = new DBIFactory();
