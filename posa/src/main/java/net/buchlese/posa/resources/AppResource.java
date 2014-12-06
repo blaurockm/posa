@@ -44,4 +44,10 @@ public class AppResource {
 		return new AppView(cfg);
 	}
 
+//	@GET
+//	@Path("/favicon.ico")
+//	public Response getFavicon() {
+//		return Response.ok(getClass().getResourceAsStream(""), "image/x-icon").build();
+//	}
+
 }

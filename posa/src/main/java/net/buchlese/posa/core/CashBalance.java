@@ -1,5 +1,7 @@
 package net.buchlese.posa.core;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -39,7 +41,24 @@ public class CashBalance {
 		List<PosTx> txs = ticketDAO.fetchTxfast(from, till);
 		List<PosTicket> tickets = ticketDAO.fetch(from, till);
 		return computeBalance(from, till, txs, tickets);
-	}	
+	}
+	
+	public List<PosTx> amendTickets(PosCashBalance bal) {
+		List<PosTx> txs = ticketDAO.fetchTx(bal.getFirstCovered(), bal.getLastCovered());
+		List<PosTicket> tickets = ticketDAO.fetch(bal.getFirstCovered(), bal.getLastCovered());
+		bal.setTickets(tickets);
+		for (PosTicket ticket : tickets) {
+			List<PosTx> titxs = new ArrayList<>();
+			for (PosTx tx : txs) {
+				if (tx.getBelegNr() == ticket.getBelegNr()) {
+					titxs.add(tx);
+				}
+			}
+			Collections.sort(titxs);
+			ticket.setTxs(titxs);
+		}
+		return txs;
+	}
 
 	public PosCashBalance computeBalance(DateTime from, DateTime till) {
 		List<PosTx> txs = ticketDAO.fetchTx(from, till);
@@ -63,7 +82,7 @@ public class CashBalance {
 		balance.setExportDate(null);
 		balance.setFirstCovered(from);
 		balance.setLastCovered(till);
-		
+
 		balance.setTicketCount((int) tickets.stream().filter(t -> (t.isCancel() && t.isCancelled()) == false).count());
 
 		if (txs.isEmpty()) {

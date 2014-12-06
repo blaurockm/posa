@@ -3,6 +3,7 @@
 <head>
 <meta http-equiv="Content-type" content="text/html; charset=utf-8">
 <title>Buchlese</title>
+<link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
 <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/dojo/1.10.1/dijit/themes/claro/document.css" />
 <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/dojo/1.10.1/dijit/themes/claro/claro.css" />
 <link rel="stylesheet" href="/assets/posa/app.css" />
@@ -107,10 +108,22 @@ registry: "dijit/registry"
 						<span data-dojo-value=""></span>
 						<span data-dojo-value="thisyear">diesem Jahr</span>
 						<span data-dojo-value="lastyear">letztem Jahr</span>
-					 </div> <button id="balExportButton" type="button"></button> <button id="goryDetailsButton" type="button"></button> </h2>
+					 </div> </h2>
 	           <div id="balGrid" style="height:30%; width:50%">
 	           </div>
-	           <iframe id="balpdf" style="height:60%; width:100%; background-color:#eeeeee;"></iframe>
+<div data-dojo-type="dijit/layout/BorderContainer" data-dojo-props="design:'sidebar', gutters:true, liveSplitters:true" id="balDetailContainer" style="height:60%; width:100%;">
+    <div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="splitter:true, region:'leading'" style="width: 100px;">
+               <button id="showButton" type="button"></button>
+               <button id="showJSONButton" type="button"></button>
+               <button id="balExportButton" type="button"></button>
+               <button id="goryDetailsButton" type="button"></button>
+               <button id="resyncButton" type="button"></button>
+               <button id="sendAgainButton" type="button"></button>
+    </div>
+    <div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="splitter:true, region:'center'">
+        <iframe id="balpdf" style="height:100%; width:100%;background-color:#eeeeee;"></iframe>
+    </div>
+</div>
 			</div>
 
   		    <!--  die technisches brimborium -->

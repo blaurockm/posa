@@ -1,5 +1,7 @@
 package net.buchlese.posa.api.bofc;
 
+import java.util.List;
+
 import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.DateTime;
 
@@ -34,6 +36,9 @@ public class PosTicket {
 	@JsonProperty
 	private boolean toBeCheckedAgain;
 
+	@JsonProperty
+	private List<PosTx> txs;
+	
 	public long getId() {
 		return id;
 	}
@@ -96,6 +101,14 @@ public class PosTicket {
 
 	public void setCancelled(boolean cancelled) {
 		this.cancelled = cancelled;
+	}
+
+	public List<PosTx> getTxs() {
+		return txs;
+	}
+
+	public void setTxs(List<PosTx> txs) {
+		this.txs = txs;
 	}
 
 

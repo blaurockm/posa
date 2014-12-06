@@ -68,4 +68,13 @@
       </createTable>
    </changeSet>
    
+   <changeSet id="prepareToSync" author="blaurock">
+      <addColumn tableName="posCashBalance">
+         <column name="lastModified" type="DATETIME"/>
+         <column name="syncTime" type="DATETIME"/>
+         <column name="syncAgain" type="boolean"/>
+         <column name="sendAgain" type="boolean"/>
+      </addColumn>
+   </changeSet>
+   
 </databaseChangeLog>

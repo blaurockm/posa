@@ -15,7 +15,6 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import net.buchlese.posa.api.bofc.ArticleGroup;
 import net.buchlese.posa.core.H2TcpServerManager;
-import net.buchlese.posa.core.PDFCashBalance;
 import net.buchlese.posa.core.SyncTimer;
 import net.buchlese.posa.jdbi.bofc.PayMethArgumentFactory;
 import net.buchlese.posa.jdbi.bofc.PosCashBalanceDAO;
@@ -67,8 +66,6 @@ public class PosAdapterApplication extends Application<PosAdapterConfiguration> 
 		ArticleGroup.injectMappings(config.getArticleGroupMappings());
 		// H2 mixed Mode
 		environment.lifecycle().manage(new H2TcpServerManager());
-		
-		PDFCashBalance.nameOfKasse = config.getName();
 		
 	    final DBIFactory posDbfactory = new DBIFactory();
 	    config.getPointOfSaleDB().setInitialSize(0); // lässt sich nicht über config einstellen

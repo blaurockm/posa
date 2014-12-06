@@ -1,5 +1,7 @@
 package net.buchlese.posa.resources;
 
+import io.dropwizard.views.View;
+
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -19,10 +21,10 @@ import javax.ws.rs.core.StreamingOutput;
 import net.buchlese.posa.api.bofc.PosCashBalance;
 import net.buchlese.posa.core.AccountingExport;
 import net.buchlese.posa.core.CashBalance;
-import net.buchlese.posa.core.PDFCashBalance;
 import net.buchlese.posa.core.Validator;
 import net.buchlese.posa.jdbi.bofc.PosCashBalanceDAO;
 import net.buchlese.posa.jdbi.bofc.PosTicketDAO;
+import net.buchlese.posa.view.CashBalView;
 
 import org.joda.time.DateTime;
 
@@ -73,23 +75,39 @@ public class PosCashBalanceResource {
 		return fetchBalanceForDate(date);
 	}
 
-	@Produces({"application/pdf"})
 	@GET
-	@Path("/pdf/{date}")
-	public StreamingOutput fetchPdfForDate(@PathParam("date") String date)  {
-	    return new StreamingOutput() {
-	        public void write(OutputStream output) throws IOException, WebApplicationException {
-	            try {
-	                PDFCashBalance generator = new PDFCashBalance(fetchBalanceForDate(date));
-	                generator.generatePDF(output);
-	            } catch (Exception e) {
-	                throw new WebApplicationException(e);
-	            }
-                output.flush();
-	        }
-	    };	
+	@Path("/complete/{date}")
+	public PosCashBalance fetchCompleteForDate(@PathParam("date") String date)  {
+		PosCashBalance bal = fetchBalanceForDate(date);
+		new CashBalance(ticketDao).amendTickets(bal);
+		return bal;
 	}
 
+	@Produces({"text/html"})
+	@GET
+	@Path("/view/{date}")
+	public View fetchViewForDate(@PathParam("date") String date)  {
+		PosCashBalance cb = fetchBalanceForDate(date);
+		return new CashBalView(cb);
+	}
+
+	@Produces({"text/html"})
+	@GET
+	@Path("/resync/{date}")
+	public View resyncBalanceForDate(@PathParam("date") String date)  {
+		PosCashBalance cb = fetchBalanceForDate(date);
+		return new CashBalView(cb);
+	}
+
+	@Produces({"text/html"})
+	@GET
+	@Path("/sendbof/{date}")
+	public View sendAgainBalanceForDate(@PathParam("date") String date)  {
+		PosCashBalance cb = fetchBalanceForDate(date);
+		return new CashBalView(cb);
+	}
+
+	
 	@Produces(MediaType.TEXT_PLAIN)
 	@GET
 	@Path("/extended/{date}")

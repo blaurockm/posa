@@ -66,15 +66,33 @@ function(dom, domConstruct, JsonRest, Button, Chart, Tooltip, Pie, DataGrid, Obj
                selectionMode : 'single',
                autoWidth : true
         }, "balGrid");
-//        balGridUi.on("RowClick", function(evt){
-//            var idx = evt.rowIndex;
-//            var pdfembed = dom.byId("balpdf");
-//            domConstruct.empty(pdfembed);
-//            currentBalance = balGridUi.getItem(idx); // globale speicherung
-//            pdfembed.src = '/cashbalance/pdf/' + currentBalance.abschlussId;
-//        }, true);
+        balGridUi.on("RowClick", function(evt){
+            var idx = evt.rowIndex;
+            var pdfembed = dom.byId("balpdf");
+            domConstruct.empty(pdfembed);
+            currentBalance = balGridUi.getItem(idx); // globale speicherung
+            pdfembed.src = '/cashbalance/view/' + currentBalance.abschlussId;
+        }, true);
         balGridUi.startup();
         
+        var showShowButton = new Button({
+            label: "Show",
+            onClick: function(){
+                var pdfembed = dom.byId("balpdf")
+                domConstruct.empty(pdfembed);
+                pdfembed.src = '/cashbalance/view/' + currentBalance.abschlussId;
+            }
+        }, "showButton").startup();
+
+        var showShowJSONButton = new Button({
+            label: "JSON",
+            onClick: function(){
+                var pdfembed = dom.byId("balpdf")
+                domConstruct.empty(pdfembed);
+                pdfembed.src = '/cashbalance/complete/' + currentBalance.abschlussId;
+            }
+        }, "showJSONButton").startup();
+
         var fibuExportButton = new Button({
             label: "FiBu-Export",
             onClick: function(){
@@ -85,13 +103,31 @@ function(dom, domConstruct, JsonRest, Button, Chart, Tooltip, Pie, DataGrid, Obj
         }, "balExportButton").startup();
         
         var showGroyDetailsButton = new Button({
-            label: "schmutzige Details",
+            label: "Details",
             onClick: function(){
                 var pdfembed = dom.byId("balpdf")
                 domConstruct.empty(pdfembed);
                 pdfembed.src = '/cashbalance/extended/' + currentBalance.abschlussId;
             }
         }, "goryDetailsButton").startup();
+
+        var showResyncButton = new Button({
+            label: "Resync K",
+            onClick: function(){
+                var pdfembed = dom.byId("balpdf")
+                domConstruct.empty(pdfembed);
+                pdfembed.src = '/cashbalance/resync/' + currentBalance.abschlussId;
+            }
+        }, "resyncButton").startup();
+
+        var showResendButton = new Button({
+            label: "Send Bof",
+            onClick: function(){
+                var pdfembed = dom.byId("balpdf")
+                domConstruct.empty(pdfembed);
+                pdfembed.src = '/cashbalance/sendbof/' + currentBalance.abschlussId;
+            }
+        }, "sendAgainButton").startup();
 
     },
     updateBalGrid = function(newVal ) {

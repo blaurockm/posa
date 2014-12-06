@@ -5,7 +5,7 @@ import org.joda.time.DateTime;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class PosTx {
+public class PosTx implements Comparable<PosTx> {
 
 	@NotEmpty
 	@JsonProperty
@@ -205,6 +205,11 @@ public class PosTx {
 	}
 	public void setIsbn(String isbn) {
 		this.isbn = isbn;
+	}
+
+	@Override
+	public int compareTo(PosTx o) {
+		return belegIdx - o.belegIdx;
 	}
 	
 }

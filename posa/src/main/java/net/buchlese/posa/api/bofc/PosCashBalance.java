@@ -4,6 +4,7 @@ import io.dropwizard.jackson.Jackson;
 
 import java.io.IOException;
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.xml.bind.annotation.XmlRootElement;
@@ -92,6 +93,8 @@ public class PosCashBalance {
 	private DateTime firstCovered;
 	@JsonProperty
 	private DateTime lastCovered;
+	@JsonProperty
+	private List<PosTicket> tickets;
 	
 	// sich selber als json-object ausgeben
 	@JsonIgnore
@@ -351,6 +354,14 @@ public class PosCashBalance {
 
 	public void setExportDate(DateTime exportDate) {
 		this.exportDate = exportDate;
+	}
+
+	public List<PosTicket> getTickets() {
+		return tickets;
+	}
+
+	public void setTickets(List<PosTicket> tickets) {
+		this.tickets = tickets;
 	}
 	
 }

@@ -4,7 +4,7 @@
 
    <groupId>net.buchlese</groupId>
    <artifactId>posa</artifactId>
-   <version>0.0.1-SNAPSHOT</version>
+   <version>0.5-SNAPSHOT</version>
    <packaging>jar</packaging>
 
    <name>posa</name>
@@ -67,17 +67,6 @@
          <groupId>com.sun.xml.bind</groupId>
          <artifactId>jaxb-impl</artifactId>
          <version>2.2.7</version>
-      </dependency>
-      <dependency>
-         <groupId>org.apache.xmlgraphics</groupId>
-         <artifactId>fop</artifactId>
-         <version>1.0</version>
-         <exclusions>
-            <exclusion>
-               <artifactId>xalan</artifactId>
-               <groupId>xalan</groupId>
-            </exclusion>
-         </exclusions>
       </dependency>
    </dependencies>
 

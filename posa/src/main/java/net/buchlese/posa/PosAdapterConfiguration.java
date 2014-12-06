@@ -10,26 +10,13 @@ import java.util.Map;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-import org.apache.fop.apps.FopFactory;
-import org.joda.time.LocalDate;
-
 import net.buchlese.posa.api.bofc.ArticleGroup;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.joda.time.LocalDate;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class PosAdapterConfiguration extends Configuration {
-	
-	@JsonIgnore
-	private static FopFactory fopFactory;
-	public static FopFactory getFopFactory() {
-		if (fopFactory == null) {
-			// Step 1: Construct a FopFactory by specifying a reference to the configuration file
-			// (reuse if you plan to render multiple documents!)
-			fopFactory = FopFactory.newInstance();
-		}
-		return fopFactory;
-	}
 	
     @Valid
     @NotNull
