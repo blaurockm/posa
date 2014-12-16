@@ -1,7 +1,20 @@
 #!/bin/bash
+### BEGIN INIT INFO
+# Provides:          posa
+# Default-Start:     2 3 4 5
+# Default-Stop:      
+# Short-Description: Adapter for PointOfSale-Database
+# Description:       posa is a program that pull the point-of-sale-database
+#                    in a regular interval a provides a web-app for accessing
+#                    this information. Also for providing info to a central database
+### END INIT INFO
+
+set -e
+
+# /etc/init.d/posa: start and stop the posa daemon
+
 #
 # chkconfig: 345 99 05
-# description: Java deamon script
 #
 # A non-SUSE Linux start/stop script for Java daemons.
 #

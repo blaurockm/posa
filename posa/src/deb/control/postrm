@@ -1,0 +1,8 @@
+#!/bin/sh -e
+# postrm for posa
+
+if [ "$1" = "purge" ] ; then
+    update-rc.d posa remove >/dev/null
+fi
+
+exit 0

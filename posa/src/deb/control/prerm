@@ -1,0 +1,31 @@
+#!/bin/sh -e
+# prerm for rsync
+
+case "$1" in
+    remove|deconfigure)
+	if [ -h /usr/doc/posa ]; then
+	    rm -f /usr/doc/posa
+	fi
+	if [ -x /etc/init.d/posa ]; then
+		if [ -x /usr/sbin/invoke-rc.d ]; then
+			invoke-rc.d posa stop
+		else
+			/etc/init.d/posa stop
+		fi
+	fi
+	;;
+    upgrade)
+	if [ -h /usr/doc/posa ]; then
+	    rm -f /usr/doc/posa
+	fi
+       ;;
+    failed-upgrade)
+        ;;
+    *)
+        echo "prerm called with unknown argument \`$1'" >&2
+        exit 0
+	;;
+esac
+
+exit 0
+
