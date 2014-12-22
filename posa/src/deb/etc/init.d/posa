@@ -1,15 +1,17 @@
 #!/bin/bash
 ### BEGIN INIT INFO
 # Provides:          posa
+# Required-Start:
+# Required-Stop:
 # Default-Start:     2 3 4 5
-# Default-Stop:      
+# Default-Stop:      0 1 6
 # Short-Description: Adapter for PointOfSale-Database
 # Description:       posa is a program that pull the point-of-sale-database
 #                    in a regular interval a provides a web-app for accessing
 #                    this information. Also for providing info to a central database
 ### END INIT INFO
 
-set -e
+#set -e
 
 # /etc/init.d/posa: start and stop the posa daemon
 
@@ -34,8 +36,8 @@ JAVAOPTS="-XX:+HeapDumpOnOutOfMemoryError \
 
 PROG=$(basename $0)
 PROG_HOME="/usr/share/$PROG"
-LOG_DIR="/var/log"
-LOG_FILE="$LOG_DIR/$PROG.log"
+LOG_DIR="/var/log/$PROG"
+LOG_FILE="$LOG_DIR/$PROG-console.log"
 PROG_CONF="/etc/$PROG/$PROG.yaml"
 PROG_JAR="$PROG_HOME/$PROG.jar"
 JAVA_PARAMS="$JAVAOPTS \
