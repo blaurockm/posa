@@ -119,6 +119,7 @@ registry: "dijit/registry"
                <button id="goryDetailsButton" type="button"></button>
                <button id="resyncButton" type="button"></button>
                <button id="sendAgainButton" type="button"></button>
+               <button id="printButton" type="button"></button>
     </div>
     <div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="splitter:true, region:'center'">
         <iframe id="balpdf" style="height:100%; width:100%;background-color:#eeeeee;"></iframe>

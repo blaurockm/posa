@@ -42,6 +42,12 @@ public class PosAdapterApplication extends Application<PosAdapterConfiguration> 
 	private Timer syncTimer;
 	private Lock syncLock;
 	
+	public static String posName;
+	
+	public static String getPosName() {
+		return posName;
+	}
+	
 	public static void main(String[] args) throws Exception {
 		new PosAdapterApplication().run(args);
 	}
@@ -64,6 +70,7 @@ public class PosAdapterApplication extends Application<PosAdapterConfiguration> 
 	@Override
 	public void run(PosAdapterConfiguration config, Environment environment) throws Exception {
 		ArticleGroup.injectMappings(config.getArticleGroupMappings());
+		posName = config.getName();
 		// H2 mixed Mode
 		environment.lifecycle().manage(new H2TcpServerManager());
 		

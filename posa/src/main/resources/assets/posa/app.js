@@ -129,6 +129,13 @@ function(dom, domConstruct, JsonRest, Button, Chart, Tooltip, Pie, DataGrid, Obj
             }
         }, "sendAgainButton").startup();
 
+        var printButton = new Button({
+            label: "Abschluss drucken",
+            onClick: function(){
+            	var pdfembed = dom.byId("balpdf"); pdfembed.focus(); pdfembed.contentWindow.print();
+            }
+        }, "printButton").startup();
+
     },
     updateBalGrid = function(newVal ) {
     	  store.query({"date": newVal}).then(function(balances){
