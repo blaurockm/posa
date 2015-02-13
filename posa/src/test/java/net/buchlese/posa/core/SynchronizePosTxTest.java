@@ -55,6 +55,11 @@ public class SynchronizePosTxTest {
 			public KassenVorgang fetch(long belegNr, int belegIdx) {
 				return null;
 			}
+
+			@Override
+			public List<KassenVorgang> fetchAllBetween(DateTime fromDate, DateTime tillDate) {
+				return null;
+			}
 		};
 	}
 	private PosTxDAO getTxDao() {
@@ -93,6 +98,12 @@ public class SynchronizePosTxTest {
 			@Override
 			public List<PosTx> fetch(DateTime vonDatum, DateTime bisDatum) {
 				return null;
+			}
+
+			@Override
+			public void deleteTxBetween(DateTime vonDatum, DateTime bisDatum) {
+				// TODO Auto-generated method stub
+				
 			}
 		};
 	}

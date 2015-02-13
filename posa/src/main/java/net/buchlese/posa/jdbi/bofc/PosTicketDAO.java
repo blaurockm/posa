@@ -71,4 +71,7 @@ public interface PosTicketDAO {
 	@SqlQuery("select * from posticket where belegnr = :belegnr")
 	PosTicket fetch(@Bind("belegnr") long belegnr);
 
+	@SqlUpdate("delete from posticket where timest between :vonDatum and :bisDatum")
+	void deleteTicketsBetween(@Bind("vonDatum") DateTime vonDatum, @Bind("bisDatum") DateTime bisDatum);
+
 }

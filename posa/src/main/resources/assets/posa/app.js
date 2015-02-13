@@ -58,6 +58,8 @@ function(dom, domConstruct, JsonRest, Button, Chart, Tooltip, Pie, DataGrid, Obj
                 { name: "Datum", field: "abschlussId", width: "90px"},
                 { name: "Umsatz", field: "revenue", styles: 'text-align: right;',width: "90px", formatter: formatMoney},
                 { name: "Ges. Ertrag", field: "profit", styles: 'text-align: right;',width: "90px", formatter: formatMoney},
+                { name: "Anf", field: "cashStart", styles: 'text-align: right;',width: "90px", formatter: formatMoney},
+                { name: "End", field: "cashEnd", styles: 'text-align: right;',width: "90px", formatter: formatMoney},
                 { name: "check", field: "checked", width: "50px", type: dojox.grid.cells.Bool, editable: true },
                 { name: "FiBu", field: "exported", width: "50px", type: dojox.grid.cells.Bool, editable: true},
                 { name: "zur FiBu am", field: "exportDate", width: "120px", formatter : formatDateTime},

@@ -35,33 +35,29 @@ public class SynchronizePosTx extends AbstractSynchronizer {
 
 	public List<PosTx> fetchNewTx() throws Exception {
 		Optional<DateTime> maxDatum = Optional.fromNullable(txDAO.getMaxDatum());
-		Optional<Integer> maxId = Optional.fromNullable(txDAO.getMaxId());
-
-		long id = maxId.or(0);
 
 		List<KassenVorgang> vorgs = vorgangsDao.fetchAllAfter(maxDatum.or(syncStart.toDateTimeAtStartOfDay()));
 
 		// Neue Kassenvorgänge holen und speichern
+		// wir geben zurück was wir geholt haben
+		return createNewTx(vorgs);
+	}
+	
+	public List<PosTx> createNewTx(List<KassenVorgang> vorgs) {
+		Optional<Integer> maxId = Optional.fromNullable(txDAO.getMaxId());
+
+		long id = maxId.or(0);
 		List<PosTx> res = new ArrayList<>();
 		for (KassenVorgang vorg : vorgs) {
-			if (vorg.getGesamt() == null || vorg.getMWSt() == null) {
-				// ein seltsamer beleg, den merken wir uns für später
-				PosTx tx = createNewTx(vorg, ++id);
-				tx.setToBeIgnored(true); // vorläufig ignorieren
-				tx.setToBeCheckedAgain(true); // später nochmal angucken
-				res.add(tx);
-			}
 			if (vorg.getGesamt() != null && vorg.getMWSt() != null) {
-				// es schein ein normaler Beleg zu sein
 				PosTx tx = createNewTx(vorg, ++id);
 				res.add(tx);
 			}
 		}
 		txDAO.insertAll(res.iterator());
-
-		// wir geben zurück was wir geholt haben
 		return res;
 	}
+	
 	
 	public void updateExistingTx() throws Exception {
 		// alte Kassenvorgänge nochmals prüfen

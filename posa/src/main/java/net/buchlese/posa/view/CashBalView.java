@@ -2,7 +2,6 @@ package net.buchlese.posa.view;
 
 import freemarker.ext.beans.BeanModel;
 import freemarker.ext.beans.BeansWrapper;
-import freemarker.ext.beans.NumberModel;
 import freemarker.template.TemplateHashModel;
 import freemarker.template.TemplateMethodModelEx;
 import freemarker.template.TemplateModelException;
@@ -11,12 +10,12 @@ import io.dropwizard.views.View;
 
 import java.util.List;
 
-import org.joda.time.DateTime;
-
 import net.buchlese.posa.PosAdapterApplication;
 import net.buchlese.posa.api.bofc.PaymentMethod;
 import net.buchlese.posa.api.bofc.PosCashBalance;
 import net.buchlese.posa.api.bofc.Tax;
+
+import org.joda.time.DateTime;
 
 public class CashBalView extends View {
 
@@ -50,6 +49,7 @@ public class CashBalView extends View {
     
     public TemplateMethodModelEx getMoney() {
     	return new TemplateMethodModelEx() {
+			@SuppressWarnings("rawtypes")
 			@Override
 			public Object exec(List args) throws TemplateModelException {
 				if (args.size() != 1) {
@@ -69,6 +69,7 @@ public class CashBalView extends View {
 
     public TemplateMethodModelEx getLocalDate() {
     	return new TemplateMethodModelEx() {
+			@SuppressWarnings("rawtypes")
 			@Override
 			public Object exec(List args) throws TemplateModelException {
 				if (args.size() != 1) {

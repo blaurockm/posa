@@ -46,7 +46,7 @@ public class SyncTimer extends TimerTask {
 
     	    SynchronizePosTx syncTx = new SynchronizePosTx(posTxDao, vorgangDao, syncStart);
 	    	SynchronizePosTicket snycTickets = new SynchronizePosTicket(posTicketDao, belegDao, syncStart);
-	    	SynchronizePosCashBalance syncBalance = new SynchronizePosCashBalance(posCashBalanceDao, posTicketDao, abschlussDao, syncStart);
+	    	SynchronizePosCashBalance syncBalance = new SynchronizePosCashBalance(posCashBalanceDao, posTicketDao, posTxDao, abschlussDao, belegDao, vorgangDao, syncStart);
 
 	    	syncTx.fetchNewTx();
 	    	syncTx.updateExistingTx();

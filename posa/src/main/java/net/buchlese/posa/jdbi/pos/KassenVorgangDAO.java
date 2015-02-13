@@ -21,6 +21,9 @@ public interface KassenVorgangDAO {
 	@SqlQuery("select * from [dbo].posakassvorg where datum> :datum order by datum asc ")
 	List<KassenVorgang> fetchAllAfter(@Bind("datum") DateTime maxDatum);
 
+	@SqlQuery("select * from [dbo].posakassvorg where datum between :vonDatum  and :bisDatum ")
+	List<KassenVorgang> fetchAllBetween(@Bind("vonDatum") DateTime fromDate, @Bind("bisDatum") DateTime tillDate);
+
 	@SqlQuery("select top 10 * from [dbo].posakassvorg order by datum desc ")
 	List<KassenVorgang> fetchLast();
 

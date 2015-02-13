@@ -19,16 +19,16 @@ posDb:
   user: sa
   password: master
 
-  user: fibu
-  password: kasse2fibu
+#  user: fibu
+#  password: kasse2fibu
   
   # the JDBC URL
   #####  lokale datenbank
 #  url: jdbc:jtds:sqlserver://localhost:1433/librasbak
   ##### im gschaeft Sulz
-#  url: jdbc:jtds:sqlserver://localhost:7891/libras
+  url: jdbc:jtds:sqlserver://localhost:7891/libras
   ##### im gschaeft Dornhan
-  url: jdbc:jtds:sqlserver://localhost:7890/libras
+#  url: jdbc:jtds:sqlserver://localhost:7890/libras
 
 
 articleGroupMappings:
@@ -41,11 +41,12 @@ articleGroupMappings:
   gutschSulz: { match : 'A00020TT', text : 'Gutschein and. Filiale',key : 'gutschSulz', type : 'COUPON', account : '1373' }
   zeitschrift: { match : 'A000082U', text : 'Zeitschriften',key : 'zeitschrift', type : 'GOOD', marge : 0.19 }
   gutsch: { match : 'Gutschein', text : 'Gutschein',key : 'gutsch', type : 'COUPON', account : '1371' }
+  schokolade: { match : 'A00008D0|A00008CZ', text : 'Schokolade',key : 'schokolade', type : 'GOOD', marge : 0.40 }
   karten: { match : '/k.*', text : 'Karten',key : 'karten', type : 'GOOD', marge : 0.5 }
   editio: { match : '/a.*', text : 'Edition',key : 'editio', type : 'GOOD', marge : 0.5 }
   book: { match : 'mwst=2', text : 'Bücher',key : 'book', type : 'GOOD', marge : 0.3 }
   nonbook: { match : 'mwst=1', text : 'NonBook',key : 'nonbook', type : 'GOOD', marge : 0.5 }
-  
+ 
 name: Test-Kasse  
 
 idNumRangeStart: 7000

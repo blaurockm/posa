@@ -9,11 +9,14 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.views.ViewBundle;
 
+import java.util.Queue;
 import java.util.Timer;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import net.buchlese.posa.api.bofc.ArticleGroup;
+import net.buchlese.posa.api.bofc.PosCashBalance;
 import net.buchlese.posa.core.H2TcpServerManager;
 import net.buchlese.posa.core.SyncTimer;
 import net.buchlese.posa.jdbi.bofc.PayMethArgumentFactory;
@@ -41,6 +44,8 @@ public class PosAdapterApplication extends Application<PosAdapterConfiguration> 
 
 	private Timer syncTimer;
 	private Lock syncLock;
+	
+	public static Queue<PosCashBalance> resyncQueue = new ConcurrentLinkedQueue<PosCashBalance>();
 	
 	public static String posName;
 	

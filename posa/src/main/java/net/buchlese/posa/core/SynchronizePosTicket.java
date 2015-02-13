@@ -29,12 +29,18 @@ public class SynchronizePosTicket extends AbstractSynchronizer {
 
 	public List<PosTicket> fetchNewTickets() throws Exception {
 		Optional<DateTime> maxDatum = Optional.fromNullable(ticketDAO.getMaxTimestamp());
-		Optional<Integer> maxId = Optional.fromNullable(ticketDAO.getMaxId());
-
-		long id = maxId.or(0);
 
 		List<KassenBeleg> belege = belegDao.fetchAllAfter(maxDatum.or(syncStart.toDateTimeAtStartOfDay()));
 
+		// convert KassenVorgang to posTx
+		return createTickets(belege);
+	}
+
+	public List<PosTicket> createTickets(List<KassenBeleg> belege) {
+		Optional<Integer> maxId = Optional.fromNullable(ticketDAO.getMaxId());
+
+		long id = maxId.or(0);
+		
 		// convert KassenVorgang to posTx
 		List<PosTicket> res = new ArrayList<>();
 		for (KassenBeleg beleg : belege) {
@@ -48,7 +54,8 @@ public class SynchronizePosTicket extends AbstractSynchronizer {
 		
 		return res;
 	}
-
+	
+	
 	public void updateExistingTickets() throws Exception {
 		List<KassenBeleg> lastBelege = belegDao.fetchLast();
 		for (KassenBeleg orig : lastBelege) {
@@ -62,6 +69,11 @@ public class SynchronizePosTicket extends AbstractSynchronizer {
 		// alte Kassenbelege nochmals prüfen
 		// toBeCheckedAgain == geparkte belege 
 		List<PosTicket> toBeCheckedAgain = ticketDAO.fetchRevisitations(new DateTime().minusHours(48));
+		updateTickets(toBeCheckedAgain);
+		
+	}
+
+	public void updateTickets(List<PosTicket> toBeCheckedAgain) {
 		for (PosTicket checker : toBeCheckedAgain) {
 			KassenBeleg orig = belegDao.fetch(checker.getBelegNr());
 			if (updateTicket(orig, checker)) {
@@ -69,9 +81,8 @@ public class SynchronizePosTicket extends AbstractSynchronizer {
 				ticketDAO.update(checker);
 			}
 		}
-
 	}
-
+	
 
 	private PosTicket createNewTicket(KassenBeleg beleg, long nextId) {
 		PosTicket tx = new PosTicket();

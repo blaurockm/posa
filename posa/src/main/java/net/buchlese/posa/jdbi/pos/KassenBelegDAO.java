@@ -20,6 +20,9 @@ public interface KassenBelegDAO {
 	@SqlQuery("select top 10 * from [dbo].kassenbelege order by datum desc ")
 	List<KassenBeleg> fetchLast();
 
+	@SqlQuery("select * from [dbo].kassenbelege where datum between :vonDatum  and :bisDatum ")
+	List<KassenBeleg> fetchAllBetween(@Bind("vonDatum") DateTime fromDate, @Bind("bisDatum") DateTime tillDate);
+
 	@SqlQuery("select * from [dbo].posakassvorg where belegnr = :belegnr and kassennr = :kassennr ")
 	List<KassenVorgang> fetchForBeleg(@BindBean KassenBeleg beleg);
 

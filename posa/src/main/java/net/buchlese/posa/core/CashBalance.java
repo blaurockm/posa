@@ -38,9 +38,10 @@ public class CashBalance {
 	}
 
 	public PosCashBalance computeBalanceFast(DateTime from, DateTime till) {
+		PosCashBalance balance = createBalance(from, till);
 		List<PosTx> txs = ticketDAO.fetchTxfast(from, till);
 		List<PosTicket> tickets = ticketDAO.fetch(from, till);
-		return computeBalance(from, till, txs, tickets);
+		return updateBalance(balance, txs, tickets);
 	}
 	
 	public List<PosTx> amendTickets(PosCashBalance bal) {
@@ -60,10 +61,20 @@ public class CashBalance {
 		return txs;
 	}
 
-	public PosCashBalance computeBalance(DateTime from, DateTime till) {
-		List<PosTx> txs = ticketDAO.fetchTx(from, till);
-		List<PosTicket> tickets = ticketDAO.fetch(from, till);
-		return computeBalance(from, till, txs, tickets);
+	public PosCashBalance createBalance(DateTime from, DateTime till) {
+		PosCashBalance balance = new PosCashBalance();
+		balance.setCreationtime(new DateTime());
+		balance.setExported(false);
+		balance.setExportDate(null);
+		balance.setFirstCovered(from);
+		balance.setLastCovered(till);
+		return balance;
+	}
+	
+	public PosCashBalance updateBalance(PosCashBalance bal) {
+		List<PosTx> txs = ticketDAO.fetchTx(bal.getFirstCovered(), bal.getLastCovered());
+		List<PosTicket> tickets = ticketDAO.fetch(bal.getFirstCovered(), bal.getLastCovered());
+		return updateBalance(bal, txs, tickets);
 	}
 
 	/**
@@ -75,14 +86,7 @@ public class CashBalance {
 	 * @param tickets  die Liste der Belege
 	 * @return ein Tagesabschluss, Summen-Bildung
 	 */
-	public PosCashBalance computeBalance(DateTime from, DateTime till,List<PosTx> txs, List<PosTicket> tickets) {
-		PosCashBalance balance = new PosCashBalance();
-		balance.setCreationtime(new DateTime());
-		balance.setExported(false);
-		balance.setExportDate(null);
-		balance.setFirstCovered(from);
-		balance.setLastCovered(till);
-
+	public PosCashBalance updateBalance(PosCashBalance balance, List<PosTx> txs, List<PosTicket> tickets) {
 		balance.setTicketCount((int) tickets.stream().filter(t -> (t.isCancel() && t.isCancelled()) == false).count());
 
 		if (txs.isEmpty()) {

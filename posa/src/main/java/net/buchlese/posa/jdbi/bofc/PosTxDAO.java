@@ -44,5 +44,7 @@ public interface PosTxDAO {
 
 	@SqlQuery("select * from postx where belegnr = :belegNr and belegidx = :lfdNummer")
 	PosTx fetch(@Bind("belegNr") int belegNr, @Bind("lfdNummer") int lfdNummer);
-	
+
+	@SqlUpdate("delete from postx where timest between :vonDatum and :bisDatum")
+	void deleteTxBetween(@Bind("vonDatum") DateTime vonDatum, @Bind("bisDatum") DateTime bisDatum);
 }

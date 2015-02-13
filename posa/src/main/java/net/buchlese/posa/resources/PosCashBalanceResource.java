@@ -18,7 +18,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.StreamingOutput;
 
-import net.buchlese.posa.PosAdapterConfiguration;
+import net.buchlese.posa.PosAdapterApplication;
 import net.buchlese.posa.api.bofc.PosCashBalance;
 import net.buchlese.posa.core.AccountingExport;
 import net.buchlese.posa.core.CashBalance;
@@ -97,6 +97,7 @@ public class PosCashBalanceResource {
 	@Path("/resync/{date}")
 	public View resyncBalanceForDate(@PathParam("date") String date)  {
 		PosCashBalance cb = fetchBalanceForDate(date);
+		PosAdapterApplication.resyncQueue.offer(cb);
 		return new CashBalView(cb);
 	}
 
@@ -132,7 +133,7 @@ public class PosCashBalanceResource {
 			DateTime today = new DateTime();
 			DateTime startOfToday = today.hourOfDay().setCopy(0); // stunde 0
 			CashBalance balCOmp = new CashBalance(ticketDao);
-			PosCashBalance bal = balCOmp.computeBalance(startOfToday, today);
+			PosCashBalance bal = balCOmp.computeBalanceFast(startOfToday, today);
 			return bal;
 		}
 		if ("thisweek".equals(date)) {
