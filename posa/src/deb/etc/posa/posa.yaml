@@ -9,7 +9,7 @@ articleGroupMappings:
   gutschDorn: { match : 'A00008BX', text : 'Gutschein and. Filiale',key : 'gutschDorn', type : 'COUPON', account : '1371' }
   gutschSulz: { match : 'A00020TT', text : 'Gutschein and. Filiale',key : 'gutschSulz', type : 'COUPON', account : '1373' }
   zeitschrift: { match : 'A000082U', text : 'Zeitschriften',key : 'zeitschrift', type : 'GOOD', marge : 0.19 }
-  gutsch: { match : 'Gutschein', text : 'Gutschein',key : 'gutsch', type : 'COUPON', account : '1371' }
+  gutsch: { match : '^Gutschein$', text : 'Gutschein',key : 'gutsch', type : 'COUPON', account : '1371' }
   karten: { match : '/k.*', text : 'Karten',key : 'karten', type : 'GOOD', marge : 0.5 }
   editio: { match : '/a.*', text : 'Edition',key : 'editio', type : 'GOOD', marge : 0.5 }
   book: { match : 'mwst=2', text : 'Bücher',key : 'book', type : 'GOOD', marge : 0.3 }
