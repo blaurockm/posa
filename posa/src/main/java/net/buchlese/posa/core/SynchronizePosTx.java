@@ -66,21 +66,9 @@ public class SynchronizePosTx extends AbstractSynchronizer {
 			PosTx checker = txDAO.fetch(orig.getBelegNr(), orig.getLfdNummer());
 			if (checker != null && updateTx(orig, checker)) {
 				// es hat sich was geändert;
-				checker.setToBeCheckedAgain(false); // ist diese Entscheidung richtig? Man kann nur einmal korrigieren
 				txDAO.update(checker);
 			}
 		}
-
-		List<PosTx> toBeCheckedAgain = txDAO.fetchRevisitations(new DateTime().minusHours(48));
-		for (PosTx checker : toBeCheckedAgain) {
-			KassenVorgang orig = vorgangsDao.fetch(checker.getBelegNr(), checker.getBelegIdx());
-			if (updateTx(orig, checker)) {
-				// es hat sich was geändert;
-				checker.setToBeCheckedAgain(false); // ist diese Entscheidung richtig? Man kann nur einmal korrigieren
-				txDAO.update(checker);
-			}
-		}
-		
 	}
 
 

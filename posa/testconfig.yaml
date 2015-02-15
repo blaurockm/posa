@@ -1,4 +1,4 @@
-#bofcDb:
+﻿#bofcDb:
   # the name of your JDBC driver
   #driverClass: org.h2.Driver
 
@@ -52,4 +52,8 @@ name: Test-Kasse
 idNumRangeStart: 7000
 
 syncStartDate: 2014-10-01
+
+pointOfSaleId: 6
+
+homeUrl: http://192.168.2.111:8080/acceptBalance
 

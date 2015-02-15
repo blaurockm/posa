@@ -65,12 +65,6 @@ public class SynchronizePosTicket extends AbstractSynchronizer {
 				ticketDAO.update(checker);
 			}
 		}
-
-		// alte Kassenbelege nochmals prüfen
-		// toBeCheckedAgain == geparkte belege 
-		List<PosTicket> toBeCheckedAgain = ticketDAO.fetchRevisitations(new DateTime().minusHours(48));
-		updateTickets(toBeCheckedAgain);
-		
 	}
 
 	public void updateTickets(List<PosTicket> toBeCheckedAgain) {

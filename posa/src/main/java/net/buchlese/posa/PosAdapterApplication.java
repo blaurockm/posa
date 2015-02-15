@@ -10,14 +10,16 @@ import io.dropwizard.setup.Environment;
 import io.dropwizard.views.ViewBundle;
 
 import java.util.Queue;
-import java.util.Timer;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import net.buchlese.posa.api.bofc.ArticleGroup;
 import net.buchlese.posa.api.bofc.PosCashBalance;
 import net.buchlese.posa.core.H2TcpServerManager;
+import net.buchlese.posa.core.SendTimer;
 import net.buchlese.posa.core.SyncTimer;
 import net.buchlese.posa.jdbi.bofc.PayMethArgumentFactory;
 import net.buchlese.posa.jdbi.bofc.PosCashBalanceDAO;
@@ -35,18 +37,19 @@ import net.buchlese.posa.resources.KassenVorgangResource;
 import net.buchlese.posa.resources.PosCashBalanceResource;
 import net.buchlese.posa.resources.PosTicketResource;
 import net.buchlese.posa.resources.PosTxResource;
-import net.buchlese.posa.resources.SynchronizeTask;
 
 import org.skife.jdbi.v2.DBI;
 
 
 public class PosAdapterApplication extends Application<PosAdapterConfiguration> {
 
-	private Timer syncTimer;
+	private ScheduledThreadPoolExecutor syncTimer;
 	private Lock syncLock;
 	
 	public static Queue<PosCashBalance> resyncQueue = new ConcurrentLinkedQueue<PosCashBalance>();
-	
+
+	public static Queue<PosCashBalance> homingQueue = new ConcurrentLinkedQueue<PosCashBalance>();
+
 	public static String posName;
 	
 	public static String getPosName() {
@@ -107,11 +110,12 @@ public class PosAdapterApplication extends Application<PosAdapterConfiguration> 
 
 	    environment.jersey().register(new AppResource(config));
 
-	    syncTimer = new Timer("DBsyncTimer");
+	    syncTimer = new ScheduledThreadPoolExecutor(10);
 		syncLock = new ReentrantLock();
 		SyncTimer syncTimerTask = new SyncTimer(syncLock, bofcDBI, posDBI, config.getSyncStartDate());
-		syncTimer.schedule(syncTimerTask, 5 * 60 * 1000, 3 * 60 * 1000);
-		environment.admin().addTask(new SynchronizeTask(syncTimerTask));
+		syncTimer.scheduleAtFixedRate(syncTimerTask, 5, 3, TimeUnit.MINUTES);
+		SendTimer senTimerTask = new SendTimer(config);
+		syncTimer.scheduleAtFixedRate(senTimerTask, 1, 1, TimeUnit.MINUTES);
 		
 	}
 	

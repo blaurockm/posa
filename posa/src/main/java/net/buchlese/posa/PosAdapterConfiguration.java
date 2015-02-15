@@ -39,7 +39,12 @@ public class PosAdapterConfiguration extends Configuration {
 
     @JsonProperty
     private long idNumRangeStart;
-    
+
+    @JsonProperty
+    private String homeUrl;
+
+    @JsonProperty
+    private int pointOfSaleId;
     
     public PosAdapterConfiguration() {
     	SimpleServerFactory server = new SimpleServerFactory();
@@ -80,6 +85,14 @@ public class PosAdapterConfiguration extends Configuration {
 
 	public long getIdNumRangeStart() {
 		return idNumRangeStart;
+	}
+
+	public String getHomeUrl() {
+		return homeUrl;
+	}
+
+	public int getPointOfSaleId() {
+		return pointOfSaleId;
 	}
     
 }

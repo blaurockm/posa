@@ -24,6 +24,8 @@ public class PosCashBalance {
 	@NotEmpty
 	@JsonProperty
 	private long id;
+	@JsonProperty
+	private int pointid;
 	@NotEmpty
 	@JsonProperty
 	private String abschlussId;
@@ -121,6 +123,10 @@ public class PosCashBalance {
 	@JsonIgnore
 	public void setChecked() {
 		
+	}
+	
+	public String toString() {
+		return "PosCashBalance of " + abschlussId + ", rev " + revenue / 100; 
 	}
 	
 	public long getId() {
@@ -362,6 +368,14 @@ public class PosCashBalance {
 
 	public void setTickets(List<PosTicket> tickets) {
 		this.tickets = tickets;
+	}
+
+	public int getPointid() {
+		return pointid;
+	}
+
+	public void setPointid(int pointid) {
+		this.pointid = pointid;
 	}
 	
 }
