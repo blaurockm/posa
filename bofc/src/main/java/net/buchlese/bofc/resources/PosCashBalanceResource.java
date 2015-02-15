@@ -7,7 +7,9 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.List;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -29,7 +31,6 @@ import org.joda.time.DateTime;
 import com.google.common.base.Optional;
 
 @Path("/cashbalance")
-@Produces(MediaType.APPLICATION_JSON)
 public class PosCashBalanceResource {
 
 	private final PosCashBalanceDAO dao;
@@ -42,8 +43,22 @@ public class PosCashBalanceResource {
 	}
 
 	private static String IDFORMAT = "yyyyMMdd";
+
+	@POST
+	@Path("/acceptBalance")
+	@Consumes(MediaType.APPLICATION_JSON)
+	public void acceptBalance(PosCashBalance cashBal)  {
+		Long id = dao.getIdOfExistingBalance(cashBal.getAbschlussId(), cashBal.getPointid());
+		if (id != null) {
+			dao.update(cashBal);
+		} else {
+			dao.insert(cashBal);
+		}
+	}
+	
 	
 	@GET
+	@Produces(MediaType.APPLICATION_JSON)
 	public List<PosCashBalance> fetchAll(@QueryParam("date") Optional<String> date)  {
 		if (date.isPresent()) {
 			return fetchBalancesForDate(date.get());
@@ -69,6 +84,7 @@ public class PosCashBalanceResource {
 
 	@GET
 	@Path("/{date}")
+	@Produces(MediaType.APPLICATION_JSON)
 	public PosCashBalance fetchForDate(@PathParam("date") String date)  {
 		return fetchBalanceForDate(date);
 	}

@@ -4,6 +4,7 @@ import io.dropwizard.jackson.Jackson;
 
 import java.io.IOException;
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.xml.bind.annotation.XmlRootElement;
@@ -23,6 +24,8 @@ public class PosCashBalance {
 	@NotEmpty
 	@JsonProperty
 	private long id;
+	@JsonProperty
+	private int pointid;
 	@NotEmpty
 	@JsonProperty
 	private String abschlussId;
@@ -92,7 +95,9 @@ public class PosCashBalance {
 	private DateTime firstCovered;
 	@JsonProperty
 	private DateTime lastCovered;
-	
+	@JsonProperty
+	private List<PosTicket> tickets;
+
 	// sich selber als json-object ausgeben
 	@JsonIgnore
 	public String getBalanceSheet() throws JsonProcessingException {
@@ -118,6 +123,10 @@ public class PosCashBalance {
 	@JsonIgnore
 	public void setChecked() {
 		
+	}
+	
+	public String toString() {
+		return "PosCashBalance of " + abschlussId + ", rev " + revenue / 100; 
 	}
 	
 	public long getId() {
@@ -351,6 +360,22 @@ public class PosCashBalance {
 
 	public void setExportDate(DateTime exportDate) {
 		this.exportDate = exportDate;
+	}
+
+	public List<PosTicket> getTickets() {
+		return tickets;
+	}
+
+	public void setTickets(List<PosTicket> tickets) {
+		this.tickets = tickets;
+	}
+
+	public int getPointid() {
+		return pointid;
+	}
+
+	public void setPointid(int pointid) {
+		this.pointid = pointid;
 	}
 	
 }

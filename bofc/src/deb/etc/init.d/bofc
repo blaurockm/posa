@@ -15,6 +15,10 @@
 JAVA_HOME=/opt/jdk8
 
 JAVAOPTS="-XX:+HeapDumpOnOutOfMemoryError \
+          -Xdebug \
+          -Xnoagent \
+          -Djava.compiler=NONE \
+          -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005 \
           -Dcom.sun.management.jmxremote.port=9111 \
           -Dcom.sun.management.jmxremote.ssl=false \
           -Dcom.sun.management.jmxremote.authenticate=false"
@@ -30,9 +34,9 @@ JAVA_PARAMS="$JAVAOPTS \
              server $PROG_CONF"
 
 serviceNameLo=$PROG                                        # service name with the first letter in lowercase
-serviceName="PoS-A"                                        # service name
-serviceUser="pi"                                           # OS user name for the service
-serviceGroup="pi"                                          # OS group name for the service
+serviceName="BackOfc"                                        # service name
+serviceUser="linaro"                                           # OS user name for the service
+serviceGroup="linaro"                                          # OS group name for the service
 applDir=$PROG_HOME                                         # home directory of the service application
 serviceUserHome="/home/$serviceUser"                       # home directory of the service user
 serviceLogFile=$LOG_FILE                                   # log file for StdOut/StdErr

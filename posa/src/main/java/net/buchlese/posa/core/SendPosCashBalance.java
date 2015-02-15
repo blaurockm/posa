@@ -7,6 +7,8 @@ import java.net.ConnectException;
 import java.util.List;
 import java.util.function.Consumer;
 
+import javax.ws.rs.core.MediaType;
+
 import net.buchlese.posa.PosAdapterConfiguration;
 import net.buchlese.posa.api.bofc.PosCashBalance;
 
@@ -30,41 +32,43 @@ public class SendPosCashBalance implements Consumer<PosCashBalance>{
 		this.homeUrl = config.getHomeUrl();
 		this.om = Jackson.newObjectMapper();
 	}
-	
-	
+
+
 	public void sendCashBalances(List<PosCashBalance> bals) {
 		for (PosCashBalance bal: bals) {
 			accept(bal);
 		}
 	}
-	
+
 	@Override
 	public void accept(PosCashBalance bal) {
 		if (homeUrl == null || homeUrl.isEmpty() || homeUrl.equals("homeless") ) {
 			// do nothing;
 			return;
 		}
-		
+
 		bal.setPointid(pointId);
-        // Get target URL
-       
-       try(CloseableHttpClient httpclient = HttpClients.createDefault()) {
-           HttpPost post = new HttpPost(this.homeUrl);
-           StringEntity cashBalEntity = new StringEntity(om.writeValueAsString(bal),
-           		ContentType.create("application/json"));
-           
-           post.setEntity(cashBalEntity);
-           
-           try(CloseableHttpResponse response = httpclient.execute(post)) {
-              	System.out.println("----------");
-              	System.out.println(":::" + response.getStatusLine());
-           }
-       } catch (ConnectException e) {
-    	   // wir konnten keine Verbindung aufbauen.
-    	   // mark PosCashBalance for retry next hour
-       } catch (IOException e) {
-		   e.printStackTrace();
-       }
-	}
-	
+		// Get target URL
+
+		try(CloseableHttpClient httpclient = HttpClients.createDefault()) {
+			HttpPost post = new HttpPost(this.homeUrl);
+			StringEntity cashBalEntity = new StringEntity(om.writeValueAsString(bal),
+					ContentType.create(MediaType.APPLICATION_JSON));
+
+			post.setEntity(cashBalEntity);
+
+			try(CloseableHttpResponse response = httpclient.execute(post)) {
+				System.out.println("----------");
+				System.out.println(":::" + response.getStatusLine());
+			}
+		} catch (ConnectException e) {
+			// wir konnten keine Verbindung aufbauen.
+			// mark PosCashBalance for retry next hour
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+	} 
+
+
 }

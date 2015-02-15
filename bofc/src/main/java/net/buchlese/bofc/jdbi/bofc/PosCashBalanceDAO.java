@@ -27,8 +27,9 @@ public interface PosCashBalanceDAO {
 	@SqlQuery("select max(creationtime) from poscashbalance")
 	DateTime getMaxDatum();
 
-	@SqlQuery("select max(abschlussid) from poscashbalance")
-	String getMaxAbschlussId();
+	// TODO: pointofsale Id hinzufügen
+	@SqlQuery("select id from poscashbalance where abschlussid = :abschlussid")
+	Long getIdOfExistingBalance(@Bind("abschlussid") String abschlussid, int pointId);
 
 	@SqlUpdate("insert into poscashbalance (id, abschlussid, revenue, creationtime, balancesheet, origsheet, exported, exportdate, firstCovered, lastCovered) " +
 	    " values (:id, :abschlussId, :revenue, :creationtime, :balanceSheet, :origAbschluss, :exported, :exportDate, :firstCovered, :lastCovered)")

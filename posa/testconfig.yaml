@@ -55,5 +55,5 @@ syncStartDate: 2014-10-01
 
 pointOfSaleId: 6
 
-homeUrl: http://192.168.2.111:8080/acceptBalance
+homeUrl: http://192.168.2.111:8080/cashbalance/acceptBalance
 

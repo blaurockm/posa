@@ -1,2 +1,2 @@
 #!/bin/sh
-/opt/jdk8/bin/java -jar /usr/share/posa/posa.jar db migrate /etc/posa/posa.yaml
+/opt/jdk8/bin/java -jar /usr/share/bofc/bofc.jar db migrate /etc/bofc/bofc.yaml

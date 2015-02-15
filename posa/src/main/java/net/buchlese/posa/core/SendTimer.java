@@ -23,6 +23,7 @@ public class SendTimer extends TimerTask {
 		if (PosAdapterApplication.homingQueue.isEmpty() == false) {
 			Consumer<? super PosCashBalance> sender = new SendPosCashBalance(config);
 			PosAdapterApplication.homingQueue.forEach(sender);
+			PosAdapterApplication.homingQueue.clear();
 		}
 		
 	}
