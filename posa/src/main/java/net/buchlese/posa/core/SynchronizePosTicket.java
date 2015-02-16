@@ -6,11 +6,14 @@ import java.util.List;
 import net.buchlese.posa.api.bofc.PaymentMethod;
 import net.buchlese.posa.api.bofc.PosTicket;
 import net.buchlese.posa.api.pos.KassenBeleg;
+import net.buchlese.posa.core.SyncTimer.BulkLoadDetails;
 import net.buchlese.posa.jdbi.bofc.PosTicketDAO;
 import net.buchlese.posa.jdbi.pos.KassenBelegDAO;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
 
@@ -18,16 +21,19 @@ public class SynchronizePosTicket extends AbstractSynchronizer {
 
 	private final PosTicketDAO ticketDAO;
 	private final KassenBelegDAO belegDao;
-	private LocalDate syncStart;
 
 
-	public SynchronizePosTicket(PosTicketDAO txDAO, KassenBelegDAO vorgangsDao, LocalDate syncStart) {
+	public SynchronizePosTicket(PosTicketDAO txDAO, KassenBelegDAO vorgangsDao) {
 		this.ticketDAO = txDAO;
 		this.belegDao = vorgangsDao;
-		this.syncStart = syncStart;
 	}
 
-	public List<PosTicket> fetchNewTickets() throws Exception {
+	/**
+	 * erzeuge Tickets für neu angelegte Belege
+	 * @param syncStart
+	 * @return
+	 */
+	public List<PosTicket> fetchNewTickets(LocalDate syncStart) {
 		Optional<DateTime> maxDatum = Optional.fromNullable(ticketDAO.getMaxTimestamp());
 
 		List<KassenBeleg> belege = belegDao.fetchAllAfter(maxDatum.or(syncStart.toDateTimeAtStartOfDay()));
@@ -35,7 +41,25 @@ public class SynchronizePosTicket extends AbstractSynchronizer {
 		// convert KassenVorgang to posTx
 		return createTickets(belege);
 	}
+	
+	/**
+	 * erzeuge Tickets für die Belege in dem Zeitraum
+	 * @param bulkLoad
+	 */
+	public void doBulkLoad(BulkLoadDetails bulkLoad) {
+		Logger log = LoggerFactory.getLogger("TicketBulkLoad");
+		log.info("doing " + bulkLoad);
+		List<KassenBeleg> belege = belegDao.fetchAllBetween(bulkLoad.getFrom().toDateTimeAtStartOfDay(), bulkLoad.getTill().toDateTimeAtStartOfDay().plusDays(1));
+		log.info("found " + belege.size() + " Belege");
+		createTickets(belege);
+		log.info("done with " + bulkLoad);
+	}
 
+	/**
+	 * erzeuge Tickets für die geg. Belege
+	 * @param belege
+	 * @return
+	 */
 	public List<PosTicket> createTickets(List<KassenBeleg> belege) {
 		Optional<Integer> maxId = Optional.fromNullable(ticketDAO.getMaxId());
 
@@ -56,7 +80,7 @@ public class SynchronizePosTicket extends AbstractSynchronizer {
 	}
 	
 	
-	public void updateExistingTickets() throws Exception {
+	public void updateLast10Tickets() throws Exception {
 		List<KassenBeleg> lastBelege = belegDao.fetchLast();
 		for (KassenBeleg orig : lastBelege) {
 			PosTicket checker = ticketDAO.fetch(orig.getBelegnr());
@@ -66,17 +90,6 @@ public class SynchronizePosTicket extends AbstractSynchronizer {
 			}
 		}
 	}
-
-	public void updateTickets(List<PosTicket> toBeCheckedAgain) {
-		for (PosTicket checker : toBeCheckedAgain) {
-			KassenBeleg orig = belegDao.fetch(checker.getBelegNr());
-			if (updateTicket(orig, checker)) {
-				// es hat sich was geändert;
-				ticketDAO.update(checker);
-			}
-		}
-	}
-	
 
 	private PosTicket createNewTicket(KassenBeleg beleg, long nextId) {
 		PosTicket tx = new PosTicket();
@@ -97,5 +110,6 @@ public class SynchronizePosTicket extends AbstractSynchronizer {
 		changed |= updBool(tx::setToBeCheckedAgain, tx.isToBeCheckedAgain(), beleg.isGeparkt());
 		return changed;
 	}
+
 
 }

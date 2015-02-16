@@ -3,6 +3,7 @@ package net.buchlese.posa.core;
 import java.util.TimerTask;
 import java.util.concurrent.locks.Lock;
 
+import net.buchlese.posa.PosAdapterApplication;
 import net.buchlese.posa.jdbi.bofc.PosCashBalanceDAO;
 import net.buchlese.posa.jdbi.bofc.PosTicketDAO;
 import net.buchlese.posa.jdbi.bofc.PosTxDAO;
@@ -17,19 +18,49 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class SyncTimer extends TimerTask {
+	
+	public static class BulkLoadDetails {
+		private LocalDate from;
+		private LocalDate till;
+		private boolean sendHome;
+		public LocalDate getFrom() {
+			return from;
+		}
+		public void setFrom(LocalDate from) {
+			this.from = from;
+		}
+		public LocalDate getTill() {
+			return till;
+		}
+		public void setTill(LocalDate till) {
+			this.till = till;
+		}
+		public boolean isSendHome() {
+			return sendHome;
+		}
+		public void setSendHome(boolean sendHome) {
+			this.sendHome = sendHome;
+		}
+		@Override
+		public String toString() {
+			return "BulkLoadDetails [from=" + from + ", till=" + till + ", sendHome=" + sendHome + "]";
+		}
+	}
+
 	private final DBI bofcDBI;
 	private final DBI posDBI;
 	private final Logger logger;
 	private final Lock syncLock;
 	private final LocalDate syncStart;
 	
-
-	public SyncTimer(Lock l, DBI bofcDBI, DBI posDBI, LocalDate syncStart) {
+	private static volatile BulkLoadDetails bulkLoad; 
+	
+	public SyncTimer(Lock l, DBI bofcDBI, DBI posDBI) {
 		this.syncLock = l;
 		this.bofcDBI = bofcDBI;
 		this.posDBI = posDBI;
 		logger = LoggerFactory.getLogger(SyncTimer.class);
-		this.syncStart = syncStart;
+		this.syncStart = LocalDate.now();
 	}
 
 	@Override
@@ -44,17 +75,29 @@ public class SyncTimer extends TimerTask {
     	    PosTicketDAO posTicketDao =  bofc.attach(PosTicketDAO.class);
     	    PosCashBalanceDAO posCashBalanceDao =  bofc.attach(PosCashBalanceDAO.class);
 
-    	    SynchronizePosTx syncTx = new SynchronizePosTx(posTxDao, vorgangDao, syncStart);
-	    	SynchronizePosTicket snycTickets = new SynchronizePosTicket(posTicketDao, belegDao, syncStart);
-	    	SynchronizePosCashBalance syncBalance = new SynchronizePosCashBalance(posCashBalanceDao, posTicketDao, posTxDao, abschlussDao, belegDao, vorgangDao, syncStart);
+    	    SynchronizePosTx syncTx = new SynchronizePosTx(posTxDao, vorgangDao);
+	    	SynchronizePosTicket syncTickets = new SynchronizePosTicket(posTicketDao, belegDao);
+	    	SynchronizePosCashBalance syncBalance = new SynchronizePosCashBalance(posCashBalanceDao, posTicketDao, posTxDao, abschlussDao, belegDao, vorgangDao);
 
-	    	syncTx.fetchNewTx();
-	    	syncTx.updateExistingTx();
+	    	if (bulkLoad != null) {
+	    		// wir wollen einen Haufen Daten rumschaufeln
+	    		syncTx.doBulkLoad(bulkLoad);
+	    		syncTickets.doBulkLoad(bulkLoad);;
+	    		syncBalance.doBulkLoad(bulkLoad);;
+	    	} else {
+	    		// ein normaler Aktualisierungslauf
+	    		syncTx.fetchNewTx(syncStart);
+	    		syncTickets.fetchNewTickets(syncStart);
+	    		syncBalance.fetchNewBalances(syncStart);
+	    		
+	    		syncTx.updateLast10Tx();
+	    		syncTickets.updateLast10Tickets();
+	    		if (PosAdapterApplication.resyncQueue.isEmpty() == false) {
+	    			PosAdapterApplication.resyncQueue.forEach(syncBalance);
+	    			PosAdapterApplication.resyncQueue.clear();
+	    		}
+	    	}
 
-	    	snycTickets.fetchNewTickets();
-	    	snycTickets.updateExistingTickets();
-
-	    	syncBalance.execute();
 	    } catch (Throwable t) {
 	    	if (t instanceof NullPointerException) {
 	    		logger.error("error while sync ", t);

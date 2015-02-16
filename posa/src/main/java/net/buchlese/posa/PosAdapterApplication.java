@@ -112,7 +112,7 @@ public class PosAdapterApplication extends Application<PosAdapterConfiguration> 
 
 	    syncTimer = new ScheduledThreadPoolExecutor(10);
 		syncLock = new ReentrantLock();
-		SyncTimer syncTimerTask = new SyncTimer(syncLock, bofcDBI, posDBI, config.getSyncStartDate());
+		SyncTimer syncTimerTask = new SyncTimer(syncLock, bofcDBI, posDBI);
 		syncTimer.scheduleAtFixedRate(syncTimerTask, 5, 3, TimeUnit.MINUTES);
 		SendTimer senTimerTask = new SendTimer(config);
 		syncTimer.scheduleAtFixedRate(senTimerTask, 1, 1, TimeUnit.MINUTES);

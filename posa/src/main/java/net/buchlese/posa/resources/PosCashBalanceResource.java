@@ -51,7 +51,7 @@ public class PosCashBalanceResource {
 		if (date.isPresent()) {
 			return fetchBalancesForDate(date.get());
 		}
-		return dao.fetchAllAfter(new DateTime().minusMonths(1).toString(IDFORMAT), Optional.absent());
+		return dao.fetchAllAfter(new DateTime().minusMonths(1).toString(IDFORMAT));
 	}
 
 	@GET
@@ -216,7 +216,7 @@ public class PosCashBalanceResource {
 			from = date;
 			till = date;
 		}
-		return dao.fetchAllAfter(from, Optional.fromNullable(till));
+		return dao.fetchAllBetween(from, till);
 	}
 
 }

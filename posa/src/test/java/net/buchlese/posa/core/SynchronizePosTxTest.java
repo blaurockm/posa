@@ -19,8 +19,8 @@ public class SynchronizePosTxTest {
 	@Ignore
 	public void missingCentTest1() throws Exception {
 		
-		SynchronizePosTx sptx = new SynchronizePosTx(getTxDao(), getTicketDao(), LocalDate.now());
-		sptx.fetchNewTx();
+		SynchronizePosTx sptx = new SynchronizePosTx(getTxDao(), getTicketDao());
+		sptx.fetchNewTx(LocalDate.now());
 	}
 	
 	private KassenVorgangDAO getTicketDao() {

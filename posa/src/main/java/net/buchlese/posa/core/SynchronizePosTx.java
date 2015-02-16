@@ -11,11 +11,14 @@ import net.buchlese.posa.api.bofc.PosTx;
 import net.buchlese.posa.api.bofc.Tax;
 import net.buchlese.posa.api.bofc.TxType;
 import net.buchlese.posa.api.pos.KassenVorgang;
+import net.buchlese.posa.core.SyncTimer.BulkLoadDetails;
 import net.buchlese.posa.jdbi.bofc.PosTxDAO;
 import net.buchlese.posa.jdbi.pos.KassenVorgangDAO;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
 
@@ -23,17 +26,18 @@ public class SynchronizePosTx extends AbstractSynchronizer {
 
 	private final PosTxDAO txDAO;
 	private final KassenVorgangDAO vorgangsDao;
-	private LocalDate syncStart;
 
-
-	public SynchronizePosTx(PosTxDAO txDAO, KassenVorgangDAO vorgangsDao, LocalDate syncStart) {
+	public SynchronizePosTx(PosTxDAO txDAO, KassenVorgangDAO vorgangsDao) {
 		this.txDAO = txDAO;
 		this.vorgangsDao = vorgangsDao;
-		this.syncStart = syncStart;
 	}
 
-
-	public List<PosTx> fetchNewTx() throws Exception {
+	/**
+	 * synchronisiere neu angelegte Tx
+	 * @param syncStart
+	 * @return
+	 */
+	public List<PosTx> fetchNewTx(LocalDate syncStart) {
 		Optional<DateTime> maxDatum = Optional.fromNullable(txDAO.getMaxDatum());
 
 		List<KassenVorgang> vorgs = vorgangsDao.fetchAllAfter(maxDatum.or(syncStart.toDateTimeAtStartOfDay()));
@@ -42,7 +46,26 @@ public class SynchronizePosTx extends AbstractSynchronizer {
 		// wir geben zurück was wir geholt haben
 		return createNewTx(vorgs);
 	}
+
+	/**
+	 * erzeuge neue Tx in dem geg. Zeitraum
+	 * 
+	 * @param bulkLoad
+	 */
+	public void doBulkLoad(BulkLoadDetails bulkLoad) {
+		Logger log = LoggerFactory.getLogger("TxBulkLoad");
+		log.info("doing " + bulkLoad);
+		List<KassenVorgang> vorgs = vorgangsDao.fetchAllBetween(bulkLoad.getFrom().toDateTimeAtStartOfDay(), bulkLoad.getTill().toDateTimeAtStartOfDay().plusDays(1));
+		createNewTx(vorgs);
+		log.info("done with " + bulkLoad);
+	}
 	
+	/**
+	 * lege Tx für die geg. KassenVorgänge an
+	 * 
+	 * @param vorgs
+	 * @return
+	 */
 	public List<PosTx> createNewTx(List<KassenVorgang> vorgs) {
 		Optional<Integer> maxId = Optional.fromNullable(txDAO.getMaxId());
 
@@ -59,7 +82,7 @@ public class SynchronizePosTx extends AbstractSynchronizer {
 	}
 	
 	
-	public void updateExistingTx() throws Exception {
+	public void updateLast10Tx() throws Exception {
 		// alte Kassenvorgänge nochmals prüfen
     	List<KassenVorgang> lastVorg = vorgangsDao.fetchLast();
 		for (KassenVorgang orig: lastVorg) {
@@ -155,6 +178,8 @@ public class SynchronizePosTx extends AbstractSynchronizer {
 		}
 		return changed;
 	}
+
+
 
 
 }

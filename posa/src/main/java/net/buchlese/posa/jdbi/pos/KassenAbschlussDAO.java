@@ -18,8 +18,7 @@ public interface KassenAbschlussDAO {
 	@SqlQuery("select * from [dbo].kasse_abschlussdaten where abschlussid > :datum")
 	List<KassenAbschluss> fetchAllAfter(@Bind("datum") String datum);
 
-	// TODO: should be "letzeÄnderung" instead of "bisdatum" but there is a fucking umlaut
-	@SqlQuery("select * from [dbo].kasse_abschlussdaten where bisDatum > :datum")
-	List<KassenAbschluss> fetchAllModified(@Bind("datum") DateTime datum);
+	@SqlQuery("select * from [dbo].kasse_abschlussdaten where bisDatum between :vondatum and :bisdatum")
+	List<KassenAbschluss> fetchAllBetween(@Bind("vondatum") DateTime from, @Bind("bisdatum") DateTime till);
 
 }
