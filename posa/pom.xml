@@ -4,7 +4,7 @@
 
    <groupId>net.buchlese</groupId>
    <artifactId>posa</artifactId>
-   <version>0.5-SNAPSHOT</version>
+   <version>0.6-SNAPSHOT</version>
    <packaging>jar</packaging>
 
    <name>posa</name>
@@ -73,6 +73,11 @@
           <artifactId>httpclient</artifactId>
           <version>4.4</version>
       </dependency>
+      <dependency>
+	      <groupId>com.jcraft</groupId>
+		  <artifactId>jsch</artifactId>
+		  <version>0.1.51</version>
+	  </dependency>
    </dependencies>
 
    <build>

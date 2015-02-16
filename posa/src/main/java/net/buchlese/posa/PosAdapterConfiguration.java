@@ -44,9 +44,23 @@ public class PosAdapterConfiguration extends Configuration {
     private String homeUrl;
 
     @JsonProperty
+    private String homeHost;
+
+    @JsonProperty
     private int pointOfSaleId;
-    
-    public PosAdapterConfiguration() {
+
+    @JsonProperty
+    private boolean sshEnabled;
+
+    public boolean isSshEnabled() {
+		return sshEnabled;
+	}
+
+	public void setSshEnabled(boolean sshEnabled) {
+		this.sshEnabled = sshEnabled;
+	}
+
+	public PosAdapterConfiguration() {
     	SimpleServerFactory server = new SimpleServerFactory();
     	server.setApplicationContextPath("/");
 		setServerFactory(server);
@@ -61,6 +75,8 @@ public class PosAdapterConfiguration extends Configuration {
     	
     	this.idNumRangeStart = 10000000;
     	this.syncStartDate = new LocalDate(2014,9,1);
+    	this.sshEnabled = true;
+    	this.homeUrl = "homeless";
     }
     
     public DataSourceFactory getPointOfSaleDB() {
@@ -93,6 +109,10 @@ public class PosAdapterConfiguration extends Configuration {
 
 	public int getPointOfSaleId() {
 		return pointOfSaleId;
+	}
+
+	public String getHomeHost() {
+		return homeHost;
 	}
     
 }
