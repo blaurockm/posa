@@ -71,35 +71,20 @@ public class SynchronizePosCashBalance extends AbstractSynchronizer implements C
 	public void doBulkLoad(BulkLoadDetails bulkLoad) {
 		Logger log = LoggerFactory.getLogger("BalanceBulkLoad");
 		log.info("doing " + bulkLoad);
-		List<KassenAbschluss> belege = abschlussDao.fetchAllBetween(bulkLoad.getFrom().toDateTimeAtStartOfDay(), bulkLoad.getTill().toDateTimeAtStartOfDay().plusDays(1));
-		log.info("found " + belege.size() + " KassenAbschlüsse");
-		List<PosCashBalance> balances = cashBalanceDAO.fetchAllBetween(bulkLoad.getFrom().toString("yyyyMMdd"), bulkLoad.getTill().toDateTimeAtStartOfDay().plusDays(1).toString("yyyyMMdd"));
-		log.info("found " + balances.size() + " existing Balances");
 		
-		// die beiden Listen abgleichen
-		List<KassenAbschluss> newBelege = new ArrayList<>(); // die beleg die es noch nicht gibt
-		List<PosCashBalance> existBalance = new ArrayList<>(); // die balances die es schon gibt
-		for (KassenAbschluss beleg: belege) {
-			boolean notfound = true;
-			for (PosCashBalance balance : balances) {
-				if (balance.getAbschlussId().equals(beleg.getAbschlussid())) {
-					notfound = false;
-					existBalance.add(balance);
-				}
-			}
-			if (notfound) {
-				newBelege.add(beleg);
-			}
-		}
-		log.info("that makes " + newBelege.size() + " neue Balances");
-		log.info(" and " + existBalance.size() + " updated Balances");
-		
-		List<PosCashBalance> pcb = createNewBalances(newBelege);
-		existBalance.forEach(this);
 		if (bulkLoad.isSendHome()) {
-			log.info("sending all home ");
+			log.info("sending only home ");
+			List<PosCashBalance> balances = cashBalanceDAO.fetchAllBetween(bulkLoad.getFrom().toString("yyyyMMdd"), bulkLoad.getTill().toDateTimeAtStartOfDay().plusDays(1).toString("yyyyMMdd"));
+			log.info("found " + balances.size() + " existing Balances");
+			PosAdapterApplication.homingQueue.addAll(balances); // sync them back home
+		} else {
+			log.info("importing from pos ");
+			log.info("deleting balances in timespan");
+			cashBalanceDAO.deleteBalancesBetween(bulkLoad.getFrom().toString("yyyyMMdd"), bulkLoad.getTill().toDateTimeAtStartOfDay().plusDays(1).toString("yyyyMMdd"));
+			List<KassenAbschluss> belege = abschlussDao.fetchAllBetween(bulkLoad.getFrom().toDateTimeAtStartOfDay(), bulkLoad.getTill().toDateTimeAtStartOfDay().plusDays(1));
+			log.info("found " + belege.size() + " KassenAbschlüsse");
+			List<PosCashBalance> pcb = createNewBalances(belege);
 			PosAdapterApplication.homingQueue.addAll(pcb); // sync the new ones back home
-			PosAdapterApplication.homingQueue.addAll(existBalance); // sync the updated ones back home
 		}
 		log.info("done with " + bulkLoad);
 	}

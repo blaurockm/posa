@@ -50,4 +50,7 @@ public interface PosCashBalanceDAO {
 		    " where  id = :id ")
 	void update(@BindBean PosCashBalance cashBal);
 
+	@SqlUpdate("delete from poscashbalance where abschlussid >= :datefrom and abschlussid <= :datetill")
+	void deleteBalancesBetween(@Bind("datefrom") String datefrom, @Bind("datetill") String datetill);
+	
 }

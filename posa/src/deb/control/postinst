@@ -9,16 +9,11 @@ fi
 
 
 if [ -x /etc/init.d/posa ]; then
-#    if dpkg --compare-versions "$oldversion" lt "0.0.1"; then
-#        update-rc.d -f posa remove
-#    fi
 
     update-rc.d posa start 95 2 3 4 5 . stop 5 0 1 6 >/dev/null
-#    if [ -x /usr/sbin/invoke-rc.d ]; then
-#        invoke-rc.d posa restart
-#    else
-#        /etc/init.d/posa restart
-#    fi
+    
+    /etc/init.d/posa restart
+
 fi
 
 

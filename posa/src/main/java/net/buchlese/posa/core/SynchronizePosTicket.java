@@ -49,6 +49,12 @@ public class SynchronizePosTicket extends AbstractSynchronizer {
 	public void doBulkLoad(BulkLoadDetails bulkLoad) {
 		Logger log = LoggerFactory.getLogger("TicketBulkLoad");
 		log.info("doing " + bulkLoad);
+		if (bulkLoad.isSendHome()) {
+			log.info("only sending home, nothing to do for tickets");
+			return;
+		}
+		log.info("deleting tickets in this timespan ");
+		ticketDAO.deleteTicketsBetween(bulkLoad.getFrom().toDateTimeAtStartOfDay(), bulkLoad.getTill().toDateTimeAtStartOfDay().plusDays(1));
 		List<KassenBeleg> belege = belegDao.fetchAllBetween(bulkLoad.getFrom().toDateTimeAtStartOfDay(), bulkLoad.getTill().toDateTimeAtStartOfDay().plusDays(1));
 		log.info("found " + belege.size() + " Belege");
 		createTickets(belege);

@@ -55,7 +55,14 @@ public class SynchronizePosTx extends AbstractSynchronizer {
 	public void doBulkLoad(BulkLoadDetails bulkLoad) {
 		Logger log = LoggerFactory.getLogger("TxBulkLoad");
 		log.info("doing " + bulkLoad);
+		if (bulkLoad.isSendHome()) {
+			log.info("only sending home, nothing to do for tx");
+			return;
+		}
+		log.info("deleting txs in this timespan ");
+		txDAO.deleteTxBetween(bulkLoad.getFrom().toDateTimeAtStartOfDay(), bulkLoad.getTill().toDateTimeAtStartOfDay().plusDays(1));
 		List<KassenVorgang> vorgs = vorgangsDao.fetchAllBetween(bulkLoad.getFrom().toDateTimeAtStartOfDay(), bulkLoad.getTill().toDateTimeAtStartOfDay().plusDays(1));
+		log.info("found " + vorgs.size() + " Vorgänge");
 		createNewTx(vorgs);
 		log.info("done with " + bulkLoad);
 	}
