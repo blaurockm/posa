@@ -71,11 +71,13 @@ public class SynchronizePosCashBalance extends AbstractSynchronizer implements C
 	public void doBulkLoad(BulkLoadDetails bulkLoad) {
 		Logger log = LoggerFactory.getLogger("BalanceBulkLoad");
 		log.info("doing " + bulkLoad);
+		CashBalance balComp = new CashBalance(ticketDAO);
 		
 		if (bulkLoad.isSendHome()) {
 			log.info("sending only home ");
 			List<PosCashBalance> balances = cashBalanceDAO.fetchAllBetween(bulkLoad.getFrom().toString("yyyyMMdd"), bulkLoad.getTill().toDateTimeAtStartOfDay().plusDays(1).toString("yyyyMMdd"));
 			log.info("found " + balances.size() + " existing Balances");
+			balances.forEach(b -> balComp.amendTickets(b)); // wir wollen alle Tickets mitgeben
 			PosAdapterApplication.homingQueue.addAll(balances); // sync them back home
 		} else {
 			log.info("importing from pos ");
@@ -84,6 +86,7 @@ public class SynchronizePosCashBalance extends AbstractSynchronizer implements C
 			List<KassenAbschluss> belege = abschlussDao.fetchAllBetween(bulkLoad.getFrom().toDateTimeAtStartOfDay(), bulkLoad.getTill().toDateTimeAtStartOfDay().plusDays(1));
 			log.info("found " + belege.size() + " KassenAbschlüsse");
 			List<PosCashBalance> pcb = createNewBalances(belege);
+			pcb.forEach(b -> balComp.amendTickets(b)); // wir wollen alle Tickets mitgeben
 			PosAdapterApplication.homingQueue.addAll(pcb); // sync the new ones back home
 		}
 		log.info("done with " + bulkLoad);

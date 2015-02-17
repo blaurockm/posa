@@ -31,7 +31,7 @@ import com.jcraft.jsch.Session;
 
 public class SendPosCashBalance implements Consumer<PosCashBalance>, java.io.Closeable {
 
-	private final int pointId;
+	private final int pointid;
 	private final String homeUrl;
 	private final String homeHost;
 	private final int localPort;
@@ -43,7 +43,7 @@ public class SendPosCashBalance implements Consumer<PosCashBalance>, java.io.Clo
 	private CloseableHttpClient httpClient;
 
 	public SendPosCashBalance(PosAdapterConfiguration config, Logger log) {
-		this.pointId = config.getPointOfSaleId();
+		this.pointid = config.getPointOfSaleId();
 		this.homeUrl = config.getHomeUrl();
 		int lp = 8080;
 		try {
@@ -88,7 +88,10 @@ public class SendPosCashBalance implements Consumer<PosCashBalance>, java.io.Clo
 			return;
 		}
 
-		bal.setPointid(pointId);
+		bal.setPointid(pointid);
+		if (bal.getTickets() != null) {
+			bal.getTickets().forEach( t -> { t.setPointid(pointid); if (t.getTxs() != null)  t.getTxs().forEach( x -> x.setPointid(pointid)); } );
+		}
 		// Get target URL
 
 		HttpPost post = new HttpPost(this.homeUrl);

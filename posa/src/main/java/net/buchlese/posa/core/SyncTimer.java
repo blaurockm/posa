@@ -53,7 +53,7 @@ public class SyncTimer extends TimerTask {
 	private final Lock syncLock;
 	private final LocalDate syncStart;
 	
-	private static volatile BulkLoadDetails bulkLoad; 
+	private volatile BulkLoadDetails bulkLoad; 
 	
 	public SyncTimer(Lock l, DBI bofcDBI, DBI posDBI) {
 		this.syncLock = l;
@@ -63,6 +63,16 @@ public class SyncTimer extends TimerTask {
 		this.syncStart = LocalDate.now();
 	}
 
+	public void setBulkLoad(BulkLoadDetails det) {
+		syncLock.lock();
+		try {
+			this.bulkLoad = det;
+		} finally {
+			syncLock.unlock();
+		}
+	}
+	
+	
 	@Override
 	public void run() {
 		syncLock.lock();
@@ -82,8 +92,9 @@ public class SyncTimer extends TimerTask {
 	    	if (bulkLoad != null) {
 	    		// wir wollen einen Haufen Daten rumschaufeln
 	    		syncTx.doBulkLoad(bulkLoad);
-	    		syncTickets.doBulkLoad(bulkLoad);;
-	    		syncBalance.doBulkLoad(bulkLoad);;
+	    		syncTickets.doBulkLoad(bulkLoad);
+	    		syncBalance.doBulkLoad(bulkLoad);
+	    		bulkLoad = null; // wir löschen wieder
 	    	} else {
 	    		// ein normaler Aktualisierungslauf
 	    		syncTx.fetchNewTx(syncStart);

@@ -1,0 +1,21 @@
+#!/bin/sh -e
+# prerm for rsync
+
+case "$1" in
+    remove|deconfigure)
+	if [ -x /etc/init.d/bofc ]; then
+		/etc/init.d/bofc stop
+	fi
+	;;
+    upgrade)
+       ;;
+    failed-upgrade)
+        ;;
+    *)
+        echo "prerm called with unknown argument \`$1'" >&2
+        exit 0
+	;;
+esac
+
+exit 0
+

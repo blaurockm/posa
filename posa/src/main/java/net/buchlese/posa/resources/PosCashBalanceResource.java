@@ -106,6 +106,7 @@ public class PosCashBalanceResource {
 	@Path("/sendbof/{date}")
 	public View sendAgainBalanceForDate(@PathParam("date") String date)  {
 		PosCashBalance cb = fetchBalanceForDate(date);
+		new CashBalance(ticketDao).amendTickets(cb);
 		PosAdapterApplication.homingQueue.offer(cb);
 		return new CashBalView(cb);
 	}

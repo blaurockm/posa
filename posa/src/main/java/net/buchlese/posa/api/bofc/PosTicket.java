@@ -14,6 +14,8 @@ public class PosTicket {
 
 	@JsonProperty
 	private long belegNr;
+	@JsonProperty
+	private int pointid;
 
 	@NotEmpty
 	@JsonProperty
@@ -109,6 +111,14 @@ public class PosTicket {
 
 	public void setTxs(List<PosTx> txs) {
 		this.txs = txs;
+	}
+
+	public int getPointid() {
+		return pointid;
+	}
+
+	public void setPointid(int pointid) {
+		this.pointid = pointid;
 	}
 
 

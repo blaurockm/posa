@@ -1,14 +1,14 @@
 #!/bin/bash
-#
-# chkconfig: 345 99 05
-# description: Java deamon script
-#
-# A non-SUSE Linux start/stop script for Java daemons.
-#
-# Derived from -
-# Home page: http://www.source-code.biz
-# License:   GNU/LGPL (http://www.gnu.org/licenses/lgpl.html)
-# Copyright 2006 Christian d'Heureuse, Inventec Informatik AG, Switzerland.
+### BEGIN INIT INFO
+# Provides:          bofc
+# Required-Start:
+# Required-Stop:
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Endpoint Homing for all posas
+# Description:       bofc ist the central depository for all data of the posas
+### END INIT INFO
+
 #http://shrubbery.mynetgear.net/c/display/W/Java+Daemon+Startup+Script
 
 # Set this to your Java installation

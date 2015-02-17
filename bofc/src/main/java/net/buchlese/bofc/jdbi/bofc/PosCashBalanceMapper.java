@@ -26,6 +26,7 @@ public class PosCashBalanceMapper implements ResultSetMapper<PosCashBalance> {
 		}
 		// just to be shure
 		cb.setId(rs.getLong("id"));
+		cb.setPointid(rs.getInt("pointid"));
 		cb.setRevenue(rs.getLong("revenue"));
 		cb.setAbschlussId(rs.getString("abschlussid"));
 		cb.setCreationtime(new DateTime(rs.getTimestamp("creationtime")));

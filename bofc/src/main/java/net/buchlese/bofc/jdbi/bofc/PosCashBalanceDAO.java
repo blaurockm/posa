@@ -4,7 +4,6 @@ import java.util.List;
 
 import net.buchlese.bofc.api.bofc.PosCashBalance;
 
-import org.joda.time.DateTime;
 import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.BindBean;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
@@ -24,15 +23,11 @@ public interface PosCashBalanceDAO {
 	@SqlQuery("select * from poscashbalance where abschlussid = :date")
 	PosCashBalance fetchForDate(@Bind("date") String date);
 	
-	@SqlQuery("select max(creationtime) from poscashbalance")
-	DateTime getMaxDatum();
+	@SqlQuery("select id from poscashbalance where abschlussid = :abschlussid and pointid = :pointId")
+	Long getIdOfExistingBalance(@Bind("abschlussid") String abschlussid,@Bind("pointId") Integer pointId);
 
-	// TODO: pointofsale Id hinzufügen
-	@SqlQuery("select id from poscashbalance where abschlussid = :abschlussid")
-	Long getIdOfExistingBalance(@Bind("abschlussid") String abschlussid, int pointId);
-
-	@SqlUpdate("insert into poscashbalance (id, abschlussid, revenue, creationtime, balancesheet, origsheet, exported, exportdate, firstCovered, lastCovered) " +
-	    " values (:id, :abschlussId, :revenue, :creationtime, :balanceSheet, :origAbschluss, :exported, :exportDate, :firstCovered, :lastCovered)")
+	@SqlUpdate("insert into poscashbalance (pointid, abschlussid, revenue, creationtime, balancesheet, origsheet, exported, exportdate, firstCovered, lastCovered) " +
+	    " values (:pointid, :abschlussId, :revenue, :creationtime, :balanceSheet, :origAbschluss, :exported, :exportDate, :firstCovered, :lastCovered)")
 	void insert(@BindBean PosCashBalance cashBal);
 
 	@SqlUpdate("update poscashbalance set (revenue, creationtime, balancesheet, origsheet, exported, exportdate, firstCovered, lastCovered) " +

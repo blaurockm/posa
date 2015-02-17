@@ -60,7 +60,7 @@ public class BackOfcApplication extends Application<BackOfcConfiguration> {
 	    
 	    environment.jersey().register(new PosTxResource(posTxDao, posCashBalanceDao));
 	    environment.jersey().register(new PosTicketResource(posTicketDao, posCashBalanceDao));
-	    environment.jersey().register(new PosCashBalanceResource(posCashBalanceDao, posTicketDao));
+	    environment.jersey().register(new PosCashBalanceResource(posCashBalanceDao, posTicketDao, posTxDao));
 
 	    environment.jersey().register(new AppResource(config));
 		

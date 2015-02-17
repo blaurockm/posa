@@ -11,6 +11,9 @@
          <column name="belegnr" type="int">
             <constraints nullable="false" />
          </column>
+         <column name="pointid" type="int">
+            <constraints nullable="false" />
+         </column>
          <column name="belegidx" type="int" />
          <column name="ean" type="varchar(25)" />
          <column name="isbn" type="varchar(25)" />
@@ -39,6 +42,9 @@
          <column name="belegnr" type="int">
             <constraints nullable="false" />
          </column>
+         <column name="pointid" type="int">
+            <constraints nullable="false" />
+         </column>
          <column name="total" type="bigint"/>
          <column name="cancelled" type="bool"/>
          <column name="cancel" type="bool"/>
@@ -53,6 +59,9 @@
             <constraints primaryKey="true" nullable="false" />
          </column>
          <column name="abschlussid" type="varchar(10)">
+            <constraints nullable="false" />
+         </column>
+         <column name="pointid" type="int">
             <constraints nullable="false" />
          </column>
          <column name="revenue" type="bigint"/>

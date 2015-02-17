@@ -23,16 +23,11 @@ public interface PosTicketDAO {
 	@SqlQuery("select * from posticket")
 	List<PosTicket> fetchAll();
 
-	@SqlBatch("insert into posticket (id, belegnr, total, paymentmethod, cancelled, cancel, timest, tobecheckedagain) " +
-	" values (:id, :belegNr, :total, :paymentMethod, :cancelled, :cancel, :timestamp, :toBeCheckedAgain)")
+	@SqlBatch("insert into posticket (belegnr, pointid, total, paymentmethod, cancelled, cancel, timest, tobecheckedagain) " +
+	" values (:belegNr, :pointid, :total, :paymentMethod, :cancelled, :cancel, :timestamp, :toBeCheckedAgain)")
 	@BatchChunkSize(700)
 	void insertAll(@Valid @BindBean Iterator<PosTicket> tickets);
 
-	@SqlQuery("select max(timest) from posticket")
-	DateTime getMaxTimestamp();
-
-	@SqlQuery("select max(id) from posticket")
-	Integer getMaxId();
 
 	/**
 	 * Alle Belege die zu einem Abschluss gehören (zuordnung aufgrund des datums)
@@ -52,14 +47,14 @@ public interface PosTicketDAO {
 	@SqlQuery("select postx.* from postx join posticket on posticket.belegnr = postx.belegnr where postx.tobeignored = 0 and posticket.timest between :vonDatum and :bisDatum")
 	List<PosTx> fetchTx(@Bind("vonDatum") DateTime vonDatum, @Bind("bisDatum") DateTime bisDatum);
 
-	@SqlQuery("select * from posticket where tobecheckedagain = 1 and timest > :datum")
-	List<PosTicket> fetchRevisitations(@Bind("datum") DateTime datum);
-
-	@SqlUpdate("update posticket set total = :total, paymentmethod = :paymentMethod, cancelled = :cancelled, tobecheckedagain = :toBeCheckedAgain, cancel = :cancel " +
+	@SqlUpdate("update posticket set total = :total, pointid = :pointid, paymentmethod = :paymentMethod, cancelled = :cancelled, tobecheckedagain = :toBeCheckedAgain, cancel = :cancel " +
 	" where id = :id ")
 	void update(@Valid @BindBean PosTicket checker);
 
 	@SqlQuery("select * from posticket where belegnr = :belegnr")
 	PosTicket fetch(@Bind("belegnr") long belegnr);
+
+	@SqlUpdate("delete from posticket where timest between :vonDatum and :bisDatum and pointid = :pointid")
+	void deleteAll(@Bind("vonDatum") DateTime vonDatum, @Bind("bisDatum") DateTime bisDatum, @Bind("pointid") Integer pointid);
 
 }

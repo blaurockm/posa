@@ -13,6 +13,8 @@ public class PosTx implements Comparable<PosTx> {
 
 	@JsonProperty
 	private long belegNr;
+	@JsonProperty
+	private int pointid;
 
 	@JsonProperty
 	private int belegIdx;
@@ -210,6 +212,14 @@ public class PosTx implements Comparable<PosTx> {
 	@Override
 	public int compareTo(PosTx o) {
 		return belegIdx - o.belegIdx;
+	}
+
+	public int getPointid() {
+		return pointid;
+	}
+
+	public void setPointid(int pointid) {
+		this.pointid = pointid;
 	}
 	
 }

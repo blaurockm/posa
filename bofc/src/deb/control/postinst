@@ -1,0 +1,21 @@
+#!/bin/sh -e
+
+action="$1"
+oldversion="$2"
+
+if [ "$action" != configure ]; then
+    exit 0
+fi
+
+
+if [ -x /etc/init.d/bofc ]; then
+
+    update-rc.d bofc start 95 2 3 4 5 . >/dev/null 
+    update-rc.d bofc stop 5 0 1 6 . >/dev/null
+    
+    /etc/init.d/bofc restart
+
+fi
+
+
+exit 0

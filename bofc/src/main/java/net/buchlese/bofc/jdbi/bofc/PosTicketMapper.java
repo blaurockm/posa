@@ -16,6 +16,7 @@ public class PosTicketMapper implements ResultSetMapper<PosTicket> {
 		PosTicket tx = new PosTicket();
 		tx.setId(rs.getLong("id"));
 		tx.setTotal(rs.getLong("total"));
+		tx.setPointid(rs.getInt("pointid"));
 		tx.setBelegNr(rs.getLong("belegNr"));
 		tx.setCancelled(rs.getBoolean("cancelled"));
 		tx.setCancel(rs.getBoolean("cancel"));

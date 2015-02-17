@@ -4,7 +4,10 @@ import io.dropwizard.servlets.tasks.Task;
 
 import java.io.PrintWriter;
 
+import org.joda.time.LocalDate;
+
 import net.buchlese.posa.core.SyncTimer;
+import net.buchlese.posa.core.SyncTimer.BulkLoadDetails;
 
 import com.codahale.metrics.annotation.Timed;
 import com.google.common.collect.ImmutableMultimap;
@@ -21,13 +24,19 @@ public class SynchronizeTask extends Task {
 	@Override
 	@Timed(name="DBSync")
 	public void execute(ImmutableMultimap<String, String> params, PrintWriter output) throws Exception {
-		try {
-			//method um den TimerTask des Timers auszuführen !?!?!?
-			st.run();
-		} catch (Throwable t) {
-			t.printStackTrace(output);
-			throw t;
+		BulkLoadDetails det = new BulkLoadDetails();
+		det.setFrom(LocalDate.parse(params.get("from").iterator().next()));
+		if (params.containsKey("till")) {
+			det.setTill(LocalDate.parse(params.get("till").iterator().next()));
+		} else {
+			det.setTill(new LocalDate());
 		}
+		if (params.containsKey("sendHome")) {
+			det.setSendHome(Boolean.parseBoolean(params.get("sendHome").iterator().next()));
+		} else {
+			det.setSendHome(false); 
+		}
+		st.setBulkLoad(det);
 	}
 
 }

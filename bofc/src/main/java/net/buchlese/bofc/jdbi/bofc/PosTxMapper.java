@@ -16,6 +16,7 @@ public class PosTxMapper implements ResultSetMapper<PosTx> {
 	public PosTx map(int arg0, ResultSet rs, StatementContext ctx) throws SQLException {
 		PosTx tx = new PosTx();
 		tx.setId(rs.getLong("id"));
+		tx.setPointid(rs.getInt("pointid"));
 		tx.setSellingPrice(rs.getLong("sellingPrice"));
 		tx.setPurchasePrice(rs.getLong("purchasePrice"));
 		tx.setRebate(rs.getDouble("rebate"));

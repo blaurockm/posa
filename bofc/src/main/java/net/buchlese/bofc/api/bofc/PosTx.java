@@ -14,6 +14,8 @@ public class PosTx {
 
 	@JsonProperty
 	private long belegNr;
+	@JsonProperty
+	private int pointid;
 
 	@JsonProperty
 	private int belegIdx;
@@ -211,6 +213,14 @@ public class PosTx {
 	}
 	public void setIsbn(String isbn) {
 		this.isbn = isbn;
+	}
+
+	public int getPointid() {
+		return pointid;
+	}
+
+	public void setPointid(int pointid) {
+		this.pointid = pointid;
 	}
 	
 }

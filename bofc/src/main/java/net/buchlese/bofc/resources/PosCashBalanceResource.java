@@ -5,7 +5,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -19,12 +21,15 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.StreamingOutput;
 
 import net.buchlese.bofc.api.bofc.PosCashBalance;
+import net.buchlese.bofc.api.bofc.PosTicket;
+import net.buchlese.bofc.api.bofc.PosTx;
 import net.buchlese.bofc.core.AccountingExport;
 import net.buchlese.bofc.core.CashBalance;
 import net.buchlese.bofc.core.PDFCashBalance;
 import net.buchlese.bofc.core.Validator;
 import net.buchlese.bofc.jdbi.bofc.PosCashBalanceDAO;
 import net.buchlese.bofc.jdbi.bofc.PosTicketDAO;
+import net.buchlese.bofc.jdbi.bofc.PosTxDAO;
 
 import org.joda.time.DateTime;
 
@@ -35,11 +40,13 @@ public class PosCashBalanceResource {
 
 	private final PosCashBalanceDAO dao;
 	private final PosTicketDAO ticketDao;
+	private final PosTxDAO txDao;
 
-	public PosCashBalanceResource(PosCashBalanceDAO dao,PosTicketDAO ticketdao) {
+	public PosCashBalanceResource(PosCashBalanceDAO dao,PosTicketDAO ticketdao, PosTxDAO txdao) {
 		super();
 		this.dao = dao;
 		this.ticketDao = ticketdao;
+		this.txDao = txdao;
 	}
 
 	private static String IDFORMAT = "yyyyMMdd";
@@ -49,10 +56,19 @@ public class PosCashBalanceResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	public void acceptBalance(PosCashBalance cashBal)  {
 		Long id = dao.getIdOfExistingBalance(cashBal.getAbschlussId(), cashBal.getPointid());
+		List<PosTx> txs = Collections.emptyList();
+		List<PosTicket> tickets = cashBal.getTickets() == null ? Collections.emptyList() : cashBal.getTickets();
+		txs = tickets.stream().filter(p -> p.getTxs() != null).flatMap(t -> t.getTxs().stream()).collect(Collectors.toList());
 		if (id != null) {
 			dao.update(cashBal);
+			ticketDao.deleteAll(cashBal.getFirstCovered(), cashBal.getLastCovered(), cashBal.getPointid());
+			txDao.deleteAll(cashBal.getFirstCovered(), cashBal.getLastCovered(), cashBal.getPointid());
+			ticketDao.insertAll(tickets.iterator());
+			txDao.insertAll(txs.iterator());
 		} else {
 			dao.insert(cashBal);
+			ticketDao.insertAll(tickets.iterator());
+			txDao.insertAll(txs.iterator());
 		}
 	}
 	

@@ -37,6 +37,7 @@ import net.buchlese.posa.resources.KassenVorgangResource;
 import net.buchlese.posa.resources.PosCashBalanceResource;
 import net.buchlese.posa.resources.PosTicketResource;
 import net.buchlese.posa.resources.PosTxResource;
+import net.buchlese.posa.resources.SynchronizeTask;
 
 import org.skife.jdbi.v2.DBI;
 
@@ -116,7 +117,9 @@ public class PosAdapterApplication extends Application<PosAdapterConfiguration> 
 		syncTimer.scheduleAtFixedRate(syncTimerTask, 5, 3, TimeUnit.MINUTES);
 		SendTimer senTimerTask = new SendTimer(config);
 		syncTimer.scheduleAtFixedRate(senTimerTask, 1, 1, TimeUnit.MINUTES);
-		
+	
+		environment.admin().addTask(new SynchronizeTask(syncTimerTask));
 	}
+
 	
 }
