@@ -96,7 +96,7 @@ public class SendPosCashBalance implements Consumer<PosCashBalance>, java.io.Clo
 
 		HttpPost post = new HttpPost(this.homeUrl);
 		try {
-			StringEntity cashBalEntity = new StringEntity(om.writeValueAsString(bal), ContentType.create(MediaType.APPLICATION_JSON));
+			StringEntity cashBalEntity = new StringEntity(om.writeValueAsString(bal), ContentType.create(MediaType.APPLICATION_JSON, "UTF8"));
 			post.setEntity(cashBalEntity);
 		} catch (JsonProcessingException e1) {
 			log.error("problem while creating json-entity " + bal, e1);

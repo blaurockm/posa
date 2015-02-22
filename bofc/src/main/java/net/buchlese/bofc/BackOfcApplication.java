@@ -9,6 +9,7 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.views.ViewBundle;
 import net.buchlese.bofc.api.bofc.ArticleGroup;
+import net.buchlese.bofc.core.H2TcpServerManager;
 import net.buchlese.bofc.jdbi.bofc.PayMethArgumentFactory;
 import net.buchlese.bofc.jdbi.bofc.PosCashBalanceDAO;
 import net.buchlese.bofc.jdbi.bofc.PosTicketDAO;
@@ -48,7 +49,9 @@ public class BackOfcApplication extends Application<BackOfcConfiguration> {
 	@Override
 	public void run(BackOfcConfiguration config, Environment environment) throws Exception {
 		ArticleGroup.injectMappings(config.getArticleGroupMappings());
-	    
+		// H2 mixed Mode
+		environment.lifecycle().manage(new H2TcpServerManager());
+
 	    final DBIFactory bofcDbFactory = new DBIFactory();
 	    final DBI bofcDBI = bofcDbFactory.build(environment, config.getBackOfficeDB(), "bofcdb");
 	    bofcDBI.registerArgumentFactory(new TaxArgumentFactory());

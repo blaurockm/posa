@@ -5,7 +5,7 @@
 
    <changeSet id="initialise" author="mblaurock">
       <createTable tableName="posTx">
-         <column name="id" type="numeric">
+         <column name="id" type="numeric" autoIncrement="true">
             <constraints primaryKey="true" nullable="false" />
          </column>
          <column name="belegnr" type="int">

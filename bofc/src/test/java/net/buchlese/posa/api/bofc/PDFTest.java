@@ -10,12 +10,14 @@ import net.buchlese.bofc.api.bofc.Tax;
 import net.buchlese.bofc.core.PDFCashBalance;
 
 import org.joda.time.DateTime;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class PDFTest {
 
 
 	@Test
+	@Ignore
 	public void testCashBalancePDF() throws Exception {
 		PosCashBalance bal = new PosCashBalance();
 		bal.setAbschlussId("20141018");

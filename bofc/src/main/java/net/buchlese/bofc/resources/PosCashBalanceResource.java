@@ -18,6 +18,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 
 import net.buchlese.bofc.api.bofc.PosCashBalance;
@@ -32,6 +33,7 @@ import net.buchlese.bofc.jdbi.bofc.PosTicketDAO;
 import net.buchlese.bofc.jdbi.bofc.PosTxDAO;
 
 import org.joda.time.DateTime;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
 
@@ -50,29 +52,36 @@ public class PosCashBalanceResource {
 	}
 
 	private static String IDFORMAT = "yyyyMMdd";
+	private static final org.slf4j.Logger log = LoggerFactory.getLogger(PosCashBalanceResource.class);
 
 	@POST
 	@Path("/acceptBalance")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public void acceptBalance(PosCashBalance cashBal)  {
-		Long id = dao.getIdOfExistingBalance(cashBal.getAbschlussId(), cashBal.getPointid());
-		List<PosTx> txs = Collections.emptyList();
-		List<PosTicket> tickets = cashBal.getTickets() == null ? Collections.emptyList() : cashBal.getTickets();
-		txs = tickets.stream().filter(p -> p.getTxs() != null).flatMap(t -> t.getTxs().stream()).collect(Collectors.toList());
-		if (id != null) {
-			dao.update(cashBal);
-			ticketDao.deleteAll(cashBal.getFirstCovered(), cashBal.getLastCovered(), cashBal.getPointid());
-			txDao.deleteAll(cashBal.getFirstCovered(), cashBal.getLastCovered(), cashBal.getPointid());
-			ticketDao.insertAll(tickets.iterator());
-			txDao.insertAll(txs.iterator());
-		} else {
-			dao.insert(cashBal);
-			ticketDao.insertAll(tickets.iterator());
-			txDao.insertAll(txs.iterator());
+	public Response acceptBalance(PosCashBalance cashBal)  {
+		try {
+			Long id = dao.getIdOfExistingBalance(cashBal.getAbschlussId(), cashBal.getPointid());
+			List<PosTx> txs = Collections.emptyList();
+			List<PosTicket> tickets = cashBal.getTickets() == null ? Collections.emptyList() : cashBal.getTickets();
+			txs = tickets.stream().filter(p -> p.getTxs() != null).flatMap(t -> t.getTxs().stream()).collect(Collectors.toList());
+			if (id != null) {
+				dao.update(cashBal);
+				ticketDao.deleteAll(cashBal.getFirstCovered(), cashBal.getLastCovered(), cashBal.getPointid());
+				txDao.deleteAll(cashBal.getFirstCovered(), cashBal.getLastCovered(), cashBal.getPointid());
+				ticketDao.insertAll(tickets.iterator());
+				txDao.insertAll(txs.iterator());
+			} else {
+				dao.insert(cashBal);
+				ticketDao.insertAll(tickets.iterator());
+				txDao.insertAll(txs.iterator());
+			}
+			return Response.ok().build();
+		} catch (Throwable t) {
+			log.error("problem creating cashBalance" + cashBal, t);
+			return Response.serverError().entity(t.getMessage()).build();
 		}
 	}
-	
-	
+
+
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<PosCashBalance> fetchAll(@QueryParam("date") Optional<String> date)  {
@@ -109,34 +118,34 @@ public class PosCashBalanceResource {
 	@GET
 	@Path("/pdf/{date}")
 	public StreamingOutput fetchPdfForDate(@PathParam("date") String date)  {
-	    return new StreamingOutput() {
-	        public void write(OutputStream output) throws IOException, WebApplicationException {
-	            try {
-	                PDFCashBalance generator = new PDFCashBalance(fetchBalanceForDate(date));
-	                generator.generatePDF(output);
-	            } catch (Exception e) {
-	                throw new WebApplicationException(e);
-	            }
-                output.flush();
-	        }
-	    };	
+		return new StreamingOutput() {
+			public void write(OutputStream output) throws IOException, WebApplicationException {
+				try {
+					PDFCashBalance generator = new PDFCashBalance(fetchBalanceForDate(date));
+					generator.generatePDF(output);
+				} catch (Exception e) {
+					throw new WebApplicationException(e);
+				}
+				output.flush();
+			}
+		};	
 	}
 
 	@Produces(MediaType.TEXT_PLAIN)
 	@GET
 	@Path("/extended/{date}")
 	public StreamingOutput fetchDetailsForDate(@PathParam("date") String date)  {
-	    return new StreamingOutput() {
-	        public void write(OutputStream output) throws IOException, WebApplicationException {
-	            try {
-	                Validator generator = new Validator(fetchBalanceForDate(date), ticketDao);
-	                generator.validateDetails(output);
-	            } catch (Exception e) {
-	                throw new WebApplicationException(e);
-	            }
-                output.flush();
-	        }
-	    };	
+		return new StreamingOutput() {
+			public void write(OutputStream output) throws IOException, WebApplicationException {
+				try {
+					Validator generator = new Validator(fetchBalanceForDate(date), ticketDao);
+					generator.validateDetails(output);
+				} catch (Exception e) {
+					throw new WebApplicationException(e);
+				}
+				output.flush();
+			}
+		};	
 	}
 
 	private PosCashBalance fetchBalanceForDate(String date) {
