@@ -14,13 +14,16 @@ import javax.ws.rs.core.MediaType;
 import net.buchlese.posa.PosAdapterApplication;
 import net.buchlese.posa.PosAdapterConfiguration;
 import net.buchlese.posa.api.bofc.PosCashBalance;
+import net.buchlese.posa.jdbi.bofc.PosCashBalanceDAO;
 
+import org.apache.http.StatusLine;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -41,9 +44,11 @@ public class SendPosCashBalance implements Consumer<PosCashBalance>, java.io.Clo
 	
 	private Session sshSession;
 	private CloseableHttpClient httpClient;
+	private final PosCashBalanceDAO cashBalanceDAO;
 
-	public SendPosCashBalance(PosAdapterConfiguration config, Logger log) {
+	public SendPosCashBalance(PosAdapterConfiguration config, PosCashBalanceDAO balDAO, Logger log) {
 		this.pointid = config.getPointOfSaleId();
+		this.cashBalanceDAO = balDAO;
 		this.homeUrl = config.getHomeUrl();
 		int lp = 8080;
 		try {
@@ -103,7 +108,13 @@ public class SendPosCashBalance implements Consumer<PosCashBalance>, java.io.Clo
 		}
 
 		try(CloseableHttpResponse response = httpClient.execute(post)) {
-			log.info("Sending " + bal + " :: " + response.getStatusLine());
+			StatusLine statusLine = response.getStatusLine();
+			log.info("Sending " + bal + " :: " + statusLine);
+			if (statusLine.getStatusCode() == 200) {
+				bal.setExported(true);
+				bal.setExportDate(new DateTime());
+				cashBalanceDAO.markAsExported(bal);
+			}
 		} catch (ConnectException e) {
 			// wir konnten keine Verbindung aufbauen.
 			// mark PosCashBalance for retry next hour

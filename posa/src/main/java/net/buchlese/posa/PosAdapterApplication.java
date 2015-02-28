@@ -115,7 +115,7 @@ public class PosAdapterApplication extends Application<PosAdapterConfiguration> 
 		syncLock = new ReentrantLock();
 		SyncTimer syncTimerTask = new SyncTimer(syncLock, bofcDBI, posDBI);
 		syncTimer.scheduleAtFixedRate(syncTimerTask, 5, 3, TimeUnit.MINUTES);
-		SendTimer senTimerTask = new SendTimer(config);
+		SendTimer senTimerTask = new SendTimer(config, posCashBalanceDao);
 		syncTimer.scheduleAtFixedRate(senTimerTask, 1, 1, TimeUnit.MINUTES);
 	
 		environment.admin().addTask(new SynchronizeTask(syncTimerTask));

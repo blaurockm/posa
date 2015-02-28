@@ -112,6 +112,7 @@ public class SynchronizePosCashBalance extends AbstractSynchronizer implements C
 	private PosCashBalance createNewBalance(KassenAbschluss abschluss) {
 		CashBalance balComp = new CashBalance(ticketDAO);
 		PosCashBalance bal = balComp.createBalance(abschluss.getVonDatum(), abschluss.getBisDatum());
+		balComp.updateBalance(bal);
 		setBalanceValues(abschluss, bal);
 		return bal;
 	}

@@ -4,7 +4,7 @@
 
    <groupId>net.buchlese</groupId>
    <artifactId>posa</artifactId>
-   <version>0.7-SNAPSHOT</version>
+   <version>0.8-SNAPSHOT</version>
    <packaging>jar</packaging>
 
    <name>posa</name>
@@ -12,7 +12,7 @@
 
    <properties>
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-      <dropwizard.version>0.7.0</dropwizard.version>
+      <dropwizard.version>0.7.1</dropwizard.version>
    </properties>
 
    <dependencies>

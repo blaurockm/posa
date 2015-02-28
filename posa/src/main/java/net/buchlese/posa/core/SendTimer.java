@@ -8,6 +8,7 @@ import java.util.TimerTask;
 import net.buchlese.posa.PosAdapterApplication;
 import net.buchlese.posa.PosAdapterConfiguration;
 import net.buchlese.posa.api.bofc.PosCashBalance;
+import net.buchlese.posa.jdbi.bofc.PosCashBalanceDAO;
 
 import org.slf4j.LoggerFactory;
 
@@ -16,12 +17,14 @@ import com.jcraft.jsch.JSchException;
 public class SendTimer extends TimerTask {
 
 	private final PosAdapterConfiguration config;
+	private final PosCashBalanceDAO cashBalDao;
 	private static final org.slf4j.Logger log = LoggerFactory.getLogger(SendTimer.class);
 	
 	
-	public SendTimer(PosAdapterConfiguration config) {
+	public SendTimer(PosAdapterConfiguration config, PosCashBalanceDAO balDao) {
 		super();
 		this.config = config;
+		this.cashBalDao = balDao;
 	}
 
 
@@ -31,7 +34,7 @@ public class SendTimer extends TimerTask {
 			List<PosCashBalance> toDo = new ArrayList<>(PosAdapterApplication.homingQueue);
 			PosAdapterApplication.homingQueue.clear();
 			
-			try (SendPosCashBalance sender = new SendPosCashBalance(config, log)) {
+			try (SendPosCashBalance sender = new SendPosCashBalance(config, cashBalDao, log)) {
 				if (config.isSshEnabled()) {
 					sender.sshConnect();
 				}
