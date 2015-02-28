@@ -32,6 +32,7 @@ public class PosCashBalanceMapper implements ResultSetMapper<PosCashBalance> {
 		cb.setFirstCovered(new DateTime(rs.getTimestamp("firstCovered")));
 		cb.setLastCovered(new DateTime(rs.getTimestamp("lastCovered")));
 		cb.setExported(rs.getBoolean("exported"));
+		cb.setExportDate(new DateTime(rs.getTimestamp("exportDate")));
 		cb.setOrigAbschluss(rs.getString("origSheet"));
 		return cb;
 	}
