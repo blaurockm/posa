@@ -101,7 +101,11 @@ public class SynchronizePosCashBalance extends AbstractSynchronizer implements C
 		List<PosCashBalance> pcb = new ArrayList<PosCashBalance>();
 		for (KassenAbschluss abschluss : abschs) {
 			if (abschluss.getIst() != null) {
-				pcb.add(createNewBalance(abschluss));
+				try {
+					pcb.add(createNewBalance(abschluss));
+				} catch (Exception e) {
+					LoggerFactory.getLogger(this.getClass()).error("problem creating balance " + abschluss.getAbschlussid(), e);
+				}
 			}
 		}
 		cashBalanceDAO.insertAll(pcb.iterator());
