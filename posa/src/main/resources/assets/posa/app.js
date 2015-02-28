@@ -94,15 +94,6 @@ function(dom, domConstruct, JsonRest, Button, Chart, Tooltip, Pie, DataGrid, Obj
                 pdfembed.src = '/cashbalance/complete/' + currentBalance.abschlussId;
             }
         }, "showJSONButton").startup();
-
-        var fibuExportButton = new Button({
-            label: "FiBu-Export",
-            onClick: function(){
-                var pdfembed = dom.byId("balpdf")
-                domConstruct.empty(pdfembed);
-                pdfembed.src = '/cashbalance/fibuexport/' + registry.byId("balPeriod").value;
-            }
-        }, "balExportButton").startup();
         
         var showGroyDetailsButton = new Button({
             label: "Details",

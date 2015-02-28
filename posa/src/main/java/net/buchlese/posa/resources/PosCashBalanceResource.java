@@ -2,11 +2,8 @@ package net.buchlese.posa.resources;
 
 import io.dropwizard.views.View;
 
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
 import java.util.List;
 
 import javax.ws.rs.GET;
@@ -20,7 +17,6 @@ import javax.ws.rs.core.StreamingOutput;
 
 import net.buchlese.posa.PosAdapterApplication;
 import net.buchlese.posa.api.bofc.PosCashBalance;
-import net.buchlese.posa.core.AccountingExport;
 import net.buchlese.posa.core.CashBalance;
 import net.buchlese.posa.core.Validator;
 import net.buchlese.posa.jdbi.bofc.PosCashBalanceDAO;
@@ -55,22 +51,6 @@ public class PosCashBalanceResource {
 	}
 
 	@GET
-	@Path("/fibuexport/{date}")
-	@Produces(MediaType.TEXT_PLAIN)
-	public StreamingOutput  fibuExport(@PathParam("date") String date)  {
-		return new StreamingOutput() {
-			@Override
-			public void write(OutputStream os) throws IOException,  WebApplicationException {
-				Writer writer = new BufferedWriter(new OutputStreamWriter(os));
-				for (PosCashBalance bal : fetchBalancesForDate(date)) {
-					writer.write(AccountingExport.accountingExport(bal));
-				}
-				writer.flush();
-			}
-		};
-	}
-
-	@GET
 	@Path("/{date}")
 	public PosCashBalance fetchForDate(@PathParam("date") String date)  {
 		return fetchBalanceForDate(date);
@@ -87,16 +67,22 @@ public class PosCashBalanceResource {
 	@Produces({"text/html"})
 	@GET
 	@Path("/view/{date}")
-	public View fetchViewForDate(@PathParam("date") String date)  {
-		PosCashBalance cb = fetchBalanceForDate(date);
+	public View fetchViewForDate(@PathParam("date") String abschlussId)  {
+		PosCashBalance cb = fetchBalanceForDate(abschlussId);
 		return new CashBalView(cb);
 	}
 
 	@Produces({"text/html"})
 	@GET
 	@Path("/resync/{date}")
-	public View resyncBalanceForDate(@PathParam("date") String date)  {
-		PosCashBalance cb = fetchBalanceForDate(date);
+	public View resyncBalanceForDate(@PathParam("date") String abschlussId)  {
+		PosCashBalance cb = fetchBalanceForDate(abschlussId);
+		if (cb == null) {
+			// es gibt den zu resyncenden abschluss noch gar nicht. einen leeren anlegen, der rest macht das resync
+			CashBalance balComp = new CashBalance(ticketDao);
+			cb = balComp.createBalance(null, null);
+			cb.setAbschlussId(abschlussId);
+		}
 		PosAdapterApplication.resyncQueue.offer(cb);
 		return new CashBalView(cb);
 	}
