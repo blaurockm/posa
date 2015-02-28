@@ -5,7 +5,7 @@
 
    <changeSet id="initialise" author="mblaurock">
       <createTable tableName="posTx">
-         <column name="id" type="numeric">
+         <column name="id" type="numeric" autoIncrement="true">
             <constraints primaryKey="true" nullable="false" />
          </column>
          <column name="belegnr" type="int">
@@ -66,15 +66,6 @@
          <column name="firstCovered" type="DATETIME"/>
          <column name="lastCovered" type="DATETIME"/>
       </createTable>
-   </changeSet>
-   
-   <changeSet id="prepareToSync" author="blaurock">
-      <addColumn tableName="posCashBalance">
-         <column name="lastModified" type="DATETIME"/>
-         <column name="syncTime" type="DATETIME"/>
-         <column name="syncAgain" type="boolean"/>
-         <column name="sendAgain" type="boolean"/>
-      </addColumn>
    </changeSet>
    
 </databaseChangeLog>

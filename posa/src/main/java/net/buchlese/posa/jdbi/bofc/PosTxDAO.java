@@ -19,22 +19,16 @@ import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 @RegisterMapper(PosTxMapper.class)
 public interface PosTxDAO {
 
-	@SqlBatch("insert into postx (id, belegnr, belegidx, sellingprice, purchaseprice, articlegroupkey, articleid, articlekey, total, description, count, ean, isbn, matchcode,  tax, txtype, timest, tobeignored, tobecheckedagain) " +
-	" values (:id, :belegNr, :belegIdx, :sellingPrice, :purchasePrice, :articleGroupKey, :articleId, :articleKey, :total, :description, :count, :ean, :isbn, :matchCode, :tax, :type, :timestamp, :toBeIgnored, :toBeCheckedAgain)")
+	@SqlBatch("insert into postx (belegnr, belegidx, sellingprice, purchaseprice, articlegroupkey, articleid, articlekey, total, description, count, ean, isbn, matchcode,  tax, txtype, timest, tobeignored, tobecheckedagain) " +
+	" values (:belegNr, :belegIdx, :sellingPrice, :purchasePrice, :articleGroupKey, :articleId, :articleKey, :total, :description, :count, :ean, :isbn, :matchCode, :tax, :type, :timestamp, :toBeIgnored, :toBeCheckedAgain)")
 	@BatchChunkSize(500)
 	void insertAll(@Valid @BindBean Iterator<PosTx> transactions);
 
 	@SqlQuery("select max(timest) from postx")
 	DateTime getMaxDatum();
 
-	@SqlQuery("select max(id) from postx")
-	Integer getMaxId();
-
 	@SqlQuery("select * from postx where tobeignored = 0 and timest between :vonDatum and :bisDatum")
 	List<PosTx> fetch(@Bind("vonDatum") DateTime vonDatum, @Bind("bisDatum") DateTime bisDatum);
-
-	@SqlQuery("select * from postx where tobecheckedAgain = 1 and timest > :datum")
-	List<PosTx> fetchRevisitations(@Bind("datum") DateTime datum);
 
 	@SqlUpdate("update postx set sellingprice = :sellingPrice, purchaseprice = :purchasePrice, articlegroupkey = :articleGroupKey, " +
 	 " articleid = :articleId, articlekey = :articleKey, total = :total, description = :description, count = :count, " +

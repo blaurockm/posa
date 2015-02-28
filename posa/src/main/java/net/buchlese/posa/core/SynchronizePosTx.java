@@ -74,13 +74,10 @@ public class SynchronizePosTx extends AbstractSynchronizer {
 	 * @return
 	 */
 	public List<PosTx> createNewTx(List<KassenVorgang> vorgs) {
-		Optional<Integer> maxId = Optional.fromNullable(txDAO.getMaxId());
-
-		long id = maxId.or(0);
 		List<PosTx> res = new ArrayList<>();
 		for (KassenVorgang vorg : vorgs) {
 			if (vorg.getGesamt() != null && vorg.getMWSt() != null) {
-				PosTx tx = createNewTx(vorg, ++id);
+				PosTx tx = createNewTx(vorg);
 				res.add(tx);
 			}
 		}
@@ -102,9 +99,8 @@ public class SynchronizePosTx extends AbstractSynchronizer {
 	}
 
 
-	public PosTx createNewTx(KassenVorgang vorg, long nextId) {
+	public PosTx createNewTx(KassenVorgang vorg) {
 		PosTx tx = new PosTx();
-		tx.setId(nextId);
 		tx.setBelegNr(vorg.getBelegNr());
 		tx.setBelegIdx(vorg.getLfdNummer());
 		tx.setTimestamp(vorg.getDatum());

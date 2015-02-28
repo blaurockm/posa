@@ -76,17 +76,7 @@ public class SynchronizePosTxTest {
 			}
 			
 			@Override
-			public Integer getMaxId() {
-				return null;
-			}
-			
-			@Override
 			public DateTime getMaxDatum() {
-				return null;
-			}
-			
-			@Override
-			public List<PosTx> fetchRevisitations(DateTime datum) {
 				return null;
 			}
 			

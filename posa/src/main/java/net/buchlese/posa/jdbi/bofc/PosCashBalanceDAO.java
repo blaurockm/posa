@@ -7,7 +7,6 @@ import javax.validation.Valid;
 
 import net.buchlese.posa.api.bofc.PosCashBalance;
 
-import org.joda.time.DateTime;
 import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.BindBean;
 import org.skife.jdbi.v2.sqlobject.SqlBatch;
@@ -29,19 +28,16 @@ public interface PosCashBalanceDAO {
 
 	@SqlQuery("select * from poscashbalance where abschlussid = :date")
 	PosCashBalance fetchForDate(@Bind("date") String date);
-	
-	@SqlQuery("select max(creationtime) from poscashbalance")
-	DateTime getMaxDatum();
 
 	@SqlQuery("select max(abschlussid) from poscashbalance")
 	String getMaxAbschlussId();
 
-	@SqlUpdate("insert into poscashbalance (id, abschlussid, revenue, creationtime, balancesheet, origsheet, exported, exportdate, firstCovered, lastCovered) " +
-	    " values (:id, :abschlussId, :revenue, :creationtime, :balanceSheet, :origAbschluss, :exported, :exportDate, :firstCovered, :lastCovered)")
+	@SqlUpdate("insert into poscashbalance (abschlussid, revenue, creationtime, balancesheet, origsheet, exported, exportdate, firstCovered, lastCovered) " +
+	    " values (:abschlussId, :revenue, :creationtime, :balanceSheet, :origAbschluss, :exported, :exportDate, :firstCovered, :lastCovered)")
 	void insert(@BindBean PosCashBalance cashBal);
 
-	@SqlBatch("insert into poscashbalance (id, abschlussid, revenue, creationtime, balancesheet, origsheet, exported, exportdate, firstCovered, lastCovered) " +
-		    " values (:id, :abschlussId, :revenue, :creationtime, :balanceSheet, :origAbschluss, :exported, :exportDate, :firstCovered, :lastCovered)")
+	@SqlBatch("insert into poscashbalance (abschlussid, revenue, creationtime, balancesheet, origsheet, exported, exportdate, firstCovered, lastCovered) " +
+		    " values (:abschlussId, :revenue, :creationtime, :balanceSheet, :origAbschluss, :exported, :exportDate, :firstCovered, :lastCovered)")
 	@BatchChunkSize(100)
 	void insertAll(@Valid @BindBean Iterator<PosCashBalance> cashBal);
 	

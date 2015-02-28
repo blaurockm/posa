@@ -67,16 +67,12 @@ public class SynchronizePosTicket extends AbstractSynchronizer {
 	 * @return
 	 */
 	public List<PosTicket> createTickets(List<KassenBeleg> belege) {
-		Optional<Integer> maxId = Optional.fromNullable(ticketDAO.getMaxId());
-
-		long id = maxId.or(0);
-		
 		// convert KassenVorgang to posTx
 		List<PosTicket> res = new ArrayList<>();
 		for (KassenBeleg beleg : belege) {
 			// wir legen den Beleg auf jeden Fall an,
 			// geparkte Belege bekommen das Kennzeichen "toBeCheckedAgain"
-			PosTicket tx = createNewTicket(beleg, ++id);
+			PosTicket tx = createNewTicket(beleg);
 			res.add(tx);
 		}
 
@@ -97,9 +93,8 @@ public class SynchronizePosTicket extends AbstractSynchronizer {
 		}
 	}
 
-	private PosTicket createNewTicket(KassenBeleg beleg, long nextId) {
+	private PosTicket createNewTicket(KassenBeleg beleg) {
 		PosTicket tx = new PosTicket();
-		tx.setId(nextId);
 		tx.setBelegNr(beleg.getBelegnr());
 		updateTicket(beleg, tx);
 		tx.setTimestamp(beleg.getZahlungszeit());
