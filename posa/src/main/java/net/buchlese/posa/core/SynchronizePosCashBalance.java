@@ -126,7 +126,11 @@ public class SynchronizePosCashBalance extends AbstractSynchronizer implements C
 		KassenAbschluss abschluss = abschlussDao.fetchForDate(accBal.getAbschlussId());
 		setBalanceValues(abschluss, accBal);
 		resyncBalanceDetails(abschluss, accBal);
-		cashBalanceDAO.update(accBal); // save to database
+		if (accBal.getId() > 0) {
+			cashBalanceDAO.update(accBal); // save to database
+		} else {
+			cashBalanceDAO.insert(accBal); // save to database
+		}
 		PosAdapterApplication.homingQueue.offer(accBal); // sync back home
 	}
 
