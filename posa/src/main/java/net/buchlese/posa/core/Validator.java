@@ -8,6 +8,7 @@ import java.io.Writer;
 import java.util.List;
 import java.util.Map;
 
+import net.buchlese.posa.api.bofc.ArticleGroup;
 import net.buchlese.posa.api.bofc.PosCashBalance;
 import net.buchlese.posa.api.bofc.PosTicket;
 import net.buchlese.posa.api.bofc.PosTx;
@@ -38,6 +39,13 @@ public class Validator {
 		long articleGrpSum = balance.getArticleGroupBalance().entrySet().stream().mapToLong(Map.Entry::getValue).sum();
 		if ( balance.getGoodsOut() != articleGrpSum) {
 			w.write(" nein\n");
+		} else {
+			w.write(" ok\n");
+		}
+
+		w.write("ArticleGroupBalance darf nicht NONE enthalten: ");
+		if (balance.getArticleGroupBalance().containsKey(ArticleGroup.NONE.getKey())) {
+			w.write(" leider doch.\n");
 		} else {
 			w.write(" ok\n");
 		}
@@ -95,6 +103,9 @@ public class Validator {
 		// GoodsOut muss der Summe der ArticleGroupBalance entsprechen
 		long articleGrpSum = balance.getArticleGroupBalance().entrySet().stream().mapToLong(Map.Entry::getValue).sum();
 		if ( balance.getGoodsOut() != articleGrpSum) {
+			return false;
+		}
+		if (balance.getArticleGroupBalance().containsKey(ArticleGroup.NONE.getKey())) {
 			return false;
 		}
 

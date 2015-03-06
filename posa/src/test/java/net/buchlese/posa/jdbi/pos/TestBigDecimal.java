@@ -20,6 +20,7 @@ import org.skife.jdbi.v2.DBI;
 
 import com.google.common.io.Resources;
 
+@Ignore
 public class TestBigDecimal {
 	@ClassRule
 	public static final DropwizardAppRule<PosAdapterConfiguration> RULE = new DropwizardAppRule<PosAdapterConfiguration>(PosAdapterApplication.class, resourceFilePath("testconfig.yaml"));

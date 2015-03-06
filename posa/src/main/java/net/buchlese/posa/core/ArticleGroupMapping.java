@@ -13,6 +13,10 @@ public class ArticleGroupMapping {
 	
 	public static ArticleGroup mappingFrom(KassenVorgang vorg) {
 		for (Map.Entry<String, ArticleGroup> mapping : ArticleGroup.getArticleGroups().entrySet()) {
+			if (mapping.getKey().equals(ArticleGroup.NONE.getKey())) {
+				// mit nix wollen wir nicht vergleichen
+				continue;
+			}
 			Predicate<String> p = Pattern.compile(mapping.getValue().getMatch()).asPredicate();
 			if (vorg.getArtikelNummer() != null && p.test(vorg.getArtikelNummer())) {
 				return mapping.getValue();
