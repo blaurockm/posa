@@ -114,12 +114,12 @@ public class PosCashBalanceResource {
 	@POST
 	@Path("/fibuexport")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	@Produces(MediaType.TEXT_PLAIN)
+	@Produces("text/plain; charset='iso-8859-1'")
 	public StreamingOutput create( @FormParam("from")String from, @FormParam("till")String till, @FormParam("kasse")Integer kasse) {
 		return new StreamingOutput() {
 			@Override
 			public void write(OutputStream os) throws IOException,  WebApplicationException {
-				Writer writer = new BufferedWriter(new OutputStreamWriter(os));
+				Writer writer = new BufferedWriter(new OutputStreamWriter(os, "iso-8859-1"));
 				writer.write(AccountingExport.accountingExportHeader());
 				for (PosCashBalance bal :  dao.fetch(kasse, from, Optional.fromNullable(till))) {
 					try {

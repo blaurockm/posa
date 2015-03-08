@@ -204,7 +204,7 @@ function(dom, domConstruct, JsonRest, Button, Chart, Tooltip, Pie, DataGrid, Obj
             // proceed directly with startup
             startup(registry);
             update();
-            dashboardupdate = window.setInterval(update, 5 * 60 * 1000);
+//            dashboardupdate = window.setInterval(update, 5 * 60 * 1000);
             registry.byId("balPeriod").on("change", updateBalGrid);
             registry.byId("ticketPeriod").on("change", updateTickGrid);
             registry.byId("txPeriod").on("change", updateTxGrid);
