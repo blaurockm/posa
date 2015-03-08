@@ -1,9 +1,9 @@
 package net.buchlese.bofc.api.bofc;
 
 public enum Tax {
-	FULL("f", "19 %", 4400),
-	HALF("h", "7 %", 4300),
-	NONE("0", "0 %", 4200); // gutschein verkauft
+	FULL("f", "19%", 4400),
+	HALF("h", "7%", 4300),
+	NONE("0", "0%", 4200); // gutschein verkauft
 	
 	private String dbKey;
 	private String accText;

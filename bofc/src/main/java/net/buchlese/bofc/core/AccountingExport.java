@@ -70,6 +70,10 @@ public class AccountingExport {
 		
 		// jetzt die einzelnen MWSt-Sätze
 		for (Map.Entry<Tax, Long> entry : bal.getTaxBalance().entrySet()) {
+			if (entry.getKey().equals(Tax.NONE)) {
+				// 0% wollen wir aufteilen
+				continue;
+			}
 			Booking taxEntry = new Booking();
 			taxEntry.setAccount(entry.getKey().getAccount());
 			taxEntry.setBetrag(entry.getValue());
@@ -123,14 +127,20 @@ public class AccountingExport {
 		soll.setBetrag(bal.getGoodsOut());
 		soll.setCode(null);
 		ausgaben.add(soll);
-		for (Map.Entry<PaymentMethod, Long> entry : bal.getPaymentMethodBalance().entrySet()) {
+		if (bal.getPaymentMethodBalance().get(PaymentMethod.TELE) != null) {
 			Booking couponEntry = new Booking();
-			couponEntry.setAccount(entry.getKey().getAccount());
-			couponEntry.setBetrag(entry.getValue());
-			couponEntry.setText(entry.getKey().getAccountText() + " " + dateShort);
-			ges += entry.getValue();
+			couponEntry.setAccount(PaymentMethod.TELE.getAccount());
+			couponEntry.setBetrag(bal.getPaymentMethodBalance().get(PaymentMethod.TELE));
+			couponEntry.setText(PaymentMethod.TELE.getAccountText() + " " + dateShort);
+			ges += bal.getPaymentMethodBalance().get(PaymentMethod.TELE);
 			ausgaben.add(couponEntry);
 		}
+		Booking cashAbsorpEntry = new Booking();
+		cashAbsorpEntry.setAccount(PaymentMethod.CASH.getAccount());
+		cashAbsorpEntry.setBetrag(bal.getAbsorption());
+		cashAbsorpEntry.setText(PaymentMethod.CASH.getAccountText() + " " + dateShort);
+		ges += bal.getAbsorption();
+		ausgaben.add(cashAbsorpEntry);
 		// jetzt die Gutschein werte
 		for (Map.Entry<String, Long> entry : bal.getOldCoupon().entrySet()) {
 			Booking couponEntry = new Booking();
@@ -139,9 +149,9 @@ public class AccountingExport {
 				continue;
 			}
 			couponEntry.setAccount(grp.getAccount());
-			couponEntry.setBetrag(entry.getValue());
-			couponEntry.setText(grp.getText() + " " + dateShort);
-			ges += entry.getValue();
+			couponEntry.setBetrag(-entry.getValue());
+			couponEntry.setText("Eingelöst " + grp.getText() + " " + dateShort);
+			ges += -entry.getValue();
 			ausgaben.add(couponEntry);
 		}
 

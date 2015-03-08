@@ -122,7 +122,12 @@ public class PosCashBalanceResource {
 				Writer writer = new BufferedWriter(new OutputStreamWriter(os));
 				writer.write(AccountingExport.accountingExportHeader());
 				for (PosCashBalance bal :  dao.fetch(kasse, from, Optional.fromNullable(till))) {
-					writer.write(AccountingExport.accountingExport(bal));
+					try {
+						writer.write(AccountingExport.accountingExport(bal));
+					} catch (Exception e) {
+						log.error("problem creating cashBalance" + bal, e);
+						writer.write("\n\n\nproblem creating cashBalance " + e.toString() + "\n\n\n\n");
+					}
 				}
 				writer.flush();
 			}
