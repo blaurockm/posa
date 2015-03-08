@@ -5,7 +5,7 @@
 <title>Buchlese</title>
 <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/dojo/1.10.1/dijit/themes/claro/document.css" />
 <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/dojo/1.10.1/dijit/themes/claro/claro.css" />
-<link rel="stylesheet" href="/assets/posa/app.css" />
+<link rel="stylesheet" href="/assets/bofc/app.css" />
 <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/dojo/1.10.1/dojox/grid/resources/Grid.css" >
 <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/dojo/1.10.1/dojox/grid/resources/claroGrid.css" >
 
@@ -107,22 +107,33 @@ registry: "dijit/registry"
 						<span data-dojo-value=""></span>
 						<span data-dojo-value="thisyear">diesem Jahr</span>
 						<span data-dojo-value="lastyear">letztem Jahr</span>
-					 </div> <button id="balExportButton" type="button"></button> <button id="goryDetailsButton" type="button"></button> </h2>
+					 </div> </h2>
 	           <div id="balGrid" style="height:30%; width:50%">
 	           </div>
-	           <iframe id="balpdf" style="height:60%; width:100%; background-color:#eeeeee;"></iframe>
-			</div>
+			   <div data-dojo-type="dijit/layout/BorderContainer" data-dojo-props="design:'sidebar', gutters:true, liveSplitters:true" id="balDetailContainer" style="height:60%; width:100%;">
+				    <div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="splitter:true, region:'leading'" style="width: 100px;">
+				               <button id="showButton" type="button"></button>
+				               <button id="showJSONButton" type="button"></button>
+				               <button id="goryDetailsButton" type="button"></button>
+				    </div>
+				    <div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="splitter:true, region:'center'">
+				        <iframe id="balpdf" style="height:100%; width:100%;background-color:#eeeeee;"></iframe>
+				    </div>
+				</div>
+		    </div>
 
   		    <!--  die technisches brimborium -->
 			<div id="adminTab" data-dojo-type="dijit/layout/ContentPane" data-dojo-props='title:"Technisches", style:"padding:10px;display:none;"'>
-				<form method="POST" action="http://localhost:8080/admin/tasks/synchronize" target="syncresult">
-					<input type="submit" value="Jetzt synchronisieren!" />
+				<form method="POST" action="/cashbalance/fibuexport" target="expresult">
+				    <table>
+					<tr><td><input type="submit" value="Jetzt synchronisieren!" /></td><td></td></tr>
+					<tr><td>Von</td><td><input type="text" name="from" value="20150207" /></td></tr>
+					<tr><td>Bis</td><td><input type="text" name="till" value="20150228" /></td></tr>
+					<tr><td>Kasse</td><td><input type="text" name="kasse" value="2" /></td></tr>
+					</table>
 				</form>
-				<div class="boardlet">
-				<p>Sync-Result</p>
-				<iframe id="syncresult" name="syncresult">
-				</iframe>
-				</div>
+				<p>Export-Ergebnis</p>
+				<iframe id="expresult" name="expresult" style="height:60%; width:100%; background-color:#eeeeee;"></iframe>
 			</div>
 		</div>
 	</div>
@@ -139,8 +150,8 @@ registry: "dijit/registry"
 					isDebug: true,
 					parseOnLoad: false,
 					packages: [{
-						name: "posa",
-						location: "/assets/posa"
+						name: "bofc",
+						location: "/assets/bofc"
 					}],
 				};
 			})();
@@ -148,7 +159,7 @@ registry: "dijit/registry"
 		<!-- load dojo -->
 		<script src="//ajax.googleapis.com/ajax/libs/dojo/1.10.1/dojo/dojo.js"></script>
 		<script>
-			require(["posa/app", "dijit/registry", "dojo/parser", "dijit/layout/BorderContainer", "dijit/layout/TabContainer", 
+			require(["bofc/app", "dijit/registry", "dojo/parser", "dijit/layout/BorderContainer", "dijit/layout/TabContainer", 
 			         "dijit/layout/ContentPane", "dijit/form/Select", "dijit/form/ComboBox", "dojo/domReady!"], function(demoApp, registry, parser) {
 				parser.parse();
 				demoApp.init(registry);

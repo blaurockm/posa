@@ -14,6 +14,7 @@ public class ArticleGroup {
 	
 	public static void injectMappings(Map<String, ArticleGroup> m) {
 		articleGroupMappings = m;
+		articleGroupMappings.put(NONE.key, NONE);
 	}
 	@JsonIgnore
 	public static  Map<String, ArticleGroup> getArticleGroups() {

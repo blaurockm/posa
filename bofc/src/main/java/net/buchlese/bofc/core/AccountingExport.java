@@ -13,9 +13,6 @@ import net.buchlese.bofc.api.bofc.PosCashBalance;
 import net.buchlese.bofc.api.bofc.Tax;
 
 public class AccountingExport {
-
-	public static int kassenKonto = 1600;
-	public static String kostenStelle = "Dornhan";
 	
 //	Belegdatum;Buchungstext;Buchungsbetrag;Sollkonto;Habenkonto;Kostenstelle
 //	04.10.2014;Einnahmen 04.10.;289.07;1600;0;
@@ -27,6 +24,30 @@ public class AccountingExport {
 //	;Telecash 04.10.;59.69;1461;;
 //	;Barentnahme 04.10.;225.0;1460;;
 //	04.10.2014;Eingel Gutscheine 04.10.;2.91;1371;1600;
+
+	public static String accountingExportHeader() {
+		return "Belegdatum;Buchungstext;Buchungsbetrag;Sollkonto;Habenkonto;Kostenstelle\n";
+	}
+
+	private static String getKostenStelle(PosCashBalance bal) {
+		if (bal.getPointid() == 1) {
+			return "Dornhan";
+		}
+		if (bal.getPointid() == 2) {
+			return "Sulz";
+		}
+		return "";
+	}
+
+	private static int getKassenkonto(PosCashBalance bal) {
+		if (bal.getPointid() == 1) {
+			return 1600;
+		}
+		if (bal.getPointid() == 2) {
+			return 1610;
+		}
+		return 1370;
+	}
 
 	public static String accountingExport(PosCashBalance bal) {
 		StringBuilder sb = new StringBuilder();
@@ -40,7 +61,7 @@ public class AccountingExport {
 		long ges = 0;
 		
 		Booking soll = new Booking();
-		soll.setAccount(kassenKonto);
+		soll.setAccount(getKassenkonto(bal));
 		soll.setDate(bal.getLastCovered());
 		soll.setText("Einnahmen " + dateShort);
 		soll.setBetrag(bal.getGoodsOut());
@@ -53,7 +74,7 @@ public class AccountingExport {
 			taxEntry.setAccount(entry.getKey().getAccount());
 			taxEntry.setBetrag(entry.getValue());
 			taxEntry.setText("Warenausgang " + entry.getKey().getAccountText() + " " + dateShort);
-			taxEntry.setCode(kostenStelle);
+			taxEntry.setCode(getKostenStelle(bal));
 			ges += entry.getValue();
 			einnahmen.add(taxEntry);
 		}
@@ -68,6 +89,7 @@ public class AccountingExport {
 			couponEntry.setAccount(grp.getAccount());
 			couponEntry.setBetrag(entry.getValue());
 			couponEntry.setText(grp.getText() + " " + dateShort);
+			couponEntry.setCode(null);
 			ges += entry.getValue();
 			einnahmen.add(couponEntry);
 		}
@@ -82,6 +104,7 @@ public class AccountingExport {
 			grpEntry.setAccount(grp.getAccount());
 			grpEntry.setBetrag(entry.getValue());
 			grpEntry.setText(grp.getText() + " " + dateShort);
+			grpEntry.setCode(null);
 			ges += entry.getValue();
 			einnahmen.add(grpEntry);
 		}
@@ -94,7 +117,7 @@ public class AccountingExport {
 		ges = 0;
 		
 		soll = new Booking();
-		soll.setAccount(kassenKonto);
+		soll.setAccount(getKassenkonto(bal));
 		soll.setDate(bal.getLastCovered());
 		soll.setText("Kassenausgang " + dateShort);
 		soll.setBetrag(bal.getGoodsOut());
@@ -154,7 +177,10 @@ public class AccountingExport {
 				if (soll == false) {
 					sb.append(";");
 				}
-				sb.append(bookings.get(i).getCode()).append("\n");
+				if (bookings.get(i).getCode() != null) {
+					sb.append(bookings.get(i).getCode());
+				}
+				sb.append("\n");
 			}
 		} else {
 			// es ist ein einfaches booking;
@@ -167,7 +193,10 @@ public class AccountingExport {
 				sb.append(bookings.get(1).getAccount()).append(";");
 				sb.append(bookings.get(0).getAccount()).append(";");
 			}
-			sb.append(bookings.get(1).getCode()).append("\n");
+			if (bookings.get(1).getCode() != null) {
+				sb.append(bookings.get(1).getCode());
+			}
+			sb.append("\n");
 		}
 		
 		return sb.toString();

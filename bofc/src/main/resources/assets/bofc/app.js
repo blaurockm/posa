@@ -56,12 +56,13 @@ function(dom, domConstruct, JsonRest, Button, Chart, Tooltip, Pie, DataGrid, Obj
         balGridUi = new DataGrid( {
             structure: [
                 { name: "Datum", field: "abschlussId", width: "90px"},
-                { name: "WoTag", field: "lastCovered", width: "90px", formatter : function(v) { return new Date(v).getDay() } },
+                { name: "Kasse", field: "pointid", width: "50px"},
                 { name: "Umsatz", field: "revenue", styles: 'text-align: right;',width: "90px", formatter: formatMoney},
-                { name: "Ges. Gewinn", field: "profit", styles: 'text-align: right;',width: "90px", formatter: formatMoney},
+                { name: "Ges. Ertrag", field: "profit", styles: 'text-align: right;',width: "90px", formatter: formatMoney},
+                { name: "Anf", field: "cashStart", styles: 'text-align: right;',width: "90px", formatter: formatMoney},
+                { name: "End", field: "cashEnd", styles: 'text-align: right;',width: "90px", formatter: formatMoney},
                 { name: "check", field: "checked", width: "50px", type: dojox.grid.cells.Bool, editable: true },
-                { name: "FiBu", field: "exported", width: "50px", type: dojox.grid.cells.Bool, editable: true},
-                { name: "zur FiBu am", field: "exportDate", width: "120px", formatter : formatDateTime},
+                { name: "homed am", field: "exportDate", width: "120px", formatter : formatDateTime},
                 { name: "Erzeugt am", field: "creationtime", width: "120px", formatter : formatDateTime}],
                rowSelector : '20px',
                selectionMode : 'single',
@@ -69,30 +70,49 @@ function(dom, domConstruct, JsonRest, Button, Chart, Tooltip, Pie, DataGrid, Obj
         }, "balGrid");
         balGridUi.on("RowClick", function(evt){
             var idx = evt.rowIndex;
-            var pdfembed = dom.byId("balpdf")
+            var pdfembed = dom.byId("balpdf");
             domConstruct.empty(pdfembed);
             currentBalance = balGridUi.getItem(idx); // globale speicherung
-            pdfembed.src = '/cashbalance/pdf/' + currentBalance.abschlussId;
+            pdfembed.src = '/cashbalance/view/' + currentBalance.abschlussId;
         }, true);
         balGridUi.startup();
         
-        var fibuExportButton = new Button({
-            label: "FiBu-Export",
+        var showShowButton = new Button({
+            label: "Show",
             onClick: function(){
                 var pdfembed = dom.byId("balpdf")
                 domConstruct.empty(pdfembed);
-                pdfembed.src = '/cashbalance/fibuexport/' + registry.byId("balPeriod").value;
+                pdfembed.src = '/cashbalance/view/' + currentBalance.abschlussId;
             }
-        }, "balExportButton").startup();
+        }, "showButton").startup();
+
+        var showShowJSONButton = new Button({
+            label: "JSON",
+            onClick: function(){
+                var pdfembed = dom.byId("balpdf")
+                domConstruct.empty(pdfembed);
+                pdfembed.src = '/cashbalance/complete/' + currentBalance.abschlussId;
+            }
+        }, "showJSONButton").startup();
         
         var showGroyDetailsButton = new Button({
-            label: "schmutzige Details",
+            label: "Details",
             onClick: function(){
                 var pdfembed = dom.byId("balpdf")
                 domConstruct.empty(pdfembed);
                 pdfembed.src = '/cashbalance/extended/' + currentBalance.abschlussId;
             }
         }, "goryDetailsButton").startup();
+        
+        var printButton = new Button({
+            label: "Abschluss drucken",
+            onClick: function(){
+                var pdfembed = dom.byId("balpdf")
+                domConstruct.empty(pdfembed);
+                pdfembed.src = '/cashbalance/pdf/' + currentBalance.abschlussId;
+//            	var pdfembed = dom.byId("balpdf"); pdfembed.focus(); pdfembed.contentWindow.print();
+            }
+        }, "printButton").startup();
 
     },
     updateBalGrid = function(newVal ) {

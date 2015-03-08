@@ -1,5 +1,7 @@
 package net.buchlese.bofc.resources;
 
+import io.dropwizard.views.View;
+
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -10,6 +12,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -31,6 +34,7 @@ import net.buchlese.bofc.core.Validator;
 import net.buchlese.bofc.jdbi.bofc.PosCashBalanceDAO;
 import net.buchlese.bofc.jdbi.bofc.PosTicketDAO;
 import net.buchlese.bofc.jdbi.bofc.PosTxDAO;
+import net.buchlese.bofc.view.CashBalView;
 
 import org.joda.time.DateTime;
 import org.slf4j.LoggerFactory;
@@ -92,14 +96,32 @@ public class PosCashBalanceResource {
 	}
 
 	@GET
-	@Path("/fibuexport/{date}")
+	@Path("/complete/{date}")
+	public PosCashBalance fetchCompleteForDate(@PathParam("date") String date)  {
+		PosCashBalance bal = fetchBalanceForDate(date);
+		new CashBalance(ticketDao).amendTickets(bal);
+		return bal;
+	}
+
+	@Produces({"text/html"})
+	@GET
+	@Path("/view/{date}")
+	public View fetchViewForDate(@PathParam("date") String abschlussId)  {
+		PosCashBalance cb = fetchBalanceForDate(abschlussId);
+		return new CashBalView(cb);
+	}
+
+	@POST
+	@Path("/fibuexport")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.TEXT_PLAIN)
-	public StreamingOutput  fibuExport(@PathParam("date") String date)  {
+	public StreamingOutput create( @FormParam("from")String from, @FormParam("till")String till, @FormParam("kasse")Integer kasse) {
 		return new StreamingOutput() {
 			@Override
 			public void write(OutputStream os) throws IOException,  WebApplicationException {
 				Writer writer = new BufferedWriter(new OutputStreamWriter(os));
-				for (PosCashBalance bal : fetchBalancesForDate(date)) {
+				writer.write(AccountingExport.accountingExportHeader());
+				for (PosCashBalance bal :  dao.fetch(kasse, from, Optional.fromNullable(till))) {
 					writer.write(AccountingExport.accountingExport(bal));
 				}
 				writer.flush();

@@ -1,5 +1,6 @@
 package net.buchlese.bofc.core;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +36,22 @@ public class CashBalance {
 		};
 	}
 
+	public List<PosTx> amendTickets(PosCashBalance bal) {
+		List<PosTx> txs = ticketDAO.fetchTx(bal.getFirstCovered(), bal.getLastCovered());
+		List<PosTicket> tickets = ticketDAO.fetch(bal.getFirstCovered(), bal.getLastCovered());
+		bal.setTickets(tickets);
+		for (PosTicket ticket : tickets) {
+			List<PosTx> titxs = new ArrayList<>();
+			for (PosTx tx : txs) {
+				if (tx.getBelegNr() == ticket.getBelegNr()) {
+					titxs.add(tx);
+				}
+			}
+//			Collections.sort(titxs);
+			ticket.setTxs(titxs);
+		}
+		return txs;
+	}
 
 	public PosCashBalance computeBalance(DateTime from, DateTime till) {
 		PosCashBalance balance = new PosCashBalance();

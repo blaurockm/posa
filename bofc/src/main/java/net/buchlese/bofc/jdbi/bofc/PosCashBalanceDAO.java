@@ -17,6 +17,9 @@ public interface PosCashBalanceDAO {
 	@SqlQuery("select * from poscashbalance where abschlussid >= :date and abschlussid <= :datetill")
 	List<PosCashBalance> fetchAllAfter(@Bind("date") String date, @Bind("datetill") Optional<String> datetill);
 
+	@SqlQuery("select * from poscashbalance where pointid = :pointId and abschlussid >= :date and abschlussid <= :datetill")
+	List<PosCashBalance> fetch(@Bind("pointId") Integer pointId, @Bind("date") String date, @Bind("datetill") Optional<String> datetill);
+
 	@SqlQuery("select * from poscashbalance where exported = 0 and abschlussid >= '20140810'")
 	List<PosCashBalance> fetchNotExported();
 
