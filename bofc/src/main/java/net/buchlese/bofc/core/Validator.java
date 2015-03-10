@@ -12,15 +12,18 @@ import net.buchlese.bofc.api.bofc.PosCashBalance;
 import net.buchlese.bofc.api.bofc.PosTicket;
 import net.buchlese.bofc.api.bofc.PosTx;
 import net.buchlese.bofc.jdbi.bofc.PosTicketDAO;
+import net.buchlese.bofc.jdbi.bofc.PosTxDAO;
 
 public class Validator {
 
 	private PosCashBalance balance;
 	private final PosTicketDAO ticketDAO;
+	private final PosTxDAO txDAO;
 	
-	public Validator(PosCashBalance balance, PosTicketDAO ticketDAO) {
+	public Validator(PosCashBalance balance, PosTicketDAO ticketDAO, PosTxDAO txDAO) {
 		this.balance = balance;
 		this.ticketDAO = ticketDAO;
+		this.txDAO = txDAO;
 	}
 
 	public void validateDetails(OutputStream output) throws IOException {
@@ -51,7 +54,7 @@ public class Validator {
 		}
 
 		w.write("Einzelcheck der Belege...\n ");
-		List<PosTx> txs = ticketDAO.fetchTx(balance.getFirstCovered(), balance.getLastCovered());
+		List<PosTx> txs = txDAO.fetchTx(balance.getFirstCovered(), balance.getLastCovered());
 		List<PosTicket> tickets = ticketDAO.fetch(balance.getFirstCovered(), balance.getLastCovered());
 		for (PosTicket ticket : tickets) {
 			w.write(" Check "); 

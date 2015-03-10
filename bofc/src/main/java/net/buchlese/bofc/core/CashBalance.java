@@ -15,19 +15,22 @@ import net.buchlese.bofc.api.bofc.PosTx;
 import net.buchlese.bofc.api.bofc.Tax;
 import net.buchlese.bofc.api.bofc.TxType;
 import net.buchlese.bofc.jdbi.bofc.PosTicketDAO;
+import net.buchlese.bofc.jdbi.bofc.PosTxDAO;
 
 import org.joda.time.DateTime;
 
 public class CashBalance {
 
 	private final PosTicketDAO ticketDAO;
+	private final PosTxDAO txDAO;
 
 	private final Comparator<PosTx> txComparator;
 
 
-	public CashBalance(PosTicketDAO ticketDAO) {
+	public CashBalance(PosTicketDAO ticketDAO, PosTxDAO txDAO) {
 		super();
 		this.ticketDAO = ticketDAO;
+		this.txDAO = txDAO;
 		txComparator = new Comparator<PosTx>() {
 			@Override
 			public int compare(PosTx o1, PosTx o2) {
@@ -37,7 +40,7 @@ public class CashBalance {
 	}
 
 	public List<PosTx> amendTickets(PosCashBalance bal) {
-		List<PosTx> txs = ticketDAO.fetchTx(bal.getFirstCovered(), bal.getLastCovered());
+		List<PosTx> txs = txDAO.fetchTx(bal.getFirstCovered(), bal.getLastCovered());
 		List<PosTicket> tickets = ticketDAO.fetch(bal.getFirstCovered(), bal.getLastCovered());
 		bal.setTickets(tickets);
 		for (PosTicket ticket : tickets) {
@@ -61,7 +64,7 @@ public class CashBalance {
 		balance.setFirstCovered(from);
 		balance.setLastCovered(till);
 		
-		List<PosTx> txs = ticketDAO.fetchTx(from, till);
+		List<PosTx> txs = txDAO.fetchTx(from, till);
 		List<PosTicket> tickets = ticketDAO.fetch(from, till);
 		
 		balance.setTicketCount((int) tickets.stream().filter(t -> (t.isCancel() && t.isCancelled()) == false).count());

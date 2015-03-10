@@ -6,7 +6,6 @@ import java.util.List;
 import javax.validation.Valid;
 
 import net.buchlese.bofc.api.bofc.PosTicket;
-import net.buchlese.bofc.api.bofc.PosTx;
 
 import org.joda.time.DateTime;
 import org.skife.jdbi.v2.sqlobject.Bind;
@@ -38,14 +37,6 @@ public interface PosTicketDAO {
 	@SqlQuery("select * from posticket where timest between :vonDatum and :bisDatum")
 	List<PosTicket> fetch(@Bind("vonDatum") DateTime vonDatum, @Bind("bisDatum") DateTime bisDatum);
 
-	/**
-	 * Alle Tx die zu einem Abschluss gehören. Zuordnung aufgrund des Datums des Belegs
-	 * @param vonDatum
-	 * @param bisDatum
-	 * @return
-	 */
-	@SqlQuery("select postx.* from postx join posticket on posticket.belegnr = postx.belegnr where postx.tobeignored = 0 and posticket.timest between :vonDatum and :bisDatum")
-	List<PosTx> fetchTx(@Bind("vonDatum") DateTime vonDatum, @Bind("bisDatum") DateTime bisDatum);
 
 	@SqlUpdate("update posticket set total = :total, pointid = :pointid, paymentmethod = :paymentMethod, cancelled = :cancelled, tobecheckedagain = :toBeCheckedAgain, cancel = :cancel " +
 	" where id = :id ")

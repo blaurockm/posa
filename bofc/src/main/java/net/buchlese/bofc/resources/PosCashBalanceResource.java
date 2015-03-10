@@ -68,6 +68,7 @@ public class PosCashBalanceResource {
 			List<PosTicket> tickets = cashBal.getTickets() == null ? Collections.emptyList() : cashBal.getTickets();
 			txs = tickets.stream().filter(p -> p.getTxs() != null).flatMap(t -> t.getTxs().stream()).collect(Collectors.toList());
 			if (id != null) {
+				cashBal.setId(id); // damit auch der richtige Abschluss aktualisiert wird
 				dao.update(cashBal);
 				ticketDao.deleteAll(cashBal.getFirstCovered(), cashBal.getLastCovered(), cashBal.getPointid());
 				txDao.deleteAll(cashBal.getFirstCovered(), cashBal.getLastCovered(), cashBal.getPointid());
@@ -99,7 +100,7 @@ public class PosCashBalanceResource {
 	@Path("/complete/{date}")
 	public PosCashBalance fetchCompleteForDate(@PathParam("date") String date)  {
 		PosCashBalance bal = fetchBalanceForDate(date);
-		new CashBalance(ticketDao).amendTickets(bal);
+		new CashBalance(ticketDao, txDao).amendTickets(bal);
 		return bal;
 	}
 
@@ -165,7 +166,7 @@ public class PosCashBalanceResource {
 		return new StreamingOutput() {
 			public void write(OutputStream output) throws IOException, WebApplicationException {
 				try {
-					Validator generator = new Validator(fetchBalanceForDate(date), ticketDao);
+					Validator generator = new Validator(fetchBalanceForDate(date), ticketDao, txDao);
 					generator.validateDetails(output);
 				} catch (Exception e) {
 					throw new WebApplicationException(e);
@@ -180,7 +181,7 @@ public class PosCashBalanceResource {
 			// wir berechnen den von heute...
 			DateTime today = new DateTime();
 			DateTime startOfToday = today.hourOfDay().setCopy(0); // stunde 0
-			CashBalance balCOmp = new CashBalance(ticketDao);
+			CashBalance balCOmp = new CashBalance(ticketDao, txDao);
 			PosCashBalance bal = balCOmp.computeBalance(startOfToday, today);
 			return bal;
 		}
@@ -188,7 +189,7 @@ public class PosCashBalanceResource {
 			// wir berechnen den von heute...
 			DateTime today = new DateTime();
 			DateTime startOfToday = today.hourOfDay().setCopy(0).dayOfWeek().setCopy(1); // stunde 0 und wochentag 0
-			CashBalance balCOmp = new CashBalance(ticketDao);
+			CashBalance balCOmp = new CashBalance(ticketDao, txDao);
 			PosCashBalance bal = balCOmp.computeBalance(startOfToday, today);
 			return bal;
 		}
@@ -196,7 +197,7 @@ public class PosCashBalanceResource {
 			// wir berechnen den von heute...
 			DateTime today = new DateTime().minusWeeks(1).hourOfDay().setCopy(23).dayOfWeek().setCopy(7); // letzter tag und letzte stunde
 			DateTime startOfToday = today.hourOfDay().setCopy(0).dayOfWeek().setCopy(1); // stunde 0 und wochentag 1
-			CashBalance balCOmp = new CashBalance(ticketDao);
+			CashBalance balCOmp = new CashBalance(ticketDao, txDao);
 			PosCashBalance bal = balCOmp.computeBalance(startOfToday, today);
 			return bal;
 		}
@@ -204,7 +205,7 @@ public class PosCashBalanceResource {
 			// wir berechnen den von heute...
 			DateTime today = new DateTime();
 			DateTime startOfToday = today.hourOfDay().setCopy(0).dayOfMonth().setCopy(1); // stunde 0 und monats-ersten
-			CashBalance balCOmp = new CashBalance(ticketDao);
+			CashBalance balCOmp = new CashBalance(ticketDao, txDao);
 			PosCashBalance bal = balCOmp.computeBalance(startOfToday, today);
 			return bal;
 		}

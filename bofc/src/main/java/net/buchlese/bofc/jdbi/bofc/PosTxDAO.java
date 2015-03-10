@@ -28,6 +28,15 @@ public interface PosTxDAO {
 	@SqlQuery("select * from postx where tobeignored = 0 and timest between :vonDatum and :bisDatum")
 	List<PosTx> fetch(@Bind("vonDatum") DateTime vonDatum, @Bind("bisDatum") DateTime bisDatum);
 
+	/**
+	 * Alle Tx die zu einem Abschluss gehören. Zuordnung aufgrund des Datums des Belegs
+	 * @param vonDatum
+	 * @param bisDatum
+	 * @return
+	 */
+	@SqlQuery("select postx.* from postx join posticket on posticket.belegnr = postx.belegnr where postx.tobeignored = 0 and posticket.timest between :vonDatum and :bisDatum")
+	List<PosTx> fetchTx(@Bind("vonDatum") DateTime vonDatum, @Bind("bisDatum") DateTime bisDatum);
+
 
 	@SqlUpdate("update postx set sellingprice = :sellingPrice, purchaseprice = :purchasePrice, articlegroupkey = :articleGroupKey, " +
 	 " articleid = :articleId, articlekey = :articleKey, total = :total, description = :description, count = :count, " +
