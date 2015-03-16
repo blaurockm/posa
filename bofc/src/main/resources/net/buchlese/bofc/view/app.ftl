@@ -126,10 +126,10 @@ registry: "dijit/registry"
 			<div id="adminTab" data-dojo-type="dijit/layout/ContentPane" data-dojo-props='title:"Technisches", style:"padding:10px;display:none;"'>
 				<form method="POST" action="/cashbalance/fibuexport" target="expresult">
 				    <table>
-					<tr><td><input type="submit" value="Jetzt synchronisieren!" /></td><td></td></tr>
+					<tr><td><input type="submit" value="Fibuexport" /></td><td></td></tr>
 					<tr><td>Von</td><td><input type="text" name="from" value="20150207" /></td></tr>
 					<tr><td>Bis</td><td><input type="text" name="till" value="20150228" /></td></tr>
-					<tr><td>Kasse</td><td><input type="text" name="kasse" value="2" /></td></tr>
+					<tr><td>Kasse</td><td> Dornhan <input type="checkbox" name="kasse" value="1" checked="checked" /> Sulz <input type="checkbox" name="kasse" value="2" checked="checked" /></td></tr>
 					</table>
 				</form>
 				<p>Export-Ergebnis</p>

@@ -176,8 +176,11 @@ public class AccountingExport {
 			if (soll == true) {
 				sb.append(";0;"); // ein soll split booking
 			}
-			sb.append("\n");
+			sb.append("\r\n");
 			for (int i = 1; i < bookings.size(); i++) {
+				if (bookings.get(i).getBetrag() == 0) {
+					continue;
+				}
 				sb.append(";").append(bookings.get(i).getText()).append(";");
 				sb.append(new BigDecimal(bookings.get(i).getBetrag()).movePointLeft(2).toPlainString()).append(";");
 				if (soll == true) {
@@ -190,7 +193,7 @@ public class AccountingExport {
 				if (bookings.get(i).getCode() != null) {
 					sb.append(bookings.get(i).getCode());
 				}
-				sb.append("\n");
+				sb.append("\r\n");
 			}
 		} else {
 			// es ist ein einfaches booking;
@@ -206,7 +209,7 @@ public class AccountingExport {
 			if (bookings.get(1).getCode() != null) {
 				sb.append(bookings.get(1).getCode());
 			}
-			sb.append("\n");
+			sb.append("\r\n");
 		}
 		
 		return sb.toString();

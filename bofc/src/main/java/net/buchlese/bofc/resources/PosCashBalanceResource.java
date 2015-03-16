@@ -116,18 +116,20 @@ public class PosCashBalanceResource {
 	@Path("/fibuexport")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces("text/plain; charset='iso-8859-1'")
-	public StreamingOutput create( @FormParam("from")String from, @FormParam("till")String till, @FormParam("kasse")Integer kasse) {
+	public StreamingOutput create( @FormParam("from")String from, @FormParam("till")String till, @FormParam("kasse") List<Integer> kassen) {
 		return new StreamingOutput() {
 			@Override
 			public void write(OutputStream os) throws IOException,  WebApplicationException {
 				Writer writer = new BufferedWriter(new OutputStreamWriter(os, "iso-8859-1"));
 				writer.write(AccountingExport.accountingExportHeader());
-				for (PosCashBalance bal :  dao.fetch(kasse, from, Optional.fromNullable(till))) {
-					try {
-						writer.write(AccountingExport.accountingExport(bal));
-					} catch (Exception e) {
-						log.error("problem creating cashBalance" + bal, e);
-						writer.write("\n\n\nproblem creating cashBalance " + e.toString() + "\n\n\n\n");
+				for (Integer kasse : kassen) {
+					for (PosCashBalance bal :  dao.fetch(kasse, from, Optional.fromNullable(till))) {
+						try {
+							writer.write(AccountingExport.accountingExport(bal));
+						} catch (Exception e) {
+							log.error("problem creating cashBalance" + bal, e);
+							writer.write("\n\n\nproblem creating cashBalance " + e.toString() + "\n\n\n\n");
+						}
 					}
 				}
 				writer.flush();
