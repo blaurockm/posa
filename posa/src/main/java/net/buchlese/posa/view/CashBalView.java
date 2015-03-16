@@ -75,6 +75,9 @@ public class CashBalView extends View {
 				if (args.size() != 1) {
 					throw new TemplateModelException("nur ein DateTime als Argument");
 				}
+				if (args.get(0) == null) {
+					return "existiert nicht";
+				}
 				return ((DateTime)((BeanModel)args.get(0)).getWrappedObject()).toLocalDate();
 			}
 		};

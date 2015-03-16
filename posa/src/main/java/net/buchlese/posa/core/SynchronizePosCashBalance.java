@@ -140,7 +140,6 @@ public class SynchronizePosCashBalance extends AbstractSynchronizer implements C
 
 
 	private void setBalanceValues(KassenAbschluss abschluss, PosCashBalance bal) {
-		bal.setId(abschluss.getId());
 		bal.setAbschlussId(abschluss.getAbschlussid());
     	updDate(bal::setFirstCovered, bal.getFirstCovered(), abschluss.getVonDatum());
     	updDate(bal::setLastCovered, bal.getLastCovered(), abschluss.getBisDatum());

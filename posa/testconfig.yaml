@@ -1,34 +1,35 @@
-﻿#bofcDb:
+﻿bofcDb:
   # the name of your JDBC driver
-  #driverClass: org.h2.Driver
+  driverClass: org.h2.Driver
 
   # the username
-  #user: sa
+  user: sa
 
   # the password
-  #password: 
+  password: 
 
   # the JDBC URL
-  #url: jdbc:h2:~/backoffice
+  url: jdbc:h2:tcp://localhost:9092//var/lib/posa/backoffice;IFEXISTS=TRUE
+  
   
 posDb:
   # the name of your JDBC driver
   driverClass: net.sourceforge.jtds.jdbc.Driver
 
   # the username
-  user: sa
-  password: master
+# user: sa
+# password: master
 
-#  user: fibu
-#  password: kasse2fibu
+  user: fibu
+  password: kasse2fibu
   
   # the JDBC URL
   #####  lokale datenbank
 #  url: jdbc:jtds:sqlserver://localhost:1433/librasbak
   ##### im gschaeft Sulz
-  url: jdbc:jtds:sqlserver://localhost:7891/libras
+#  url: jdbc:jtds:sqlserver://localhost:7891/libras
   ##### im gschaeft Dornhan
-#  url: jdbc:jtds:sqlserver://localhost:7890/libras
+  url: jdbc:jtds:sqlserver://localhost:7890/libras
 
 
 articleGroupMappings:
