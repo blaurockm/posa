@@ -15,15 +15,10 @@ import net.buchlese.bofc.jdbi.bofc.PosTicketDAO;
 import net.buchlese.bofc.jdbi.bofc.PosTxDAO;
 
 public class Validator {
-
 	private PosCashBalance balance;
-	private final PosTicketDAO ticketDAO;
-	private final PosTxDAO txDAO;
 	
 	public Validator(PosCashBalance balance, PosTicketDAO ticketDAO, PosTxDAO txDAO) {
 		this.balance = balance;
-		this.ticketDAO = ticketDAO;
-		this.txDAO = txDAO;
 	}
 
 	public void validateDetails(OutputStream output) throws IOException {
@@ -54,14 +49,13 @@ public class Validator {
 		}
 
 		w.write("Einzelcheck der Belege...\n ");
-		List<PosTx> txs = txDAO.fetchTx(balance.getFirstCovered(), balance.getLastCovered(), balance.getPointid());
-		List<PosTicket> tickets = ticketDAO.fetch(balance.getFirstCovered(), balance.getLastCovered(), balance.getPointid());
+		List<PosTicket> tickets = balance.getTickets();
 		for (PosTicket ticket : tickets) {
 			w.write(" Check "); 
 			w.write(String.valueOf(ticket.getBelegNr()));
 			w.write(" (" + ticket.getPaymentMethod() + ")");
 			long tito = ticket.getTotal();
-			long txto = txs.stream().filter(t -> t.getBelegNr() == ticket.getBelegNr()).mapToLong(PosTx::getTotal).sum();
+			long txto = ticket.getTxs().stream().mapToLong(PosTx::getTotal).sum();
 			if (tito != txto) {
 				w.write(" nein, ti=" + tito + " <-> tx=" + txto + "\n");
 			} else {
