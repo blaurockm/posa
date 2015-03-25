@@ -47,6 +47,10 @@ public class CashBalance {
 	public List<PosTx> amendTickets(PosCashBalance bal) {
 		List<PosTx> txs = ticketDAO.fetchTx(bal.getFirstCovered(), bal.getLastCovered());
 		List<PosTicket> tickets = ticketDAO.fetch(bal.getFirstCovered(), bal.getLastCovered());
+		return amendTickets(bal, txs, tickets);
+	}
+
+	public List<PosTx> amendTickets(PosCashBalance bal,List<PosTx> txs,List<PosTicket> tickets) {
 		bal.setTickets(tickets);
 		for (PosTicket ticket : tickets) {
 			List<PosTx> titxs = new ArrayList<>();

@@ -4,6 +4,6 @@ Priority: optional
 Architecture: all
 Homepage: http://buchlese.net
 Depends: 
-Version: 0.8
+Version: 0.9
 Maintainer: Markus Blaurock blaurock@buchlese.net
 Description: Adapter for Libras-Point Of Sale System
