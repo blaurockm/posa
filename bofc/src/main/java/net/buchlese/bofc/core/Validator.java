@@ -54,8 +54,8 @@ public class Validator {
 		}
 
 		w.write("Einzelcheck der Belege...\n ");
-		List<PosTx> txs = txDAO.fetchTx(balance.getFirstCovered(), balance.getLastCovered());
-		List<PosTicket> tickets = ticketDAO.fetch(balance.getFirstCovered(), balance.getLastCovered());
+		List<PosTx> txs = txDAO.fetchTx(balance.getFirstCovered(), balance.getLastCovered(), balance.getPointid());
+		List<PosTicket> tickets = ticketDAO.fetch(balance.getFirstCovered(), balance.getLastCovered(), balance.getPointid());
 		for (PosTicket ticket : tickets) {
 			w.write(" Check "); 
 			w.write(String.valueOf(ticket.getBelegNr()));

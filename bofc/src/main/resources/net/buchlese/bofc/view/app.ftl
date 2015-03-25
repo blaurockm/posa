@@ -62,34 +62,6 @@ registry: "dijit/registry"
 				    <div id="pieFan" style="margin:0pt"></div>
 				</div>
 			</div>
-			
-  		    <!--  die Kassenbelege -->
-			<div id="tickTab" data-dojo-type="dijit/layout/ContentPane" data-dojo-props='title:"Belege", style:"padding:10px;"'>
-			   <h2>Kassenbelege von <select id="ticketPeriod" data-dojo-type="dijit/form/ComboBox">
-			           <option value="today">Heute</option>
-			           <option value="yesterday">Gestern</option>
-			           <option value="preyesterday">Vorgestern</option>
-			           <option value="prepreyesterday">Vor 3 Tagen</option>
-			           <option value="preprepreyesterday">Vor 4 Tagen</option>
-			           <option value="todayLastWeek">gleicherWoTag letze Woche</option>
-			           <option value="yesterdayLastWeek">gestrigerWoTag letze Woche</option>
-					 </select> </h2>
-	           <div id="tickGrid" style="height:80%"></div>
-			</div>
-
-  		    <!--  die Kassentransaktionen -->
-			<div id="txTab" data-dojo-type="dijit/layout/ContentPane" data-dojo-props='title:"Transaktionen", style:"padding:10px;"'>
-			   <h2>Kassentransaktionen von <select id="txPeriod" data-dojo-type="dijit/form/ComboBox">
-			           <option value="today">Heute</option>
-			           <option value="yesterday">Gestern</option>
-			           <option value="preyesterday">Vorgestern</option>
-			           <option value="prepreyesterday">Vor 3 Tagen</option>
-			           <option value="preprepreyesterday">Vor 4 Tagen</option>
-			           <option value="todayLastWeek">gleicherWoTag letze Woche</option>
-			           <option value="yesterdayLastWeek">gestrigerWoTag letze Woche</option>
-					 </select> </h2>
-	           <div id="txGrid" style="height:80%"></div>
-			</div>
 
   		    <!--  die Kassentransaktionen -->
 			<div id="balTab" data-dojo-type="dijit/layout/ContentPane" data-dojo-props='title:"Kassenabschlüsse", style:"padding:10px;"'>

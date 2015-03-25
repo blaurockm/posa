@@ -25,7 +25,10 @@ public interface PosCashBalanceDAO {
 
 	@SqlQuery("select * from poscashbalance where abschlussid = :date")
 	PosCashBalance fetchForDate(@Bind("date") String date);
-	
+
+	@SqlQuery("select * from poscashbalance where id = :id")
+	PosCashBalance fetchForId(@Bind("id") String id);
+
 	@SqlQuery("select id from poscashbalance where abschlussid = :abschlussid and pointid = :pointId")
 	Long getIdOfExistingBalance(@Bind("abschlussid") String abschlussid,@Bind("pointId") Integer pointId);
 

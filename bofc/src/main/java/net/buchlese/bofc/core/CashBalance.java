@@ -40,8 +40,8 @@ public class CashBalance {
 	}
 
 	public List<PosTx> amendTickets(PosCashBalance bal) {
-		List<PosTx> txs = txDAO.fetchTx(bal.getFirstCovered(), bal.getLastCovered());
-		List<PosTicket> tickets = ticketDAO.fetch(bal.getFirstCovered(), bal.getLastCovered());
+		List<PosTx> txs = txDAO.fetchTx(bal.getFirstCovered(), bal.getLastCovered(), bal.getPointid());
+		List<PosTicket> tickets = ticketDAO.fetch(bal.getFirstCovered(), bal.getLastCovered(), bal.getPointid());
 		bal.setTickets(tickets);
 		for (PosTicket ticket : tickets) {
 			List<PosTx> titxs = new ArrayList<>();
@@ -56,16 +56,17 @@ public class CashBalance {
 		return txs;
 	}
 
-	public PosCashBalance computeBalance(DateTime from, DateTime till) {
+	public PosCashBalance computeBalance(DateTime from, DateTime till, int pointid) {
 		PosCashBalance balance = new PosCashBalance();
 		balance.setCreationtime(new DateTime());
 		balance.setExported(false);
 		balance.setExportDate(null);
 		balance.setFirstCovered(from);
 		balance.setLastCovered(till);
+		balance.setPointid(pointid);
 		
-		List<PosTx> txs = txDAO.fetchTx(from, till);
-		List<PosTicket> tickets = ticketDAO.fetch(from, till);
+		List<PosTx> txs = txDAO.fetchTx(from, till, pointid);
+		List<PosTicket> tickets = ticketDAO.fetch(from, till, pointid);
 		
 		balance.setTicketCount((int) tickets.stream().filter(t -> (t.isCancel() && t.isCancelled()) == false).count());
 

@@ -34,8 +34,8 @@ public interface PosTxDAO {
 	 * @param bisDatum
 	 * @return
 	 */
-	@SqlQuery("select postx.* from postx join posticket on posticket.belegnr = postx.belegnr where postx.tobeignored = 0 and posticket.timest between :vonDatum and :bisDatum")
-	List<PosTx> fetchTx(@Bind("vonDatum") DateTime vonDatum, @Bind("bisDatum") DateTime bisDatum);
+	@SqlQuery("select postx.* from postx join posticket on posticket.belegnr = postx.belegnr where postx.tobeignored = 0 and posticket.timest between :vonDatum and :bisDatum and postx.pointid = :pointid")
+	List<PosTx> fetchTx(@Bind("vonDatum") DateTime vonDatum, @Bind("bisDatum") DateTime bisDatum, @Bind("pointid") Integer pointid);
 
 
 	@SqlUpdate("update postx set sellingprice = :sellingPrice, purchaseprice = :purchasePrice, articlegroupkey = :articleGroupKey, " +

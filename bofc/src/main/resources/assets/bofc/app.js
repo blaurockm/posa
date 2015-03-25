@@ -9,12 +9,6 @@ function(dom, domConstruct, JsonRest, Button, Chart, Tooltip, Pie, DataGrid, Obj
 	var store = new JsonRest({
 	    target: "/cashbalance"
 	  }),
-	txStore = new JsonRest({
-		    target: "/tx"
-	  }),
-	tickStore = new JsonRest({
-		    target: "/ticket"
-	  }),
     wgrpKuchen = new Chart("pieFan"),
 
     startup = function(registry) {
@@ -28,30 +22,6 @@ function(dom, domConstruct, JsonRest, Button, Chart, Tooltip, Pie, DataGrid, Obj
         });
     	var tip = new Tooltip(wgrpKuchen, "default");
     	currentBalance = null; // das aktuell ausgewählte Balance-Sheet
-    	
-        txGridUi = new DataGrid( {structure: [
-                { name: "Belegnummer", field: "belegNr", width: "90px"},
-                { name: "Warengruppe", field: "articleGroupKey", width: "120px"},
-                { name: "Beschreibung", field: "description", width: "300px"},
-                { name: "Anzahl", field: "count", width: "40px"},
-                { name: "Einzel", field: "sellingPrice", styles: 'text-align: right;', width: "50px", formatter: formatMoney },
-                { name: "Gesamt", field: "total",styles: 'text-align: right;', width: "50px" , formatter: formatMoney},
-                { name: "Steuer", field: "tax", width: "40px"},
-                { name: "Typ", field: "type", width: "75px"},
-                { name: "Uhrzeit", field: "timestamp", width: "90px", formatter : formatDate}]
-        }, "txGrid");
-        txGridUi.startup();
-        
-        tickGridUi = new DataGrid( {
-            structure: [
-                { name: "Belegnummer", field: "belegNr", width: "90px"},
-                { name: "Gesamt", field: "total", styles: 'text-align: right;',width: "50px", formatter: formatMoney},
-                { name: "Typ", field: "paymentMethod", width: "75px"},
-                { name: "Storno", field: "cancel", width: "50px", type: dojox.grid.cells.Bool, editable: true },
-                { name: "storniert", field: "cancelled", width: "50px", type: dojox.grid.cells.Bool, editable: true},
-                { name: "Uhrzeit", field: "timestamp", width: "90px", formatter : formatDate}]
-        }, "tickGrid");
-        tickGridUi.startup();
         
         balGridUi = new DataGrid( {
             structure: [
@@ -73,7 +43,7 @@ function(dom, domConstruct, JsonRest, Button, Chart, Tooltip, Pie, DataGrid, Obj
             var pdfembed = dom.byId("balpdf");
             domConstruct.empty(pdfembed);
             currentBalance = balGridUi.getItem(idx); // globale speicherung
-            pdfembed.src = '/cashbalance/view/' + currentBalance.abschlussId;
+            pdfembed.src = '/cashbalance/view/' + currentBalance.id;
         }, true);
         balGridUi.startup();
         
@@ -82,7 +52,7 @@ function(dom, domConstruct, JsonRest, Button, Chart, Tooltip, Pie, DataGrid, Obj
             onClick: function(){
                 var pdfembed = dom.byId("balpdf")
                 domConstruct.empty(pdfembed);
-                pdfembed.src = '/cashbalance/view/' + currentBalance.abschlussId;
+                pdfembed.src = '/cashbalance/view/' + currentBalance.id;
             }
         }, "showButton").startup();
 
@@ -91,7 +61,7 @@ function(dom, domConstruct, JsonRest, Button, Chart, Tooltip, Pie, DataGrid, Obj
             onClick: function(){
                 var pdfembed = dom.byId("balpdf")
                 domConstruct.empty(pdfembed);
-                pdfembed.src = '/cashbalance/complete/' + currentBalance.abschlussId;
+                pdfembed.src = '/cashbalance/complete/' + currentBalance.id;
             }
         }, "showJSONButton").startup();
         
@@ -100,7 +70,7 @@ function(dom, domConstruct, JsonRest, Button, Chart, Tooltip, Pie, DataGrid, Obj
             onClick: function(){
                 var pdfembed = dom.byId("balpdf")
                 domConstruct.empty(pdfembed);
-                pdfembed.src = '/cashbalance/extended/' + currentBalance.abschlussId;
+                pdfembed.src = '/cashbalance/extended/' + currentBalance.id;
             }
         }, "goryDetailsButton").startup();
         
@@ -109,7 +79,7 @@ function(dom, domConstruct, JsonRest, Button, Chart, Tooltip, Pie, DataGrid, Obj
             onClick: function(){
                 var pdfembed = dom.byId("balpdf")
                 domConstruct.empty(pdfembed);
-                pdfembed.src = '/cashbalance/pdf/' + currentBalance.abschlussId;
+                pdfembed.src = '/cashbalance/pdf/' + currentBalance.id;
 //            	var pdfembed = dom.byId("balpdf"); pdfembed.focus(); pdfembed.contentWindow.print();
             }
         }, "printButton").startup();
@@ -119,18 +89,6 @@ function(dom, domConstruct, JsonRest, Button, Chart, Tooltip, Pie, DataGrid, Obj
     	  store.query({"date": newVal}).then(function(balances){
               var dataStore = new ObjectStore({ objectStore:new Memory({ data: balances}) });
               balGridUi.setStore(dataStore);
-    	  });
-    },
-    updateTickGrid = function(newVal ) {
-          tickStore.query({"date": newVal}).then(function(txdata){
-            var dataStore = new ObjectStore({ objectStore:new Memory({ data: txdata}) });
-            tickGridUi.setStore(dataStore);
-          });
-    },
-    updateTxGrid = function(newVal ) {
-    	  txStore.query({"date": newVal}).then(function(tickData){
-              var dataStore = new ObjectStore({ objectStore:new Memory({ data: tickData}) });
-              txGridUi.setStore(dataStore);
     	  });
     },
     renderTable = function(tablenode, map) {
@@ -204,10 +162,7 @@ function(dom, domConstruct, JsonRest, Button, Chart, Tooltip, Pie, DataGrid, Obj
             // proceed directly with startup
             startup(registry);
             update();
-//            dashboardupdate = window.setInterval(update, 5 * 60 * 1000);
             registry.byId("balPeriod").on("change", updateBalGrid);
-            registry.byId("ticketPeriod").on("change", updateTickGrid);
-            registry.byId("txPeriod").on("change", updateTxGrid);
         }
     };
     

@@ -34,8 +34,8 @@ public interface PosTicketDAO {
 	 * @param bisDatum
 	 * @return
 	 */
-	@SqlQuery("select * from posticket where timest between :vonDatum and :bisDatum")
-	List<PosTicket> fetch(@Bind("vonDatum") DateTime vonDatum, @Bind("bisDatum") DateTime bisDatum);
+	@SqlQuery("select * from posticket where timest between :vonDatum and :bisDatum and pointid = :pointid")
+	List<PosTicket> fetch(@Bind("vonDatum") DateTime vonDatum, @Bind("bisDatum") DateTime bisDatum, @Bind("pointid") Integer pointid);
 
 
 	@SqlUpdate("update posticket set total = :total, pointid = :pointid, paymentmethod = :paymentMethod, cancelled = :cancelled, tobecheckedagain = :toBeCheckedAgain, cancel = :cancel " +

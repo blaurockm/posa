@@ -18,8 +18,6 @@ import net.buchlese.bofc.jdbi.bofc.TaxArgumentFactory;
 import net.buchlese.bofc.jdbi.bofc.TxTypeArgumentFactory;
 import net.buchlese.bofc.resources.AppResource;
 import net.buchlese.bofc.resources.PosCashBalanceResource;
-import net.buchlese.bofc.resources.PosTicketResource;
-import net.buchlese.bofc.resources.PosTxResource;
 
 import org.skife.jdbi.v2.DBI;
 
@@ -61,8 +59,6 @@ public class BackOfcApplication extends Application<BackOfcConfiguration> {
 	    final PosTicketDAO posTicketDao = bofcDBI.onDemand(PosTicketDAO.class);
 	    final PosCashBalanceDAO posCashBalanceDao = bofcDBI.onDemand(PosCashBalanceDAO.class);
 	    
-	    environment.jersey().register(new PosTxResource(posTxDao, posCashBalanceDao));
-	    environment.jersey().register(new PosTicketResource(posTicketDao, posCashBalanceDao));
 	    environment.jersey().register(new PosCashBalanceResource(posCashBalanceDao, posTicketDao, posTxDao));
 
 	    environment.jersey().register(new AppResource(config));

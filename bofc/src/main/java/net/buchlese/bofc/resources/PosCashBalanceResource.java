@@ -99,7 +99,7 @@ public class PosCashBalanceResource {
 	@GET
 	@Path("/complete/{date}")
 	public PosCashBalance fetchCompleteForDate(@PathParam("date") String date)  {
-		PosCashBalance bal = fetchBalanceForDate(date);
+		PosCashBalance bal = fetchBalanceForId(date);
 		new CashBalance(ticketDao, txDao).amendTickets(bal);
 		return bal;
 	}
@@ -108,7 +108,7 @@ public class PosCashBalanceResource {
 	@GET
 	@Path("/view/{date}")
 	public View fetchViewForDate(@PathParam("date") String abschlussId)  {
-		PosCashBalance cb = fetchBalanceForDate(abschlussId);
+		PosCashBalance cb = fetchBalanceForId(abschlussId);
 		return new CashBalView(cb);
 	}
 
@@ -141,7 +141,11 @@ public class PosCashBalanceResource {
 	@Path("/{date}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public PosCashBalance fetchForDate(@PathParam("date") String date)  {
-		return fetchBalanceForDate(date);
+		List<PosCashBalance> res = dao.fetchAllAfter(date, Optional.absent());
+		if (res.isEmpty() == false) {
+			return res.get(0);
+		}
+		return null;
 	}
 
 	@Produces({"application/pdf"})
@@ -151,7 +155,7 @@ public class PosCashBalanceResource {
 		return new StreamingOutput() {
 			public void write(OutputStream output) throws IOException, WebApplicationException {
 				try {
-					PDFCashBalance generator = new PDFCashBalance(fetchBalanceForDate(date));
+					PDFCashBalance generator = new PDFCashBalance(fetchBalanceForId(date));
 					generator.generatePDF(output);
 				} catch (Exception e) {
 					throw new WebApplicationException(e);
@@ -168,7 +172,7 @@ public class PosCashBalanceResource {
 		return new StreamingOutput() {
 			public void write(OutputStream output) throws IOException, WebApplicationException {
 				try {
-					Validator generator = new Validator(fetchBalanceForDate(date), ticketDao, txDao);
+					Validator generator = new Validator(fetchBalanceForId(date), ticketDao, txDao);
 					generator.validateDetails(output);
 				} catch (Exception e) {
 					throw new WebApplicationException(e);
@@ -178,13 +182,13 @@ public class PosCashBalanceResource {
 		};	
 	}
 
-	private PosCashBalance fetchBalanceForDate(String date) {
+	private PosCashBalance fetchBalanceForId(String date) {
 		if ("today".equals(date)) {
 			// wir berechnen den von heute...
 			DateTime today = new DateTime();
 			DateTime startOfToday = today.hourOfDay().setCopy(0); // stunde 0
 			CashBalance balCOmp = new CashBalance(ticketDao, txDao);
-			PosCashBalance bal = balCOmp.computeBalance(startOfToday, today);
+			PosCashBalance bal = balCOmp.computeBalance(startOfToday, today,1);
 			return bal;
 		}
 		if ("thisweek".equals(date)) {
@@ -192,7 +196,7 @@ public class PosCashBalanceResource {
 			DateTime today = new DateTime();
 			DateTime startOfToday = today.hourOfDay().setCopy(0).dayOfWeek().setCopy(1); // stunde 0 und wochentag 0
 			CashBalance balCOmp = new CashBalance(ticketDao, txDao);
-			PosCashBalance bal = balCOmp.computeBalance(startOfToday, today);
+			PosCashBalance bal = balCOmp.computeBalance(startOfToday, today,1);
 			return bal;
 		}
 		if ("lastweek".equals(date)) {
@@ -200,7 +204,7 @@ public class PosCashBalanceResource {
 			DateTime today = new DateTime().minusWeeks(1).hourOfDay().setCopy(23).dayOfWeek().setCopy(7); // letzter tag und letzte stunde
 			DateTime startOfToday = today.hourOfDay().setCopy(0).dayOfWeek().setCopy(1); // stunde 0 und wochentag 1
 			CashBalance balCOmp = new CashBalance(ticketDao, txDao);
-			PosCashBalance bal = balCOmp.computeBalance(startOfToday, today);
+			PosCashBalance bal = balCOmp.computeBalance(startOfToday, today,1);
 			return bal;
 		}
 		if ("thismonth".equals(date)) {
@@ -208,10 +212,10 @@ public class PosCashBalanceResource {
 			DateTime today = new DateTime();
 			DateTime startOfToday = today.hourOfDay().setCopy(0).dayOfMonth().setCopy(1); // stunde 0 und monats-ersten
 			CashBalance balCOmp = new CashBalance(ticketDao, txDao);
-			PosCashBalance bal = balCOmp.computeBalance(startOfToday, today);
+			PosCashBalance bal = balCOmp.computeBalance(startOfToday, today,1);
 			return bal;
 		}
-		PosCashBalance bal = dao.fetchForDate(date);
+		PosCashBalance bal = dao.fetchForId(date);
 		return bal;
 	}
 
