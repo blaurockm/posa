@@ -26,41 +26,52 @@ registry: "dijit/registry"
 		<div data-dojo-type="dijit/layout/TabContainer" data-dojo-props="region:'center', tabStrip:true" id="workingArea">
   		    <!--  das dashboard -->
 			<div id="dashboardTab" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="title:'Dashboard'">
-				<div id="info" class="boardlet" style="float:left">
-				   <b>Tagesstatistik <span id="balanceDate"></span></b>
-				   <p>Erster Beleg <span id="firstTicket"></span> um <span id="firstTicketDate"></span><br/>
-				   Letzer Beleg <span id="lastTicket"></span> um <span id="lastTicketDate"></span></p>
-				   <p>insgesamt <span id="ticketCount"></span> Belege</p>
-				</div>
-				<div id="umsatz"  class="boardlet" style="clear:right; float:right">
-					<p><span style="font-size:200%;font-weight:bold">Umsatz</span></p>
-					<p style="text-align:right"><span id="umsatzEUR" style="font-size:200%" >400,00</span></p>
-				</div>
-				<div id="zahlen"   class="boardlet"  style="clear:left; float:left">
+<div data-dojo-type="dijit/layout/LayoutContainer" id="dashboardLayout">
+    <div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'top'">
+      <p><span style="font-size:200%;font-weight:bold">Woche <span id="week"></span> vom <span id="weekStart"></span> bis zum <span id="weekEnd"></span></span></p>
+      <p>
+	  insgesamt <span id="ticketCount"></span> Belege
+	  </p>
+    </div>
+    <div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'center', layoutPriority:1">
+      	<div style="width:50%;float:left; background:red">
+   	         <div id="pieFan" style="margin:0pt"></div>
+	    </div>
+      	<div style="width:50%;clear:right; float:right; background:green">
+			<b>Warengruppen</b>
+	    </div>
+	    <div id="details" style="width:50%;clear:left; float:left; background:blue" >
 					<b>Details</b>
 					<table width="90%">
 						<tr><td width="50%">Bar</td><td id="cashEUR" style="text-align:right"></td></tr>
 						<tr><td>TeleCash</td><td id="teleEUR" style="text-align:right"></td></tr>
 						<tr><td>Warenverkauf</td><td id="goodsoutEUR" style="text-align:right"></td></tr>
-						<tr><td>Geschätzer Gewinn</td><td id="profitEUR" style="text-align:right"></td></tr>
 						<tr><td>Auszahlungen</td><td id="payoutEUR" style="text-align:right"></td></tr>
 						<tr><td>Einzahlungen</td><td id="payinEUR" style="text-align:right"></td></tr>
 						<tr><td>Rechnungen bez.</td><td id="invPayedEUR" style="text-align:right"></td></tr>
 						<tr><td>Gutscheine eingelöst</td><td id="tradeinEUR" style="text-align:right"></td></tr>
 						<tr><td>Gutscheine verkauft</td><td id="tradeoutEUR" style="text-align:right"></td></tr>
 					</table>
-					<span style="font-size:80%">
-					<p>
-					<table width="90%" id="gutscheineInGrp" >
+	   </div>
+      	<div style="width:50%;clear:right; float:right; background:gray">
+			<b>Ertrag</b>
+					<table width="90%">
+						<tr><td width="50%">Umsatz</td><td id="umsatzEUR" style="text-align:right"></td></tr>
+						<tr><td>Ertrag</td><td id="profitEUR" style="text-align:right"></td></tr>
+						<tr><td>Ertrag letzte Woche</td><td id="profitLastWeekEUR" style="text-align:right"></td></tr>
+						<tr><td>Ertrag diesen Monat</td><td id="profitThisMonthEUR" style="text-align:right"></td></tr>
 					</table>
-					<p>
-					<table width="90%" id="gutscheineOutGrp"  >
-					</table>
-					</span>
-				</div>
-				<div id="warengruppen"  class="boardlet" style="clear:right; float:right">
-				    <div id="pieFan" style="margin:0pt"></div>
-				</div>
+	    </div>
+	</div>
+    <div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'bottom'">
+    	<div data-dojo-type="dijit/TitlePane" data-dojo-props="title: 'Probleme diese Woche'">
+    	    <ol>
+             <li>Kassenanfangsbestände unstimmig.
+             <li>Problem bei folgenden Kassenberichten:
+             </ol>
+        </div>
+    </div>
+</div>
 			</div>
 
   		    <!--  die Kassentransaktionen -->
@@ -131,7 +142,7 @@ registry: "dijit/registry"
 		<!-- load dojo -->
 		<script src="//ajax.googleapis.com/ajax/libs/dojo/1.10.1/dojo/dojo.js"></script>
 		<script>
-			require(["bofc/app", "dijit/registry", "dojo/parser", "dijit/layout/BorderContainer", "dijit/layout/TabContainer", 
+			require(["bofc/app", "dijit/registry", "dojo/parser", "dijit/layout/BorderContainer", "dijit/layout/TabContainer", "dijit/layout/LayoutContainer", 
 			         "dijit/layout/ContentPane", "dijit/form/Select", "dijit/form/ComboBox", "dojo/domReady!"], function(demoApp, registry, parser) {
 				parser.parse();
 				demoApp.init(registry);

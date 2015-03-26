@@ -7,7 +7,7 @@ function(dom, domConstruct, JsonRest, Button, Chart, Tooltip, Pie, DataGrid, Obj
 	
 	// ein paar variablen definieren
 	var store = new JsonRest({
-	    target: "/cashbalance"
+	    target: "/accrualweek"
 	  }),
     wgrpKuchen = new Chart("pieFan"),
 
@@ -103,34 +103,31 @@ function(dom, domConstruct, JsonRest, Button, Chart, Tooltip, Pie, DataGrid, Obj
     }
     update = function() {
       // Get an object by identity
-  	  store.get("today").then(function(balance){
- 	       dom.byId("balanceDate").innerHTML = new Date(balance.creationtime).toLocaleDateString() + " " + new Date(balance.creationtime).toLocaleTimeString();
-  	       dom.byId("firstTicket").innerHTML = balance.firstBelegNr;
-  	       dom.byId("lastTicket").innerHTML = balance.lastBelegNr;
-  	       dom.byId("firstTicketDate").innerHTML = new Date(balance.firstTimestamp).toLocaleTimeString();
-  	       dom.byId("lastTicketDate").innerHTML = new Date(balance.lastTimestamp).toLocaleTimeString();
+  	  store.get("thisweek").then(function(balance){
+// 	       dom.byId("balanceDate").innerHTML = new Date(balance.creationtime).toLocaleDateString() + " " + new Date(balance.creationtime).toLocaleTimeString();
+  	       dom.byId("week").innerHTML = balance.week;
+  	       dom.byId("weekStart").innerHTML = new Date(balance.firstDay).toLocaleDateString();
+  	       dom.byId("weekEnd").innerHTML = new Date(balance.lastDay).toLocaleDateString();
   	       dom.byId("ticketCount").innerHTML = balance.ticketCount;
 
   	       if (balance.revenue == undefined) {
   	    	   return;
   	       }
   	       dom.byId("umsatzEUR").innerHTML = balance.revenue.formatMoney();
-
-  	       dom.byId("goodsoutEUR").innerHTML = balance.goodsOut.formatMoney();
   	       dom.byId("profitEUR").innerHTML = balance.profit.formatMoney();
 
-  	       dom.byId("cashEUR").innerHTML = balance.paymentMethodBalance["CASH"].formatMoney();
-  	       if (balance.paymentMethodBalance.TELE != undefined) {
-  	       	  dom.byId("teleEUR").innerHTML = balance.paymentMethodBalance["TELE"].formatMoney();
-  	       }
-  	       dom.byId("payoutEUR").innerHTML = balance.cashOutSum.formatMoney();
-  	       dom.byId("payinEUR").innerHTML = balance.cashInSum.formatMoney();
-  	       dom.byId("invPayedEUR").innerHTML = balance.payedInvoicesSum.formatMoney();
-  	       dom.byId("tradeoutEUR").innerHTML = balance.couponTradeOut.formatMoney();
-  	       dom.byId("tradeinEUR").innerHTML = balance.couponTradeIn.formatMoney();
-
-  	       renderTable(dom.byId("gutscheineOutGrp"), balance.newCoupon);
-  	       renderTable(dom.byId("gutscheineInGrp"), balance.oldCoupon);
+//  	       dom.byId("cashEUR").innerHTML = balance.paymentMethodBalance["CASH"].formatMoney();
+//  	       if (balance.paymentMethodBalance.TELE != undefined) {
+//  	       	  dom.byId("teleEUR").innerHTML = balance.paymentMethodBalance["TELE"].formatMoney();
+//  	       }
+//  	       dom.byId("payoutEUR").innerHTML = balance.cashOutSum.formatMoney();
+//  	       dom.byId("payinEUR").innerHTML = balance.cashInSum.formatMoney();
+//  	       dom.byId("invPayedEUR").innerHTML = balance.payedInvoicesSum.formatMoney();
+//  	       dom.byId("tradeoutEUR").innerHTML = balance.couponTradeOut.formatMoney();
+//  	       dom.byId("tradeinEUR").innerHTML = balance.couponTradeIn.formatMoney();
+//
+//  	       renderTable(dom.byId("gutscheineOutGrp"), balance.newCoupon);
+//  	       renderTable(dom.byId("gutscheineInGrp"), balance.oldCoupon);
 
   	       var chartData = [];
   	       for (var grp in balance.articleGroupBalance) {

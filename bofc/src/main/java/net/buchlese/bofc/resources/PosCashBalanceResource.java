@@ -93,7 +93,7 @@ public class PosCashBalanceResource {
 		if (date.isPresent()) {
 			return fetchBalancesForDate(date.get());
 		}
-		return dao.fetchAllAfter(new DateTime().minusMonths(1).toString(IDFORMAT), Optional.absent());
+		return dao.fetchAllAfter(new DateTime().minusMonths(1).toString(IDFORMAT), new DateTime().toString(IDFORMAT));
 	}
 
 	@GET
@@ -135,17 +135,6 @@ public class PosCashBalanceResource {
 				writer.flush();
 			}
 		};
-	}
-
-	@GET
-	@Path("/{date}")
-	@Produces(MediaType.APPLICATION_JSON)
-	public PosCashBalance fetchForDate(@PathParam("date") String date)  {
-		List<PosCashBalance> res = dao.fetchAllAfter(date, Optional.absent());
-		if (res.isEmpty() == false) {
-			return res.get(0);
-		}
-		return null;
 	}
 
 	@Produces({"application/pdf"})
@@ -263,13 +252,11 @@ public class PosCashBalanceResource {
 			from = new DateTime().minusYears(1).dayOfYear().withMinimumValue().toString(IDFORMAT);
 			till = new DateTime().minusYears(1).dayOfYear().withMaximumValue().toString(IDFORMAT);
 		}
-		if (date.equals("notexported")) {
-			return dao.fetchNotExported();
-		}
 		if (from == null) {
 			from = new DateTime().minusWeeks(1).dayOfWeek().withMinimumValue().toString(IDFORMAT);
+			till = new DateTime().toString(IDFORMAT);
 		}
-		return dao.fetchAllAfter(from, Optional.fromNullable(till));
+		return dao.fetchAllAfter(from, till);
 	}
 
 }
