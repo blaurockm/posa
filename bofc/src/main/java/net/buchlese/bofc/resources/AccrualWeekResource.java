@@ -1,5 +1,7 @@
 package net.buchlese.bofc.resources;
 
+import io.dropwizard.views.View;
+
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -9,6 +11,7 @@ import javax.ws.rs.core.MediaType;
 import net.buchlese.bofc.api.bofc.AccrualWeek;
 import net.buchlese.bofc.core.WeekBalance;
 import net.buchlese.bofc.jdbi.bofc.PosCashBalanceDAO;
+import net.buchlese.bofc.view.WeekView;
 
 import org.joda.time.DateTime;
 
@@ -29,6 +32,14 @@ public class AccrualWeekResource {
       	return fetchAccrualWeekForDate(date);
 	}
 
+	@Produces({"text/html"})
+	@GET
+	@Path("/view/{date}")
+	public View fetchViewForDate(@PathParam("date") String date)  {
+      	AccrualWeek aw = fetchAccrualWeekForDate(date);
+		return new WeekView(aw);
+	}
+	
 	private AccrualWeek fetchAccrualWeekForDate(String date) {
 		if ("thisweek".equals(date)) {
 			// wir berechnen den von heute...

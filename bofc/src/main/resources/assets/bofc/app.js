@@ -3,14 +3,8 @@ define(["dojo/dom", "dojo/dom-construct", "dojo/store/JsonRest", "dijit/form/But
         "dojox/charting/action2d/Tooltip", "dojox/charting/plot2d/Pie", "dojox/grid/DataGrid",
         "dojo/data/ObjectStore", "dojo/store/Memory"
         ],
-function(dom, domConstruct, JsonRest, Button, Chart, Tooltip, Pie, DataGrid, ObjectStore, Memory) {
+function(dom, domConstruct, JsonRest, Button, Chart, Tooltip, DataGrid, ObjectStore, Memory) {
 	
-	// ein paar variablen definieren
-	var store = new JsonRest({
-	    target: "/accrualweek"
-	  }),
-    wgrpKuchen = new Chart("pieFan"),
-
     startup = function(registry) {
     	//      create and setup the UI with layout and widgets
         // Add the only/default plot
@@ -91,56 +85,6 @@ function(dom, domConstruct, JsonRest, Button, Chart, Tooltip, Pie, DataGrid, Obj
               balGridUi.setStore(dataStore);
     	  });
     },
-    renderTable = function(tablenode, map) {
-       domConstruct.empty(tablenode);
-       for (var cgrpo in map) {
-    	   if (map.hasOwnProperty(cgrpo)) {
-    		    var tro = domConstruct.create("tr", null,  tablenode);
-    		    domConstruct.create("td", { innerHTML: cgrpo, style : 'width: 50%;' }, tro);
-    		    domConstruct.create("td", { innerHTML: map[cgrpo].formatMoney(), style : 'text-align: right;'  }, tro);
-    	   }
-       }
-    }
-    update = function() {
-      // Get an object by identity
-  	  store.get("thisweek").then(function(balance){
-// 	       dom.byId("balanceDate").innerHTML = new Date(balance.creationtime).toLocaleDateString() + " " + new Date(balance.creationtime).toLocaleTimeString();
-  	       dom.byId("week").innerHTML = balance.week;
-  	       dom.byId("weekStart").innerHTML = new Date(balance.firstDay).toLocaleDateString();
-  	       dom.byId("weekEnd").innerHTML = new Date(balance.lastDay).toLocaleDateString();
-  	       dom.byId("ticketCount").innerHTML = balance.ticketCount;
-
-  	       if (balance.revenue == undefined) {
-  	    	   return;
-  	       }
-  	       dom.byId("umsatzEUR").innerHTML = balance.revenue.formatMoney();
-  	       dom.byId("profitEUR").innerHTML = balance.profit.formatMoney();
-
-//  	       dom.byId("cashEUR").innerHTML = balance.paymentMethodBalance["CASH"].formatMoney();
-//  	       if (balance.paymentMethodBalance.TELE != undefined) {
-//  	       	  dom.byId("teleEUR").innerHTML = balance.paymentMethodBalance["TELE"].formatMoney();
-//  	       }
-//  	       dom.byId("payoutEUR").innerHTML = balance.cashOutSum.formatMoney();
-//  	       dom.byId("payinEUR").innerHTML = balance.cashInSum.formatMoney();
-//  	       dom.byId("invPayedEUR").innerHTML = balance.payedInvoicesSum.formatMoney();
-//  	       dom.byId("tradeoutEUR").innerHTML = balance.couponTradeOut.formatMoney();
-//  	       dom.byId("tradeinEUR").innerHTML = balance.couponTradeIn.formatMoney();
-//
-//  	       renderTable(dom.byId("gutscheineOutGrp"), balance.newCoupon);
-//  	       renderTable(dom.byId("gutscheineInGrp"), balance.oldCoupon);
-
-  	       var chartData = [];
-  	       for (var grp in balance.articleGroupBalance) {
-  	    	   if (balance.articleGroupBalance.hasOwnProperty(grp)) {
-  	    		    chartData.push({ y : balance.articleGroupBalance[grp] / 100.0, text : grp, tooltip : balance.articleGroupBalance[grp].formatMoney() });
-  	    	   }
-  	       }
-  	       // Add the series of data
-  	       wgrpKuchen.addSeries("Warengruppen",chartData);
-  	       wgrpKuchen.render();
-  	  });
-    };
-    
     
     formatMoney = function(n){
     	return n.formatMoney();
@@ -158,7 +102,6 @@ function(dom, domConstruct, JsonRest, Button, Chart, Tooltip, Pie, DataGrid, Obj
         init: function(registry) {
             // proceed directly with startup
             startup(registry);
-            update();
             registry.byId("balPeriod").on("change", updateBalGrid);
         }
     };
