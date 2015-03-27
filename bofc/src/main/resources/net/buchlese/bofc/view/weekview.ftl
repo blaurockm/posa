@@ -19,12 +19,12 @@
 		<b>Details</b>
 		<table width="90%">
 			<tr>
-				<td width="50%">Bar</td>
-				<td id="cashEUR" style="text-align: right"></td>
+				<td width="50%">Abschöpfung</td>
+				<td id="cashEUR" style="text-align: right">${money(weekAbsorption)}</td>
 			</tr>
 			<tr>
 				<td>TeleCash</td>
-				<td id="teleEUR" style="text-align: right"></td>
+				<td id="teleEUR" style="text-align: right">${money(weekTelecash)}</td>
 			</tr>
 			<tr>
 				<td>Warenverkauf</td>
@@ -69,7 +69,7 @@
 			</tr>
 			<tr>
 				<td>Ertrag diesen Monat</td>
-				<td id="profitThisMonthEUR" style="text-align: right"></td>
+				<td id="profitThisMonthEUR" style="text-align: right">${money(monthProfit)}</td>
 			</tr>
 		</table>
 	</div>

@@ -37,7 +37,7 @@ public class AccrualWeekResource {
 	@Path("/view/{date}")
 	public View fetchViewForDate(@PathParam("date") String date)  {
       	AccrualWeek aw = fetchAccrualWeekForDate(date);
-		return new WeekView(aw);
+		return new WeekView(aw, balanceDao);
 	}
 	
 	private AccrualWeek fetchAccrualWeekForDate(String date) {

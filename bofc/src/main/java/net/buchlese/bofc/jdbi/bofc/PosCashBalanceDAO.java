@@ -4,6 +4,7 @@ import java.util.List;
 
 import net.buchlese.bofc.api.bofc.PosCashBalance;
 
+import org.joda.time.DateTime;
 import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.BindBean;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
@@ -37,5 +38,8 @@ public interface PosCashBalanceDAO {
 		    " = (:revenue, :creationtime, :balanceSheet, :origAbschluss, :exported, :exportDate, :firstCovered, :lastCovered)" +
 		    " where  id = :id ")
 	void update(@BindBean PosCashBalance cashBal);
+
+	@SqlQuery("select sum(revenue) from poscashbalance where firstCovered between :firstDay and :lastDay")
+	Long getProfitOfTimespan(@Bind("firstDay") DateTime firstDay, @Bind("lastDay") DateTime lastDay);
 
 }

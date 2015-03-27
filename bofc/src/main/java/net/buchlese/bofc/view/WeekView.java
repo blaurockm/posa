@@ -9,21 +9,45 @@ import freemarker.template.TemplateMethodModelEx;
 import freemarker.template.TemplateModelException;
 import freemarker.template.TemplateNumberModel;
 import net.buchlese.bofc.api.bofc.AccrualWeek;
+import net.buchlese.bofc.api.bofc.PaymentMethod;
+import net.buchlese.bofc.api.bofc.PosCashBalance;
+import net.buchlese.bofc.jdbi.bofc.PosCashBalanceDAO;
 import io.dropwizard.views.View;
 
 public class WeekView extends View {
 
 	private final AccrualWeek week;
+	private final PosCashBalanceDAO balanceDao;
 	
-	public WeekView(AccrualWeek aw) {
+	public WeekView(AccrualWeek aw, PosCashBalanceDAO balanceDao) {
 		super("weekview.ftl");
 		this.week = aw;
+		this.balanceDao = balanceDao;
 	}
 
 	public AccrualWeek getWeek() {
 		return week;
 	}
 
+	public long getWeekAbsorption() {
+		long dornhan = week.getBalances().get(1).stream().map(PosCashBalance::getAbsorption).reduce(0l, Long::sum);
+		long sulz = week.getBalances().get(2).stream().map(PosCashBalance::getAbsorption).reduce(0l, Long::sum);
+		return sulz + dornhan;
+	}
+
+	public long getWeekTelecash() {
+		long dornhan = week.getBalances().get(1).stream().map( x -> x.getPaymentMethodBalance().get(PaymentMethod.TELE)).reduce(0l, Long::sum);
+		long sulz = week.getBalances().get(2).stream().map( x -> x.getPaymentMethodBalance().get(PaymentMethod.TELE)).reduce(0l, Long::sum);
+		return sulz + dornhan;
+	}
+
+	public long getMonthProfit() {
+		List<PosCashBalance> res = balanceDao.fetchAllAfter(week.getFirstDay().dayOfMonth().setCopy(1).toString("yyyyMMdd"),week.getLastDay().toString("yyyyMMdd") );
+		return res.stream().map(PosCashBalance::getProfit).reduce(0l,Long::sum);
+	}
+	
+	
+	
     public TemplateMethodModelEx getMoney() {
     	return new TemplateMethodModelEx() {
 			@SuppressWarnings("rawtypes")
