@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import net.buchlese.bofc.api.bofc.AccrualWeek;
+import net.buchlese.bofc.api.bofc.PaymentMethod;
 import net.buchlese.bofc.api.bofc.PosCashBalance;
 import net.buchlese.bofc.jdbi.bofc.PosCashBalanceDAO;
 
@@ -31,7 +32,19 @@ public class WeekBalance {
 
 		aw.setProfit(bals.stream().map(PosCashBalance::getProfit).reduce(0l, Long::sum));
 		aw.setRevenue(bals.stream().map(PosCashBalance::getRevenue).reduce(0l, Long::sum));
-		
+
+		aw.setAbsorption(bals.stream().map(PosCashBalance::getAbsorption).reduce(0l,  Long::sum));
+		aw.setTelecash(bals.stream().map( x -> x.getPaymentMethodBalance().getOrDefault(PaymentMethod.TELE,0l) ).reduce(0l, Long::sum));
+		aw.setCash(bals.stream().map( x -> x.getPaymentMethodBalance().getOrDefault(PaymentMethod.CASH,0l) ).reduce(0l, Long::sum));
+
+		aw.setCouponTradeIn(bals.stream().map(PosCashBalance::getCouponTradeIn).reduce(0l, Long::sum));
+		aw.setCouponTradeOut(bals.stream().map(PosCashBalance::getCouponTradeOut).reduce(0l, Long::sum));
+
+		aw.setCashInSum(bals.stream().map(PosCashBalance::getCashInSum).reduce(0l, Long::sum));
+		aw.setCashOutSum(bals.stream().map(PosCashBalance::getCashOutSum).reduce(0l, Long::sum));
+
+		aw.setPayedInvoicesSum(bals.stream().map(PosCashBalance::getPayedInvoicesSum).reduce(0l, Long::sum));
+
 		aw.setTicketCount(bals.stream().map(PosCashBalance::getTicketCount).reduce(0, Integer::sum));
 		
 		return aw;

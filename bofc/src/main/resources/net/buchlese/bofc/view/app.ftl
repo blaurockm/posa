@@ -25,8 +25,19 @@ registry: "dijit/registry"
 		</div>
 		<div data-dojo-type="dijit/layout/TabContainer" data-dojo-props="region:'center', tabStrip:true" id="workingArea">
   		    <!--  das dashboard -->
-           <a href="/accrualweek/view/thisweek" data-dojo-type="dijit/layout/LinkPane">Diese Woche</a>
-
+			<div data-dojo-type="dijit/layout/LayoutContainer" data-dojo-props='title:"Wochenübersicht", style:"padding:10px;"'>
+			    <div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'top'">
+			      <span style="font-size:100%;font-weight:bold">				       
+			      <button id="prevWeekButton" type="button"></button>
+			      Woche <span id="weeknum">6</span>
+			      <button id="nextWeekButton" type="button"></button>
+			      </span>
+			    </div>
+			    <div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'center', layoutPriority:1">
+			      	<iframe id="weekviewdiv" style="height:100%; width:100%;background-color:#eeeeee;">
+			      	</iframe>
+				</div>
+			</div>
   		    <!--  die Kassentransaktionen -->
 			<div id="balTab" data-dojo-type="dijit/layout/ContentPane" data-dojo-props='title:"Kassenabschlüsse", style:"padding:10px;"'>
 			   <h2>Kassenabschlüsse von <div id="balPeriod" data-dojo-type="dijit/form/Select">

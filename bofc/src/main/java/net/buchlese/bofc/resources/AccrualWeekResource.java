@@ -65,7 +65,13 @@ public class AccrualWeekResource {
 			AccrualWeek bal = balComp.computeBalance(startOfToday, today);
 			return bal;
 		}
-		return null;
+		Integer weekNum = Integer.parseInt(date);
+		DateTime week = new DateTime().weekOfWeekyear().setCopy(weekNum);
+		DateTime startOfWeek = week.hourOfDay().setCopy(0).dayOfWeek().setCopy(1); // stunde 0 und wochentag 1 (Montag)
+		DateTime endOfWeek = week.hourOfDay().setCopy(0).dayOfWeek().setCopy(7); // stunde 0 und wochentag 7 (Sonntag)
+		WeekBalance balComp = new WeekBalance(balanceDao);
+		AccrualWeek bal = balComp.computeBalance(startOfWeek, endOfWeek);
+		return bal;
 	}
 
 }
