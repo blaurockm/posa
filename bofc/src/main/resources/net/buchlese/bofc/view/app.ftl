@@ -21,7 +21,7 @@ registry: "dijit/registry"
 </script> -->
 	<div id="main" data-dojo-type="dijit/layout/BorderContainer" data-dojo-props="liveSplitters:false, design:'headline'">
 		<div id="header" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'top'">
-		  <h1>Buchlese PoS-Adapter für ${posName?html}</h1>
+		  <h1><b>Buchlese Statistik-Provider</b></h1>
 		</div>
 		<div data-dojo-type="dijit/layout/TabContainer" data-dojo-props="region:'center', tabStrip:true" id="workingArea">
   		    <!--  das dashboard -->
@@ -32,6 +32,8 @@ registry: "dijit/registry"
 			      Woche <span id="weeknum">6</span>
 			      <button id="nextWeekButton" type="button"></button>
 			      </span>
+			      <button id="fibuWeekButton" type="button"></button>
+			      <button id="selectCashBalWeekButton" type="button"></button>
 			    </div>
 			    <div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'center', layoutPriority:1">
 			      	<iframe id="weekviewdiv" style="height:100%; width:100%;background-color:#eeeeee;">

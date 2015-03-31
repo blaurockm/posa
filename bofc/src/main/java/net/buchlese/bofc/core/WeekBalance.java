@@ -1,5 +1,6 @@
 package net.buchlese.bofc.core;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,6 +29,7 @@ public class WeekBalance {
 		
 		List<PosCashBalance> bals = balanceDao.fetchAllAfter(from.toString("yyyyMMdd"), till.toString("yyyyMMdd"));
 		
+		aw.setAllBalances(bals);
 		aw.setBalances(bals.stream().collect(Collectors.groupingBy(PosCashBalance::getPointid)));
 
 		aw.setProfit(bals.stream().map(PosCashBalance::getProfit).reduce(0l, Long::sum));
@@ -43,9 +45,28 @@ public class WeekBalance {
 		aw.setCashInSum(bals.stream().map(PosCashBalance::getCashInSum).reduce(0l, Long::sum));
 		aw.setCashOutSum(bals.stream().map(PosCashBalance::getCashOutSum).reduce(0l, Long::sum));
 
+		aw.setGoodsOut(bals.stream().map(PosCashBalance::getGoodsOut).reduce(0l, Long::sum));
+
 		aw.setPayedInvoicesSum(bals.stream().map(PosCashBalance::getPayedInvoicesSum).reduce(0l, Long::sum));
 
 		aw.setTicketCount(bals.stream().map(PosCashBalance::getTicketCount).reduce(0, Integer::sum));
+		
+		// validate all
+		List<String> probs = new ArrayList<String>();
+		for (List<PosCashBalance> pbals : aw.getBalances().values()) {
+			pbals.sort( (x,y) -> x.getAbschlussId().compareTo(y.getAbschlussId()) );
+			long curr = 0;
+			for (PosCashBalance bal : pbals) {
+				if (curr > 0 && bal.getCashStart() != curr) {
+					probs.add("Kassenfangsbestandproblem am " + bal.getFirstCovered().toLocalDate() + " : " + bal.getCashStart() + " statt " + curr);
+				}
+				curr = bal.getCashEnd();
+				if (Validator.validBalance(bal) == false) {
+					probs.add("Unstimmigkeit bei Kassenbericht vom " + bal.getFirstCovered().toLocalDate());
+				}
+			}
+		}
+		aw.setProblems(probs);
 		
 		return aw;
 	}

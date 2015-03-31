@@ -6,6 +6,8 @@ function(dom, domConstruct, JsonRest, Button, DataGrid, ObjectStore, Memory) {
 	// ein paar variablen definieren
 	var store = new JsonRest({
 	    target: "/cashbalance"
+	  }), store2 = new JsonRest({
+	    target: "/accrualweek"
 	  }),
 	  
     startup = function(registry) {
@@ -57,6 +59,23 @@ function(dom, domConstruct, JsonRest, Button, DataGrid, ObjectStore, Memory) {
                 weekview.src = '/accrualweek/view/' + currentWeek;
             }
         }, "nextWeekButton").startup();
+
+        var showFibuWeekButton = new Button({
+            label: "FiBu-Übergabe dieser Woche",
+            onClick: function(){
+            	window.open('/accrualweek/fibuexport/' + currentWeek + "?kasse=1&kasse=2");
+            }
+        }, "fibuWeekButton").startup();
+
+        var showFibuWeekButton = new Button({
+            label: "Kassenabschlüsse",
+            onClick: function(){
+          	  store2.query({"week": currentWeek}).then(function(balances){
+                  var dataStore = new ObjectStore({ objectStore:new Memory({ data: balances}) });
+                  balGridUi.setStore(dataStore);
+        	  });
+            }
+        }, "selectCashBalWeekButton").startup();
 
         var showShowButton = new Button({
             label: "Show",

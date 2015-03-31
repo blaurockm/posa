@@ -27,7 +27,7 @@
 		<table>
 			<tr>
 				<td>Warenverkauf</td>
-				<td id="goodsoutEUR" style="text-align: right">${money(weekGoodsOut)}</td>
+				<td id="goodsoutEUR" style="text-align: right">${money(week.goodsOut)}</td>
 			</tr>
 			<tr>
 				<td>Gutscheine verkauft</td>
@@ -82,8 +82,9 @@
 	
 	<div class="span-24">
 	<ol>
-		<li>Kassenanfangsbestände unstimmig.
-		<li>Problem bei folgenden Kassenberichten:
+	  <#list week.problems as problem>
+		<li class="error"> ${problem} </li>
+	  </#list>	
 	</ol>
 	</div>
 </div>

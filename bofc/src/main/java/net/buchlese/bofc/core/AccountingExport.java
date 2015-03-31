@@ -26,7 +26,7 @@ public class AccountingExport {
 //	04.10.2014;Eingel Gutscheine 04.10.;2.91;1371;1600;
 
 	public static String accountingExportHeader() {
-		return "Belegdatum;Buchungstext;Buchungsbetrag;Sollkonto;Habenkonto;Kostenstelle\n";
+		return "Belegdatum;Buchungstext;Buchungsbetrag;Sollkonto;Habenkonto;Kostenstelle\r\n";
 	}
 
 	private static String getKostenStelle(PosCashBalance bal) {

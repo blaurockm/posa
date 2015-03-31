@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.joda.time.DateTime;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class AccrualWeek {
@@ -23,7 +24,7 @@ public class AccrualWeek {
 	@JsonProperty
 	private DateTime lastDay;
 	@JsonProperty
-	private String memo;
+	private Long goodsOut;  // Warenverkäufe
 	@JsonProperty
 	private Map<Integer, List<PosCashBalance>> balances;
 	@JsonProperty
@@ -46,6 +47,12 @@ public class AccrualWeek {
 	private Long cash;  // bar einnahmen
 	@JsonProperty
 	private Long telecash;  // telecash einnahmen
+	@JsonProperty
+	private String memo;
+	@JsonIgnore
+	private List<String> problems;
+	@JsonIgnore
+	private List<PosCashBalance> allBalances;
 	
 	public Long getRevenue() {
 		return revenue;
@@ -160,6 +167,24 @@ public class AccrualWeek {
 	}
 	public void setTelecash(Long telecash) {
 		this.telecash = telecash;
+	}
+	public Long getGoodsOut() {
+		return goodsOut;
+	}
+	public void setGoodsOut(Long goodsOut) {
+		this.goodsOut = goodsOut;
+	}
+	public List<String> getProblems() {
+		return problems;
+	}
+	public void setProblems(List<String> problems) {
+		this.problems = problems;
+	}
+	public List<PosCashBalance> getAllBalances() {
+		return allBalances;
+	}
+	public void setAllBalances(List<PosCashBalance> allBalances) {
+		this.allBalances = allBalances;
 	}
 
 }
