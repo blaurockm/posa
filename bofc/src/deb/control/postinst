@@ -10,8 +10,7 @@ fi
 
 if [ -x /etc/init.d/bofc ]; then
 
-    update-rc.d bofc start 95 2 3 4 5 . >/dev/null 
-    update-rc.d bofc stop 5 0 1 6 . >/dev/null
+    update-rc.d bofc start 95 2 3 4 5 . stop 5 0 1 6 . >/dev/null 
     
     /etc/init.d/bofc restart
 
