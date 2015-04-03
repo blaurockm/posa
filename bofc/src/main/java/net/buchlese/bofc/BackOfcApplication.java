@@ -16,6 +16,7 @@ import net.buchlese.bofc.jdbi.bofc.PosTicketDAO;
 import net.buchlese.bofc.jdbi.bofc.PosTxDAO;
 import net.buchlese.bofc.jdbi.bofc.TaxArgumentFactory;
 import net.buchlese.bofc.jdbi.bofc.TxTypeArgumentFactory;
+import net.buchlese.bofc.resources.AccrualMonthResource;
 import net.buchlese.bofc.resources.AccrualWeekResource;
 import net.buchlese.bofc.resources.AppResource;
 import net.buchlese.bofc.resources.PosCashBalanceResource;
@@ -62,8 +63,9 @@ public class BackOfcApplication extends Application<BackOfcConfiguration> {
 	    
 	    environment.jersey().register(new PosCashBalanceResource(posCashBalanceDao, posTicketDao, posTxDao));
 	    environment.jersey().register(new AccrualWeekResource(posCashBalanceDao));
+	    environment.jersey().register(new AccrualMonthResource(posCashBalanceDao));
 
-	    environment.jersey().register(new AppResource(config));
+	    environment.jersey().register(new AppResource(config, environment));
 		
 	}
 	

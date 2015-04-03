@@ -115,9 +115,9 @@ public class PosCashBalanceResource {
 	@POST
 	@Path("/fibuexport")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	@Produces("text/plain; charset='iso-8859-1'")
-	public StreamingOutput create( @FormParam("from")String from, @FormParam("till")String till, @FormParam("kasse") List<Integer> kassen) {
-		return new StreamingOutput() {
+	@Produces("text/csv; charset='iso-8859-1'")
+	public Response create( @FormParam("from")String from, @FormParam("till")String till, @FormParam("kasse") List<Integer> kassen) {
+		StreamingOutput stream = new StreamingOutput() {
 			@Override
 			public void write(OutputStream os) throws IOException,  WebApplicationException {
 				Writer writer = new BufferedWriter(new OutputStreamWriter(os, "iso-8859-1"));
@@ -135,6 +135,7 @@ public class PosCashBalanceResource {
 				writer.flush();
 			}
 		};
+		return Response.ok(stream).header("Content-Disposition","attachment; filename=wochenliste.csv").build();
 	}
 
 	@Produces({"application/pdf"})

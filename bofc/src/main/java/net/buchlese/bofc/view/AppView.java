@@ -13,6 +13,7 @@ public class AppView extends View {
 	}
 
 	public String getPosName() {
+		cfg.getMetricsFactory();
 		return "Backend";
 	}
 }

@@ -6,13 +6,16 @@ function(dom, domConstruct, JsonRest, Button, DataGrid, ObjectStore, Memory) {
 	// ein paar variablen definieren
 	var store = new JsonRest({
 	    target: "/cashbalance"
-	  }), store2 = new JsonRest({
+	  }), weekStore = new JsonRest({
 	    target: "/accrualweek"
+	  }), monthStore = new JsonRest({
+	    target: "/accrualmonth"
 	  }),
 	  
     startup = function(registry) {
     	currentBalance = null; // das aktuell ausgewählte Balance-Sheet
     	currentWeek = new Date().getWeek();
+    	currentMonth = new Date().getMonth() + 1; // wir nehmen die natürliche Zählung
         
         balGridUi = new DataGrid( {
             structure: [
@@ -67,15 +70,47 @@ function(dom, domConstruct, JsonRest, Button, DataGrid, ObjectStore, Memory) {
             }
         }, "fibuWeekButton").startup();
 
-        var showFibuWeekButton = new Button({
+        var showCashBalWeekButton = new Button({
             label: "Kassenabschlüsse",
             onClick: function(){
-          	  store2.query({"week": currentWeek}).then(function(balances){
+          	  weekStore.query({"week": currentWeek}).then(function(balances){
                   var dataStore = new ObjectStore({ objectStore:new Memory({ data: balances}) });
                   balGridUi.setStore(dataStore);
         	  });
             }
         }, "selectCashBalWeekButton").startup();
+
+        var showPrevMonthButton = new Button({
+            label: "\u25c4",
+            onClick: function(){
+            	currentMonth = currentMonth -1;
+            	dom.byId("monthnum").innerHTML = currentMonth;
+                var weekview = dom.byId("monthviewdiv");
+                domConstruct.empty(weekview);
+                weekview.src = '/accrualmonth/view/' + currentMonth;
+            }
+        }, "prevMonthButton").startup();
+
+        var showNextMonthButton = new Button({
+            label: "\u25ba",
+            onClick: function(){
+            	currentMonth = currentMonth +1;
+            	dom.byId("monthnum").innerHTML = currentMonth;
+                var weekview = dom.byId("monthviewdiv");
+                domConstruct.empty(weekview);
+                weekview.src = '/accrualmonth/view/' + currentMonth;
+            }
+        }, "nextMonthButton").startup();
+
+        var showCashBalMonthButton = new Button({
+            label: "Kassenabschlüsse",
+            onClick: function(){
+          	  monthStore.query({"week": currentMonth}).then(function(balances){
+                  var dataStore = new ObjectStore({ objectStore:new Memory({ data: balances}) });
+                  balGridUi.setStore(dataStore);
+        	  });
+            }
+        }, "selectCashBalMonthButton").startup();
 
         var showShowButton = new Button({
             label: "Show",
@@ -143,6 +178,8 @@ function(dom, domConstruct, JsonRest, Button, DataGrid, ObjectStore, Memory) {
             registry.byId("balPeriod").on("change", updateBalGrid);
         	dom.byId("weeknum").innerHTML = currentWeek;
             dom.byId("weekviewdiv").src = '/accrualweek/view/thisweek';
+        	dom.byId("monthnum").innerHTML = currentMonth;
+            dom.byId("monthviewdiv").src = '/accrualmonth/view/thismonth';
         }
     };
     

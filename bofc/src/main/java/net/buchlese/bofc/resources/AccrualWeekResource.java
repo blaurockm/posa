@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -31,8 +30,6 @@ import net.buchlese.bofc.view.WeekView;
 
 import org.joda.time.DateTime;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Optional;
 
 @Path("/accrualweek")
 public class AccrualWeekResource {
@@ -68,7 +65,7 @@ public class AccrualWeekResource {
 	@Path("/view/{date}")
 	public View fetchViewForDate(@PathParam("date") String date)  {
       	AccrualWeek aw = fetchAccrualWeekForDate(date);
-		return new WeekView(aw, balanceDao);
+		return new WeekView(aw);
 	}
 
 	@GET

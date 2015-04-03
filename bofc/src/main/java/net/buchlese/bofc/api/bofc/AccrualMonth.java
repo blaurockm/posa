@@ -2,17 +2,16 @@ package net.buchlese.bofc.api.bofc;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class AccrualWeek extends AccrualPeriod {
+public class AccrualMonth extends AccrualPeriod {
 	@JsonProperty
-	private int week;
+	private int month;
 	@JsonProperty
 	private int year;
-	
-	public int getWeek() {
-		return week;
+	public int getMonth() {
+		return month;
 	}
-	public void setWeek(int week) {
-		this.week = week;
+	public void setMonth(int month) {
+		this.month = month;
 	}
 	public int getYear() {
 		return year;
@@ -21,4 +20,5 @@ public class AccrualWeek extends AccrualPeriod {
 		this.year = year;
 	}
 
+	
 }

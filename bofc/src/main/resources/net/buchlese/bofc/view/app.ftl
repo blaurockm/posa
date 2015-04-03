@@ -24,7 +24,7 @@ registry: "dijit/registry"
 		  <h1><b>Buchlese Statistik-Provider</b></h1>
 		</div>
 		<div data-dojo-type="dijit/layout/TabContainer" data-dojo-props="region:'center', tabStrip:true" id="workingArea">
-  		    <!--  das dashboard -->
+  		    <!--  die wochenübersicht -->
 			<div data-dojo-type="dijit/layout/LayoutContainer" data-dojo-props='title:"Wochenübersicht", style:"padding:10px;"'>
 			    <div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'top'">
 			      <span style="font-size:100%;font-weight:bold">				       
@@ -40,6 +40,21 @@ registry: "dijit/registry"
 			      	</iframe>
 				</div>
 			</div>
+  		    <!--  die Monatsübersicht -->
+			<div data-dojo-type="dijit/layout/LayoutContainer" data-dojo-props='title:"Monatsübersicht", style:"padding:10px;"'>
+			    <div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'top'">
+			      <span style="font-size:100%;font-weight:bold">				       
+			      <button id="prevMonthButton" type="button"></button>
+			      Monat <span id="monthnum">3</span>
+			      <button id="nextMonthButton" type="button"></button>
+			      </span>
+			      <button id="selectCashBalMonthButton" type="button"></button>
+			    </div>
+			    <div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'center', layoutPriority:1">
+			      	<iframe id="monthviewdiv" style="height:100%; width:100%;background-color:#eeeeee;">
+			      	</iframe>
+				</div>
+			</div>
   		    <!--  die Kassentransaktionen -->
 			<div id="balTab" data-dojo-type="dijit/layout/ContentPane" data-dojo-props='title:"Kassenabschlüsse", style:"padding:10px;"'>
 			   <h2>Kassenabschlüsse von <div id="balPeriod" data-dojo-type="dijit/form/Select">
@@ -49,13 +64,8 @@ registry: "dijit/registry"
 						<span data-dojo-value="thismonth">diesem Monat</span>
 						<span data-dojo-value="lastmonth">letztem Monat</span>
 						<span data-dojo-value=""></span>
-						<span data-dojo-value="notExported">die der FiBu Unbekannten</span>
-						<span data-dojo-value=""></span>
 						<span data-dojo-value="thisquarter">diesem Quartal</span>
 						<span data-dojo-value="lastquarter">letztem Quartal</span>
-						<span data-dojo-value=""></span>
-						<span data-dojo-value="thisyear">diesem Jahr</span>
-						<span data-dojo-value="lastyear">letztem Jahr</span>
 					 </div> </h2>
 	           <div id="balGrid" style="height:30%; width:50%">
 	           </div>
@@ -71,19 +81,8 @@ registry: "dijit/registry"
 				</div>
 		    </div>
 
-  		    <!--  die technisches brimborium -->
-			<div id="adminTab" data-dojo-type="dijit/layout/ContentPane" data-dojo-props='title:"Technisches", style:"padding:10px;display:none;"'>
-				<form method="POST" action="/cashbalance/fibuexport" target="expresult">
-				    <table>
-					<tr><td><input type="submit" value="Fibuexport" /></td><td></td></tr>
-					<tr><td>Von</td><td><input type="text" name="from" value="20150207" /></td></tr>
-					<tr><td>Bis</td><td><input type="text" name="till" value="20150228" /></td></tr>
-					<tr><td>Kasse</td><td> Dornhan <input type="checkbox" name="kasse" value="1" checked="checked" /> Sulz <input type="checkbox" name="kasse" value="2" checked="checked" /></td></tr>
-					</table>
-				</form>
-				<p>Export-Ergebnis</p>
-				<iframe id="expresult" name="expresult" style="height:60%; width:100%; background-color:#eeeeee;"></iframe>
-			</div>
+  		    <!--  technisches brimborium -->
+  		    <a href="/technics" data-dojo-type="dijit/layout/LinkPane">Technisches</a>
 		</div>
 	</div>
 
@@ -109,7 +108,7 @@ registry: "dijit/registry"
 		<script src="//ajax.googleapis.com/ajax/libs/dojo/1.10.1/dojo/dojo.js"></script>
 		<script>
 			require(["bofc/app", "dijit/registry", "dojo/parser", "dijit/layout/BorderContainer", "dijit/layout/TabContainer", "dijit/layout/LayoutContainer", 
-			         "dijit/layout/ContentPane", "dijit/form/Select", "dijit/form/ComboBox", "dojo/domReady!"], function(demoApp, registry, parser) {
+			         "dijit/layout/ContentPane", "dijit/layout/LinkPane", "dijit/form/Select", "dijit/form/ComboBox", "dojo/domReady!"], function(demoApp, registry, parser) {
 				parser.parse();
 				demoApp.init(registry);
 			});

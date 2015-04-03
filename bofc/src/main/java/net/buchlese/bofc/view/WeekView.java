@@ -1,30 +1,18 @@
 package net.buchlese.bofc.view;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 
-import org.joda.time.DateTime;
-
-import freemarker.ext.beans.BeanModel;
-import freemarker.template.TemplateMethodModelEx;
-import freemarker.template.TemplateModelException;
-import freemarker.template.TemplateNumberModel;
 import net.buchlese.bofc.api.bofc.AccrualWeek;
 import net.buchlese.bofc.api.bofc.PaymentMethod;
 import net.buchlese.bofc.api.bofc.PosCashBalance;
-import net.buchlese.bofc.jdbi.bofc.PosCashBalanceDAO;
-import io.dropwizard.views.View;
 
-public class WeekView extends View {
+public class WeekView extends AbstractBofcView {
 	private final AccrualWeek week;
-	private final PosCashBalanceDAO balanceDao;
 	
-	public WeekView(AccrualWeek aw, PosCashBalanceDAO balanceDao) {
+	public WeekView(AccrualWeek aw) {
 		super("weekview.ftl");
 		this.week = aw;
-		this.balanceDao = balanceDao;
 	}
 
 	public AccrualWeek getWeek() {
@@ -53,36 +41,5 @@ public class WeekView extends View {
 	}
 	
 	
-	public TemplateMethodModelEx getMoney() {
-    	return new TemplateMethodModelEx() {
-			@SuppressWarnings("rawtypes")
-			@Override
-			public Object exec(List args) throws TemplateModelException {
-				if (args.size() != 1) {
-					throw new TemplateModelException("nur ein int als Argument");
-				}
-				if (args.get(0) == null) {
-					return "0,00 EUR";
-				}
-				if (args.get(0) instanceof TemplateNumberModel) {
-					return String.format("%,.2f EUR", ((TemplateNumberModel)args.get(0)).getAsNumber().intValue() / 100.0d);
-				}
-				return "";
-			}
-		};
-    }
-	
-    public TemplateMethodModelEx getLocalDate() {
-    	return new TemplateMethodModelEx() {
-			@SuppressWarnings("rawtypes")
-			@Override
-			public Object exec(List args) throws TemplateModelException {
-				if (args.size() != 1) {
-					throw new TemplateModelException("nur ein DateTime als Argument");
-				}
-				return ((DateTime)((BeanModel)args.get(0)).getWrappedObject()).toLocalDate();
-			}
-		};
-    }
 
 }
