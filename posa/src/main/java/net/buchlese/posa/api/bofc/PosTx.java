@@ -3,6 +3,7 @@ package net.buchlese.posa.api.bofc;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.DateTime;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class PosTx implements Comparable<PosTx> {
@@ -87,7 +88,12 @@ public class PosTx implements Comparable<PosTx> {
 		}
 		return ArticleGroup.NONE;
 	}
-	
+
+	@JsonIgnore
+	public void setArticleGroup(ArticleGroup g) {
+		
+	}
+
 	public long getId() {
 		return id;
 	}
