@@ -66,6 +66,7 @@ public class SynchronizePosCashBalance extends AbstractSynchronizer implements C
 		// für jeden nicht vorhandenen neuen Abschluss eine CashBalance anlegen.
 		List<PosCashBalance> pcb = createNewBalances(belege);
 		cashBalanceDAO.insertAll(pcb.iterator());
+		PosAdapterApplication.homingQueue.addAll(pcb); // sync the new ones back home
 	}
 
 	/**

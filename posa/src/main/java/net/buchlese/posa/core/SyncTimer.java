@@ -16,6 +16,7 @@ import net.buchlese.posa.jdbi.pos.KassenVorgangDAO;
 import org.joda.time.LocalDate;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
+import org.skife.jdbi.v2.exceptions.UnableToObtainConnectionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -117,18 +118,9 @@ public class SyncTimer extends TimerTask {
 	    	long dur = System.currentTimeMillis()-lastRun;
 	    	if (dur > maxDuration) maxDuration = dur;
 	    } catch (Throwable t) {
-	    	if ((t instanceof SQLException) == false) {
+	    	if ((t instanceof UnableToObtainConnectionException) == false) {
 	    		logger.error("error while sync ", t);
 	    		PosAdapterApplication.problemMessages.add("Sync-Problem: " + t.getMessage());
-	    	} else {
-	    		// es ist ein SQL-Problem
-	    		if (((SQLException)t).getCause() instanceof IOException) {
-	    			// die zieldatenbank ist nicht erreichbar.
-	    			// das wird ignoriert.
-	    		} else {
-		    		logger.error("error while sync ", t);
-		    		PosAdapterApplication.problemMessages.add("Sync-SQL-Problem: " + t.getMessage());
-	    		}
 	    	}
 	    } finally {
 	    	syncLock.unlock();
