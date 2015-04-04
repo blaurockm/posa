@@ -39,7 +39,9 @@ public class SynchronizePosTicket extends AbstractSynchronizer {
 		List<KassenBeleg> belege = belegDao.fetchAllAfter(maxDatum.or(syncStart.toDateTimeAtStartOfDay()));
 
 		// convert KassenVorgang to posTx
-		return createTickets(belege);
+		List<PosTicket> res = convertBelegToTicket(belege);
+		ticketDAO.insertAll(res.iterator());
+		return res;
 	}
 	
 	/**
@@ -57,7 +59,8 @@ public class SynchronizePosTicket extends AbstractSynchronizer {
 		ticketDAO.deleteTicketsBetween(bulkLoad.getFrom().toDateTimeAtStartOfDay(), bulkLoad.getTill().toDateTimeAtStartOfDay().plusDays(1));
 		List<KassenBeleg> belege = belegDao.fetchAllBetween(bulkLoad.getFrom().toDateTimeAtStartOfDay(), bulkLoad.getTill().toDateTimeAtStartOfDay().plusDays(1));
 		log.info("found " + belege.size() + " Belege");
-		createTickets(belege);
+		List<PosTicket> res = convertBelegToTicket(belege);
+		ticketDAO.insertAll(res.iterator());
 		log.info("done with " + bulkLoad);
 	}
 
@@ -66,34 +69,20 @@ public class SynchronizePosTicket extends AbstractSynchronizer {
 	 * @param belege
 	 * @return
 	 */
-	public List<PosTicket> createTickets(List<KassenBeleg> belege) {
+	public List<PosTicket> convertBelegToTicket(List<KassenBeleg> belege) {
 		// convert KassenVorgang to posTx
 		List<PosTicket> res = new ArrayList<>();
 		for (KassenBeleg beleg : belege) {
 			// wir legen den Beleg auf jeden Fall an,
 			// geparkte Belege bekommen das Kennzeichen "toBeCheckedAgain"
-			PosTicket tx = createNewTicket(beleg);
+			PosTicket tx = convertBelegToTicket(beleg);
 			res.add(tx);
 		}
-
-		ticketDAO.insertAll(res.iterator());
 		
 		return res;
 	}
-	
-	
-	public void updateLast10Tickets() throws Exception {
-		List<KassenBeleg> lastBelege = belegDao.fetchLast();
-		for (KassenBeleg orig : lastBelege) {
-			PosTicket checker = ticketDAO.fetch(orig.getBelegnr());
-			if (checker != null && updateTicket(orig, checker)) {
-				// es hat sich was geändert;
-				ticketDAO.update(checker);
-			}
-		}
-	}
 
-	private PosTicket createNewTicket(KassenBeleg beleg) {
+	private PosTicket convertBelegToTicket(KassenBeleg beleg) {
 		PosTicket tx = new PosTicket();
 		tx.setBelegNr(beleg.getBelegnr());
 		updateTicket(beleg, tx);

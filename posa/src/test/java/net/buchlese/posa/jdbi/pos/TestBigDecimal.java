@@ -52,7 +52,7 @@ public class TestBigDecimal {
 		
 	    KassenVorgang vorg = vorgangDao.fetch(2701801, 4);
 		
-		s.createNewTx(vorg);
+		s.convertVorgangToTx(vorg);
 	}
 	
 }

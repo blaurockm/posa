@@ -51,6 +51,8 @@ public class PosAdapterApplication extends Application<PosAdapterConfiguration> 
 
 	public static Queue<PosCashBalance> homingQueue = new ConcurrentLinkedQueue<PosCashBalance>();
 
+	public static Queue<String> problemMessages = new ConcurrentLinkedQueue<String>();
+
 	public static String posName;
 	
 	public static String getPosName() {
@@ -109,7 +111,7 @@ public class PosAdapterApplication extends Application<PosAdapterConfiguration> 
 	    environment.jersey().register(new PosTicketResource(posTicketDao, posCashBalanceDao));
 	    environment.jersey().register(new PosCashBalanceResource(posCashBalanceDao, posTicketDao));
 
-	    environment.jersey().register(new AppResource(config));
+	    environment.jersey().register(new AppResource(config, environment));
 
 	    syncTimer = new ScheduledThreadPoolExecutor(10);
 		syncLock = new ReentrantLock();

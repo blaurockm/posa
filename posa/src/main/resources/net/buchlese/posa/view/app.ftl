@@ -127,22 +127,8 @@ registry: "dijit/registry"
 </div>
 			</div>
 
-  		    <!--  die technisches brimborium -->
-			<div id="adminTab" data-dojo-type="dijit/layout/ContentPane" data-dojo-props='title:"Technisches", style:"padding:10px;display:none;"'>
-				<form method="POST" action="/admin/tasks/synchronize" target="syncresult">
-				    <table>
-					<tr><td><input type="submit" value="Jetzt synchronisieren!" /></td><td></td></tr>
-					<tr><td>Von</td><td><input type="text" name="from" value="2015-01-04" /></td></tr>
-					<tr><td>Bis</td><td><input type="text" name="till" value="2015-01-20" /></td></tr>
-					<tr><td>Nur Homing</td><td><input type="checkbox" name="sendHome" value="true" /></td></tr>
-					</table>
-				</form>
-				<div class="boardlet">
-				<p>Sync-Result</p>
-				<iframe id="syncresult" name="syncresult">
-				</iframe>
-				</div>
-			</div>
+  		    <!--  technisches brimborium -->
+  		    <a href="/technics" data-dojo-type="dijit/layout/LinkPane">Technisches</a>
 		</div>
 	</div>
 
@@ -168,7 +154,7 @@ registry: "dijit/registry"
 		<script src="//ajax.googleapis.com/ajax/libs/dojo/1.10.1/dojo/dojo.js"></script>
 		<script>
 			require(["posa/app", "dijit/registry", "dojo/parser", "dijit/layout/BorderContainer", "dijit/layout/TabContainer", 
-			         "dijit/layout/ContentPane", "dijit/form/Select", "dijit/form/ComboBox", "dojo/domReady!"], function(demoApp, registry, parser) {
+			         "dijit/layout/ContentPane", "dijit/layout/LinkPane", "dijit/form/Select", "dijit/form/ComboBox", "dojo/domReady!"], function(demoApp, registry, parser) {
 				parser.parse();
 				demoApp.init(registry);
 			});

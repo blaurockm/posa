@@ -1,7 +1,5 @@
 package net.buchlese.posa.core;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -41,28 +39,7 @@ public class CashBalance {
 		PosCashBalance balance = createBalance(from, till);
 		List<PosTx> txs = ticketDAO.fetchTxfast(from, till);
 		List<PosTicket> tickets = ticketDAO.fetch(from, till);
-		return updateBalance(balance, txs, tickets);
-	}
-	
-	public List<PosTx> amendTickets(PosCashBalance bal) {
-		List<PosTx> txs = ticketDAO.fetchTx(bal.getFirstCovered(), bal.getLastCovered());
-		List<PosTicket> tickets = ticketDAO.fetch(bal.getFirstCovered(), bal.getLastCovered());
-		return amendTickets(bal, txs, tickets);
-	}
-
-	public List<PosTx> amendTickets(PosCashBalance bal,List<PosTx> txs,List<PosTicket> tickets) {
-		bal.setTickets(tickets);
-		for (PosTicket ticket : tickets) {
-			List<PosTx> titxs = new ArrayList<>();
-			for (PosTx tx : txs) {
-				if (tx.getBelegNr() == ticket.getBelegNr()) {
-					titxs.add(tx);
-				}
-			}
-			Collections.sort(titxs);
-			ticket.setTxs(titxs);
-		}
-		return txs;
+		return computeBalance(balance, txs, tickets);
 	}
 
 	public PosCashBalance createBalance(DateTime from, DateTime till) {
@@ -75,11 +52,6 @@ public class CashBalance {
 		return balance;
 	}
 	
-	public PosCashBalance updateBalance(PosCashBalance bal) {
-		List<PosTx> txs = ticketDAO.fetchTx(bal.getFirstCovered(), bal.getLastCovered());
-		List<PosTicket> tickets = ticketDAO.fetch(bal.getFirstCovered(), bal.getLastCovered());
-		return updateBalance(bal, txs, tickets);
-	}
 
 	/**
 	 * Berechne die Summen für die geg Listen von Tickets und Transaktionen.
@@ -90,7 +62,7 @@ public class CashBalance {
 	 * @param tickets  die Liste der Belege
 	 * @return ein Tagesabschluss, Summen-Bildung
 	 */
-	public PosCashBalance updateBalance(PosCashBalance balance, List<PosTx> txs, List<PosTicket> tickets) {
+	public PosCashBalance computeBalance(PosCashBalance balance, List<PosTx> txs, List<PosTicket> tickets) {
 		balance.setTicketCount((int) tickets.stream().filter(t -> (t.isCancel() && t.isCancelled()) == false).count());
 
 		if (txs.isEmpty()) {

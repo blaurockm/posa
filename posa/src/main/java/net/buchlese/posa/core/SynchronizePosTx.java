@@ -44,7 +44,9 @@ public class SynchronizePosTx extends AbstractSynchronizer {
 
 		// Neue Kassenvorgänge holen und speichern
 		// wir geben zurück was wir geholt haben
-		return createNewTx(vorgs);
+		List<PosTx> res = convertVorgangToTx(vorgs);
+		txDAO.insertAll(res.iterator());
+		return res;
 	}
 
 	/**
@@ -63,7 +65,8 @@ public class SynchronizePosTx extends AbstractSynchronizer {
 		txDAO.deleteTxBetween(bulkLoad.getFrom().toDateTimeAtStartOfDay(), bulkLoad.getTill().toDateTimeAtStartOfDay().plusDays(1));
 		List<KassenVorgang> vorgs = vorgangsDao.fetchAllBetween(bulkLoad.getFrom().toDateTimeAtStartOfDay(), bulkLoad.getTill().toDateTimeAtStartOfDay().plusDays(1));
 		log.info("found " + vorgs.size() + " Vorgänge");
-		createNewTx(vorgs);
+		List<PosTx> res = convertVorgangToTx(vorgs);
+		txDAO.insertAll(res.iterator());
 		log.info("done with " + bulkLoad);
 	}
 	
@@ -73,33 +76,19 @@ public class SynchronizePosTx extends AbstractSynchronizer {
 	 * @param vorgs
 	 * @return
 	 */
-	public List<PosTx> createNewTx(List<KassenVorgang> vorgs) {
+	public List<PosTx> convertVorgangToTx(List<KassenVorgang> vorgs) {
 		List<PosTx> res = new ArrayList<>();
 		for (KassenVorgang vorg : vorgs) {
 			if (vorg.getGesamt() != null && vorg.getMWSt() != null) {
-				PosTx tx = createNewTx(vorg);
+				PosTx tx = convertVorgangToTx(vorg);
 				res.add(tx);
 			}
 		}
-		txDAO.insertAll(res.iterator());
 		return res;
 	}
-	
-	
-	public void updateLast10Tx() throws Exception {
-		// alte Kassenvorgänge nochmals prüfen
-    	List<KassenVorgang> lastVorg = vorgangsDao.fetchLast();
-		for (KassenVorgang orig: lastVorg) {
-			PosTx checker = txDAO.fetch(orig.getBelegNr(), orig.getLfdNummer());
-			if (checker != null && updateTx(orig, checker)) {
-				// es hat sich was geändert;
-				txDAO.update(checker);
-			}
-		}
-	}
 
 
-	public PosTx createNewTx(KassenVorgang vorg) {
+	public PosTx convertVorgangToTx(KassenVorgang vorg) {
 		PosTx tx = new PosTx();
 		tx.setBelegNr(vorg.getBelegNr());
 		tx.setBelegIdx(vorg.getLfdNummer());

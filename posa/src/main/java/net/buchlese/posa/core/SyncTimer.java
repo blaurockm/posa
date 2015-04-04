@@ -1,5 +1,7 @@
 package net.buchlese.posa.core;
 
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.TimerTask;
 import java.util.concurrent.locks.Lock;
 
@@ -55,6 +57,10 @@ public class SyncTimer extends TimerTask {
 	
 	private volatile BulkLoadDetails bulkLoad; 
 	
+	public static long lastRun;
+	public static long lastRunWithDbConnection;
+	public static long maxDuration;
+	
 	public SyncTimer(Lock l, DBI bofcDBI, DBI posDBI) {
 		this.syncLock = l;
 		this.bofcDBI = bofcDBI;
@@ -76,7 +82,9 @@ public class SyncTimer extends TimerTask {
 	@Override
 	public void run() {
 		syncLock.lock();
+		lastRun = System.currentTimeMillis();
 	    try(Handle bofc = bofcDBI.open();  Handle pos = posDBI.open()) {
+	    	lastRunWithDbConnection = lastRun;
 	    	KassenVorgangDAO vorgangDao = pos.attach(KassenVorgangDAO.class);
     	    KassenBelegDAO belegDao = pos.attach(KassenBelegDAO.class);
     	    KassenAbschlussDAO abschlussDao = pos.attach(KassenAbschlussDAO.class);
@@ -101,19 +109,26 @@ public class SyncTimer extends TimerTask {
 	    		syncTickets.fetchNewTickets(syncStart);
 	    		syncBalance.fetchNewBalances(syncStart);
 	    		
-	    		syncTx.updateLast10Tx();
-	    		syncTickets.updateLast10Tickets();
 	    		if (PosAdapterApplication.resyncQueue.isEmpty() == false) {
 	    			PosAdapterApplication.resyncQueue.forEach(syncBalance);
 	    			PosAdapterApplication.resyncQueue.clear();
 	    		}
 	    	}
-
+	    	long dur = System.currentTimeMillis()-lastRun;
+	    	if (dur > maxDuration) maxDuration = dur;
 	    } catch (Throwable t) {
-	    	if (t instanceof NullPointerException) {
+	    	if ((t instanceof SQLException) == false) {
 	    		logger.error("error while sync ", t);
+	    		PosAdapterApplication.problemMessages.add("Sync-Problem: " + t.getMessage());
 	    	} else {
-	    		logger.info("problem with auto-sync " + t.getMessage());
+	    		// es ist ein SQL-Problem
+	    		if (((SQLException)t).getCause() instanceof IOException) {
+	    			// die zieldatenbank ist nicht erreichbar.
+	    			// das wird ignoriert.
+	    		} else {
+		    		logger.error("error while sync ", t);
+		    		PosAdapterApplication.problemMessages.add("Sync-SQL-Problem: " + t.getMessage());
+	    		}
 	    	}
 	    } finally {
 	    	syncLock.unlock();

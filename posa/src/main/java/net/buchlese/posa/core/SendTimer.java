@@ -27,10 +27,12 @@ public class SendTimer extends TimerTask {
 		this.cashBalDao = balDao;
 	}
 
-
+    public static long lastHomingRun;
+	
 	@Override
 	public void run() {
 		if (PosAdapterApplication.homingQueue.isEmpty() == false) {
+			lastHomingRun = System.currentTimeMillis();
 			List<PosCashBalance> toDo = new ArrayList<>(PosAdapterApplication.homingQueue);
 			PosAdapterApplication.homingQueue.clear();
 			

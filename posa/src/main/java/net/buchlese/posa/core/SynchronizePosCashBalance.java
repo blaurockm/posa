@@ -3,6 +3,7 @@ package net.buchlese.posa.core;
 import io.dropwizard.jackson.Jackson;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -63,13 +64,8 @@ public class SynchronizePosCashBalance extends AbstractSynchronizer implements C
 		List<KassenAbschluss> belege = abschlussDao.fetchAllAfter(maxId.or(syncStart.toString("yyyyMMdd")));
 
 		// für jeden nicht vorhandenen neuen Abschluss eine CashBalance anlegen.
-		// aber wir wollen definitv alle Tickets die heute mal so importiert wurden wieder löschen.
-		CashBalance balComp = new CashBalance(ticketDAO);
-		for (KassenAbschluss abschluss : belege) {
-			PosCashBalance cb = balComp.createBalance(null, null);
-			setBalanceValues(abschluss, cb); // werte setzen.
-			resyncBalanceDetails(abschluss, cb); // tickets neu syncen, speichern und verschicken
-		}
+		List<PosCashBalance> pcb = createNewBalances(belege);
+		cashBalanceDAO.insertAll(pcb.iterator());
 	}
 
 	/**
@@ -79,25 +75,21 @@ public class SynchronizePosCashBalance extends AbstractSynchronizer implements C
 	public void doBulkLoad(BulkLoadDetails bulkLoad) {
 		Logger log = LoggerFactory.getLogger("BalanceBulkLoad");
 		log.info("doing " + bulkLoad);
-		CashBalance balComp = new CashBalance(ticketDAO);
 		
 		if (bulkLoad.isSendHome()) {
 			log.info("sending only home ");
 			List<PosCashBalance> balances = cashBalanceDAO.fetchAllBetween(bulkLoad.getFrom().toString("yyyyMMdd"), bulkLoad.getTill().toDateTimeAtStartOfDay().plusDays(1).toString("yyyyMMdd"));
 			log.info("found " + balances.size() + " existing Balances");
-			balances.forEach(b -> balComp.amendTickets(b)); // wir wollen alle Tickets mitgeben
 			PosAdapterApplication.homingQueue.addAll(balances); // sync them back home
 		} else {
 			log.info("importing from pos ");
 			log.info("deleting balances and everything in timespan");
 			cashBalanceDAO.deleteBalancesBetween(bulkLoad.getFrom().toString("yyyyMMdd"), bulkLoad.getTill().toDateTimeAtStartOfDay().plusDays(1).toString("yyyyMMdd"));
-			txDAO.deleteTxBetween(bulkLoad.getFrom().toDateTimeAtStartOfDay(), bulkLoad.getTill().toDateTimeAtStartOfDay().plusDays(1));
-			ticketDAO.deleteTicketsBetween(bulkLoad.getFrom().toDateTimeAtStartOfDay(), bulkLoad.getTill().toDateTimeAtStartOfDay().plusDays(1));
 
 			List<KassenAbschluss> belege = abschlussDao.fetchAllBetween(bulkLoad.getFrom().toDateTimeAtStartOfDay(), bulkLoad.getTill().toDateTimeAtStartOfDay().plusDays(1));
 			log.info("found " + belege.size() + " KassenAbschlüsse");
 			List<PosCashBalance> pcb = createNewBalances(belege);
-			pcb.forEach(b -> balComp.amendTickets(b)); // wir wollen alle Tickets mitgeben
+			cashBalanceDAO.insertAll(pcb.iterator());
 			PosAdapterApplication.homingQueue.addAll(pcb); // sync the new ones back home
 		}
 		log.info("done with " + bulkLoad);
@@ -113,38 +105,39 @@ public class SynchronizePosCashBalance extends AbstractSynchronizer implements C
 		for (KassenAbschluss abschluss : abschs) {
 			if (abschluss.getIst() != null) {
 				try {
-					pcb.add(createNewBalance(abschluss));
+					CashBalance balComp = new CashBalance(ticketDAO);
+					PosCashBalance accBal = balComp.createBalance(abschluss.getVonDatum(), abschluss.getBisDatum());
+					updateBalanceValues(abschluss, accBal);
+					pcb.add(accBal);
 				} catch (Exception e) {
 					LoggerFactory.getLogger(this.getClass()).error("problem creating balance " + abschluss.getAbschlussid(), e);
+					PosAdapterApplication.problemMessages.add("problem creating balance " + abschluss.getAbschlussid());
 				}
 			}
 		}
-		cashBalanceDAO.insertAll(pcb.iterator());
 		return pcb;
 	}
 
-
-	private PosCashBalance createNewBalance(KassenAbschluss abschluss) {
-		CashBalance balComp = new CashBalance(ticketDAO);
-		PosCashBalance bal = balComp.createBalance(abschluss.getVonDatum(), abschluss.getBisDatum());
-		balComp.updateBalance(bal);
-		setBalanceValues(abschluss, bal);
-		return bal;
-	}
-
 	/** 
-	 * aktualisiert genau einen Kassenabschluss
+	 * aktualisiert genau einen Kassenabschluss (kommt von resync-queue)
 	 * @param accBal
 	 */
 	@Override
 	public void accept(PosCashBalance accBal) {
 		KassenAbschluss abschluss = abschlussDao.fetchForDate(accBal.getAbschlussId());
-		setBalanceValues(abschluss, accBal);
-		resyncBalanceDetails(abschluss, accBal);
+		updateBalanceValues(abschluss, accBal);
+
+		if (accBal.getId() > 0) {
+			cashBalanceDAO.update(accBal); // save to database
+		} else {
+			cashBalanceDAO.insert(accBal); // save to database
+		}
+		
+		PosAdapterApplication.homingQueue.offer(accBal); // sync back home
 	}
 
 
-	private void setBalanceValues(KassenAbschluss abschluss, PosCashBalance bal) {
+	private void updateBalanceValues(KassenAbschluss abschluss, PosCashBalance bal) {
 		bal.setAbschlussId(abschluss.getAbschlussid());
     	updDate(bal::setFirstCovered, bal.getFirstCovered(), abschluss.getVonDatum());
     	updDate(bal::setLastCovered, bal.getLastCovered(), abschluss.getBisDatum());
@@ -158,35 +151,36 @@ public class SynchronizePosCashBalance extends AbstractSynchronizer implements C
 		} catch (JsonProcessingException e) {
 			// das  ist uns egal
 		}
+		// DIe Tickets wollen wir immer neu dranschreiben
+		updateBalanceTickets(abschluss, bal);
 	}
 
-
-	private void resyncBalanceDetails(KassenAbschluss abschluss, PosCashBalance bal) {
+	private void updateBalanceTickets(KassenAbschluss abschluss, PosCashBalance bal) {
 		// jetzt die Tx neu Synchronisieren
-		txDAO.deleteTxBetween(abschluss.getVonDatum(), abschluss.getBisDatum());
 		SynchronizePosTx syncTx = new SynchronizePosTx(txDAO, vorgangDao);
 		List<KassenVorgang> vorgs = vorgangDao.fetchAllBetween(bal.getFirstCovered(), bal.getLastCovered());
-		List<PosTx> posTxs = syncTx.createNewTx(vorgs);
+		List<PosTx> posTxs = syncTx.convertVorgangToTx(vorgs);
 		
 		// jetzt die Tickets neu synchronisieren
 		SynchronizePosTicket syncTicket = new SynchronizePosTicket(ticketDAO, belegDao);
-		ticketDAO.deleteTicketsBetween(abschluss.getVonDatum(), abschluss.getBisDatum());
 		List<KassenBeleg> belgs = belegDao.fetchAllBetween(bal.getFirstCovered(), bal.getLastCovered());
-		List<PosTicket> posTickets= syncTicket.createTickets(belgs);
+		List<PosTicket> posTickets= syncTicket.convertBelegToTicket(belgs);
 		
 		CashBalance balComp = new CashBalance(ticketDAO);
-		balComp.updateBalance(bal,posTxs, posTickets);
+		balComp.computeBalance(bal,posTxs, posTickets);
 
-		// jetzt speichern, damit die tickets nicht im JSON drin stehen. im posa wollen wir das nicht doppelt haben.
-		if (bal.getId() > 0) {
-			cashBalanceDAO.update(bal); // save to database
-		} else {
-			cashBalanceDAO.insert(bal); // save to database
-		}
+		bal.setTickets(posTickets);
 		
-		balComp.amendTickets(bal, posTxs, posTickets); // wir wollen alle Tickets mitgeben
-		PosAdapterApplication.homingQueue.offer(bal); // sync back home
-
+		for (PosTicket ticket : posTickets) {
+			List<PosTx> titxs = new ArrayList<>();
+			for (PosTx tx : posTxs) {
+				if (tx.getBelegNr() == ticket.getBelegNr()) {
+					titxs.add(tx);
+				}
+			}
+			Collections.sort(titxs);
+			ticket.setTxs(titxs);
+		} // wir wollen alle Tickets mitgeben
 	}
 
 	

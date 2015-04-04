@@ -60,7 +60,6 @@ public class PosCashBalanceResource {
 	@Path("/complete/{date}")
 	public PosCashBalance fetchCompleteForDate(@PathParam("date") String date)  {
 		PosCashBalance bal = fetchBalanceForDate(date);
-		new CashBalance(ticketDao).amendTickets(bal);
 		return bal;
 	}
 
@@ -92,7 +91,6 @@ public class PosCashBalanceResource {
 	@Path("/sendbof/{date}")
 	public View sendAgainBalanceForDate(@PathParam("date") String date)  {
 		PosCashBalance cb = fetchBalanceForDate(date);
-		new CashBalance(ticketDao).amendTickets(cb);
 		PosAdapterApplication.homingQueue.offer(cb);
 		return new CashBalView(cb);
 	}
