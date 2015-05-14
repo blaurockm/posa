@@ -75,8 +75,10 @@ public class SynchronizePosTicket extends AbstractSynchronizer {
 		for (KassenBeleg beleg : belege) {
 			// wir legen den Beleg auf jeden Fall an,
 			// geparkte Belege bekommen das Kennzeichen "toBeCheckedAgain"
-			PosTicket tx = convertBelegToTicket(beleg);
-			res.add(tx);
+			if (beleg.getZahlungsBetrag() != null) {
+				PosTicket tx = convertBelegToTicket(beleg);
+				res.add(tx);
+			}
 		}
 		
 		return res;

@@ -126,7 +126,7 @@ public class PosCashBalance {
 	}
 	
 	public String toString() {
-		return "PosCashBalance of " + abschlussId + ", rev " + revenue / 100; 
+		return "PosCashBalance of " + String.valueOf(abschlussId) + (revenue != null ? (", rev " + String.valueOf(revenue / 100)) : "n.bek."); 
 	}
 	
 	public long getId() {
