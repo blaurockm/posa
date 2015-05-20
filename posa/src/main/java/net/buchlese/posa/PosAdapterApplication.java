@@ -21,6 +21,8 @@ import net.buchlese.posa.api.bofc.PosCashBalance;
 import net.buchlese.posa.core.H2TcpServerManager;
 import net.buchlese.posa.core.SendTimer;
 import net.buchlese.posa.core.SyncTimer;
+import net.buchlese.posa.gui.GuiServlet;
+import net.buchlese.posa.gui.VaadinBundle;
 import net.buchlese.posa.jdbi.bofc.PayMethArgumentFactory;
 import net.buchlese.posa.jdbi.bofc.PosCashBalanceDAO;
 import net.buchlese.posa.jdbi.bofc.PosTicketDAO;
@@ -69,7 +71,8 @@ public class PosAdapterApplication extends Application<PosAdapterConfiguration> 
 		
 		// wir geben was her. unsere bilder und css - dinger
 		bootstrap.addBundle(new AssetsBundle());
-		
+		bootstrap.addBundle(new VaadinBundle(GuiServlet.class, "/cal/*"));
+		 
 		// wir migrieren immer nur eine DB
 	    bootstrap.addBundle(new MigrationsBundle<PosAdapterConfiguration>() {
 	    	public DataSourceFactory getDataSourceFactory(PosAdapterConfiguration configuration) {

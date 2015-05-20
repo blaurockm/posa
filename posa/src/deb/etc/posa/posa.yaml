@@ -54,3 +54,11 @@ logging:
 
     level: INFO
 
+server:
+  requestLog:
+    appenders:
+      - type: file
+        threshold: ERROR
+        currentLogFilename: /var/log/posa/posa-req.log
+        archive: false
+

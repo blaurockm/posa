@@ -9,8 +9,8 @@
   password: 
 
   # the JDBC URL
-  url: jdbc:h2:tcp://localhost:9092//var/lib/posa/backoffice;IFEXISTS=TRUE
-  
+  #url: jdbc:h2:tcp://localhost:9092//var/lib/posa/backoffice;IFEXISTS=TRUE
+  url: jdbc:h2:~/backoffice
   
 posDb:
   # the name of your JDBC driver
@@ -63,4 +63,8 @@ homeHost: 192.168.2.111
 
 sshEnabled: false
 
-
+#server:
+#  requestLog:
+#    appenders:
+#      - type: console
+#        threshold: ERROR
