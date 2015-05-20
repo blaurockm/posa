@@ -13,6 +13,7 @@
    <properties>
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
       <dropwizard.version>0.7.1</dropwizard.version>
+ 	  <vaadin.version>7.3.7</vaadin.version>
    </properties>
 
    <dependencies>
@@ -73,6 +74,21 @@
                <groupId>xalan</groupId>
             </exclusion>
          </exclusions>
+      </dependency>
+      <dependency>
+          <groupId>com.vaadin</groupId>
+          <artifactId>vaadin-themes</artifactId>
+          <version>${vaadin.version}</version>
+      </dependency>
+      <dependency>
+          <groupId>com.vaadin</groupId>
+          <artifactId>vaadin-client-compiled</artifactId>
+          <version>${vaadin.version}</version>
+      </dependency>
+      <dependency>
+          <groupId>com.vaadin</groupId>
+          <artifactId>vaadin-server</artifactId>
+          <version>${vaadin.version}</version>
       </dependency>
    </dependencies>
 

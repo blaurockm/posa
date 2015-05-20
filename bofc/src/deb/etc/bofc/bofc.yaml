@@ -1,6 +1,6 @@
 articleGroupMappings:
   lotto:  { match : 'A00008TD', text : 'Lotto',  key : 'lotto', type : 'GOOD', marge : 0.05, account : '3631' }
-  rubbellose: { match : 'A000082V', text : 'Rubbel-Lose',key : 'rubbellose', type: 'GOOD', marge : 0.02, account : '3632' }
+  rubbellose: { match : 'A000082V', text : 'Rubbel-Lose',key : 'rubbellose', type: 'GOOD', marge : 0.02, account : '3631' }
   tickets: { match : 'A00008JI|[Rr]eservix|KKF.*',key : 'tickets', text : 'Reservix-Karten', type: 'GOOD', marge : 0.09, account : '1372' }  
   gutschJacob: { match : 'A000083V', text : 'Gutscheine Jacob',key : 'gutschJacob', type : 'COUPON', account : '1373' }
   gutschSchul: { match : 'A00008OO', text : 'Schulgutschein',key : 'gutschSchul', type : 'COUPON', account : '1373' }
@@ -36,4 +36,12 @@ logging:
         archivedFileCount: 5
 
     level: INFO
+
+server:
+  requestLog:
+    appenders:
+      - type: file
+        threshold: ERROR
+        currentLogFilename: /var/log/bofc/bofc-req.log
+        archive: false
 

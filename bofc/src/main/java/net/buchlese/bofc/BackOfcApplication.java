@@ -10,6 +10,8 @@ import io.dropwizard.setup.Environment;
 import io.dropwizard.views.ViewBundle;
 import net.buchlese.bofc.api.bofc.ArticleGroup;
 import net.buchlese.bofc.core.H2TcpServerManager;
+import net.buchlese.bofc.gui.GuiServlet;
+import net.buchlese.bofc.gui.VaadinBundle;
 import net.buchlese.bofc.jdbi.bofc.PayMethArgumentFactory;
 import net.buchlese.bofc.jdbi.bofc.PosCashBalanceDAO;
 import net.buchlese.bofc.jdbi.bofc.PosTicketDAO;
@@ -37,6 +39,7 @@ public class BackOfcApplication extends Application<BackOfcConfiguration> {
 		
 		// wir geben was her. unsere bilder und css - dinger
 		bootstrap.addBundle(new AssetsBundle());
+		bootstrap.addBundle(new VaadinBundle(GuiServlet.class, "/cal/*"));
 		
 		// wir migrieren immer nur eine DB
 	    bootstrap.addBundle(new MigrationsBundle<BackOfcConfiguration>() {
