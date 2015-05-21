@@ -12,7 +12,7 @@ import net.buchlese.bofc.api.shift.Employee;
 import net.buchlese.bofc.api.shift.ShopHours;
 import net.buchlese.bofc.api.shift.Store;
 
-public class ShiftModel {
+public class ShiftCalModel {
 	
 	public void createDefaultShiftsPerMonth(Employee emp, YearMonth month) {
 		
