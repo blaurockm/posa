@@ -161,7 +161,7 @@
                         <data>
                            <src>${project.basedir}/src/deb/etc/posa</src>
                            <type>directory</type>
-                           <excludes>**/.svn,**/.svn/**,**/.git,**/.git/**</excludes>
+                           <excludes>**/.svn,**/.svn/**,**/.git,**/.git/**,**/.gitignore</excludes>
                            <mapper>
                               <type>perm</type>
                               <prefix>/etc/posa</prefix>
@@ -180,7 +180,7 @@
                         <data>
                            <src>${project.basedir}/src/deb/usr</src>
                            <type>directory</type>
-                           <excludes>**/.svn,**/.svn/**,**/.git,**/.git/**</excludes>
+                           <excludes>**/.svn,**/.svn/**,**/.git,**/.git/**,**/.gitignore</excludes>
                            <mapper>
                               <type>perm</type>
                               <prefix>/usr</prefix>
@@ -189,7 +189,7 @@
                         <data>
                            <src>${project.basedir}/src/deb/var</src>
                            <type>directory</type>
-                           <excludes>**/.svn,**/.svn/**,**/.git,**/.git/**</excludes>
+                           <excludes>**/.svn,**/.svn/**,**/.git,**/.git/**,**/.gitignore</excludes>
                            <mapper>
                               <type>perm</type>
                               <prefix>/var</prefix>
