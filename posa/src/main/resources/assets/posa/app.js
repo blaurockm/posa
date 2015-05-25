@@ -91,7 +91,7 @@ function(dom, domConstruct, JsonRest, Button, Chart, Tooltip, Pie, DataGrid, Obj
             onClick: function(){
                 var pdfembed = dom.byId("balpdf")
                 domConstruct.empty(pdfembed);
-                pdfembed.src = '/cashbalance/complete/' + currentBalance.abschlussId;
+                pdfembed.src = '/cashbalance/' + currentBalance.abschlussId;
             }
         }, "showJSONButton").startup();
         

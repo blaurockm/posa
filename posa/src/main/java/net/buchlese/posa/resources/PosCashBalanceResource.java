@@ -43,31 +43,22 @@ public class PosCashBalanceResource {
 	private static String IDFORMAT = "yyyyMMdd";
 	
 	@GET
-	public List<PosCashBalance> fetchAll(@QueryParam("date") Optional<String> date)  {
-		if (date.isPresent()) {
-			return fetchBalancesForDate(date.get());
-		}
-		return dao.fetchAllAfter(new DateTime().minusMonths(1).toString(IDFORMAT));
-	}
-
-	@GET
 	@Path("/{date}")
 	public PosCashBalance fetchForDate(@PathParam("date") String date)  {
 		return fetchBalanceForDate(date);
-	}
-
-	@GET
-	@Path("/complete/{date}")
-	public PosCashBalance fetchCompleteForDate(@PathParam("date") String date)  {
-		PosCashBalance bal = fetchBalanceForDate(date);
-		return bal;
 	}
 
 	@Produces({"text/html"})
 	@GET
 	@Path("/view/{date}")
 	public View fetchViewForDate(@PathParam("date") String abschlussId)  {
-		PosCashBalance cb = fetchBalanceForDate(abschlussId);
+		PosCashBalance cb = dao.fetchForDate(abschlussId);
+		if (cb == null) {
+			// es gibt den zu resyncenden abschluss noch gar nicht. einen leeren anlegen
+			CashBalance balComp = new CashBalance(ticketDao);
+			cb = balComp.createBalance(null, null);
+			cb.setAbschlussId(abschlussId);
+		}
 		return new CashBalView(cb);
 	}
 
@@ -75,7 +66,7 @@ public class PosCashBalanceResource {
 	@GET
 	@Path("/resync/{date}")
 	public View resyncBalanceForDate(@PathParam("date") String abschlussId)  {
-		PosCashBalance cb = fetchBalanceForDate(abschlussId);
+		PosCashBalance cb = dao.fetchForDate(abschlussId);
 		if (cb == null) {
 			// es gibt den zu resyncenden abschluss noch gar nicht. einen leeren anlegen, der rest macht das resync
 			CashBalance balComp = new CashBalance(ticketDao);
@@ -90,7 +81,7 @@ public class PosCashBalanceResource {
 	@GET
 	@Path("/sendbof/{date}")
 	public View sendAgainBalanceForDate(@PathParam("date") String date)  {
-		PosCashBalance cb = fetchBalanceForDate(date);
+		PosCashBalance cb = dao.fetchForDate(date);
 		PosAdapterApplication.homingQueue.offer(cb);
 		return new CashBalView(cb);
 	}
@@ -103,7 +94,7 @@ public class PosCashBalanceResource {
 	    return new StreamingOutput() {
 	        public void write(OutputStream output) throws IOException, WebApplicationException {
 	            try {
-	                Validator generator = new Validator(fetchBalanceForDate(date), ticketDao);
+	                Validator generator = new Validator(dao.fetchForDate(date), ticketDao);
 	                generator.validateDetails(output);
 	            } catch (Exception e) {
 	                throw new WebApplicationException(e);
@@ -113,40 +104,40 @@ public class PosCashBalanceResource {
 	    };	
 	}
 
-	private PosCashBalance fetchBalanceForDate(String date) {
-		if ("today".equals(date)) {
+	private PosCashBalance fetchBalanceForDate(String datekey) {
+		CashBalance balComp = new CashBalance(ticketDao);
+		DateTime till = new DateTime();
+		DateTime from = till.hourOfDay().setCopy(0); // stunde 0
+		PosCashBalance bal = null;
+		switch (datekey) {
+		case "today" :
 			// wir berechnen den von heute...
-			DateTime today = new DateTime();
-			DateTime startOfToday = today.hourOfDay().setCopy(0); // stunde 0
-			CashBalance balCOmp = new CashBalance(ticketDao);
-			PosCashBalance bal = balCOmp.computeBalanceFast(startOfToday, today);
-			return bal;
+			bal = balComp.computeBalanceFast(from, till);
+			break;
+		case "thisweek" :
+			// wir berechnen den von dieser woche
+			from = till.hourOfDay().setCopy(0).dayOfWeek().setCopy(1); // stunde 0 und wochentag 0
+			bal = balComp.computeBalanceFast(from, till); // hier ist die geschwindigkeit wichtiger als die Genauigkeit
+			break;
+		case "lastweek" :
+			// wir berechnen den von letzter woche
+			till = new DateTime().minusWeeks(1).hourOfDay().setCopy(23).dayOfWeek().setCopy(7); // letzter tag und letzte stunde
+			from = till.hourOfDay().setCopy(0).dayOfWeek().setCopy(1); // stunde 0 und wochentag 1
+			bal = balComp.computeBalanceFast(from, till); // hier ist die geschwindigkeit wichtiger als die Genauigkeit
+			break;
+		case "thismonth" :
+			// wir berechnen den von diesem monat
+			from = till.hourOfDay().setCopy(0).dayOfMonth().setCopy(1); // stunde 0 und monats-ersten
+			bal = balComp.computeBalanceFast(from, till); // hier ist die geschwindigkeit wichtiger als die Genauigkeit
+			break;
+		default :
+			bal = dao.fetchForDate(datekey);
+			if (bal == null) {
+				// es gibt den zu resyncenden abschluss noch gar nicht. einen leeren anlegen
+				bal = balComp.createBalance(null, null);
+				bal.setAbschlussId(datekey);
+			}
 		}
-		if ("thisweek".equals(date)) {
-			// wir berechnen den von heute...
-			DateTime today = new DateTime();
-			DateTime startOfToday = today.hourOfDay().setCopy(0).dayOfWeek().setCopy(1); // stunde 0 und wochentag 0
-			CashBalance balCOmp = new CashBalance(ticketDao);
-			PosCashBalance bal = balCOmp.computeBalanceFast(startOfToday, today); // hier ist die geschwindigkeit wichtiger als die Genauigkeit
-			return bal;
-		}
-		if ("lastweek".equals(date)) {
-			// wir berechnen den von heute...
-			DateTime today = new DateTime().minusWeeks(1).hourOfDay().setCopy(23).dayOfWeek().setCopy(7); // letzter tag und letzte stunde
-			DateTime startOfToday = today.hourOfDay().setCopy(0).dayOfWeek().setCopy(1); // stunde 0 und wochentag 1
-			CashBalance balCOmp = new CashBalance(ticketDao);
-			PosCashBalance bal = balCOmp.computeBalanceFast(startOfToday, today); // hier ist die geschwindigkeit wichtiger als die Genauigkeit
-			return bal;
-		}
-		if ("thismonth".equals(date)) {
-			// wir berechnen den von heute...
-			DateTime today = new DateTime();
-			DateTime startOfToday = today.hourOfDay().setCopy(0).dayOfMonth().setCopy(1); // stunde 0 und monats-ersten
-			CashBalance balCOmp = new CashBalance(ticketDao);
-			PosCashBalance bal = balCOmp.computeBalanceFast(startOfToday, today); // hier ist die geschwindigkeit wichtiger als die Genauigkeit
-			return bal;
-		}
-		PosCashBalance bal = dao.fetchForDate(date);
 		return bal;
 	}
 
