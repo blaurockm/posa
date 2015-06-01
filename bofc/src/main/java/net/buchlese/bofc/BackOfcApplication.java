@@ -39,7 +39,7 @@ public class BackOfcApplication extends Application<BackOfcConfiguration> {
 		
 		// wir geben was her. unsere bilder und css - dinger
 		bootstrap.addBundle(new AssetsBundle());
-		bootstrap.addBundle(new VaadinBundle(GuiServlet.class, "/cal/*"));
+		bootstrap.addBundle(new VaadinBundle(GuiServlet.class, "/gui/*"));
 		
 		// wir migrieren immer nur eine DB
 	    bootstrap.addBundle(new MigrationsBundle<BackOfcConfiguration>() {
