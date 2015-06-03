@@ -42,5 +42,10 @@ public class BofcViewImpl extends CustomComponent  implements BofcViewIF {
 	public ShiftCalViewIF getShiftCalView() {
 		return shiftCalView;
 	}
+
+	@Override
+	public VoucherViewIF getVoucherView() {
+		return voucherView;
+	}
 	
 }

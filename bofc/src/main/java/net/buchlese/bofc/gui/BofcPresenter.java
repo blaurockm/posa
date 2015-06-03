@@ -10,7 +10,7 @@ public class BofcPresenter {
 		this.model = model;
 		new ShiftCalPresenter(view.getShiftCalView(), model.getShiftCalModel());
 //		new StatisticPresenter(view.getStatisticView(), model.getStatisticModel());
-//		new VoucherPresenter(view.getVoucherView(), model.getVoucherModel());
+		new VoucherPresenter(view.getVoucherView(), model.getVoucherModel());
 	}
 
 	public BofcViewIF getView() {

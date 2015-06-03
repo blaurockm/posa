@@ -29,6 +29,9 @@ import org.skife.jdbi.v2.DBI;
 public class BackOfcApplication extends Application<BackOfcConfiguration> {
 
 	
+	private PosTxDAO posTxDao;
+	private PosCashBalanceDAO posCashBalanceDao;
+
 	public static void main(String[] args) throws Exception {
 		new BackOfcApplication().run(args);
 	}
@@ -39,7 +42,7 @@ public class BackOfcApplication extends Application<BackOfcConfiguration> {
 		
 		// wir geben was her. unsere bilder und css - dinger
 		bootstrap.addBundle(new AssetsBundle());
-		bootstrap.addBundle(new VaadinBundle(GuiServlet.class, "/gui/*"));
+		bootstrap.addBundle(new VaadinBundle(GuiServlet.class, "/gui/*", this));
 		
 		// wir migrieren immer nur eine DB
 	    bootstrap.addBundle(new MigrationsBundle<BackOfcConfiguration>() {
@@ -60,16 +63,31 @@ public class BackOfcApplication extends Application<BackOfcConfiguration> {
 	    bofcDBI.registerArgumentFactory(new TaxArgumentFactory());
 	    bofcDBI.registerArgumentFactory(new PayMethArgumentFactory());
 	    bofcDBI.registerArgumentFactory(new TxTypeArgumentFactory());
-	    final PosTxDAO posTxDao = bofcDBI.onDemand(PosTxDAO.class);
+	    posTxDao = bofcDBI.onDemand(PosTxDAO.class);
 	    final PosTicketDAO posTicketDao = bofcDBI.onDemand(PosTicketDAO.class);
-	    final PosCashBalanceDAO posCashBalanceDao = bofcDBI.onDemand(PosCashBalanceDAO.class);
+	    posCashBalanceDao = bofcDBI.onDemand(PosCashBalanceDAO.class);
 	    
 	    environment.jersey().register(new PosCashBalanceResource(posCashBalanceDao, posTicketDao, posTxDao));
 	    environment.jersey().register(new AccrualWeekResource(posCashBalanceDao));
 	    environment.jersey().register(new AccrualMonthResource(posCashBalanceDao));
 
 	    environment.jersey().register(new AppResource(config, environment));
-		
 	}
-	
+
+	public PosTxDAO getPosTxDao() {
+		return posTxDao;
+	}
+
+	public void setPosTxDao(PosTxDAO posTxDao) {
+		this.posTxDao = posTxDao;
+	}
+
+	public PosCashBalanceDAO getPosCashBalanceDao() {
+		return posCashBalanceDao;
+	}
+
+	public void setPosCashBalanceDao(PosCashBalanceDAO posCashBalanceDao) {
+		this.posCashBalanceDao = posCashBalanceDao;
+	}
+
 }
