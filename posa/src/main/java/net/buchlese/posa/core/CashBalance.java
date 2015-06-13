@@ -103,7 +103,7 @@ public class CashBalance {
 		balance.setArticleGroupBalance(agrpBal);
 		long profit = 0;
 		for (String articleGroupKey : agrpBal.keySet()) {
-			if (ArticleGroup.getArticleGroups().get(articleGroupKey).getMarge() != null ) {
+			if (articleGroupKey != null && ArticleGroup.getArticleGroups().containsKey(articleGroupKey) && ArticleGroup.getArticleGroups().get(articleGroupKey).getMarge() != null ) {
 				profit += agrpBal.get(articleGroupKey) * ArticleGroup.getArticleGroups().get(articleGroupKey).getMarge();
 			}
 		}

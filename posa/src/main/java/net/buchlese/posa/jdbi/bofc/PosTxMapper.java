@@ -33,8 +33,6 @@ public class PosTxMapper implements ResultSetMapper<PosTx> {
 		tx.setTax(Tax.fromDbKey(rs.getString("tax")));
 		tx.setType(TxType.fromDbKey(rs.getString("txtype")));
 		tx.setTimestamp(new DateTime(rs.getTimestamp("timest")));
-		tx.setToBeIgnored(rs.getBoolean("tobeignored"));
-		tx.setToBeCheckedAgain(rs.getBoolean("tobecheckedagain"));
 		return tx;
 	}
 

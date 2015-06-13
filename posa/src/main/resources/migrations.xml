@@ -26,8 +26,6 @@
          <column name="articleGroupKey" type="varchar(12)" />
          <column name="articleId" type="numeric" />
          <column name="articlekey" type="varchar(10)" />
-         <column name="tobeignored" type="bool"/>
-         <column name="tobecheckedagain" type="bool"/>
          <column name="timest" type="DATETIME">
             <constraints nullable="false" />
          </column>

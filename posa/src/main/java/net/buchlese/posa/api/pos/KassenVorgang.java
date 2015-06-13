@@ -47,6 +47,8 @@ public class KassenVorgang {
 	private DateTime datum;
 	@JsonProperty
 	private double mWStSatz;
+	@JsonProperty
+	private Character wargrindex;
 //			CREATE TABLE [dbo].[KassenVorgänge](
 //				[KassenNr] [int] NOT NULL,  -------------------
 //				[BelegNr] [int] NOT NULL,
@@ -200,6 +202,12 @@ public class KassenVorgang {
 	}
 	public void setMWStSatz(double mWStSatz) {
 		this.mWStSatz = mWStSatz;
+	}
+	public Character getWarGrIndex() {
+		return wargrindex;
+	}
+	public void setWarGrIndex(Character wargrindex) {
+		this.wargrindex = wargrindex;
 	}
 
 }

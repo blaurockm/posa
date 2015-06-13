@@ -37,11 +37,6 @@ public class SynchronizePosTxTest {
 			}
 
 			@Override
-			public List<KassenVorgang> fetchLast() {
-				return null;
-			}
-
-			@Override
 			public BigDecimal fetchZahlbetrag(int belegNr) {
 				return null;
 			}

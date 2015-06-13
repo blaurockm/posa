@@ -28,6 +28,8 @@ public class KassenVorgangMapper implements ResultSetMapper<KassenVorgang> {
 		vorg.setArtikelNummer(rs.getString("artikelNummer"));
 //		[MatchCode] [varchar](70) NULL,
 		vorg.setMatchCode(rs.getString("matchCode"));
+		// warengruppenindex. immer gefüllt, notfalls mit 
+		vorg.setWarGrIndex(rs.getString("WarGrIndex") != null ? rs.getString("WarGrIndex").charAt(0) : '-');
 //		[Bezeichnung] [ntext] NULL,
 		String bezeichnung = rs.getString("bezeichnung");
 		if (bezeichnung != null && bezeichnung.isEmpty() == false) {

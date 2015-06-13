@@ -93,8 +93,6 @@ public class SynchronizePosTx extends AbstractSynchronizer {
 		tx.setBelegNr(vorg.getBelegNr());
 		tx.setBelegIdx(vorg.getLfdNummer());
 		tx.setTimestamp(vorg.getDatum());
-		tx.setToBeIgnored(false);
-		tx.setToBeCheckedAgain(false);
 		updateTx(vorg, tx);
 		return tx;
 	}
@@ -142,9 +140,7 @@ public class SynchronizePosTx extends AbstractSynchronizer {
 				List<KassenVorgang> allVorgs = vorgangsDao.fetchForBeleg(vorg.getBelegNr(), vorg.getKassenNr());
 				BigDecimal sumWarenBetrag = allVorgs.stream().filter(v -> v.getLfdNummer() != vorg.getLfdNummer()).map(KassenVorgang::getGesamt).reduce(BigDecimal.ZERO, BigDecimal::add); // (a,b) -> a.add(b)
 				BigDecimal amountPayed = vorgangsDao.fetchZahlbetrag(vorg.getBelegNr());
-				if (amountPayed == null) {
-					tx.setToBeCheckedAgain(true); // hier stimmt was nicht, später nochmal angucken
-				} else {
+				if (amountPayed != null) {
 					// der Gutschein ist teil eines belges, es wurde was damit bezahlt
 					BigDecimal gutschBetrag = vorg.getGesamt().abs();
 					if (sumWarenBetrag.compareTo(gutschBetrag) <0  &&  amountPayed.movePointRight(2).setScale(0,RoundingMode.HALF_UP).longValue() == 0l) {

@@ -42,13 +42,13 @@
    	  <td>Telecash</td>	<td align="right">${money(balance.paymentMethodBalance(paymentMethod.TELE))}</td>
    	</tr>
    	<tr>
-   	  <td>Wertgutscheine (ang)</td> <td align="right">${money(-balance.couponTradeIn)}</td>
+   	  <td>Wertgutscheine (ang)</td> <td align="right">${money(-balance.couponTradeIn!0)}</td>
    	</tr>
    </table>
    </td></tr>
    </table>
    
-   <h3>Umsatzsteuerverteilung der Gesamteinnahmen von ${money(balance.revenue - balance.couponTradeIn)}</h3>
+   <h3>Umsatzsteuerverteilung der Gesamteinnahmen von ${money(balance.revenue!0 - balance.couponTradeIn!0)}</h3>
    <table>
    	<tr>
    	  <td>Voller Satz (19%)</td>	<td align="right" style="padding-left:10mm">${money(balance.taxBalance(tax.FULL))}</td>
@@ -59,21 +59,26 @@
    	<tr>
    	  <td>Ohne Umsatzsteuer (0%)</td> <td align="right">${money(balance.taxBalance(tax.NONE))}</td>
    	</tr>
+   	<#if balance.couponTradeOut??>
    	<#if balance.couponTradeOut gt 0>
    	<tr>
-   	  <td>Verkaufte Gutscheine</td> <td align="right">${money(balance.couponTradeOut)}</td>
+   	  <td>Verkaufte Gutscheine</td> <td align="right">${money(balance.couponTradeOut!0)}</td>
    	</tr>
    	</#if>
+   	</#if>
+   	<#if balance.payedInvoices??>
    <#assign invs = balance.payedInvoices?keys>
    <#list invs as inv>
    	<tr>
    	  <td>siehe ${inv}  </td> <td align="right" style="padding-left:10mm">${money(balance.payedInvoices[inv])}</td>
    	</tr>
-   </#list>	  
+   </#list>
+   </#if>	  
    	  
    </table>
    
    <h3>Verteilung der Einnahmen auf Warengruppen</h3>
+   <#if balance.articleGroupBalance??>
    <table>
    <#assign keys = balance.articleGroupBalance?keys>
    <#list keys as key>
@@ -82,6 +87,7 @@
    	</tr>
    </#list>	
    </table>
+   </#if>	  
    
    <p style="font-size:small; margin-top:2cm">Erzeugt am ${balance.creationtime}</p>
 </body>
