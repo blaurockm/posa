@@ -1,5 +1,6 @@
 package net.buchlese.bofc.view;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,23 +21,23 @@ public class WeekView extends AbstractBofcView {
 	}
 
 	public long getWeekAbsorptionSulz() {
-		return week.getBalances().get(2).stream().map(PosCashBalance::getAbsorption).reduce(0l, Long::sum);
+		return week.getBalances().getOrDefault(2,Collections.emptyList()).stream().map(PosCashBalance::getAbsorption).reduce(0l, Long::sum);
 	}
 
 	public long getWeekAbsorptionDornhan() {
-		return week.getBalances().get(1).stream().map(PosCashBalance::getAbsorption).reduce(0l, Long::sum);
+		return week.getBalances().getOrDefault(1,Collections.emptyList()).stream().map(PosCashBalance::getAbsorption).reduce(0l, Long::sum);
 	}
 
 	public long getWeekTelecash() {
-		long dornhan = week.getBalances().get(1).stream().map( x -> x.getPaymentMethodBalance().getOrDefault(PaymentMethod.TELE,0l) ).reduce(0l, Long::sum);
-		long sulz = week.getBalances().get(2).stream().map( x -> 0 + x.getPaymentMethodBalance().getOrDefault(PaymentMethod.TELE,0l)).reduce(0l, Long::sum);
+		long dornhan = week.getBalances().getOrDefault(1,Collections.emptyList()).stream().map( x -> x.getPaymentMethodBalance().getOrDefault(PaymentMethod.TELE,0l) ).reduce(0l, Long::sum);
+		long sulz = week.getBalances().getOrDefault(2,Collections.emptyList()).stream().map( x -> 0 + x.getPaymentMethodBalance().getOrDefault(PaymentMethod.TELE,0l)).reduce(0l, Long::sum);
 		return sulz + dornhan;
 	}
 
 	public Map<String, Long> getArticleGroupBalance() {
 		Map<String, Long> res = new HashMap<String, Long>();
-		week.getBalances().get(1).stream().forEach( x -> x.getArticleGroupBalance().forEach( (k,v) -> res.merge(k, v, Long::sum)));
-		week.getBalances().get(2).stream().forEach( x -> x.getArticleGroupBalance().forEach( (k,v) -> res.merge(k, v, Long::sum)));
+		week.getBalances().getOrDefault(1,Collections.emptyList()).stream().filter(x -> x.getArticleGroupBalance() != null).forEach( x -> x.getArticleGroupBalance().forEach( (k,v) -> res.merge(k, v, Long::sum)));
+		week.getBalances().getOrDefault(2,Collections.emptyList()).stream().filter(x -> x.getArticleGroupBalance() != null).forEach( x -> x.getArticleGroupBalance().forEach( (k,v) -> res.merge(k, v, Long::sum)));
 		return res;
 	}
 	
