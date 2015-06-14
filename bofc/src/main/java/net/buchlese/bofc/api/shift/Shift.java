@@ -6,7 +6,7 @@ import java.time.LocalDate;
 public class Shift {
 	private long id;
 	private Employee employee;
-	private Store store;
+	private Shop store;
 	private LocalDate date;
 	private Instant workFrom;
 	private Instant workTill;
@@ -18,10 +18,10 @@ public class Shift {
 	public void setEmployee(Employee employee) {
 		this.employee = employee;
 	}
-	public Store getStore() {
+	public Shop getStore() {
 		return store;
 	}
-	public void setStore(Store store) {
+	public void setStore(Shop store) {
 		this.store = store;
 	}
 	public LocalDate getDate() {

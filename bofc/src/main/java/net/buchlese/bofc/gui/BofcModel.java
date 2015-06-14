@@ -9,8 +9,7 @@ import com.vaadin.server.VaadinService;
 public class BofcModel {
 
 	public ShiftCalModel getShiftCalModel() {
-		// TODO Auto-generated method stub
-		return null;
+		return new ShiftCalModel(((BackOfcApplication)((DropwizardVaadinServletService)VaadinService.getCurrent()).getApp()).getShiftCalDao());
 	}
 
 	public VoucherModel getVoucherModel() {

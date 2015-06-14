@@ -9,7 +9,7 @@ public class Schedule {
 	private Instant workFrom;
 	private Instant workTill;
 	private double workHours;
-	private Store workPlace;
+	private Shop workPlace;
 	public long getId() {
 		return id;
 	}
@@ -40,10 +40,10 @@ public class Schedule {
 	public void setWorkHours(double workHours) {
 		this.workHours = workHours;
 	}
-	public Store getWorkPlace() {
+	public Shop getWorkPlace() {
 		return workPlace;
 	}
-	public void setWorkPlace(Store workPlace) {
+	public void setWorkPlace(Shop workPlace) {
 		this.workPlace = workPlace;
 	}
 	

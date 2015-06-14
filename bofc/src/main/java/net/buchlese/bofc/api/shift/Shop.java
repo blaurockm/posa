@@ -1,8 +1,24 @@
 package net.buchlese.bofc.api.shift;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-public class Store {
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+public class Shop {
+	private static Map<Long, Shop> shopMapping;
+
+	@JsonIgnore
+	public static  Map<Long, Shop> getShops() {
+		return shopMapping;
+	}
+
+	@JsonIgnore
+	public static  Shop getShop(int num) {
+		return shopMapping.get(num);
+	}
+
 	private long id;
 	private String abbrev;
 	private String name;
@@ -30,6 +46,12 @@ public class Store {
 	}
 	public void setShopHours(List<ShopHours> shopHours) {
 		this.shopHours = shopHours;
+	}
+
+	public static void inject(List<Shop> shops) {
+		shopMapping = new HashMap<Long, Shop>();
+		shops.stream().forEach(x -> shopMapping.put(x.getId(), x));
+		
 	}
 	
 }

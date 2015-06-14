@@ -77,4 +77,71 @@
       </createTable>
    </changeSet>
    
+   <changeSet id="shiftmgmt" author="mblaurock">
+   
+      <createTable tableName="Employee">
+         <column name="id" type="bigint" autoIncrement="true">
+            <constraints primaryKey="true" nullable="false" />
+         </column>
+         <column name="entryDate" type="DATETIME"/>
+         <column name="name" type="varchar2(50)"/>
+         <column name="personellNumber" type="int"/>
+      </createTable>   
+      
+      <createTable tableName="Schedule">
+         <column name="id" type="bigint" autoIncrement="true">
+            <constraints primaryKey="true" nullable="false" />
+         </column>
+         <column name="weekDay" type="int"/>
+         <column name="workFrom" type="DATETIME"/>
+         <column name="workTill" type="DATETIME"/>
+         <column name="workHours" type="DOUBLE"/>
+         <column name="workPlace" type="int"/>
+      </createTable>   
+      
+      <createTable tableName="Shift">
+         <column name="id" type="bigint" autoIncrement="true">
+            <constraints primaryKey="true" nullable="false" />
+         </column>
+         <column name="date_" type="DATE"/>
+         <column name="employee" type="int"/>
+         <column name="store" type="int"/>
+         <column name="workFrom" type="DATETIME"/>
+         <column name="workTill" type="DATETIME"/>
+         <column name="workHours" type="DOUBLE"/>
+         <column name="settled" type="boolean"/>
+      </createTable>   
+      
+      <createTable tableName="ShopEvent">
+         <column name="id" type="bigint" autoIncrement="true">
+            <constraints primaryKey="true" nullable="false" />
+         </column>
+         <column name="date_" type="DATE"/>
+         <column name="caption" type="varchar2(50)"/>
+         <column name="description" type="varchar2(100)"/>
+         <column name="doneBy" type="int"/>
+         <column name="doneWhere" type="int"/>
+         <column name="from" type="DATETIME"/>
+         <column name="till" type="DATETIME"/>
+         <column name="wholeDay" type="DOUBLE"/>
+         <column name="workFree" type="boolean"/>
+      </createTable>
+         
+      <createTable tableName="ShopHours">
+         <column name="id" type="bigint" autoIncrement="true">
+            <constraints primaryKey="true" nullable="false" />
+         </column>
+         <column name="weekDay" type="int"/>
+         <column name="openFrom" type="DATETIME"/>
+         <column name="openTill" type="DATETIME"/>
+      </createTable>
+         
+      <createTable tableName="Shop">
+         <column name="id" type="bigint" autoIncrement="true">
+            <constraints primaryKey="true" nullable="false" />
+         </column>
+         <column name="abbrev" type="varchar2(10)"/>
+         <column name="name" type="varchar2(50)"/>
+      </createTable>   
+   </changeSet>
 </databaseChangeLog>

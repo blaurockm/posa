@@ -6,4 +6,6 @@ public interface VoucherViewIF {
 	
 	void setDisplay(Container c);
 
+	void setDisplayFooter(String sum, String sum2);
+
 }

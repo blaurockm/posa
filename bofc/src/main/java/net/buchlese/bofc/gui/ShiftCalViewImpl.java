@@ -4,6 +4,7 @@ import java.sql.Date;
 import java.time.YearMonth;
 import java.util.Locale;
 
+import com.vaadin.data.Container;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Calendar;
@@ -17,6 +18,7 @@ public class ShiftCalViewImpl extends CustomComponent implements ShiftCalViewIF 
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	private Calendar cal;
 	
 	public ShiftCalViewImpl() {
 		setSizeFull();
@@ -30,11 +32,13 @@ public class ShiftCalViewImpl extends CustomComponent implements ShiftCalViewIF 
 		layout.setSpacing(true);
 		layout.setComponentAlignment(header, Alignment.TOP_CENTER);
 		
-		Calendar cal = new Calendar();
+		cal = new Calendar();
 		cal.setLocale(Locale.getDefault());
 		
 		cal.setStartDate(Date.valueOf(YearMonth.now().atDay(1)));
 		cal.setEndDate(Date.valueOf(YearMonth.now().atEndOfMonth()));
+		cal.setFirstVisibleHourOfDay(9);;
+		cal.setLastVisibleHourOfDay(20);;
 		
 		layout.addComponent(cal);
 		layout.setExpandRatio(cal, 5f);
@@ -42,4 +46,10 @@ public class ShiftCalViewImpl extends CustomComponent implements ShiftCalViewIF 
 		
 		setCompositionRoot(layout);
 	}
+	
+	@Override
+	public void setDisplay(Container.Indexed c) {
+		cal.setContainerDataSource(c);
+	}
+
 }

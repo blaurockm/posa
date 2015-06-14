@@ -10,7 +10,9 @@ public class VoucherPresenter {
 			VoucherModel model) {
 		this.view = view;
 		this.model = model;
-		this.view.setDisplay(model.getDefaultContainer());
+		model.selectCurrentWeek();
+		this.view.setDisplayFooter(model.getSum(1), model.getSum(2));
+		this.view.setDisplay(model.getContainer());
 	}
 
 	public VoucherViewIF getView() {

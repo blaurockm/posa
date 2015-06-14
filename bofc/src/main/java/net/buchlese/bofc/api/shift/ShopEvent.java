@@ -1,6 +1,7 @@
 package net.buchlese.bofc.api.shift;
 
 import java.time.Instant;
+import java.time.LocalDate;
 
 public class ShopEvent {
 	private long id;
@@ -9,7 +10,8 @@ public class ShopEvent {
 	private boolean wholeDay;
 	private boolean workFree;
 	private Employee doneBy;
-	private Store doneWhere;
+	private Shop doneWhere;
+	private LocalDate date;
 	public long getId() {
 		return id;
 	}
@@ -46,10 +48,16 @@ public class ShopEvent {
 	public void setDoneBy(Employee doneBy) {
 		this.doneBy = doneBy;
 	}
-	public Store getDoneWhere() {
+	public Shop getDoneWhere() {
 		return doneWhere;
 	}
-	public void setDoneWhere(Store doneWhere) {
+	public void setDoneWhere(Shop doneWhere) {
 		this.doneWhere = doneWhere;
+	}
+	public LocalDate getDate() {
+		return date;
+	}
+	public void setDate(LocalDate date) {
+		this.date = date;
 	}
 }

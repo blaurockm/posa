@@ -62,6 +62,13 @@ public class VoucherViewImpl extends CustomComponent implements VoucherViewIF  {
 
 	public void setDisplay(Container c) {
 		table.setContainerDataSource(c);
+		
+	}
+
+	@Override
+	public void setDisplayFooter(String sumSulz, String sumDornhan) {
+		table.setColumnFooter("Kasse Sulz", sumSulz);
+		table.setColumnFooter("Kasse Dornhan", sumDornhan);
 	}
 	
 	

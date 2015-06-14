@@ -9,6 +9,8 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.views.ViewBundle;
 import net.buchlese.bofc.api.bofc.ArticleGroup;
+import net.buchlese.bofc.api.shift.Employee;
+import net.buchlese.bofc.api.shift.Shop;
 import net.buchlese.bofc.core.H2TcpServerManager;
 import net.buchlese.bofc.gui.GuiServlet;
 import net.buchlese.bofc.gui.VaadinBundle;
@@ -16,6 +18,7 @@ import net.buchlese.bofc.jdbi.bofc.PayMethArgumentFactory;
 import net.buchlese.bofc.jdbi.bofc.PosCashBalanceDAO;
 import net.buchlese.bofc.jdbi.bofc.PosTicketDAO;
 import net.buchlese.bofc.jdbi.bofc.PosTxDAO;
+import net.buchlese.bofc.jdbi.bofc.ShiftCalDAO;
 import net.buchlese.bofc.jdbi.bofc.TaxArgumentFactory;
 import net.buchlese.bofc.jdbi.bofc.TxTypeArgumentFactory;
 import net.buchlese.bofc.resources.AccrualMonthResource;
@@ -32,6 +35,7 @@ public class BackOfcApplication extends Application<BackOfcConfiguration> {
 	
 	private PosTxDAO posTxDao;
 	private PosCashBalanceDAO posCashBalanceDao;
+	private ShiftCalDAO shiftCalDao;
 
 	public static void main(String[] args) throws Exception {
 		new BackOfcApplication().run(args);
@@ -67,6 +71,10 @@ public class BackOfcApplication extends Application<BackOfcConfiguration> {
 	    posTxDao = bofcDBI.onDemand(PosTxDAO.class);
 	    final PosTicketDAO posTicketDao = bofcDBI.onDemand(PosTicketDAO.class);
 	    posCashBalanceDao = bofcDBI.onDemand(PosCashBalanceDAO.class);
+	    shiftCalDao = bofcDBI.onDemand(ShiftCalDAO.class);
+	    
+	    Employee.inject(shiftCalDao.fetchEmployees());
+	    Shop.inject(shiftCalDao.fetchShops());
 	    
 	    environment.jersey().register(new PosCashBalanceResource(posCashBalanceDao, posTicketDao, posTxDao));
 	    environment.jersey().register(new AccrualWeekResource(posCashBalanceDao));
@@ -90,6 +98,14 @@ public class BackOfcApplication extends Application<BackOfcConfiguration> {
 
 	public void setPosCashBalanceDao(PosCashBalanceDAO posCashBalanceDao) {
 		this.posCashBalanceDao = posCashBalanceDao;
+	}
+
+	public ShiftCalDAO getShiftCalDao() {
+		return shiftCalDao;
+	}
+
+	public void setShiftCalDao(ShiftCalDAO shiftCalDao) {
+		this.shiftCalDao = shiftCalDao;
 	}
 
 }
