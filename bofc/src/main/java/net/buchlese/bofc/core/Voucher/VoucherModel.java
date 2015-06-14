@@ -72,8 +72,8 @@ public class VoucherModel {
 		co.addContainerProperty("Kasse Sulz", PosCashBalance.class, null);
 		co.addContainerProperty("Kasse Dornhan",  PosCashBalance.class, null);
 
-		Optional<LocalDate> firstDay = vs.stream().map(x -> x.getFirstCovered()).min(org.joda.time.DateTimeComparator.getInstance()).map(x -> LocalDate.of(x.getYear(),x.getMonthOfYear(), x.getDayOfYear()));
-		Optional<LocalDate> lastDay = vs.stream().map(x -> x.getLastCovered()).max(org.joda.time.DateTimeComparator.getInstance()).map(x -> LocalDate.of(x.getYear(),x.getMonthOfYear(), x.getDayOfYear()));
+		Optional<LocalDate> firstDay = vs.stream().map(x -> x.getFirstCovered()).min(org.joda.time.DateTimeComparator.getInstance()).map(x -> LocalDate.of(x.getYear(),x.getMonthOfYear(), x.getDayOfMonth()));
+		Optional<LocalDate> lastDay = vs.stream().map(x -> x.getLastCovered()).max(org.joda.time.DateTimeComparator.getInstance()).map(x -> LocalDate.of(x.getYear(),x.getMonthOfYear(), x.getDayOfMonth()));
 
 		DateTimeFormatter abschlussidformat = DateTimeFormatter.ofPattern("yyyyMMdd");
 		if (firstDay.isPresent() && lastDay.isPresent()) {
