@@ -4,8 +4,6 @@ import io.dropwizard.jackson.Jackson;
 
 import java.io.IOException;
 import java.net.ConnectException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -28,21 +26,16 @@ import org.slf4j.Logger;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jcraft.jsch.JSch;
-import com.jcraft.jsch.JSchException;
-import com.jcraft.jsch.Session;
 
 public class SendPosCashBalance implements Consumer<PosCashBalance>, java.io.Closeable {
 
+	private final static String homeResource = "cashbalance/acceptBalance";
+	
 	private final int pointid;
 	private final String homeUrl;
-	private final String homeHost;
-	private final int localPort;
-	private static final String sshUser = "posclient";
 	private final ObjectMapper om;
 	private final Logger log;
 	
-	private Session sshSession;
 	private CloseableHttpClient httpClient;
 	private final PosCashBalanceDAO cashBalanceDAO;
 
@@ -50,41 +43,16 @@ public class SendPosCashBalance implements Consumer<PosCashBalance>, java.io.Clo
 		this.pointid = config.getPointOfSaleId();
 		this.cashBalanceDAO = balDAO;
 		this.homeUrl = config.getHomeUrl();
-		int lp = 8080;
-		try {
-			URL url = new URL(config.getHomeUrl());
-			lp = url.getPort();
-		} catch (MalformedURLException e) {
-			log.error("problem parsing homeUrl", e);
-		}
-		this.homeHost = config.getHomeHost();
-		this.localPort = lp;
 		this.om = Jackson.newObjectMapper();
 		this.log = log;
 		this.httpClient = HttpClients.createDefault();
 	}
-
 
 	public void sendCashBalances(List<PosCashBalance> bals) {
 		for (PosCashBalance bal: bals) {
 			accept(bal);
 		}
 	}
-
-	public void sshConnect() throws JSchException {
-		 JSch jsch=new JSch();
-		 // den bofcclient.pub muss man in die .ssh/authorized_keys datei des users posclient packen
-	     jsch.addIdentity("/etc/posa/bofcclient","KennstDuDasLandWoJederLacht");
-//	     jsch.setKnownHosts("/etc/posa/known_hosts");
-	     JSch.setConfig("StrictHostKeyChecking", "no"); // die ip vom server kann sich ändern. wir können keine statisches known_hosts dafür pflegen.
-	     // alternative wäre VerifyHostKeyDNS
-	     // dazu brauchen wir einen secure fingerprint im dynDNS-Service, wer macht sowas? selfhost nicht
-		 sshSession=jsch.getSession(sshUser, homeHost, 22);
-		 
-		 sshSession.connect();
-		 sshSession.setPortForwardingL(localPort, "localhost", 8080);
-	}
-	
 	
 	@Override
 	public void accept(PosCashBalance bal) {
@@ -99,7 +67,7 @@ public class SendPosCashBalance implements Consumer<PosCashBalance>, java.io.Clo
 		}
 		// Get target URL
 
-		HttpPost post = new HttpPost(this.homeUrl);
+		HttpPost post = new HttpPost(this.homeUrl + homeResource);
 		try {
 			StringEntity cashBalEntity = new StringEntity(om.writeValueAsString(bal), ContentType.create(MediaType.APPLICATION_JSON, "UTF8"));
 			post.setEntity(cashBalEntity);
@@ -129,9 +97,6 @@ public class SendPosCashBalance implements Consumer<PosCashBalance>, java.io.Clo
 
 	@Override
 	public void close() throws IOException {
-		if (sshSession != null && sshSession.isConnected()) {
-			sshSession.disconnect();
-		}
 		if (httpClient != null) {
 			httpClient.close();
 		}

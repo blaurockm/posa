@@ -18,6 +18,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import net.buchlese.posa.api.bofc.ArticleGroup;
 import net.buchlese.posa.api.bofc.PosCashBalance;
+import net.buchlese.posa.core.ConfigSyncTimer;
 import net.buchlese.posa.core.H2TcpServerManager;
 import net.buchlese.posa.core.SendTimer;
 import net.buchlese.posa.core.SyncTimer;
@@ -116,9 +117,11 @@ public class PosAdapterApplication extends Application<PosAdapterConfiguration> 
 	    syncTimer = new ScheduledThreadPoolExecutor(10);
 		syncLock = new ReentrantLock();
 		SyncTimer syncTimerTask = new SyncTimer(syncLock, bofcDBI, posDBI);
-		syncTimer.scheduleAtFixedRate(syncTimerTask, 1, 1, TimeUnit.MINUTES);
+		syncTimer.scheduleAtFixedRate(syncTimerTask, 5, 3, TimeUnit.MINUTES);
 		SendTimer senTimerTask = new SendTimer(config, posCashBalanceDao);
-		syncTimer.scheduleAtFixedRate(senTimerTask, 2, 1, TimeUnit.MINUTES);
+		syncTimer.scheduleAtFixedRate(senTimerTask, 8, 1, TimeUnit.MINUTES);
+		ConfigSyncTimer configTimerTask = new ConfigSyncTimer(config);
+		syncTimer.scheduleAtFixedRate(configTimerTask, 1, 1440, TimeUnit.MINUTES);
 	
 		environment.admin().addTask(new SynchronizeTask(syncTimerTask));
 	}

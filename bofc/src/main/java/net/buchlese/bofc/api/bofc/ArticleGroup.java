@@ -7,8 +7,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ArticleGroup {
 
+	public static Character UNDEF_WARGRINDEX = '-';
+	
 	@JsonIgnore
-	public static ArticleGroup NONE = new ArticleGroup("n.m.", "unbekannt");
+	public static ArticleGroup NONE = new ArticleGroup("n.m.", "unbekannt",UNDEF_WARGRINDEX);
 	
 	private static Map<String, ArticleGroup> articleGroupMappings;
 	
@@ -24,11 +26,14 @@ public class ArticleGroup {
 	public ArticleGroup() {
 	}
 
-	public ArticleGroup(String key, String name) {
+	public ArticleGroup(String key, String name, Character wargridx) {
 		this.key = key;
 		this.text = name;
+		this.wargrindex = String.valueOf(wargridx);
 	}
 
+	@JsonProperty
+	private String wargrindex;
 	@JsonProperty
 	private String match;
 	@JsonProperty
@@ -77,5 +82,11 @@ public class ArticleGroup {
 	public void setAccount(Integer account) {
 		this.account = account;
 	}
-	
+	public String getWargrindex() {
+		return wargrindex;
+	}
+	public void setWargrindex(String wargrindex) {
+		this.wargrindex = wargrindex;
+	}
+
 }

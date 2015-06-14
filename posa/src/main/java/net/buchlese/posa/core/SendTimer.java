@@ -36,10 +36,8 @@ public class SendTimer extends TimerTask {
 			List<PosCashBalance> toDo = new ArrayList<>(PosAdapterApplication.homingQueue);
 			PosAdapterApplication.homingQueue.clear();
 			
-			try (SendPosCashBalance sender = new SendPosCashBalance(config, cashBalDao, log)) {
-				if (config.isSshEnabled()) {
-					sender.sshConnect();
-				}
+			try (SendPosCashBalance sender = new SendPosCashBalance(config, cashBalDao, log);
+					CloudConnect cloud = new CloudConnect(config, log)) {
 				toDo.forEach(sender);
 			} catch (JSchException e1) {
 				// problem connecting to ssh-server

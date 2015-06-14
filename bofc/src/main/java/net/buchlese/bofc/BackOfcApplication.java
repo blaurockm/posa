@@ -21,6 +21,7 @@ import net.buchlese.bofc.jdbi.bofc.TxTypeArgumentFactory;
 import net.buchlese.bofc.resources.AccrualMonthResource;
 import net.buchlese.bofc.resources.AccrualWeekResource;
 import net.buchlese.bofc.resources.AppResource;
+import net.buchlese.bofc.resources.ArticleGroupResource;
 import net.buchlese.bofc.resources.PosCashBalanceResource;
 
 import org.skife.jdbi.v2.DBI;
@@ -70,6 +71,7 @@ public class BackOfcApplication extends Application<BackOfcConfiguration> {
 	    environment.jersey().register(new PosCashBalanceResource(posCashBalanceDao, posTicketDao, posTxDao));
 	    environment.jersey().register(new AccrualWeekResource(posCashBalanceDao));
 	    environment.jersey().register(new AccrualMonthResource(posCashBalanceDao));
+	    environment.jersey().register(new ArticleGroupResource());
 
 	    environment.jersey().register(new AppResource(config, environment));
 	}

@@ -56,8 +56,8 @@ syncStartDate: 2014-10-01
 
 pointOfSaleId: 6
 
-homeUrl: http://192.168.2.111:8080/cashbalance/acceptBalance
-#homeUrl: http://localhost:34343/cashbalance/acceptBalance
+homeUrl: http://192.168.2.111:8080/
+#homeUrl: http://localhost:34343/
 #homeHost: buchlese.selfhost.eu
 homeHost: 192.168.2.111
 

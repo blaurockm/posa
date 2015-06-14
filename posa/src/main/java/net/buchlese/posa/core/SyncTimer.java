@@ -1,7 +1,5 @@
 package net.buchlese.posa.core;
 
-import java.io.IOException;
-import java.sql.SQLException;
 import java.util.TimerTask;
 import java.util.concurrent.locks.Lock;
 
