@@ -15,7 +15,7 @@ public class EmployeeMapper implements ResultSetMapper<Employee>{
 		Employee tx = new Employee();
 		tx.setId(rs.getLong("id"));
 		tx.setName(rs.getString("name"));
-		tx.setPersonellNumber(rs.getInt("personellNumer"));
+		tx.setPersonellNumber(rs.getInt("personellNumber"));
 		return tx;
 	}
 
