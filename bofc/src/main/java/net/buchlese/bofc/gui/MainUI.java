@@ -4,7 +4,6 @@ import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Title;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.VaadinRequest;
-import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.HorizontalLayout;
@@ -12,16 +11,9 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 
-/**
- * Created by jangalinski on 21.12.14.
- */
-@Title("Main UI")
-@Theme("valo")
+@Title("Buchlese-Imperium")
+@Theme("buchlese")
 public class MainUI extends UI {
-
-    /**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
     @Override

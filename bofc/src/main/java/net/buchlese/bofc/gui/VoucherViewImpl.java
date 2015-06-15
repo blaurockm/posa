@@ -66,7 +66,7 @@ public class VoucherViewImpl extends CustomComponent implements VoucherViewIF  {
 	}
 
 	@Override
-	public void setDisplayFooter(String sumSulz, String sumDornhan) {
+	public void setDisplayFooter(String sumDornhan, String sumSulz) {
 		table.setColumnFooter("Kasse Sulz", sumSulz);
 		table.setColumnFooter("Kasse Dornhan", sumDornhan);
 	}
