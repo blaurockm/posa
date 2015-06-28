@@ -64,6 +64,7 @@ public class VoucherModel {
 		vouchers = dao.fetchAllAfter(monday.format(abschlussidformat), sunday.format(abschlussidformat));
 	}
 
+	@SuppressWarnings("unchecked")
 	private Container createContainer(List<PosCashBalance> vs) {
 		Container co = new IndexedContainer();
 

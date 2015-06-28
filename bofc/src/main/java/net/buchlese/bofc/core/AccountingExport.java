@@ -87,12 +87,14 @@ public class AccountingExport {
 		for (Map.Entry<String, Long> entry : bal.getNewCoupon().entrySet()) {
 			Booking couponEntry = new Booking();
 			ArticleGroup grp = ArticleGroup.getArticleGroups().get(entry.getKey());
-			if (grp == null || grp.getAccount() == null) {
-				continue;
-			}
-			couponEntry.setAccount(grp.getAccount());
 			couponEntry.setBetrag(entry.getValue());
-			couponEntry.setText(grp.getText() + " " + dateShort);
+			if (grp != null && grp.getAccount() != null) {
+				couponEntry.setAccount(grp.getAccount());
+				couponEntry.setText(grp.getText() + " " + dateShort);
+			} else {
+				couponEntry.setAccount(1371);
+				couponEntry.setText("Gutsch " + dateShort);
+			}
 			couponEntry.setCode(null);
 			ges += entry.getValue();
 			einnahmen.add(couponEntry);
@@ -144,13 +146,15 @@ public class AccountingExport {
 		// jetzt die Gutschein werte
 		for (Map.Entry<String, Long> entry : bal.getOldCoupon().entrySet()) {
 			Booking couponEntry = new Booking();
-			ArticleGroup grp = ArticleGroup.getArticleGroups().get(entry.getKey()); 
-			if (grp == null || grp.getAccount() == null) {
-				continue;
-			}
-			couponEntry.setAccount(grp.getAccount());
+			ArticleGroup grp = ArticleGroup.getArticleGroups().get(entry.getKey());
 			couponEntry.setBetrag(-entry.getValue());
-			couponEntry.setText("Eingelöst " + grp.getText() + " " + dateShort);
+			if (grp != null && grp.getAccount() != null) {
+				couponEntry.setAccount(grp.getAccount());
+				couponEntry.setText("Eingelöst " + grp.getText() + " " + dateShort);
+			} else {
+				couponEntry.setAccount(1371);
+				couponEntry.setText("Eingelöst Gutsch " + dateShort);
+			}
 			ges += -entry.getValue();
 			ausgaben.add(couponEntry);
 		}
