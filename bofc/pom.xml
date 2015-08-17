@@ -205,8 +205,8 @@
                            <mapper>
                               <type>perm</type>
                               <prefix>/var</prefix>
-                              <user>linaro</user>
-                              <group>linaro</group>
+                              <user>buchlese</user>
+                              <group>buchlese</group>
                            </mapper>
                         </data>
                      </dataSet>

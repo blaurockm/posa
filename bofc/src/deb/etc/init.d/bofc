@@ -12,7 +12,7 @@
 #http://shrubbery.mynetgear.net/c/display/W/Java+Daemon+Startup+Script
 
 # Set this to your Java installation
-JAVA_HOME=/opt/jdk8
+JAVA_HOME=/usr/lib/jvm/java-8-oracle
 
 JAVAOPTS="-XX:+HeapDumpOnOutOfMemoryError \
           -Xdebug \
@@ -36,8 +36,8 @@ JAVA_PARAMS="$JAVAOPTS \
 
 serviceNameLo=$PROG                                        # service name with the first letter in lowercase
 serviceName="BackOfc"                                        # service name
-serviceUser="linaro"                                           # OS user name for the service
-serviceGroup="linaro"                                          # OS group name for the service
+serviceUser="buchlese"                                           # OS user name for the service
+serviceGroup="buchlese"                                          # OS group name for the service
 applDir=$PROG_HOME                                         # home directory of the service application
 serviceUserHome="/home/$serviceUser"                       # home directory of the service user
 serviceLogFile=$LOG_FILE                                   # log file for StdOut/StdErr
