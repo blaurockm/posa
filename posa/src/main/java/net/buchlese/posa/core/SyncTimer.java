@@ -92,20 +92,21 @@ public class SyncTimer extends TimerTask {
     	    PosTicketDAO posTicketDao =  bofc.attach(PosTicketDAO.class);
     	    PosCashBalanceDAO posCashBalanceDao =  bofc.attach(PosCashBalanceDAO.class);
 
-    	    SynchronizePosTx syncTx = new SynchronizePosTx(posTxDao, vorgangDao);
-	    	SynchronizePosTicket syncTickets = new SynchronizePosTicket(posTicketDao, belegDao);
 	    	SynchronizePosCashBalance syncBalance = new SynchronizePosCashBalance(posCashBalanceDao, posTicketDao, posTxDao, abschlussDao, belegDao, vorgangDao);
 
 	    	if (bulkLoad != null) {
 	    		// wir wollen einen Haufen Daten rumschaufeln
-	    		syncTx.doBulkLoad(bulkLoad);
-	    		syncTickets.doBulkLoad(bulkLoad);
 	    		syncBalance.doBulkLoad(bulkLoad);
 	    		bulkLoad = null; // wir löschen wieder
 	    	} else {
 	    		// ein normaler Aktualisierungslauf
-	    		syncTx.fetchNewTx(syncStart);
-	    		syncTickets.fetchNewTickets(syncStart);
+	    		
+	    		ServerStateGatherer ssg = new ServerStateGatherer();
+	    		ssg.gatherData();
+	    		
+	    		PosStateGatherer psg = new PosStateGatherer();
+	    		psg.gatherData();
+	    		
 	    		syncBalance.fetchNewBalances(syncStart);
 	    		
 	    		if (PosAdapterApplication.resyncQueue.isEmpty() == false) {
