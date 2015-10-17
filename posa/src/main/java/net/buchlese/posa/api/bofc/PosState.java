@@ -5,7 +5,7 @@ import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class PosState {
+public class PosState implements SendableObject {
 
 	@JsonProperty
 	private long timest;

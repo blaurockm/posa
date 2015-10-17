@@ -20,7 +20,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @XmlRootElement(name = "CashBalance")
-public class PosCashBalance {
+public class PosCashBalance implements SendableObject {
 	@NotEmpty
 	@JsonProperty
 	private long id;

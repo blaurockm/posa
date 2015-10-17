@@ -18,6 +18,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import net.buchlese.posa.api.bofc.ArticleGroup;
 import net.buchlese.posa.api.bofc.PosCashBalance;
+import net.buchlese.posa.api.bofc.SendableObject;
 import net.buchlese.posa.core.ConfigSyncTimer;
 import net.buchlese.posa.core.H2TcpServerManager;
 import net.buchlese.posa.core.SendTimer;
@@ -50,7 +51,7 @@ public class PosAdapterApplication extends Application<PosAdapterConfiguration> 
 	
 	public static Queue<PosCashBalance> resyncQueue = new ConcurrentLinkedQueue<PosCashBalance>();
 
-	public static Queue<PosCashBalance> homingQueue = new ConcurrentLinkedQueue<PosCashBalance>();
+	public static Queue<SendableObject> homingQueue = new ConcurrentLinkedQueue<SendableObject>();
 
 	public static Queue<String> problemMessages = new ConcurrentLinkedQueue<String>();
 

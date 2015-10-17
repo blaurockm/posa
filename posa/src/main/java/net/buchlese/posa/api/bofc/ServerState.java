@@ -2,7 +2,7 @@ package net.buchlese.posa.api.bofc;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class ServerState {
+public class ServerState implements SendableObject {
 	@JsonProperty
 	private long timest;
 	

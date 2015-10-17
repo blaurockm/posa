@@ -9,8 +9,8 @@
   password: 
 
   # the JDBC URL
-#  url: jdbc:h2:tcp://localhost:9092//var/lib/posa/backoffice;IFEXISTS=TRUE
-  url: jdbc:h2:~/backoffice
+  url: jdbc:h2:tcp://localhost:19092///var/lib/posa/backoffice;IFEXISTS=TRUE
+#  url: jdbc:h2:~/backoffice
   
   
 posDb:
@@ -56,11 +56,11 @@ syncStartDate: 2014-10-01
 
 pointOfSaleId: 6
 
-homeUrl: http://192.168.2.111:8080/
+homeUrl: http://buchlese.selfhost.eu:7896/
 #homeUrl: http://localhost:34343/
-#homeHost: buchlese.selfhost.eu
-homeHost: 192.168.2.111
+homeHost: buchlese.selfhost.eu
+#homeHost: 192.168.2.111
 
-sshEnabled: false
+sshEnabled: true
 
 

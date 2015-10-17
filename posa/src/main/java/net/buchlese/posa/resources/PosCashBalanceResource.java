@@ -4,6 +4,7 @@ import io.dropwizard.views.View;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.List;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -22,6 +23,7 @@ import net.buchlese.posa.jdbi.bofc.PosTicketDAO;
 import net.buchlese.posa.view.CashBalView;
 
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 
 @Path("/cashbalance")
 @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
@@ -40,6 +42,12 @@ public class PosCashBalanceResource {
 	@Path("/{date}")
 	public PosCashBalance fetchForDate(@PathParam("date") String date)  {
 		return fetchBalanceForDate(date);
+	}
+	
+	@GET
+	@Path("/list")
+	public List<PosCashBalance> fetchForList()  {
+		return dao.fetchAllAfter(LocalDate.now().minusDays(8).toString("yyyyMMdd"));
 	}
 
 	@Produces({"text/html"})
