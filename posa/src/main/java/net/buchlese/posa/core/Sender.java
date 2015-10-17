@@ -24,13 +24,15 @@ import org.slf4j.Logger;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public abstract class Sender<T extends SendableObject> implements Consumer<T>, java.io.Closeable {
+public abstract class Sender<T extends SendableObject> implements Consumer<SendableObject>, java.io.Closeable {
 	
 	private final String homeUrl;
 	private final ObjectMapper om;
 	private final Logger log;
 	
 	private CloseableHttpClient httpClient;
+	
+	private Sender<?> succ;
 
 	public Sender(PosAdapterConfiguration config, Logger log) {
 		this.homeUrl = config.getHomeUrl();
@@ -39,8 +41,8 @@ public abstract class Sender<T extends SendableObject> implements Consumer<T>, j
 		this.httpClient = HttpClients.createDefault();
 	}
 	
-	@Override
-	public void accept(T bal) {
+
+	public void send(T bal) {
 		if (homeUrl == null || homeUrl.isEmpty() || homeUrl.equals("homeless") ) {
 			// do nothing;
 			return;
@@ -74,6 +76,24 @@ public abstract class Sender<T extends SendableObject> implements Consumer<T>, j
 
 	}
 
+    public Sender<?> addSender(Sender<?> x) {
+    	this.succ = x;
+    	return x;
+    }
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public void accept(SendableObject s) {
+		if (canHandle(s)) {
+			send( (T) s);
+		} else {
+			if (succ != null)
+				succ.accept(s);
+		}
+	}
+	
+	public abstract boolean canHandle(SendableObject x);
+	
 	protected abstract String getHomeResource();
 	
 	protected abstract void postSuccessfulSendHook(T bal);

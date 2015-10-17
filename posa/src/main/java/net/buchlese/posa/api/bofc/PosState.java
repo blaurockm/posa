@@ -11,6 +11,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class PosState implements SendableObject {
 
 	@JsonProperty
+	private int pointid;
+
+	@JsonProperty
 	private Instant timest;
 
 	@JsonProperty
@@ -64,6 +67,14 @@ public class PosState implements SendableObject {
 	public void setPaymentMethodBalance(
 			Map<PaymentMethod, Long> paymentMethodBalance) {
 		this.paymentMethodBalance = paymentMethodBalance;
+	}
+
+	public int getPointid() {
+		return pointid;
+	}
+
+	public void setPointid(int pointid) {
+		this.pointid = pointid;
 	}
 	
 }

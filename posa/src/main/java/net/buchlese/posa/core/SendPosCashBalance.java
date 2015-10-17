@@ -4,6 +4,7 @@ import java.util.List;
 
 import net.buchlese.posa.PosAdapterConfiguration;
 import net.buchlese.posa.api.bofc.PosCashBalance;
+import net.buchlese.posa.api.bofc.SendableObject;
 import net.buchlese.posa.jdbi.bofc.PosCashBalanceDAO;
 
 import org.joda.time.DateTime;
@@ -45,6 +46,11 @@ public class SendPosCashBalance extends Sender<PosCashBalance> {
 	@Override
 	protected String getHomeResource() {
 		return homeResource;
+	}
+
+	@Override
+	public boolean canHandle(SendableObject x) {
+		return x instanceof PosCashBalance;
 	}
 
 }
