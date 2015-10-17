@@ -31,12 +31,15 @@ import net.buchlese.bofc.view.WeekView;
 import org.joda.time.DateTime;
 import org.slf4j.LoggerFactory;
 
+import com.google.inject.Inject;
+
 @Path("/accrualweek")
 public class AccrualWeekResource {
 	private PosCashBalanceDAO balanceDao;
 	
 	private static final org.slf4j.Logger log = LoggerFactory.getLogger(AccrualWeekResource.class);
 
+	@Inject
 	public AccrualWeekResource(PosCashBalanceDAO balanceDao) {
 		super();
 		this.balanceDao = balanceDao;

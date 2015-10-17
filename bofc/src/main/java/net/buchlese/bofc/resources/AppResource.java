@@ -9,6 +9,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import com.google.inject.Inject;
+
 import net.buchlese.bofc.BackOfcConfiguration;
 import net.buchlese.bofc.view.AppView;
 import net.buchlese.bofc.view.MobileView;
@@ -21,6 +23,7 @@ public class AppResource {
 	private final BackOfcConfiguration cfg;
 	private final Environment app;
 	
+	@Inject
 	public AppResource(BackOfcConfiguration config, Environment app) {
 		this.cfg = config;
 		this.app = app;

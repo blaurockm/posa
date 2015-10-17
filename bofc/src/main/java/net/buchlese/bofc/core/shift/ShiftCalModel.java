@@ -14,6 +14,7 @@ import net.buchlese.bofc.api.shift.ShopEvent;
 import net.buchlese.bofc.api.shift.ShopHours;
 import net.buchlese.bofc.jdbi.bofc.ShiftCalDAO;
 
+import com.google.inject.Inject;
 import com.vaadin.data.Container;
 import com.vaadin.data.Container.Indexed;
 import com.vaadin.data.util.BeanItemContainer;
@@ -21,13 +22,8 @@ import com.vaadin.ui.components.calendar.event.BasicEvent;
 
 public class ShiftCalModel {
 	
-	private final ShiftCalDAO dao;
+	@Inject private ShiftCalDAO dao;
 	
-	public ShiftCalModel(ShiftCalDAO dao) {
-		super();
-		this.dao = dao;
-	}
-
 	public void createDefaultShiftsPerMonth(Employee emp, YearMonth month) {
 		
 	}

@@ -1,10 +1,12 @@
 package net.buchlese.posa;
 
 import io.dropwizard.Application;
+import io.dropwizard.assets.AssetsBundle;
 import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.migrations.MigrationsBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import io.dropwizard.views.ViewBundle;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -52,10 +54,10 @@ public class PosAdapterApplication extends Application<PosAdapterConfiguration> 
 
 	    bootstrap.addBundle(guiceBundle);
 		
-//		bootstrap.addBundle(new ViewBundle());
+		bootstrap.addBundle(new ViewBundle());
 		
 		// wir geben was her. unsere bilder und css - dinger
-//		bootstrap.addBundle(new AssetsBundle());
+		bootstrap.addBundle(new AssetsBundle());
 		
 		// wir migrieren immer nur eine DB
 	    bootstrap.addBundle(new MigrationsBundle<PosAdapterConfiguration>() {

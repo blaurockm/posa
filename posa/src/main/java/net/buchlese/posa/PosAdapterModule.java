@@ -67,9 +67,6 @@ public class PosAdapterModule extends AbstractModule {
 			}
 		}
 		return bofcDBI;
-		//    final PosTxDAO posTxDao = bofcDBI.onDemand(PosTxDAO.class);
-		//    final PosTicketDAO posTicketDao = bofcDBI.onDemand(PosTicketDAO.class);
-		//    final PosCashBalanceDAO posCashBalanceDao = bofcDBI.onDemand(PosCashBalanceDAO.class);
 	}
 	
 	@Provides @Inject

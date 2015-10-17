@@ -29,8 +29,9 @@ import net.buchlese.bofc.core.DayBalance;
 import net.buchlese.bofc.jdbi.bofc.PosCashBalanceDAO;
 import net.buchlese.bofc.view.DayView;
 
-import org.joda.time.DateTime;
 import org.slf4j.LoggerFactory;
+
+import com.google.inject.Inject;
 
 @Path("/day")
 public class AccrualDayResource {
@@ -38,6 +39,7 @@ public class AccrualDayResource {
 	
 	private static final org.slf4j.Logger log = LoggerFactory.getLogger(AccrualDayResource.class);
 
+	@Inject
 	public AccrualDayResource(PosCashBalanceDAO balanceDao) {
 		super();
 		this.balanceDao = balanceDao;

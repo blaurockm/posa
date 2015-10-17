@@ -15,17 +15,14 @@ import java.util.Optional;
 import net.buchlese.bofc.api.bofc.PosCashBalance;
 import net.buchlese.bofc.jdbi.bofc.PosCashBalanceDAO;
 
+import com.google.inject.Inject;
 import com.vaadin.data.Container;
 import com.vaadin.data.Item;
 import com.vaadin.data.util.IndexedContainer;
 
 public class VoucherModel {
 
-	private PosCashBalanceDAO dao;
-
-	public VoucherModel(PosCashBalanceDAO posTxDao) {
-		this.dao = posTxDao; 
-	}
+	@Inject private PosCashBalanceDAO dao;
 
 	private List<PosCashBalance> vouchers;
 

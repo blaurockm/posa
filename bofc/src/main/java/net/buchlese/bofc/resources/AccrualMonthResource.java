@@ -19,10 +19,13 @@ import net.buchlese.bofc.view.MonthView;
 
 import org.joda.time.DateTime;
 
+import com.google.inject.Inject;
+
 @Path("/accrualmonth")
 public class AccrualMonthResource {
 	private PosCashBalanceDAO balanceDao;
 
+	@Inject
 	public AccrualMonthResource(PosCashBalanceDAO balanceDao) {
 		super();
 		this.balanceDao = balanceDao;

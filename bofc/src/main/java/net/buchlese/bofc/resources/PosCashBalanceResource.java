@@ -40,6 +40,7 @@ import org.joda.time.DateTime;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
+import com.google.inject.Inject;
 
 @Path("/cashbalance")
 public class PosCashBalanceResource {
@@ -48,6 +49,7 @@ public class PosCashBalanceResource {
 	private final PosTicketDAO ticketDao;
 	private final PosTxDAO txDao;
 
+	@Inject
 	public PosCashBalanceResource(PosCashBalanceDAO dao,PosTicketDAO ticketdao, PosTxDAO txdao) {
 		super();
 		this.dao = dao;
