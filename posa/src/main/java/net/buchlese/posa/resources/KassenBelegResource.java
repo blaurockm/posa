@@ -15,6 +15,7 @@ import net.buchlese.posa.jdbi.pos.KassenBelegDAO;
 import org.joda.time.DateTime;
 
 import com.google.common.base.Optional;
+import com.google.inject.Inject;
 
 @Path("/beleg")
 @Produces(MediaType.APPLICATION_JSON)
@@ -22,6 +23,7 @@ public class KassenBelegResource {
 
 	private final KassenBelegDAO dao;
 
+	@Inject
 	public KassenBelegResource(KassenBelegDAO dao) {
 		super();
 		this.dao = dao;

@@ -15,6 +15,7 @@ import net.buchlese.posa.jdbi.pos.KassenAbschlussDAO;
 import org.joda.time.DateTime;
 
 import com.google.common.base.Optional;
+import com.google.inject.Inject;
 
 @Path("/abschluss")
 @Produces(MediaType.APPLICATION_JSON)
@@ -22,6 +23,7 @@ public class KassenAbschlussResource {
 
 	private final KassenAbschlussDAO dao;
 
+	@Inject
 	public KassenAbschlussResource(KassenAbschlussDAO dao) {
 		super();
 		this.dao = dao;

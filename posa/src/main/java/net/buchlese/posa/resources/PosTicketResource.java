@@ -15,6 +15,8 @@ import net.buchlese.posa.jdbi.bofc.PosTicketDAO;
 
 import org.joda.time.DateTime;
 
+import com.google.inject.Inject;
+
 @Path("/ticket")
 @Produces(MediaType.APPLICATION_JSON)
 public class PosTicketResource {
@@ -22,6 +24,7 @@ public class PosTicketResource {
 	private final PosTicketDAO dao;
 	private final PosCashBalanceDAO balDao;
 
+	@Inject
 	public PosTicketResource(PosTicketDAO dao, PosCashBalanceDAO baldao) {
 		super();
 		this.dao = dao;

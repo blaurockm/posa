@@ -18,6 +18,11 @@ import org.skife.jdbi.v2.exceptions.UnableToObtainConnectionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import com.google.inject.name.Named;
+
+@Singleton
 public class SyncTimer extends TimerTask {
 	
 	public static class BulkLoadDetails {
@@ -53,6 +58,7 @@ public class SyncTimer extends TimerTask {
 	private final Logger logger;
 	private final Lock syncLock;
 	private final LocalDate syncStart;
+	private final PosStateGatherer psg;
 	
 	private volatile BulkLoadDetails bulkLoad; 
 	
@@ -60,10 +66,12 @@ public class SyncTimer extends TimerTask {
 	public static long lastRunWithDbConnection;
 	public static long maxDuration;
 	
-	public SyncTimer(Lock l, DBI bofcDBI, DBI posDBI) {
+	@Inject
+	public SyncTimer(@Named("SyncLock") Lock l, @Named("bofcdb") DBI bofcDBI, @Named("posdb") DBI posDBI, PosStateGatherer psg) {
 		this.syncLock = l;
 		this.bofcDBI = bofcDBI;
 		this.posDBI = posDBI;
+		this.psg = psg;
 		logger = LoggerFactory.getLogger(SyncTimer.class);
 		this.syncStart = LocalDate.now();
 	}
@@ -100,11 +108,6 @@ public class SyncTimer extends TimerTask {
 	    		bulkLoad = null; // wir löschen wieder
 	    	} else {
 	    		// ein normaler Aktualisierungslauf
-	    		
-	    		ServerStateGatherer ssg = new ServerStateGatherer();
-	    		ssg.gatherData();
-	    		
-	    		PosStateGatherer psg = new PosStateGatherer();
 	    		psg.gatherData();
 	    		
 	    		syncBalance.fetchNewBalances(syncStart);

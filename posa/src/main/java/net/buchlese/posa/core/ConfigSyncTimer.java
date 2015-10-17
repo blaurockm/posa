@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
+import com.google.inject.Inject;
 import com.jcraft.jsch.JSchException;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.GenericType;
@@ -33,6 +34,7 @@ public class ConfigSyncTimer extends TimerTask {
 
 	public static long lastRun;
 	
+	@Inject
 	public ConfigSyncTimer(PosAdapterConfiguration config) {
 		this.config = config;
 		this.homeUrl = config.getHomeUrl();

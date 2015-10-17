@@ -13,9 +13,9 @@ import net.buchlese.posa.api.pos.KassenVorgang;
 import net.buchlese.posa.jdbi.pos.KassenVorgangDAO;
 
 import org.joda.time.DateTime;
-import org.skife.jdbi.v2.DBI;
 
 import com.google.common.base.Optional;
+import com.google.inject.Inject;
 
 @Path("/vorgang")
 @Produces(MediaType.APPLICATION_JSON)
@@ -23,7 +23,8 @@ public class KassenVorgangResource {
 
 	private final KassenVorgangDAO dao;
 
-	public KassenVorgangResource(KassenVorgangDAO dao, DBI dbi) {
+	@Inject
+	public KassenVorgangResource(KassenVorgangDAO dao) {
 		super();
 		this.dao = dao;
 	}

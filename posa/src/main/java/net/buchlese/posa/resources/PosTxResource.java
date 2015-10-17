@@ -15,6 +15,8 @@ import net.buchlese.posa.jdbi.bofc.PosTxDAO;
 
 import org.joda.time.DateTime;
 
+import com.google.inject.Inject;
+
 @Path("/tx")
 @Produces(MediaType.APPLICATION_JSON)
 public class PosTxResource {
@@ -22,6 +24,7 @@ public class PosTxResource {
 	private final PosTxDAO dao;
 	private final PosCashBalanceDAO balDao;
 
+	@Inject
 	public PosTxResource(PosTxDAO dao, PosCashBalanceDAO baldao) {
 		super();
 		this.dao = dao;

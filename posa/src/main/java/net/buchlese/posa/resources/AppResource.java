@@ -9,6 +9,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import com.google.inject.Inject;
+
 import net.buchlese.posa.PosAdapterConfiguration;
 import net.buchlese.posa.view.AppView;
 import net.buchlese.posa.view.MobileView;
@@ -21,6 +23,7 @@ public class AppResource {
 	private final PosAdapterConfiguration cfg;
 	private final Environment env;
 	
+	@Inject
 	public AppResource(PosAdapterConfiguration config, Environment env) {
 		this.cfg = config;
 		this.env = env;

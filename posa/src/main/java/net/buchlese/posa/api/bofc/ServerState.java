@@ -1,10 +1,12 @@
 package net.buchlese.posa.api.bofc;
 
+import org.joda.time.Instant;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ServerState implements SendableObject {
 	@JsonProperty
-	private long timest;
+	private Instant timest;
 	
 	@JsonProperty
 	private boolean dbConnection;
@@ -13,13 +15,13 @@ public class ServerState implements SendableObject {
 	private String ipAddress;
 	
 	@JsonProperty
-	private java.util.Date lastDbConnection;
+	private Instant lastDbConnection;
 
-	public long getTimest() {
+	public Instant getTimest() {
 		return timest;
 	}
 
-	public void setTimest(long timest) {
+	public void setTimest(Instant timest) {
 		this.timest = timest;
 	}
 
@@ -39,11 +41,11 @@ public class ServerState implements SendableObject {
 		this.ipAddress = ipAddress;
 	}
 
-	public java.util.Date getLastDbConnection() {
+	public Instant getLastDbConnection() {
 		return lastDbConnection;
 	}
 
-	public void setLastDbConnection(java.util.Date lastDbConnection) {
+	public void setLastDbConnection(Instant lastDbConnection) {
 		this.lastDbConnection = lastDbConnection;
 	}
 	

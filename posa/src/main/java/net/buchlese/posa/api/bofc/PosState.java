@@ -3,36 +3,50 @@ package net.buchlese.posa.api.bofc;
 import java.util.EnumMap;
 import java.util.Map;
 
+import org.joda.time.Instant;
+import org.joda.time.LocalDate;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class PosState implements SendableObject {
 
 	@JsonProperty
-	private long timest;
+	private Instant timest;
 
 	@JsonProperty
-	private java.sql.Date stateDate;
+	private LocalDate stateDate;
 
 	@JsonProperty
 	private Long revenue;     // Umsatz
+	
+	@JsonProperty
+	private Long profit;
 
 	@JsonProperty
 	private Map<PaymentMethod, Long> paymentMethodBalance = new EnumMap<PaymentMethod, Long>(PaymentMethod.class);
 
-	public long getTimest() {
+	public Instant getTimest() {
 		return timest;
 	}
 
-	public void setTimest(long timest) {
+	public void setTimest(Instant timest) {
 		this.timest = timest;
 	}
 
-	public java.sql.Date getStateDate() {
+	public LocalDate getStateDate() {
 		return stateDate;
 	}
 
-	public void setStateDate(java.sql.Date stateDate) {
+	public void setStateDate(LocalDate stateDate) {
 		this.stateDate = stateDate;
+	}
+
+	public Long getProfit() {
+		return profit;
+	}
+
+	public void setProfit(Long profit) {
+		this.profit = profit;
 	}
 
 	public Long getRevenue() {

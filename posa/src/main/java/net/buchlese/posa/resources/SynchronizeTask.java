@@ -11,11 +11,13 @@ import net.buchlese.posa.core.SyncTimer.BulkLoadDetails;
 
 import com.codahale.metrics.annotation.Timed;
 import com.google.common.collect.ImmutableMultimap;
+import com.google.inject.Inject;
 
 public class SynchronizeTask extends Task {
 
 	private final SyncTimer st;
 
+	@Inject
 	public SynchronizeTask(SyncTimer st) {
 		super("synchronize");
 		this.st = st;

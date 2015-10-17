@@ -13,6 +13,7 @@ import net.buchlese.posa.jdbi.bofc.PosCashBalanceDAO;
 
 import org.slf4j.LoggerFactory;
 
+import com.google.inject.Inject;
 import com.jcraft.jsch.JSchException;
 
 public class SendTimer extends TimerTask {
@@ -21,7 +22,7 @@ public class SendTimer extends TimerTask {
 	private final PosCashBalanceDAO cashBalDao;
 	private static final org.slf4j.Logger log = LoggerFactory.getLogger(SendTimer.class);
 	
-	
+	@Inject
 	public SendTimer(PosAdapterConfiguration config, PosCashBalanceDAO balDao) {
 		super();
 		this.config = config;

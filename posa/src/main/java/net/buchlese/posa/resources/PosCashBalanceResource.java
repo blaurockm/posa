@@ -25,6 +25,8 @@ import net.buchlese.posa.view.CashBalView;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
+import com.google.inject.Inject;
+
 @Path("/cashbalance")
 @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
 public class PosCashBalanceResource {
@@ -32,6 +34,7 @@ public class PosCashBalanceResource {
 	private final PosCashBalanceDAO dao;
 	private final PosTicketDAO ticketDao;
 
+	@Inject
 	public PosCashBalanceResource(PosCashBalanceDAO dao,PosTicketDAO ticketdao) {
 		super();
 		this.dao = dao;
