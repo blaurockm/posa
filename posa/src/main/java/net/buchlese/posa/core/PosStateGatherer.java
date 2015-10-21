@@ -2,6 +2,7 @@ package net.buchlese.posa.core;
 
 import java.util.List;
 
+import net.buchlese.posa.PosAdapterApplication;
 import net.buchlese.posa.api.bofc.PosState;
 import net.buchlese.posa.api.bofc.PosTx;
 import net.buchlese.posa.api.pos.KassenVorgang;
@@ -40,9 +41,10 @@ public class PosStateGatherer extends AbstractGatherer {
 		lastState = new PosState();
 		lastState.setTimest(Instant.now());
 		lastState.setStateDate(LocalDate.now());
-		lastState.setRevenue(posTxs.stream().mapToLong(PosTx::getTotal).sum());
-		lastState.setRevenue(posTxs.stream().mapToLong(x -> (long) (x.getTotal()*x.getArticleGroup().getMarge())   ).sum());
+		lastState.setRevenue(posTxs.stream().filter(x -> x.getTotal() != null).mapToLong(PosTx::getTotal).sum());
+		lastState.setProfit(posTxs.stream().filter(x -> x.getTotal() != null && x.getArticleGroup() != null && x.getArticleGroup().getMarge() != null).mapToLong(x -> Long.valueOf((long)(x.getTotal()*x.getArticleGroup().getMarge()))   ).sum());
 
+		PosAdapterApplication.homingQueue.offer(lastState); // sync back home
 	}
 
 	public PosState getState() {

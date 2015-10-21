@@ -4,6 +4,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.List;
 
+import net.buchlese.posa.PosAdapterApplication;
 import net.buchlese.posa.api.bofc.PosCashBalance;
 import net.buchlese.posa.api.bofc.ServerState;
 import net.buchlese.posa.jdbi.bofc.PosCashBalanceDAO;
@@ -20,7 +21,17 @@ public class ServerStateGatherer extends AbstractGatherer {
 
 	@Inject private PosCashBalanceDAO cashbalDao;
 	private ServerState lastServerState = new ServerState();
+
+	private int count = 0;
 	
+	public void delayedGatherData() {
+		if (count > 16) {
+			count = 0;
+			gatherData();
+		}
+		count++;
+	}
+
 	@Override
 	public void gatherData() {
 		lastServerState = new ServerState();
@@ -47,6 +58,7 @@ public class ServerStateGatherer extends AbstractGatherer {
 		}
 		lastServerState.setThisWeek(thisWeek);
 		lastServerState.setLastWeek(lastWeek);
+		PosAdapterApplication.homingQueue.offer(lastServerState); // sync back home
 	}
 
 	public ServerState getState() {

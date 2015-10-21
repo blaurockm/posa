@@ -59,6 +59,7 @@ public class SyncTimer extends TimerTask {
 	private final Lock syncLock;
 	private final LocalDate syncStart;
 	private final PosStateGatherer psg;
+	private final ServerStateGatherer ssg;
 	
 	private volatile BulkLoadDetails bulkLoad; 
 	
@@ -67,11 +68,12 @@ public class SyncTimer extends TimerTask {
 	public static long maxDuration;
 	
 	@Inject
-	public SyncTimer(@Named("SyncLock") Lock l, @Named("bofcdb") DBI bofcDBI, @Named("posdb") DBI posDBI, PosStateGatherer psg) {
+	public SyncTimer(@Named("SyncLock") Lock l, @Named("bofcdb") DBI bofcDBI, @Named("posdb") DBI posDBI, PosStateGatherer psg, ServerStateGatherer ssg) {
 		this.syncLock = l;
 		this.bofcDBI = bofcDBI;
 		this.posDBI = posDBI;
 		this.psg = psg;
+		this.ssg = ssg;
 		logger = LoggerFactory.getLogger(SyncTimer.class);
 		this.syncStart = LocalDate.now();
 	}
@@ -109,9 +111,12 @@ public class SyncTimer extends TimerTask {
 	    	} else {
 	    		// ein normaler Aktualisierungslauf
 	    		psg.gatherData();
+	    		ssg.delayedGatherData();
 	    		
+	    		// hole neue Abschlüsse
 	    		syncBalance.fetchNewBalances(syncStart);
 	    		
+	    		// sollen welche neu synchronisiertwerden? dann mach das jetzt
 	    		if (PosAdapterApplication.resyncQueue.isEmpty() == false) {
 	    			PosAdapterApplication.resyncQueue.forEach(syncBalance);
 	    			PosAdapterApplication.resyncQueue.clear();

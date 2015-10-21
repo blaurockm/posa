@@ -18,27 +18,26 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
 import org.slf4j.Logger;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public abstract class Sender<T extends SendableObject> implements Consumer<SendableObject>, java.io.Closeable {
+public abstract class Sender<T extends SendableObject> implements Consumer<SendableObject> {
 	
 	private final String homeUrl;
 	private final ObjectMapper om;
 	private final Logger log;
+	private final CloseableHttpClient httpClient;
 	
-	private CloseableHttpClient httpClient;
 	
 	private Sender<?> succ;
 
-	public Sender(PosAdapterConfiguration config, Logger log) {
+	public Sender(PosAdapterConfiguration config, Logger log, CloseableHttpClient client) {
 		this.homeUrl = config.getHomeUrl();
 		this.om = Jackson.newObjectMapper();
 		this.log = log;
-		this.httpClient = HttpClients.createDefault();
+		this.httpClient = client;
 	}
 	
 
@@ -99,14 +98,6 @@ public abstract class Sender<T extends SendableObject> implements Consumer<Senda
 	protected abstract void postSuccessfulSendHook(T bal);
 	
 	protected abstract void preSendHook(T bal);
-
-
-	@Override
-	public void close() throws IOException {
-		if (httpClient != null) {
-			httpClient.close();
-		}
-	} 
 
 
 }

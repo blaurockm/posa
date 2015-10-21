@@ -7,10 +7,11 @@ import java.util.TimerTask;
 
 import net.buchlese.posa.PosAdapterApplication;
 import net.buchlese.posa.PosAdapterConfiguration;
-import net.buchlese.posa.api.bofc.PosCashBalance;
 import net.buchlese.posa.api.bofc.SendableObject;
 import net.buchlese.posa.jdbi.bofc.PosCashBalanceDAO;
 
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.slf4j.LoggerFactory;
 
 import com.google.inject.Inject;
@@ -38,17 +39,20 @@ public class SendTimer extends TimerTask {
 			List<SendableObject> toDo = new ArrayList<>(PosAdapterApplication.homingQueue);
 			PosAdapterApplication.homingQueue.clear();
 			
-			Sender<?> sender = new SendPosCashBalance(config, cashBalDao, log);
-			sender = sender.addSender(new SendPosState(config, log));
-			
-			try (CloudConnect cloud = new CloudConnect(config, log)) {
+			try (CloseableHttpClient httpClient = HttpClients.createDefault();
+					CloudConnect cloud = new CloudConnect(config, log)) {
+				
+				Sender<?> sender = new SendPosCashBalance(config, cashBalDao, log, httpClient);
+				sender = sender.addSender(new SendPosState(config, log, httpClient));
+				sender = sender.addSender(new SendServerState(config, log, httpClient));
+				
 				toDo.forEach(sender);
 			} catch (JSchException e1) {
 				// problem connecting to ssh-server
 				log.error("problem connecting ssh-session", e1);
 			} catch (IOException e) {
 				// problem closing httpClient
-				log.error("problem closing session", e);
+				log.error("problem closing cloud", e);
 			}
 			
 		}

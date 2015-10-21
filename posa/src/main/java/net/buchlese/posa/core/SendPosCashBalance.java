@@ -7,6 +7,7 @@ import net.buchlese.posa.api.bofc.PosCashBalance;
 import net.buchlese.posa.api.bofc.SendableObject;
 import net.buchlese.posa.jdbi.bofc.PosCashBalanceDAO;
 
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 
@@ -17,8 +18,8 @@ public class SendPosCashBalance extends Sender<PosCashBalance> {
 	private final int pointid;
 	private final PosCashBalanceDAO cashBalanceDAO;
 
-	public SendPosCashBalance(PosAdapterConfiguration config, PosCashBalanceDAO balDAO, Logger log) {
-		super(config, log);
+	public SendPosCashBalance(PosAdapterConfiguration config, PosCashBalanceDAO balDAO, Logger log, CloseableHttpClient c) {
+		super(config, log, c);
 		this.pointid = config.getPointOfSaleId();
 		this.cashBalanceDAO = balDAO;
 	}
