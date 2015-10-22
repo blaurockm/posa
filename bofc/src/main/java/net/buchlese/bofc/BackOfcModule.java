@@ -38,15 +38,10 @@ public class BackOfcModule extends AbstractModule {
 	public DBI provideBofcDBI(BackOfcConfiguration configuration, Environment environment) {
 		if (bofcDBI == null) {
 			final DBIFactory bofcDbFactory = new DBIFactory();
-			try {
-				bofcDBI = bofcDbFactory.build(environment, configuration.getBackOfficeDB(), "bofcdb");
-				bofcDBI.registerArgumentFactory(new TaxArgumentFactory());
-				bofcDBI.registerArgumentFactory(new PayMethArgumentFactory());
-				bofcDBI.registerArgumentFactory(new TxTypeArgumentFactory());
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
-				bofcDBI = null;
-			}
+			bofcDBI = bofcDbFactory.build(environment, configuration.getBackOfficeDB(), "bofcdb");
+			bofcDBI.registerArgumentFactory(new TaxArgumentFactory());
+			bofcDBI.registerArgumentFactory(new PayMethArgumentFactory());
+			bofcDBI.registerArgumentFactory(new TxTypeArgumentFactory());
 		}
 		return bofcDBI;
 	}

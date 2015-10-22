@@ -22,7 +22,7 @@ public class SendTimer extends TimerTask {
 	private final PosAdapterConfiguration config;
 	private final PosCashBalanceDAO cashBalDao;
 	private static final org.slf4j.Logger log = LoggerFactory.getLogger(SendTimer.class);
-	
+
 	@Inject
 	public SendTimer(PosAdapterConfiguration config, PosCashBalanceDAO balDao) {
 		super();
@@ -30,33 +30,36 @@ public class SendTimer extends TimerTask {
 		this.cashBalDao = balDao;
 	}
 
-    public static long lastHomingRun;
-	
+	public static long lastHomingRun;
+
 	@Override
 	public void run() {
-		if (PosAdapterApplication.homingQueue.isEmpty() == false) {
-			lastHomingRun = System.currentTimeMillis();
-			List<SendableObject> toDo = new ArrayList<>(PosAdapterApplication.homingQueue);
-			PosAdapterApplication.homingQueue.clear();
-			
-			try (CloseableHttpClient httpClient = HttpClients.createDefault();
-					CloudConnect cloud = new CloudConnect(config, log)) {
-				
-				Sender<?> sender = new SendPosCashBalance(config, cashBalDao, log, httpClient);
-				sender = sender.addSender(new SendPosState(config, log, httpClient));
-				sender = sender.addSender(new SendServerState(config, log, httpClient));
-				
-				toDo.forEach(sender);
-			} catch (JSchException e1) {
-				// problem connecting to ssh-server
-				log.error("problem connecting ssh-session", e1);
-			} catch (IOException e) {
-				// problem closing httpClient
-				log.error("problem closing cloud", e);
+		synchronized(PosAdapterApplication.homingQueue) {
+			if (PosAdapterApplication.homingQueue.isEmpty() == false) {
+				lastHomingRun = System.currentTimeMillis();
+				List<SendableObject> toDo = new ArrayList<>(PosAdapterApplication.homingQueue);
+				PosAdapterApplication.homingQueue.clear();
+
+				try (CloseableHttpClient httpClient = HttpClients.createDefault();
+						CloudConnect cloud = new CloudConnect(config, log)) {
+
+					Sender<?> sender = new SendPosCashBalance(config, cashBalDao, log, httpClient);
+					sender = sender.addSender(new SendPosState(config, log, httpClient));
+					sender = sender.addSender(new SendServerState(config, log, httpClient));
+
+					toDo.forEach(sender);
+				} catch (JSchException e1) {
+					// problem connecting to ssh-server
+					log.error("problem connecting ssh-session", e1);
+				} catch (IOException e) {
+					// problem closing httpClient
+					log.error("problem closing cloud", e);
+				} catch (Throwable t) {
+					log.error("komisches problem", t);
+				}
+
 			}
-			
 		}
-		
 	}
 
 }

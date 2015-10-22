@@ -112,6 +112,11 @@ public class ServerState implements SendableObject {
 	public void setPointid(int pointid) {
 		this.pointid = pointid;
 	}
+
+	@Override
+	public String toString() {
+		return "ServerState [timest=" + timest + "]";
+	}
 	
 
 }

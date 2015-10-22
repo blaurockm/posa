@@ -77,10 +77,10 @@ public class PosAdapterApplication extends Application<PosAdapterConfiguration> 
 		syncTimer.scheduleAtFixedRate(syncTimerTask, 5, 15, TimeUnit.MINUTES);
 
 		SendTimer senTimerTask = guiceBundle.getInjector().getInstance(SendTimer.class);
-		syncTimer.scheduleAtFixedRate(senTimerTask, 8, 1, TimeUnit.MINUTES);
+		syncTimer.scheduleAtFixedRate(senTimerTask, 1, 1, TimeUnit.MINUTES);
 		
 		ConfigSyncTimer configTimerTask = guiceBundle.getInjector().getInstance(ConfigSyncTimer.class);
-		syncTimer.scheduleAtFixedRate(configTimerTask, 1, 1440, TimeUnit.MINUTES);
+		syncTimer.scheduleAtFixedRate(configTimerTask, 3, 1440, TimeUnit.MINUTES);
 	
 	}
 

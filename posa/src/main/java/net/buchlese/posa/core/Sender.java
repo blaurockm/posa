@@ -60,7 +60,7 @@ public abstract class Sender<T extends SendableObject> implements Consumer<Senda
 
 		try(CloseableHttpResponse response = httpClient.execute(post)) {
 			StatusLine statusLine = response.getStatusLine();
-			log.info("Sending " + bal + " :: " + statusLine);
+			log.info("Sending " + bal + " with " + post + " :: " + statusLine);
 			if (statusLine.getStatusCode() == 200) {
 				postSuccessfulSendHook(bal);
 			}
@@ -76,7 +76,7 @@ public abstract class Sender<T extends SendableObject> implements Consumer<Senda
 	}
 
     public Sender<?> addSender(Sender<?> x) {
-    	this.succ = x;
+    	x.succ = this;
     	return x;
     }
 	

@@ -76,5 +76,10 @@ public class PosState implements SendableObject {
 	public void setPointid(int pointid) {
 		this.pointid = pointid;
 	}
+
+	@Override
+	public String toString() {
+		return "PosState [timest=" + timest + "]";
+	}
 	
 }

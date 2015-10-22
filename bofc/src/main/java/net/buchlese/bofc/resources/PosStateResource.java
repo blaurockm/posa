@@ -1,10 +1,10 @@
 package net.buchlese.bofc.resources;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -23,7 +23,7 @@ public class PosStateResource {
 
 	private static final org.slf4j.Logger log = LoggerFactory.getLogger(PosStateResource.class);
 
-	private Map<Integer, LinkedList<PosState>> states = new HashMap<>();
+	private final static Map<Integer, LinkedList<PosState>> states = new ConcurrentHashMap<>();
 	private final static int MAXSIZE = 100;
 	
 	@POST

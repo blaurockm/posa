@@ -9,6 +9,7 @@ import java.util.TimerTask;
 
 import javax.ws.rs.core.MediaType;
 
+import net.buchlese.posa.PosAdapterApplication;
 import net.buchlese.posa.PosAdapterConfiguration;
 import net.buchlese.posa.api.bofc.ArticleGroup;
 
@@ -33,14 +34,14 @@ public class ConfigSyncTimer extends TimerTask {
 	private final String homeUrl;
 
 	public static long lastRun;
-	
+
 	@Inject
 	public ConfigSyncTimer(PosAdapterConfiguration config) {
 		this.config = config;
 		this.homeUrl = config.getHomeUrl();
 		logger = LoggerFactory.getLogger(ConfigSyncTimer.class);
 	}
-	
+
 	@Override
 	public void run() {
 		if (homeUrl == null || homeUrl.isEmpty() || homeUrl.equals("homeless") ) {
@@ -49,36 +50,37 @@ public class ConfigSyncTimer extends TimerTask {
 		}
 
 		lastRun = System.currentTimeMillis();
+		synchronized(PosAdapterApplication.homingQueue) {
 
-		try (CloudConnect cloud = new CloudConnect(config, logger)) {
-			
-			ClientConfig clientConfig = new DefaultClientConfig();
-			clientConfig.getClasses().add(JacksonJsonProvider.class);
-			Client client = Client.create(clientConfig);
-			
-			WebResource r = client.resource(homeUrl + homeResource);
-			
-			List<ArticleGroup> articleGroups = r.accept(MediaType.APPLICATION_JSON_TYPE)
-					.get(new GenericType<List<ArticleGroup>>() {});
-				
-			Map<String, ArticleGroup> newConf = new HashMap<String, ArticleGroup>();
-			
-			articleGroups.stream().forEach(x -> newConf.put(x.getKey(), x));
-			
-			ArticleGroup.injectMappings(newConf);
-			
-		} catch (ConnectException e) {
-			// wir konnten keine Verbindung aufbauen.
-			// mark PosCashBalance for retry next hour
-			logger.warn("problem while connecting home", e);
-		} catch (JSchException e1) {
-			// problem connecting to ssh-server
-			logger.error("problem connecting ssh-session", e1);
-		} catch (IOException e) {
-			// problem closing httpClient
-			logger.error("problem closing session", e);
+			try (CloudConnect cloud = new CloudConnect(config, logger)) {
+
+				ClientConfig clientConfig = new DefaultClientConfig();
+				clientConfig.getClasses().add(JacksonJsonProvider.class);
+				Client client = Client.create(clientConfig);
+
+				WebResource r = client.resource(homeUrl + homeResource);
+
+				List<ArticleGroup> articleGroups = r.accept(MediaType.APPLICATION_JSON_TYPE)
+						.get(new GenericType<List<ArticleGroup>>() {});
+
+				Map<String, ArticleGroup> newConf = new HashMap<String, ArticleGroup>();
+
+				articleGroups.stream().forEach(x -> newConf.put(x.getKey(), x));
+
+				ArticleGroup.injectMappings(newConf);
+
+			} catch (ConnectException e) {
+				// wir konnten keine Verbindung aufbauen.
+				// mark PosCashBalance for retry next hour
+				logger.warn("problem while connecting home", e);
+			} catch (JSchException e1) {
+				// problem connecting to ssh-server
+				logger.error("problem connecting ssh-session", e1);
+			} catch (IOException e) {
+				// problem closing httpClient
+				logger.error("problem closing session", e);
+			}
 		}
-			
 	}
-	
+
 }

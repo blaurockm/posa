@@ -17,7 +17,7 @@ public class SendPosState extends Sender<PosState> {
 
 	@Override
 	public boolean canHandle(SendableObject x) {
-		return true;
+		return x instanceof PosState;
 	}
 
 	@Override

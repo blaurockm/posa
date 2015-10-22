@@ -1,13 +1,13 @@
 package net.buchlese.posa.core;
 
+import net.buchlese.posa.PosAdapterConfiguration;
+import net.buchlese.posa.api.bofc.SendableObject;
+import net.buchlese.posa.api.bofc.ServerState;
+
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.slf4j.Logger;
 
-import net.buchlese.posa.PosAdapterConfiguration;
-import net.buchlese.posa.api.bofc.PosState;
-import net.buchlese.posa.api.bofc.SendableObject;
-
-public class SendServerState extends Sender<PosState> {
+public class SendServerState extends Sender<ServerState> {
 	private final int pointid;
 
 	public SendServerState(PosAdapterConfiguration config, Logger log, CloseableHttpClient httpClient) {
@@ -17,7 +17,7 @@ public class SendServerState extends Sender<PosState> {
 
 	@Override
 	public boolean canHandle(SendableObject x) {
-		return true;
+		return x instanceof ServerState;
 	}
 
 	@Override
@@ -26,12 +26,12 @@ public class SendServerState extends Sender<PosState> {
 	}
 
 	@Override
-	protected void postSuccessfulSendHook(PosState bal) {
+	protected void postSuccessfulSendHook(ServerState bal) {
 
 	}
 
 	@Override
-	protected void preSendHook(PosState bal) {
+	protected void preSendHook(ServerState bal) {
 		bal.setPointid(pointid);
 	}
 
