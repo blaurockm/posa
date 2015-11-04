@@ -9,8 +9,8 @@
   password: 
 
   # the JDBC URL
-  url: jdbc:h2:tcp://localhost:19092///var/lib/posa/backoffice;IFEXISTS=TRUE
-#  url: jdbc:h2:~/backoffice
+#  url: jdbc:h2:tcp://localhost:19092///var/lib/posa/backoffice;IFEXISTS=TRUE
+  url: jdbc:h2:~/backoffice
   
   
 posDb:
@@ -26,9 +26,9 @@ posDb:
   
   # the JDBC URL
   #####  lokale datenbank
-  url: jdbc:jtds:sqlserver://localhost:1433/librasbak
+#  url: jdbc:jtds:sqlserver://localhost:1433/librasbak
   ##### im gschaeft Sulz
-#  url: jdbc:jtds:sqlserver://localhost:7891/libras
+  url: jdbc:jtds:sqlserver://localhost:7891/libras
   ##### im gschaeft Dornhan
 #  url: jdbc:jtds:sqlserver://localhost:7890/libras
 

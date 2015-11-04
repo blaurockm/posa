@@ -13,7 +13,7 @@ public class KleinteilKopf {
 	private int id;
 	@NotEmpty
 	@JsonProperty
-	private int rechnungsNummer;
+	private String rechnungsNummer;
 	@NotEmpty
 	@JsonProperty
 	private int kundenNummer;
@@ -32,6 +32,8 @@ public class KleinteilKopf {
 	@JsonProperty
 	private DateTime rechnungsDatum;
 	@JsonProperty
+	private DateTime druckDatum;
+	@JsonProperty
 	private BigDecimal rabatt;
 	@JsonProperty
 	private BigDecimal skonto;
@@ -42,11 +44,11 @@ public class KleinteilKopf {
 	@JsonProperty
 	private BigDecimal mwst19;
 	@JsonProperty
-	private BigDecimal netto0;
+	private BigDecimal brutto0;
 	@JsonProperty
-	private BigDecimal netto7;
+	private BigDecimal brutto7;
 	@JsonProperty
-	private BigDecimal netto19;
+	private BigDecimal brutto19;
 	@JsonProperty
 	private Boolean bezahlt;
 
@@ -58,11 +60,11 @@ public class KleinteilKopf {
 		this.id = id;
 	}
 
-	public int getRechnungsNummer() {
+	public String getRechnungsNummer() {
 		return rechnungsNummer;
 	}
 
-	public void setRechnungsNummer(int rechnungsNummer) {
+	public void setRechnungsNummer(String rechnungsNummer) {
 		this.rechnungsNummer = rechnungsNummer;
 	}
 
@@ -167,13 +169,6 @@ public class KleinteilKopf {
 		this.mwst19 = mwst19;
 	}
 
-	public void setNetto7(BigDecimal brutto7) {
-		this.netto7 = brutto7;
-	}
-	public void setNetto19(BigDecimal brutto19) {
-		this.netto19 = brutto19;
-	}
-
 	public Boolean getBezahlt() {
 		return bezahlt;
 	}
@@ -186,20 +181,36 @@ public class KleinteilKopf {
 		return brutto;
 	}
 
-	public BigDecimal getNetto7() {
-		return netto7;
+	public DateTime getDruckDatum() {
+		return druckDatum;
 	}
 
-	public BigDecimal getNetto19() {
-		return netto19;
+	public void setDruckDatum(DateTime druckDatum) {
+		this.druckDatum = druckDatum;
 	}
 
-	public BigDecimal getNetto0() {
-		return netto0;
+	public BigDecimal getBrutto0() {
+		return brutto0;
 	}
 
-	public void setNetto0(BigDecimal netto0) {
-		this.netto0 = netto0;
+	public void setBrutto0(BigDecimal brutto0) {
+		this.brutto0 = brutto0;
+	}
+
+	public BigDecimal getBrutto7() {
+		return brutto7;
+	}
+
+	public void setBrutto7(BigDecimal brutto7) {
+		this.brutto7 = brutto7;
+	}
+
+	public BigDecimal getBrutto19() {
+		return brutto19;
+	}
+
+	public void setBrutto19(BigDecimal brutto19) {
+		this.brutto19 = brutto19;
 	}
 
 }

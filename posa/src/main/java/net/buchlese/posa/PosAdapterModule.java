@@ -7,6 +7,7 @@ import io.dropwizard.jdbi.DBIFactory;
 import io.dropwizard.setup.Environment;
 import net.buchlese.posa.jdbi.bofc.PayMethArgumentFactory;
 import net.buchlese.posa.jdbi.bofc.PosCashBalanceDAO;
+import net.buchlese.posa.jdbi.bofc.PosInvoiceDAO;
 import net.buchlese.posa.jdbi.bofc.PosTicketDAO;
 import net.buchlese.posa.jdbi.bofc.PosTxDAO;
 import net.buchlese.posa.jdbi.bofc.TaxArgumentFactory;
@@ -14,6 +15,7 @@ import net.buchlese.posa.jdbi.bofc.TxTypeArgumentFactory;
 import net.buchlese.posa.jdbi.pos.KassenAbschlussDAO;
 import net.buchlese.posa.jdbi.pos.KassenBelegDAO;
 import net.buchlese.posa.jdbi.pos.KassenVorgangDAO;
+import net.buchlese.posa.jdbi.pos.KleinteilDAO;
 
 import org.skife.jdbi.v2.DBI;
 
@@ -83,6 +85,11 @@ public class PosAdapterModule extends AbstractModule {
 	}
 
 	@Provides @Inject
+	public PosInvoiceDAO providePosInvoiceDao(@Named("bofcdb")DBI posDBI) {
+		return posDBI.onDemand(PosInvoiceDAO.class);
+	}
+
+	@Provides @Inject
 	public KassenVorgangDAO provideVorgangsDao(@Named("posdb")DBI posDBI) {
 		return posDBI.onDemand(KassenVorgangDAO.class);
 	}
@@ -97,6 +104,10 @@ public class PosAdapterModule extends AbstractModule {
 		return posDBI.onDemand(KassenAbschlussDAO.class);
 	}
 
+	@Provides @Inject
+	public KleinteilDAO provideKleinteilDao(@Named("posdb")DBI posDBI) {
+		return posDBI.onDemand(KleinteilDAO.class);
+	}
 
 
 }

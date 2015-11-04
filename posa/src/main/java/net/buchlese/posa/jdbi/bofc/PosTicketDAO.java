@@ -46,7 +46,7 @@ public interface PosTicketDAO {
 	 * @param bisDatum
 	 * @return
 	 */
-	@SqlQuery("select postx.* from postx join posticket on posticket.belegnr = postx.belegnr where postx.tobeignored = 0 and posticket.timest between :vonDatum and :bisDatum")
+	@SqlQuery("select postx.* from postx join posticket on posticket.belegnr = postx.belegnr where posticket.timest between :vonDatum and :bisDatum")
 	List<PosTx> fetchTx(@Bind("vonDatum") DateTime vonDatum, @Bind("bisDatum") DateTime bisDatum);
 
 	/**
@@ -55,7 +55,7 @@ public interface PosTicketDAO {
 	 * @param bisDatum
 	 * @return
 	 */
-	@SqlQuery("select postx.* from postx where postx.tobeignored = 0 and timest between :vonDatum and :bisDatum")
+	@SqlQuery("select postx.* from postx where timest between :vonDatum and :bisDatum")
 	List<PosTx> fetchTxfast(@Bind("vonDatum") DateTime vonDatum, @Bind("bisDatum") DateTime bisDatum);
 
 	@SqlUpdate("update posticket set total = :total, paymentmethod = :paymentMethod, cancelled = :cancelled, tobecheckedagain = :toBeCheckedAgain, cancel = :cancel " +

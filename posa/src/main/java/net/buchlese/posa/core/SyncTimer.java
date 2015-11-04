@@ -5,11 +5,13 @@ import java.util.concurrent.locks.Lock;
 
 import net.buchlese.posa.PosAdapterApplication;
 import net.buchlese.posa.jdbi.bofc.PosCashBalanceDAO;
+import net.buchlese.posa.jdbi.bofc.PosInvoiceDAO;
 import net.buchlese.posa.jdbi.bofc.PosTicketDAO;
 import net.buchlese.posa.jdbi.bofc.PosTxDAO;
 import net.buchlese.posa.jdbi.pos.KassenAbschlussDAO;
 import net.buchlese.posa.jdbi.pos.KassenBelegDAO;
 import net.buchlese.posa.jdbi.pos.KassenVorgangDAO;
+import net.buchlese.posa.jdbi.pos.KleinteilDAO;
 
 import org.joda.time.LocalDate;
 import org.skife.jdbi.v2.DBI;
@@ -98,11 +100,16 @@ public class SyncTimer extends TimerTask {
     	    KassenBelegDAO belegDao = pos.attach(KassenBelegDAO.class);
     	    KassenAbschlussDAO abschlussDao = pos.attach(KassenAbschlussDAO.class);
 
+    	    KleinteilDAO kleinteilDao = pos.attach(KleinteilDAO.class);
+
     	    PosTxDAO posTxDao = bofc.attach(PosTxDAO.class);
     	    PosTicketDAO posTicketDao =  bofc.attach(PosTicketDAO.class);
     	    PosCashBalanceDAO posCashBalanceDao =  bofc.attach(PosCashBalanceDAO.class);
 
+    	    PosInvoiceDAO posInvoiceDao =  bofc.attach(PosInvoiceDAO.class);
+
 	    	SynchronizePosCashBalance syncBalance = new SynchronizePosCashBalance(posCashBalanceDao, posTicketDao, posTxDao, abschlussDao, belegDao, vorgangDao);
+	    	SynchronizePosInvoice syncInvoice = new SynchronizePosInvoice(posInvoiceDao, kleinteilDao);
 
 	    	if (bulkLoad != null) {
 	    		// wir wollen einen Haufen Daten rumschaufeln
@@ -115,6 +122,7 @@ public class SyncTimer extends TimerTask {
 	    		
 	    		// hole neue Abschlüsse
 	    		syncBalance.fetchNewBalances(syncStart);
+	    		syncInvoice.fetchNewInvoices(syncStart.toDateTimeAtStartOfDay().minusDays(2));
 	    		
 	    		// sollen welche neu synchronisiertwerden? dann mach das jetzt
 	    		if (PosAdapterApplication.resyncQueue.isEmpty() == false) {
@@ -122,6 +130,7 @@ public class SyncTimer extends TimerTask {
 	    			PosAdapterApplication.resyncQueue.clear();
 	    		}
 	    	}
+
 	    	long dur = System.currentTimeMillis()-lastRun;
 	    	if (dur > maxDuration) maxDuration = dur;
 	    } catch (Throwable t) {
