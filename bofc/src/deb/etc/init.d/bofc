@@ -24,7 +24,7 @@ JAVAOPTS="-XX:+HeapDumpOnOutOfMemoryError \
           -Dcom.sun.management.jmxremote.ssl=false \
           -Dcom.sun.management.jmxremote.authenticate=false"
 
-PROG=$(basename $0)
+PROG=bofc
 PROG_HOME="/usr/share/$PROG"
 LOG_DIR="/var/log"
 LOG_FILE="$LOG_DIR/$PROG.log"

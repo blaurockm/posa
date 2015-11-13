@@ -34,7 +34,7 @@ JAVAOPTS="-XX:+HeapDumpOnOutOfMemoryError \
           -Dcom.sun.management.jmxremote.ssl=false \
           -Dcom.sun.management.jmxremote.authenticate=false"
 
-PROG=$(basename $0)
+PROG=posa
 PROG_HOME="/usr/share/$PROG"
 LOG_DIR="/var/log/$PROG"
 LOG_FILE="$LOG_DIR/$PROG-console.log"
