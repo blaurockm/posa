@@ -11,11 +11,12 @@ bofcDb:
   # the JDBC URL 
   # vom cubietruck
 #  url: jdbc:h2:tcp://192.168.2.111:9092//var/lib/bofc/backoffice;IFEXISTS=TRUE
-  url: jdbc:h2:~/backofficeg
+#  url: jdbc:h2:~/backofficeg
+  url: jdbc:h2:tcp://localhost:19092//var/lib/bofc/backoffice;IFEXISTS=TRUE
 
 articleGroupMappings:
-  lotto:  { wargrindex: 'L', text : 'Lotto',  key : 'lotto', type : 'GOOD', marge : 0.05, account : '3631' }
-  rubbellose: { wargrindex: 'U', text : 'Rubbel-Lose',key : 'rubbellose', type: 'GOOD', marge : 0.02, account : '3631' }
+  lotto:  { wargrindex: 'L', text : 'Lotto',  key : 'lotto', type : 'GOOD', marge : 0.05, account : '1373' }
+  rubbellose: { wargrindex: 'U', text : 'Rubbel-Lose',key : 'rubbellose', type: 'GOOD', marge : 0.02, account : '1373' }
   tickets: { wargrindex: 'R', key : 'tickets', text : 'Reservix-Karten', type: 'GOOD', marge : 0.09, account : '1372' }  
   zeitschrift: { wargrindex: 'Z', text : 'Zeitschriften',key : 'zeitschrift', type : 'GOOD', marge : 0.19 }
   gutsch: { wargrindex: 'G', text : 'Gutschein',key : 'gutsch', type : 'COUPON', account : '1371' }

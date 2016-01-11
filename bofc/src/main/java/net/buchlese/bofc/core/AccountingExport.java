@@ -30,12 +30,6 @@ public class AccountingExport {
 	}
 
 	private static String getKostenStelle(PosCashBalance bal) {
-		if (bal.getPointid() == 1) {
-			return "Dornhan";
-		}
-		if (bal.getPointid() == 2) {
-			return "Sulz";
-		}
 		return "";
 	}
 
@@ -45,6 +39,9 @@ public class AccountingExport {
 		}
 		if (bal.getPointid() == 2) {
 			return 1610;
+		}
+		if (bal.getPointid() == 3) {
+			return 1620;
 		}
 		return 1370;
 	}
@@ -75,7 +72,7 @@ public class AccountingExport {
 				continue;
 			}
 			Booking taxEntry = new Booking();
-			taxEntry.setAccount(entry.getKey().getAccount());
+			taxEntry.setAccount(entry.getKey().getAccount() + bal.getPointid());
 			taxEntry.setBetrag(entry.getValue());
 			taxEntry.setText("Warenausgang " + entry.getKey().getAccountText() + " " + dateShort);
 			taxEntry.setCode(getKostenStelle(bal));

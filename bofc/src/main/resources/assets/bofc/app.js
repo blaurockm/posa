@@ -66,7 +66,7 @@ function(dom, domConstruct, JsonRest, Button, DataGrid, ObjectStore, Memory) {
         var showFibuWeekButton = new Button({
             label: "FiBu-Übergabe dieser Woche",
             onClick: function(){
-            	window.open('/accrualweek/fibuexport/' + currentWeek + "?kasse=1&kasse=2");
+            	window.open('/accrualweek/fibuexport/' + currentWeek + "?kasse=1&kasse=2&kasse=3");
             }
         }, "fibuWeekButton").startup();
 
@@ -175,7 +175,6 @@ function(dom, domConstruct, JsonRest, Button, DataGrid, ObjectStore, Memory) {
         init: function(registry) {
             // proceed directly with startup
             startup(registry);
-            registry.byId("balPeriod").on("change", updateBalGrid);
         	dom.byId("weeknum").innerHTML = currentWeek;
             dom.byId("weekviewdiv").src = '/accrualweek/view/thisweek';
         	dom.byId("monthnum").innerHTML = currentMonth;

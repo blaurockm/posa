@@ -55,19 +55,8 @@ registry: "dijit/registry"
 			      	</iframe>
 				</div>
 			</div>
-  		    <!--  die Kassentransaktionen -->
 			<div id="balTab" data-dojo-type="dijit/layout/ContentPane" data-dojo-props='title:"Kassenabschlüsse", style:"padding:10px;"'>
-			   <h2>Kassenabschlüsse von <div id="balPeriod" data-dojo-type="dijit/form/Select">
-						<span data-dojo-value=" ">-- Zeitraum --</span>
-						<span data-dojo-value="thisweek">Dieser Woche</span>
-						<span data-dojo-value="lastweek">letzter Woche</span>
-						<span data-dojo-value="thismonth">diesem Monat</span>
-						<span data-dojo-value="lastmonth">letztem Monat</span>
-						<span data-dojo-value=""></span>
-						<span data-dojo-value="thisquarter">diesem Quartal</span>
-						<span data-dojo-value="lastquarter">letztem Quartal</span>
-					 </div> </h2>
-	           <div id="balGrid" style="height:30%; width:50%">
+	           <div id="balGrid" style="height:40%; width:50%">
 	           </div>
 			   <div data-dojo-type="dijit/layout/BorderContainer" data-dojo-props="design:'sidebar', gutters:true, liveSplitters:true" id="balDetailContainer" style="height:60%; width:100%;">
 				    <div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="splitter:true, region:'leading'" style="width: 100px;">
@@ -80,6 +69,9 @@ registry: "dijit/registry"
 				    </div>
 				</div>
 		    </div>
+
+  		    <!--  technisches brimborium -->
+  		    <a href="/state" data-dojo-type="dijit/layout/LinkPane">Status</a>
 
   		    <!--  technisches brimborium -->
   		    <a href="/technics" data-dojo-type="dijit/layout/LinkPane">Technisches</a>

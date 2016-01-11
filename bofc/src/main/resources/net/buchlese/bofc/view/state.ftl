@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
     <meta charset="utf-8" />
-    <title>JSON Sample</title>
+    <title>Statusanzeige Backoffice-App</title>
 <style type="text/css">
 .week {
    border:1pt solid black;
@@ -44,7 +44,7 @@ $(function() {
 	  
 	  var posView = $("#posStateView");
 	  
-      $.getJSON('posstate.json').done(showPosStates);
+      $.getJSON('posState').done(showPosStates);
 	  
 });
     </script> 
