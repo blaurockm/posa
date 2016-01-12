@@ -29,6 +29,10 @@ public class KassenAbschluss {
 	@JsonProperty
 	private BigDecimal ist;
 	@JsonProperty
+	private BigDecimal soll;
+	@JsonProperty
+	private BigDecimal differenz;
+	@JsonProperty
 	private BigDecimal abschoepfung;
 	@JsonProperty
 	private BigDecimal einzahlungen;
@@ -212,6 +216,18 @@ public class KassenAbschluss {
 	}
 	public void setAuszahlungenOhne(BigDecimal auszahlungenOhne) {
 		this.auszahlungenOhne = auszahlungenOhne;
+	}
+	public BigDecimal getSoll() {
+		return soll;
+	}
+	public void setSoll(BigDecimal soll) {
+		this.soll = soll;
+	}
+	public BigDecimal getDifferenz() {
+		return differenz;
+	}
+	public void setDifferenz(BigDecimal differenz) {
+		this.differenz = differenz;
 	}
 	
 	

@@ -68,6 +68,10 @@ public class PosCashBalance {
 	@JsonProperty
 	private Long cashEnd;  // Kassen Endbestand
 	@JsonProperty
+	private Long cashDiff;  // Kassen Zähldifferenz
+	@JsonProperty
+	private Long cash;  // Kassen Zählbestand
+	@JsonProperty
 	private Long revenue;     // Umsatz
 	@JsonProperty
 	private Long profit;     // Profit
@@ -376,6 +380,22 @@ public class PosCashBalance {
 
 	public void setPointid(int pointid) {
 		this.pointid = pointid;
+	}
+
+	public Long getCashDiff() {
+		return cashDiff;
+	}
+
+	public void setCashDiff(Long cashDiff) {
+		this.cashDiff = cashDiff;
+	}
+
+	public Long getCash() {
+		return cash;
+	}
+
+	public void setCash(Long cash) {
+		this.cash = cash;
 	}
 	
 }

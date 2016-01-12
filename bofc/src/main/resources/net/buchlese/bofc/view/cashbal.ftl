@@ -19,13 +19,16 @@
    	  <td>Bareinnahmen</td>	<td align="right">${money(balance.paymentMethodBalance(paymentMethod.CASH))}</td>
    	</tr>
    	<tr>
+   	  <td>Barbestandsdifferenz</td>	<td align="right">${money(balance.cashDiff)}</td>
+   	</tr>
+   	<tr>
    	  <td>Bareinzahlungen</td>	<td align="right">${money(balance.cashInSum)}</td>
    	</tr>
    	<tr>
    	  <td>Barauszahlungen</td>	<td align="right">${money(balance.cashOutSum)}</td>
    	</tr>
    	<tr>
-   	  <td>Abschöpfung</td>	<td align="right">${money(balance.absorption)}</td>
+   	  <td>(-) Abschöpfung</td>	<td align="right">${money(balance.absorption)}</td>
    	</tr>
    	<tr>  
    	  <td>Kassenendbestand</td>	<td align="right">${money(balance.cashEnd)}</td>

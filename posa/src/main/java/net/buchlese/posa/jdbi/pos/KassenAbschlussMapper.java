@@ -39,7 +39,9 @@ public class KassenAbschlussMapper implements ResultSetMapper<KassenAbschluss> {
 //		[Ist] [float] NULL,
 		ka.setIst(rs.getBigDecimal("Ist"));
 //		[Soll] [float] NULL,  -------------------
+		ka.setSoll(rs.getBigDecimal("Soll"));
 //		[Differenz] [float] NULL,  -------------------
+		ka.setDifferenz(rs.getBigDecimal("Differenz"));
 //		[Abschöpfung] [float] NULL,
 		ka.setAbschoepfung(rs.getBigDecimal("Abschöpfung"));
 //		[Vortrag] [float] NULL,    -------------------

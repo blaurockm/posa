@@ -19,6 +19,9 @@
    	  <td>Bareinnahmen</td>	<td align="right">${money(balance.paymentMethodBalance(paymentMethod.CASH))}</td>
    	</tr>
    	<tr>
+   	  <td>Barbestandsdifferenz</td>	<td align="right">${money(balance.cashDiff)}</td>
+   	</tr>
+   	<tr>
    	  <td>Bareinzahlungen</td>	<td align="right">${money(balance.cashInSum)}</td>
    	</tr>
    	<tr>
