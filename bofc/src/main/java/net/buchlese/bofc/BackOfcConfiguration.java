@@ -11,6 +11,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.apache.fop.apps.FopFactory;
+import org.joda.time.DateTime;
 
 import net.buchlese.bofc.api.bofc.ArticleGroup;
 
@@ -37,7 +38,7 @@ public class BackOfcConfiguration extends Configuration {
     
     @JsonProperty
     private Map<String, ArticleGroup> articleGroupMappings = new HashMap<>();
-    
+
     public BackOfcConfiguration() {
     	SimpleServerFactory server = new SimpleServerFactory();
     	server.setApplicationContextPath("/");

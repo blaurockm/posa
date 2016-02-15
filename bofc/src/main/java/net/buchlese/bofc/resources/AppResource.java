@@ -14,6 +14,7 @@ import com.google.inject.Inject;
 import net.buchlese.bofc.BackOfcConfiguration;
 import net.buchlese.bofc.view.AppView;
 import net.buchlese.bofc.view.MobileView;
+import net.buchlese.bofc.view.StartView;
 import net.buchlese.bofc.view.StateView;
 import net.buchlese.bofc.view.TechnicsView;
 
@@ -48,7 +49,7 @@ public class AppResource {
 
 	@GET
 	@Path("/app")
-	public View getDesktop() {
+	public View getStatistics() {
 		return new AppView(cfg);
 	}
 
@@ -56,6 +57,12 @@ public class AppResource {
 	@Path("/technics")
 	public View getTechnics() {
 		return new TechnicsView(cfg, app);
+	}
+
+	@GET
+	@Path("/start")
+	public View getDesktop() {
+		return new StartView(cfg);
 	}
 
 	@GET

@@ -28,3 +28,4 @@ articleGroupMappings:
   schreibwaren: { wargrindex: 'S', text : 'Schreibwaren',key : 'schreibw', type : 'GOOD', marge : 0.5 }
   kalender: { wargrindex: '7', text : 'Kalender',key : 'kalender', type : 'GOOD', marge : 0.3 }
   nonbook: { wargrindex: '4568', text : 'NonBook',key : 'nonbook', type : 'GOOD', marge : 0.5 }
+

@@ -35,8 +35,11 @@ import net.buchlese.bofc.jdbi.bofc.PosCashBalanceDAO;
 import net.buchlese.bofc.jdbi.bofc.PosTicketDAO;
 import net.buchlese.bofc.jdbi.bofc.PosTxDAO;
 import net.buchlese.bofc.view.CashBalView;
+import net.buchlese.bofc.view.StartView;
 
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.joda.time.format.DateTimeFormat;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
@@ -124,8 +127,14 @@ public class PosCashBalanceResource {
 			public void write(OutputStream os) throws IOException,  WebApplicationException {
 				Writer writer = new BufferedWriter(new OutputStreamWriter(os, "iso-8859-1"));
 				writer.write(AccountingExport.accountingExportHeader());
+				String fromId = new DateParam(from).getDate().toString(IDFORMAT);
+				Optional<String> tillId = Optional.fromNullable(till).transform( d -> new DateParam(d).getDate().toString(IDFORMAT));
 				for (Integer kasse : kassen) {
-					for (PosCashBalance bal :  dao.fetch(kasse, from, Optional.fromNullable(till))) {
+					LocalDate ti = new DateParam(till).getDate();
+					for (PosCashBalance bal :  dao.fetch(kasse, fromId, tillId)) {
+						if (ti == null || bal.getLastCovered().toLocalDate().isAfter(ti)) {
+							ti = bal.getLastCovered().toLocalDate();
+						}
 						try {
 							writer.write(AccountingExport.accountingExport(bal));
 						} catch (Exception e) {
@@ -133,6 +142,7 @@ public class PosCashBalanceResource {
 							writer.write("\n\n\nproblem creating cashBalance " + e.toString() + "\n\n\n\n");
 						}
 					}
+					StartView.setFromDate(kasse, ti);
 				}
 				writer.flush();
 			}
@@ -262,4 +272,13 @@ public class PosCashBalanceResource {
 		return dao.fetchAllAfter(from, till);
 	}
 
+	private static class DateParam {
+		private LocalDate date;
+		public DateParam(String dateStr) {
+			date = DateTimeFormat.forPattern("yyyy-MM-dd").parseLocalDate(dateStr);
+		}
+		public LocalDate getDate() {
+			return date;
+		}
+	}
 }

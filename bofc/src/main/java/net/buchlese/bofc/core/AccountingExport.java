@@ -159,10 +159,34 @@ public class AccountingExport {
 		soll.setBetrag(ges);
 		sb.append(convertBookingsToCSV(ausgaben, false));
 
+		// und jetzt die Kassendifferenz.
+		List<Booking> kassdiff = new ArrayList<>();
+		soll = new Booking();
+		soll.setAccount(getKassenkonto(bal));
+		soll.setDate(bal.getLastCovered());
+		soll.setText("Kassendifferenz " + dateShort);
+		soll.setBetrag(bal.getCashDiff());
+		soll.setCode(null);
+		kassdiff.add(soll);
+		Booking haben = new Booking();
+		haben.setAccount(7400);		
+		haben.setCode(null);
+		kassdiff.add(haben);
+		
+		sb.append(convertBookingsToCSV(kassdiff, true));
+
+		
 		return sb.toString();
 	}
 	
-	
+	/**
+	 * erzeugt aus einer List mit Buchungen einen CSV-String.
+	 * Wenn es mehr als 2 Buchungen sind, wird eine Split-Buchung erzeugt, aonsten eine normale Soll-Haben Buchung
+	 * 
+	 * @param bookings
+	 * @param soll
+	 * @return String in CSV-Format
+	 */
 	private static String convertBookingsToCSV(List<Booking> bookings, boolean soll) {
 		String dateLong = bookings.get(0).getDate().toString("dd.MM.yyyy");
 		StringBuilder sb = new StringBuilder();
@@ -217,6 +241,11 @@ public class AccountingExport {
 	}
 
 
+	/**
+	 * Helferklasse. Eine einfach Buchung auf ein Konto. 2 Stück davon ergeben eine Doppik
+	 * @author Markus Blaurock
+	 *
+	 */
 	private static class Booking {
 		private int account;
 		private long betrag;
