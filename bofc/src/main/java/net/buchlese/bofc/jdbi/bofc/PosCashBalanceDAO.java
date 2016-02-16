@@ -15,6 +15,8 @@ import com.google.common.base.Optional;
 
 @RegisterMapper(PosCashBalanceMapper.class)
 public interface PosCashBalanceDAO {
+	public static String IDFORMAT = "yyyyMMdd";
+
 	@SqlQuery("select * from poscashbalance where abschlussid >= :date and abschlussid <= :datetill")
 	List<PosCashBalance> fetchAllAfter(@Bind("date") String date, @Bind("datetill") String datetill);
 

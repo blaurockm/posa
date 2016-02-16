@@ -103,7 +103,7 @@
             </div>
             <div class="form-group">
               <label for="schrambergTill">Bis Datum</label>
-              <input type="date" placeholder="ab" name="from" class="form-control" id="schrambergTill" value="${schrambergTill}">
+              <input type="date" placeholder="ab" name="till" class="form-control" id="schrambergTill" value="${schrambergTill}">
             </div>
             <button type="submit" class="btn btn-success">Export</button>
           </form>  

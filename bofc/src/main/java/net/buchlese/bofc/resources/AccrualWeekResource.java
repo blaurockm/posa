@@ -23,7 +23,7 @@ import javax.ws.rs.core.StreamingOutput;
 
 import net.buchlese.bofc.api.bofc.AccrualWeek;
 import net.buchlese.bofc.api.bofc.PosCashBalance;
-import net.buchlese.bofc.core.AccountingExport;
+import net.buchlese.bofc.core.AccountingExportFile;
 import net.buchlese.bofc.core.WeekBalance;
 import net.buchlese.bofc.jdbi.bofc.PosCashBalanceDAO;
 import net.buchlese.bofc.view.WeekView;
@@ -81,11 +81,11 @@ public class AccrualWeekResource {
 			public void write(OutputStream os) throws IOException,  WebApplicationException {
 		      	AccrualWeek aw = fetchAccrualWeekForDate(date);
 				Writer writer = new BufferedWriter(new OutputStreamWriter(os, "iso-8859-1"));
-				writer.write(AccountingExport.accountingExportHeader());
+				writer.write(AccountingExportFile.accountingExportHeader());
 				for (Integer kasse : kassen) {
 					for (PosCashBalance bal :  aw.getBalances().getOrDefault(kasse, Collections.emptyList())) {
 						try {
-							writer.write(AccountingExport.accountingExport(bal));
+							writer.write(AccountingExportFile.accountingExport(bal));
 						} catch (Exception e) {
 							log.error("problem creating cashBalance" + bal, e);
 							writer.write("\n\n\nproblem creating cashBalance " + e.toString() + "\n\n\n\n");

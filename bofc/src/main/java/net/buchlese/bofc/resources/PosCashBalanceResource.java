@@ -24,18 +24,20 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 
+import net.buchlese.bofc.api.bofc.AccountingExport;
 import net.buchlese.bofc.api.bofc.PosCashBalance;
 import net.buchlese.bofc.api.bofc.PosTicket;
 import net.buchlese.bofc.api.bofc.PosTx;
-import net.buchlese.bofc.core.AccountingExport;
+import net.buchlese.bofc.core.AccountingExportFactory;
+import net.buchlese.bofc.core.AccountingExportFile;
 import net.buchlese.bofc.core.CashBalance;
 import net.buchlese.bofc.core.PDFCashBalance;
 import net.buchlese.bofc.core.Validator;
 import net.buchlese.bofc.jdbi.bofc.PosCashBalanceDAO;
 import net.buchlese.bofc.jdbi.bofc.PosTicketDAO;
 import net.buchlese.bofc.jdbi.bofc.PosTxDAO;
+import net.buchlese.bofc.view.AccountingExportView;
 import net.buchlese.bofc.view.CashBalView;
-import net.buchlese.bofc.view.StartView;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -117,32 +119,45 @@ public class PosCashBalanceResource {
 		return new CashBalView(cb);
 	}
 
+	@GET
+	@Path("/viewfibuexport")
+	@Produces("text/html")
+	public View create(@QueryParam("key") Integer key) {
+		AccountingExport ae = AccountingExportFactory.getExport(key);
+		if (ae != null) {
+			return new AccountingExportView(ae);
+		}
+		throw new WebApplicationException("key not found");
+	}
+
 	@POST
 	@Path("/fibuexport")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces("text/html")
+	public View create( @FormParam("from")String fromStr, @FormParam("till")String tillStr, @FormParam("kasse") List<Integer> kassen) {
+		LocalDate from = new DateParam(fromStr).getDate();
+		Optional<LocalDate> till = Optional.fromNullable(tillStr).transform(d -> new DateParam(d).getDate());
+		for (Integer kasse : kassen) {
+			return new AccountingExportView(AccountingExportFactory.createExport(kasse, from, till, dao));
+		}
+		throw new WebApplicationException("kasse not found");
+	}
+
+	@GET
+	@Path("/fibuexportfile")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces("text/csv; charset='iso-8859-1'")
-	public Response create( @FormParam("from")String from, @FormParam("till")String till, @FormParam("kasse") List<Integer> kassen) {
+	public Response createFile( @QueryParam("key") Integer key) {
 		StreamingOutput stream = new StreamingOutput() {
 			@Override
 			public void write(OutputStream os) throws IOException,  WebApplicationException {
 				Writer writer = new BufferedWriter(new OutputStreamWriter(os, "iso-8859-1"));
-				writer.write(AccountingExport.accountingExportHeader());
-				String fromId = new DateParam(from).getDate().toString(IDFORMAT);
-				Optional<String> tillId = Optional.fromNullable(till).transform( d -> new DateParam(d).getDate().toString(IDFORMAT));
-				for (Integer kasse : kassen) {
-					LocalDate ti = new DateParam(till).getDate();
-					for (PosCashBalance bal :  dao.fetch(kasse, fromId, tillId)) {
-						if (ti == null || bal.getLastCovered().toLocalDate().isAfter(ti)) {
-							ti = bal.getLastCovered().toLocalDate();
-						}
-						try {
-							writer.write(AccountingExport.accountingExport(bal));
-						} catch (Exception e) {
-							log.error("problem creating cashBalance" + bal, e);
-							writer.write("\n\n\nproblem creating cashBalance " + e.toString() + "\n\n\n\n");
-						}
-					}
-					StartView.setFromDate(kasse, ti);
+				AccountingExport ae = AccountingExportFactory.getExport(key);
+				try {
+					AccountingExportFile.createFile(ae, writer);
+				} catch (Exception e) {
+					log.error("problem creating file for AccountingExport " + ae, e);
+					writer.write("\n\n\nproblem creating cashBalance " + e.toString() + "\n\n\n\n");
 				}
 				writer.flush();
 			}

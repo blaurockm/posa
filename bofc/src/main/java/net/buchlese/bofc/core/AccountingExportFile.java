@@ -1,5 +1,7 @@
 package net.buchlese.bofc.core;
 
+import java.io.IOException;
+import java.io.Writer;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -7,12 +9,13 @@ import java.util.Map;
 
 import org.joda.time.DateTime;
 
+import net.buchlese.bofc.api.bofc.AccountingExport;
 import net.buchlese.bofc.api.bofc.ArticleGroup;
 import net.buchlese.bofc.api.bofc.PaymentMethod;
 import net.buchlese.bofc.api.bofc.PosCashBalance;
 import net.buchlese.bofc.api.bofc.Tax;
 
-public class AccountingExport {
+public class AccountingExportFile {
 	
 //	Belegdatum;Buchungstext;Buchungsbetrag;Sollkonto;Habenkonto;Kostenstelle
 //	04.10.2014;Einnahmen 04.10.;289.07;1600;0;
@@ -25,6 +28,18 @@ public class AccountingExport {
 //	;Barentnahme 04.10.;225.0;1460;;
 //	04.10.2014;Eingel Gutscheine 04.10.;2.91;1371;1600;
 
+	public static void createFile(AccountingExport ae, Writer writer) throws IOException {
+		writer.write(AccountingExportFile.accountingExportHeader());
+		for (PosCashBalance bal :  ae.getBalances()) {
+			try {
+				writer.write(AccountingExportFile.accountingExport(bal));
+			} catch (Exception e) {
+				writer.write("\n\n\nproblem creating cashBalance " + e.toString() + "\n\n\n\n");
+			}
+		}
+	}
+	
+	
 	public static String accountingExportHeader() {
 		return "Belegdatum;Buchungstext;Buchungsbetrag;Sollkonto;Habenkonto;Kostenstelle\r\n";
 	}
@@ -33,17 +48,17 @@ public class AccountingExport {
 		return "";
 	}
 
+	public static int getKassenkonto(int pointid) {
+		switch(pointid) {
+		case 1 : return 1600;
+		case 2 : return 1610;
+		case 3 : return 1620;
+		default: return 1370;
+		}
+	}
+
 	private static int getKassenkonto(PosCashBalance bal) {
-		if (bal.getPointid() == 1) {
-			return 1600;
-		}
-		if (bal.getPointid() == 2) {
-			return 1610;
-		}
-		if (bal.getPointid() == 3) {
-			return 1620;
-		}
-		return 1370;
+		return getKassenkonto(bal.getPointid());
 	}
 
 	public static String accountingExport(PosCashBalance bal) {
