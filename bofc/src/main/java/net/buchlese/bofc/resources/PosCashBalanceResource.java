@@ -116,7 +116,10 @@ public class PosCashBalanceResource {
 	@Path("/view/{date}")
 	public View fetchViewForDate(@PathParam("date") String abschlussId)  {
 		PosCashBalance cb = fetchBalanceForId(abschlussId);
-		return new CashBalView(cb);
+		if (cb != null) {
+			return new CashBalView(cb);
+		}
+		throw new WebApplicationException("cashbal " + abschlussId + " not found.");
 	}
 
 	@GET

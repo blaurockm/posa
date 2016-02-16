@@ -33,6 +33,9 @@ public class CashBalView extends View {
 		if (cashBal.getPointid() == 2) {
 			return "Kasse Sulz";
 		}
+		if (cashBal.getPointid() == 3) {
+			return "Kasse Schramberg";
+		}
 		return "--------Testsystem!----------";
 	}
 	
