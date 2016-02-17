@@ -17,6 +17,9 @@ import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 
 @RegisterMapper(PosCashBalanceMapper.class)
 public interface PosCashBalanceDAO {
+	
+	static final String IDFORMAT = "yyyyMMdd"; 
+	
 	@SqlQuery("select * from poscashbalance where abschlussid >= :date ")
 	List<PosCashBalance> fetchAllAfter(@Bind("date") String date);
 

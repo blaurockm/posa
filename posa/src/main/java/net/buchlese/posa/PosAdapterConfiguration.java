@@ -50,6 +50,9 @@ public class PosAdapterConfiguration extends Configuration {
     private int pointOfSaleId;
 
     @JsonProperty
+    private int daysBack = 14;
+
+    @JsonProperty
     private boolean sshEnabled;
 
     public boolean isSshEnabled() {
@@ -113,6 +116,10 @@ public class PosAdapterConfiguration extends Configuration {
 
 	public String getHomeHost() {
 		return homeHost;
+	}
+
+	public int getDaysBack() {
+		return daysBack;
 	}
     
 }

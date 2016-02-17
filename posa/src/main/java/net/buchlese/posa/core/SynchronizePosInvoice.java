@@ -56,7 +56,6 @@ public class SynchronizePosInvoice extends AbstractSynchronizer {
 
 	
 	public PosInvoice createInvoice(KleinteilKopf rech) {
-		System.out.println("convert Invoice " + rech.getRechnungsNummer());
 		PosInvoice inv = new PosInvoice();
 		inv.setNumber(rech.getRechnungsNummer());
 		inv.setDate(rech.getRechnungsDatum().toLocalDate());
@@ -72,7 +71,6 @@ public class SynchronizePosInvoice extends AbstractSynchronizer {
 		updStr(inv::setName3, inv.getName3(), rech.getName3());
 		updStr(inv::setStreet, inv.getStreet(), rech.getStrasse());
 		updStr(inv::setCity, inv.getCity(), rech.getOrt());
-		System.out.println("converted Invoice " + inv);
 		return inv;
 	}
 	

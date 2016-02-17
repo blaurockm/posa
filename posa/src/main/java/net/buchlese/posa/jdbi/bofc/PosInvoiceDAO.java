@@ -8,6 +8,7 @@ import javax.validation.Valid;
 import net.buchlese.posa.api.bofc.PosInvoice;
 
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.BindBean;
 import org.skife.jdbi.v2.sqlobject.SqlBatch;
@@ -19,13 +20,16 @@ import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 public interface PosInvoiceDAO {
 
 	@SqlQuery("select * from posinvoice where number = :nummer")
-	List<PosInvoice> fetch(@Bind("nummber") String num);
+	List<PosInvoice> fetch(@Bind("nummer") String num);
+
+	@SqlQuery("select * from posinvoice where invDate > :date")
+	List<PosInvoice> fetchAllAfter(@Bind("date") java.util.Date num);
 
 	@SqlQuery("select max(creationtime) from posinvoice")
 	DateTime getLastErfasst();
 
 	@SqlBatch("insert into posinvoice (number, customer, debitor, amount, amountFull, amountHalf, amountNone, invDate, creationtime, printdate, name1, name2, name3,  street, city) " +
-	" values (:number, :customerId, :debitorId, :amount, :amountFull, :amountHalf, :amountNone, :creationTime,:creationTime, :printTime, :name1, :name2, :name3, :street, :city)")
+	" values (:number, :customerId, :debitorId, :amount, :amountFull, :amountHalf, :amountNone, :date,:creationTime, :printTime, :name1, :name2, :name3, :street, :city)")
 	@BatchChunkSize(500)
 	void insertAll(@Valid @BindBean Iterator<PosInvoice> transactions);
 

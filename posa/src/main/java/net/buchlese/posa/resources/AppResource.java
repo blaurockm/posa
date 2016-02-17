@@ -12,6 +12,8 @@ import javax.ws.rs.core.MediaType;
 import com.google.inject.Inject;
 
 import net.buchlese.posa.PosAdapterConfiguration;
+import net.buchlese.posa.jdbi.bofc.PosCashBalanceDAO;
+import net.buchlese.posa.jdbi.bofc.PosInvoiceDAO;
 import net.buchlese.posa.view.AppView;
 import net.buchlese.posa.view.MobileView;
 import net.buchlese.posa.view.TechnicsView;
@@ -22,11 +24,15 @@ public class AppResource {
 
 	private final PosAdapterConfiguration cfg;
 	private final Environment env;
-	
+	private final PosCashBalanceDAO dao;
+	private final PosInvoiceDAO daoInv;
+
 	@Inject
-	public AppResource(PosAdapterConfiguration config, Environment env) {
+	public AppResource(PosAdapterConfiguration config, Environment env, PosCashBalanceDAO dao, PosInvoiceDAO daoInv) {
 		this.cfg = config;
 		this.env = env;
+		this.dao = dao;
+		this.daoInv = daoInv;
 	}
 
 	@GET
@@ -48,7 +54,7 @@ public class AppResource {
 	@GET
 	@Path("/app")
 	public View getDesktop() {
-		return new AppView(cfg);
+		return new AppView(cfg, dao, daoInv);
 	}
 	
 	@GET
