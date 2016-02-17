@@ -12,8 +12,14 @@
    border:1pt solid red;
 }
 
-.wotag {
+.wotag1 {
    border: 1pt solid green;
+   text-align:center;
+}
+
+.wotag2 {
+   border: 1pt solid green;
+   text-align:center;
 }
 
 .valueField {
@@ -28,23 +34,62 @@ $(function() {
 
     function displayPosState(pos) {
 	    var view = posView.clone().appendTo("#placeholder");
+	    view.attr("pointid", pos.pointid);
 		view.find("#posId").find("span.value").html(pos.pointid);
 		view.find("#posRevenue").find("span.value").html(pos.revenue.formatMoney());
 		view.find("#posProfit").find("span.value").html(pos.profit.formatMoney());
 		var akt = new Date(pos.timest)
 		view.find("#posLastSeen").find("span.value").html(akt.toLocaleTimeString() + " " + akt.toLocaleDateString());
+	    view.show();
 	}
 	
+    function addServerState(view, server) {
+    	view.find("#posId").find("span.value").html("---" + server.pointid + "---");
+    	var wotag = view.find("td.wotag1");
+    	for(var w in server.thisWeek) {
+    		if (server.thisWeek[w] == true) {
+    			wotag.html("/").css("background", "green");
+    		} else {
+    			wotag.html("X").css("background", "red");
+    		}
+    		wotag = wotag.next();
+    	}
+    	wotag = view.find("td.wotag2");
+    	for(var w in server.lastWeek) {
+    		if (server.lastWeek[w] == true) {
+    			wotag.html("/").css("background", "green");
+    		} else {
+    			wotag.html("X").css("background", "red");
+    		}
+    		wotag = wotag.next();
+    	}
+    	
+    }
+    
       function showPosStates(data) {
         for (var i in data) {
 		    displayPosState(data[i]);
         }
-
 	  }
-	  
+
+      function showServerStates(data) {
+          for (var i in data) {
+        	  var existView = $(".stateview[pointid="+data[i].pointid+"]");
+  		      addServerState(existView, data[i]);
+          }
+  	  }
+
 	  var posView = $("#posStateView");
 	  
-      $.getJSON('posState').done(showPosStates);
+      $.getJSON('posState').done(showPosStates).fail(function( jqxhr, textStatus, error ) {
+    	    var err = textStatus + ", " + error;
+    	    console.log( "Request Failed: " + err );
+    	});
+      $.getJSON('serverState').done(showServerStates).fail(function( jqxhr, textStatus, error ) {
+  	    var err = textStatus + ", " + error;
+  	    console.log( "Request Failed: " + err );
+  	    });
+      posView.hide();
 	  
 });
     </script> 
@@ -62,7 +107,7 @@ $(function() {
  </script>
     <div id="placeholder"></div>
 	<hr style="clear:both">
-	<div id="posStateView" style="clear:left; border:1px solid black; float:left;">
+	<div id="posStateView" class="stateview" style="clear:left; border:1px solid black; float:left;">
 	  <div id="posId" style="float:left; padding:6pt;"><span style="font-size:300%" class="value">1</span></div>
 	  <div style="float:left;">
 	  <div id="posRevenue" class="valueField" style="float:left">Umsatz <span class="value">0,00</span></div>
@@ -72,12 +117,12 @@ $(function() {
 	  <div style="float:left;">
 	  <table class="week">
 	    <tr><th class="wotagH">Mo</th><th class="wotagH">Di</th><th class="wotagH">Mi</th><th class="wotagH">Do</th><th class="wotagH">Fr</th><th class="wotagH">Sa</th><th class="wotagH">So</th></tr>
-		<tr><td class="wotag"></td><td class="wotag"></td><td class="wotag"></td><td class="wotag"></td><td class="wotag"></td><td class="wotag"></td><td class="wotag"></td></tr>
+		<tr><td class="wotag1"></td><td class="wotag1"></td><td class="wotag1"></td><td class="wotag1"></td><td class="wotag1"></td><td class="wotag1"></td><td class="wotag1"></td></tr>
 	  </table></div>
 	  <div style="float:left;">
 	  <table class="week">
 	    <tr><th class="wotagH">Mo</th><th class="wotagH">Di</th><th class="wotagH">Mi</th><th class="wotagH">Do</th><th class="wotagH">Fr</th><th class="wotagH">Sa</th><th class="wotagH">So</th></tr>
-		<tr><td class="wotag"></td><td class="wotag"></td><td class="wotag"></td><td class="wotag"></td><td class="wotag"></td><td class="wotag"></td><td class="wotag"></td></tr>
+		<tr><td class="wotag2"></td><td class="wotag2"></td><td class="wotag2"></td><td class="wotag2"></td><td class="wotag2"></td><td class="wotag2"></td><td class="wotag2"></td></tr>
 	  </table></div>
 	
 	  </div> 

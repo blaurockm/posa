@@ -14,8 +14,11 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import net.buchlese.bofc.api.bofc.PosState;
 import net.buchlese.bofc.api.bofc.ServerState;
 
+import org.joda.time.Instant;
+import org.joda.time.LocalDate;
 import org.slf4j.LoggerFactory;
 
 @Path("/serverState")
@@ -54,6 +57,12 @@ public class ServerStateResource {
 		for (LinkedList<ServerState> x : states.values()) {
 			res.add(x.getFirst());
 		}
+		ServerState dummy = new ServerState();
+		dummy.setPointid(66);
+		dummy.setTimest(Instant.now());
+		dummy.setThisWeek(new boolean[]{true,true,false,false,true,false,true});
+		res.add(dummy);
+
 		return res;
 	}
 	
