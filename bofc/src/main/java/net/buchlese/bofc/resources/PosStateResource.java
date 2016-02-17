@@ -56,13 +56,13 @@ public class PosStateResource {
 		for (LinkedList<PosState> x : states.values()) {
 			res.add(x.getFirst());
 		}
-		PosState dummy = new PosState();
-		dummy.setPointid(66);
-		dummy.setRevenue(23442L);
-		dummy.setProfit(4323L);
-		dummy.setStateDate(LocalDate.now());
-		dummy.setTimest(Instant.now());
-		res.add(dummy);
+//		PosState dummy = new PosState();
+//		dummy.setPointid(66);
+//		dummy.setRevenue(23442L);
+//		dummy.setProfit(4323L);
+//		dummy.setStateDate(LocalDate.now());
+//		dummy.setTimest(Instant.now());
+//		res.add(dummy);
 		return res;
 	}
 	

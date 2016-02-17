@@ -57,11 +57,11 @@ public class ServerStateResource {
 		for (LinkedList<ServerState> x : states.values()) {
 			res.add(x.getFirst());
 		}
-		ServerState dummy = new ServerState();
-		dummy.setPointid(66);
-		dummy.setTimest(Instant.now());
-		dummy.setThisWeek(new boolean[]{true,true,false,false,true,false,true});
-		res.add(dummy);
+//		ServerState dummy = new ServerState();
+//		dummy.setPointid(66);
+//		dummy.setTimest(Instant.now());
+//		dummy.setThisWeek(new boolean[]{true,true,false,false,true,false,true});
+//		res.add(dummy);
 
 		return res;
 	}
