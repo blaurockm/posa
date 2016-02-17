@@ -2,8 +2,6 @@ package net.buchlese.bofc;
 
 import io.dropwizard.jdbi.DBIFactory;
 import io.dropwizard.setup.Environment;
-import net.buchlese.bofc.gui.GuiServlet;
-import net.buchlese.bofc.gui.VaadinBundle;
 import net.buchlese.bofc.jdbi.bofc.PayMethArgumentFactory;
 import net.buchlese.bofc.jdbi.bofc.PosCashBalanceDAO;
 import net.buchlese.bofc.jdbi.bofc.PosTicketDAO;
@@ -27,11 +25,6 @@ public class BackOfcModule extends AbstractModule {
 
 	}
 	private DBI bofcDBI;
-
-	@Provides
-	public VaadinBundle provideVaadinBundle(BackOfcApplication app) {
-		return new VaadinBundle(GuiServlet.class, "/gui/*", app);
-	}
 	
 	@Provides
 	@Named("bofcdb")
