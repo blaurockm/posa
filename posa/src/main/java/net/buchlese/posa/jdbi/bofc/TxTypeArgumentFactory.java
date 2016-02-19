@@ -13,8 +13,7 @@ import org.skife.jdbi.v2.tweak.ArgumentFactory;
 public class TxTypeArgumentFactory implements ArgumentFactory<TxType> {
 
 	@Override
-	public boolean accepts(Class<?> expectedType, Object value,
-			StatementContext ctx) {
+	public boolean accepts(Class<?> expectedType, Object value,	StatementContext ctx) {
 		return value instanceof TxType;
 	}
 

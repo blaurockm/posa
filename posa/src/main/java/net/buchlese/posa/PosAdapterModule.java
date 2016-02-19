@@ -5,6 +5,8 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import io.dropwizard.jdbi.DBIFactory;
 import io.dropwizard.setup.Environment;
+import net.buchlese.posa.jdbi.bofc.JodaLocalDateArgumentFactory;
+import net.buchlese.posa.jdbi.bofc.JodaLocalDateMapper;
 import net.buchlese.posa.jdbi.bofc.PayMethArgumentFactory;
 import net.buchlese.posa.jdbi.bofc.PosCashBalanceDAO;
 import net.buchlese.posa.jdbi.bofc.PosInvoiceDAO;
@@ -63,6 +65,8 @@ public class PosAdapterModule extends AbstractModule {
 				bofcDBI.registerArgumentFactory(new TaxArgumentFactory());
 				bofcDBI.registerArgumentFactory(new PayMethArgumentFactory());
 				bofcDBI.registerArgumentFactory(new TxTypeArgumentFactory());
+				bofcDBI.registerArgumentFactory(new JodaLocalDateArgumentFactory());
+				bofcDBI.registerMapper(new JodaLocalDateMapper());
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 				bofcDBI = null;
