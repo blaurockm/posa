@@ -1,7 +1,7 @@
 package net.buchlese.bofc.api.bofc;
 
 public enum PaymentMethod {
-	CASH("c", "Bar", 1460),
+	CASH("c", "Bar", 1464),
 	TELE("t", "EC", 1461),
 	WHAT("w", "WTF?", 1370);
 	

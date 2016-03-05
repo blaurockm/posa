@@ -150,7 +150,7 @@ public class AccountingExportFile {
 			ausgaben.add(couponEntry);
 		}
 		Booking cashAbsorpEntry = new Booking();
-		cashAbsorpEntry.setAccount(PaymentMethod.CASH.getAccount());
+		cashAbsorpEntry.setAccount(PaymentMethod.CASH.getAccount()+bal.getPointid());
 		cashAbsorpEntry.setBetrag(bal.getAbsorption());
 		cashAbsorpEntry.setText(PaymentMethod.CASH.getAccountText() + " " + dateShort);
 		ges += bal.getAbsorption();
@@ -175,21 +175,23 @@ public class AccountingExportFile {
 		sb.append(convertBookingsToCSV(ausgaben, false));
 
 		// und jetzt die Kassendifferenz.
-		List<Booking> kassdiff = new ArrayList<>();
-		soll = new Booking();
-		soll.setAccount(getKassenkonto(bal));
-		soll.setDate(bal.getLastCovered());
-		soll.setText("Kassendifferenz " + dateShort);
-		soll.setBetrag(bal.getCashDiff());
-		soll.setCode(null);
-		kassdiff.add(soll);
-		Booking haben = new Booking();
-		haben.setAccount(7400);		
-		haben.setCode(null);
-		kassdiff.add(haben);
-		
-		sb.append(convertBookingsToCSV(kassdiff, true));
+		if (bal.getCashDiff() != 0) {
+			// natürlich nur, wenn es eine gibt..
+			List<Booking> kassdiff = new ArrayList<>();
+			soll = new Booking();
+			soll.setAccount(getKassenkonto(bal));
+			soll.setDate(bal.getLastCovered());
+			soll.setText("Kassendifferenz " + dateShort);
+			soll.setBetrag(bal.getCashDiff());
+			soll.setCode(null);
+			kassdiff.add(soll);
+			Booking haben = new Booking();
+			haben.setAccount(7400);		
+			haben.setCode(null);
+			kassdiff.add(haben);
 
+			sb.append(convertBookingsToCSV(kassdiff, true));
+		}
 		
 		return sb.toString();
 	}
