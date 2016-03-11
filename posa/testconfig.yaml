@@ -18,11 +18,11 @@ posDb:
   driverClass: net.sourceforge.jtds.jdbc.Driver
 
   # the username
-  user: sa
-  password: master
+#  user: sa
+#  password: master
 
-#  user: fibu
-#  password: kasse2fibu
+  user: fibu
+  password: kasse2fibu
   
   # the JDBC URL
   #####  lokale datenbank

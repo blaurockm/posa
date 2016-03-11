@@ -9,6 +9,7 @@ import net.buchlese.posa.PosAdapterApplication;
 import net.buchlese.posa.PosAdapterConfiguration;
 import net.buchlese.posa.api.bofc.SendableObject;
 import net.buchlese.posa.jdbi.bofc.PosCashBalanceDAO;
+import net.buchlese.posa.jdbi.bofc.PosInvoiceDAO;
 
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
@@ -21,13 +22,16 @@ public class SendTimer extends TimerTask {
 
 	private final PosAdapterConfiguration config;
 	private final PosCashBalanceDAO cashBalDao;
+	private final PosInvoiceDAO invoiceDao;
+	
 	private static final org.slf4j.Logger log = LoggerFactory.getLogger(SendTimer.class);
 
 	@Inject
-	public SendTimer(PosAdapterConfiguration config, PosCashBalanceDAO balDao) {
+	public SendTimer(PosAdapterConfiguration config, PosCashBalanceDAO balDao, PosInvoiceDAO invDAO) {
 		super();
 		this.config = config;
 		this.cashBalDao = balDao;
+		this.invoiceDao = invDAO;
 	}
 
 	public static long lastHomingRun;
@@ -46,6 +50,7 @@ public class SendTimer extends TimerTask {
 					Sender<?> sender = new SendPosCashBalance(config, cashBalDao, log, httpClient);
 					sender = sender.addSender(new SendPosState(config, log, httpClient));
 					sender = sender.addSender(new SendServerState(config, log, httpClient));
+					sender = sender.addSender(new SendPosInvoice(config, invoiceDao, log, httpClient));
 
 					toDo.forEach(sender);
 				} catch (JSchException e1) {

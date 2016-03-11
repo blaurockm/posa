@@ -24,7 +24,7 @@
    	  <td align="right" style="padding-left:10mm">${money(inv.cashDiff)}</td>
    	  <td align="right" style="padding-left:10mm">${money(inv.cashEnd)}</td>
    	  <td align="center"><a href="/cashbalance/view/${day.toString("yyyyMMdd")}" target="_new">view</a>
-   	  <a href="/cashbalance/sendbofc/${day.toString("yyyyMMdd")}" target="_new">send</a>
+   	  <a href="/cashbalance/sendbof/${day.toString("yyyyMMdd")}" target="_new">send</a>
    	  <a href="/cashbalance/resync/${day.toString("yyyyMMdd")}" target="_new">resync</a>
    	  </td>
    	</tr>
@@ -69,6 +69,8 @@
       <td><#if inv.date??>${inv.date.toString("dd.MM.yyyy")}<#else> kein Datum?</#if>  </td> 
       <td>${inv.name1}</td>
    	  <td align="right" style="padding-left:10mm">${money(inv.amount)}</td>
+	  <td align="center"><a href="/invoice/${inv.number}" target="_new">view</a>
+   	  <a href="/invoice/sendbof/${inv.number}" target="_new">send</a>
 	 </tr>   
    </#list>
    </tbody>

@@ -8,6 +8,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import net.buchlese.posa.PosAdapterApplication;
 import net.buchlese.posa.api.bofc.PosInvoice;
 import net.buchlese.posa.jdbi.bofc.PosInvoiceDAO;
 
@@ -31,6 +32,15 @@ public class PosInvoiceResource {
 		return dao.fetch(nr);
 	}
 
-
+	@GET
+	@Path("/sendbof/{nr}")
+	public PosInvoice sendAgainInvoice(@PathParam("nr") String nr)  {
+		List<PosInvoice> cb = dao.fetch(nr);
+		if (cb.isEmpty() == false) {
+			PosAdapterApplication.homingQueue.offer(cb.get(0));
+			return cb.get(0);
+		}
+		return null;
+	}
 
 }

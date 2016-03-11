@@ -144,4 +144,36 @@
          <column name="name" type="varchar2(50)"/>
       </createTable>   
    </changeSet>
+   
+   
+   <changeSet id="invoices" author="mblaurock">
+      <createTable tableName="posInvoice">
+         <column name="id" type="bigint" autoIncrement="true">
+            <constraints primaryKey="true" nullable="false" />
+         </column>
+         <column name="number" type="varchar(10)">
+            <constraints nullable="false" />
+         </column>
+         <column name="invdate" type="DATETIME">
+            <constraints nullable="false" />
+         </column>
+         <column name="creationtime" type="DATETIME">
+            <constraints nullable="false" />
+         </column>
+         <column name="printDate" type="DATETIME"/>
+         <column name="amount" type="bigint"/>
+         <column name="amountFull" type="bigint"/>
+         <column name="amountHalf" type="bigint"/>
+         <column name="amountNone" type="bigint"/>
+         <column name="name1" type="varchar(40)" />
+         <column name="name2" type="varchar(40)" />
+         <column name="name3" type="varchar(40)" />
+         <column name="street" type="varchar(40)" />
+         <column name="city" type="varchar(50)" />
+         <column name="customer" type="int">
+            <constraints nullable="false" />
+         </column>
+         <column name="debitor" type="int"/>
+      </createTable>
+   </changeSet>
 </databaseChangeLog>

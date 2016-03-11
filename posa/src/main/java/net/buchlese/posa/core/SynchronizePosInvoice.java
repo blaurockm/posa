@@ -59,6 +59,7 @@ public class SynchronizePosInvoice extends AbstractSynchronizer {
 		PosInvoice inv = new PosInvoice();
 		inv.setNumber(rech.getRechnungsNummer());
 		inv.setDate(rech.getRechnungsDatum().toLocalDate());
+		inv.setCustomerId(rech.getKundenNummer());
 		updDate(inv::setCreationTime, inv.getCreationTime(), rech.getErfassungsDatum());
 		updDate(inv::setPrintTime, inv.getPrintTime(), rech.getDruckDatum());
 		updMoney(inv::setAmount, inv.getAmount(), rech.getBrutto());

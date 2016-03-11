@@ -4,7 +4,7 @@
 
    <groupId>net.buchlese</groupId>
    <artifactId>posa</artifactId>
-   <version>1.7-SNAPSHOT</version>
+   <version>1.8-SNAPSHOT</version>
    <packaging>jar</packaging>
 
    <name>posa</name>
