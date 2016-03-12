@@ -161,6 +161,7 @@
             <constraints nullable="false" />
          </column>
          <column name="printDate" type="DATETIME"/>
+         <column name="pointid" type="int"/>
          <column name="amount" type="bigint"/>
          <column name="amountFull" type="bigint"/>
          <column name="amountHalf" type="bigint"/>

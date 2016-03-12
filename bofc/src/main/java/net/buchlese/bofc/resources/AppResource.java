@@ -9,14 +9,15 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import com.google.inject.Inject;
-
 import net.buchlese.bofc.BackOfcConfiguration;
+import net.buchlese.bofc.jdbi.bofc.PosInvoiceDAO;
 import net.buchlese.bofc.view.AppView;
 import net.buchlese.bofc.view.MobileView;
 import net.buchlese.bofc.view.StartView;
 import net.buchlese.bofc.view.StateView;
 import net.buchlese.bofc.view.TechnicsView;
+
+import com.google.inject.Inject;
 
 @Path("/")
 @Produces(MediaType.TEXT_HTML)
@@ -24,11 +25,13 @@ public class AppResource {
 
 	private final BackOfcConfiguration cfg;
 	private final Environment app;
+	private final PosInvoiceDAO daoInv;
 	
 	@Inject
-	public AppResource(BackOfcConfiguration config, Environment app) {
+	public AppResource(BackOfcConfiguration config, Environment app, PosInvoiceDAO daoInv) {
 		this.cfg = config;
 		this.app = app;
+		this.daoInv = daoInv;
 	}
 
 	@GET
@@ -62,7 +65,7 @@ public class AppResource {
 	@GET
 	@Path("/start")
 	public View getDesktop() {
-		return new StartView(cfg);
+		return new StartView(cfg, daoInv);
 	}
 
 	@GET

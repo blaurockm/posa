@@ -26,7 +26,7 @@
     <![endif]-->
   </head>
   <body>
-    <nav class="navbar navbar-inverse navbar-fixed-top">
+    <nav class="navbar navbar-default navbar-static-top">
       <div class="container">
         <div class="navbar-header">
           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -38,15 +38,10 @@
           <a class="navbar-brand" href="#">Buchlese</a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
-          <form class="navbar-form navbar-right">
-            <div class="form-group">
-              <input type="text" placeholder="Email" class="form-control">
-            </div>
-            <div class="form-group">
-              <input type="password" placeholder="Password" class="form-control">
-            </div>
-            <button type="submit" class="btn btn-success">Sign in</button>
-          </form>
+           <ul class="nav navbar-nav">
+             <li><a href="#kasse">Kassenberichte</a></li>
+             <li><a href="#rechnungen">Ausgangsrechnungen</a></li>
+           </ul>
         </div><!--/.navbar-collapse -->
       </div>
     </nav>
@@ -60,6 +55,7 @@
 		</div>
 	</div>
 
+    <section id="kasse">
     <div class="container">
       <!-- Example row of columns -->
       <div class="row">
@@ -111,6 +107,25 @@
 	  </div>    	
     
     </div> <!-- /container -->
+	</section>
+	
+	<section id="rechnungen">
+	   <div class="container">
+	      <div class="col-md-12">
+          <h2>Ausgangsrechnungen</h2>
+	        <ul class="list-group">
+   <#list invoices as inv>
+     <li class="list-group-item">
+      ${inv.number}
+      ${inv.name1} (${inv.customerId})
+   	  ${money(inv.amount)} vom <#if inv.date??>${inv.date.toString("dd.MM.yyyy")}<#else> kein Datum?</#if>  
+   	  <span class="badge">${inv.debitorId}</span>
+	 </li>   
+   </#list>
+	        </ul>
+	      </div>
+	   </div>
+	</section>
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>

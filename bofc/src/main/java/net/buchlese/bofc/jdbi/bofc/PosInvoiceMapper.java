@@ -17,6 +17,7 @@ public class PosInvoiceMapper implements ResultSetMapper<PosInvoice> {
 		tx.setId(rs.getLong("id"));
 		tx.setNumber(rs.getString("number"));
 		tx.setCustomerId(rs.getInt("customer"));
+		tx.setPointid(rs.getInt("pointid"));
 		tx.setDebitorId(rs.getInt("debitor"));
 		tx.setAmount(rs.getLong("amount"));
 		tx.setAmountFull(rs.getLong("amountFull"));
