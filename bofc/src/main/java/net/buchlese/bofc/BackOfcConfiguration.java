@@ -10,10 +10,9 @@ import java.util.Map;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-import org.apache.fop.apps.FopFactory;
-import org.joda.time.DateTime;
-
 import net.buchlese.bofc.api.bofc.ArticleGroup;
+
+import org.apache.fop.apps.FopFactory;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;

@@ -16,8 +16,6 @@ import javax.ws.rs.core.Response;
 
 import net.buchlese.bofc.api.bofc.PosState;
 
-import org.joda.time.Instant;
-import org.joda.time.LocalDate;
 import org.slf4j.LoggerFactory;
 
 @Path("/posState")

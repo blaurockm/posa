@@ -24,6 +24,8 @@ public class AccountingExport {
 	private LocalDate till;
 	@JsonProperty
 	private List<PosCashBalance> balances;
+	@JsonProperty
+	private List<PosInvoice> invoices;
 	public LocalDate getExecDate() {
 		return execDate;
 	}
@@ -71,6 +73,12 @@ public class AccountingExport {
 	}
 	public void setKey(int key) {
 		this.key = key;
+	}
+	public List<PosInvoice> getInvoices() {
+		return invoices;
+	}
+	public void setInvoices(List<PosInvoice> invoices) {
+		this.invoices = invoices;
 	}
 	
 }

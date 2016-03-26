@@ -4,8 +4,14 @@
 <meta http-equiv="Content-type" content="text/html; charset=iso8859-1">
 <title>${export.description?html}</title>
 
+<script>
+function drucken() {
+	window.print();
+}
+</script>
 </head>
 <body>
+   
    <h1>${export.description?html}  vom ${export.execDate.toString("dd.MM.")}</h1>
    
    <p>Export ID-Nr ${export.key}
@@ -33,8 +39,33 @@
    </#list>
    </tbody>	  
    </table>
+   
+   <hr>
+   <p>
+   
+   <table border="1">
+   <thead>
+   <tr>
+     <th>Rechnung Nr</th><th>Belegdatum</th><th>Kunde</th><th>Betrag</th>
+   </tr>
+   </thead>
+   <tbody>
+   <#list export.invoices as inv>
+     <tr>
+      <td>${inv.number}</td>
+      <td><#if inv.date??>${inv.date.toString("dd.MM.yyyy")}<#else> kein Datum?</#if>  </td> 
+      <td>${inv.name1}</td>
+   	  <td align="right" style="padding-left:10mm">${money(inv.amount)}</td>
+	  <td align="center"><a href="/invoice/${inv.number}" target="_new">view</a></td>
+	 </tr>   
+   </#list>
+   </tbody>
+   </table>
 
+   <hr>
    <p>
    <a href="/cashbalance/fibuexportfile?key=${export.key}">Dateidownload</a>
+   <p>
+   <a href="javascript:drucken()">Protokoll drucken</a>
      
 </body>

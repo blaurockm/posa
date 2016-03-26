@@ -3,18 +3,21 @@ package net.buchlese.bofc.core;
 import java.io.IOException;
 import java.io.Writer;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-
-import org.joda.time.DateTime;
 
 import net.buchlese.bofc.api.bofc.AccountingExport;
-import net.buchlese.bofc.api.bofc.ArticleGroup;
-import net.buchlese.bofc.api.bofc.PaymentMethod;
 import net.buchlese.bofc.api.bofc.PosCashBalance;
-import net.buchlese.bofc.api.bofc.Tax;
+import net.buchlese.bofc.api.bofc.PosInvoice;
+import net.buchlese.bofc.core.accounting.BalanceAccounting;
+import net.buchlese.bofc.core.accounting.InvoiceAccounting;
+import net.buchlese.bofc.core.accounting.LedgerEntry;
 
+/**
+ * exportiert die LedgerEntries im Format passend für Lexware.
+ * 
+ * @author Markus Blaurock
+ *
+ */
 public class AccountingExportFile {
 	
 //	Belegdatum;Buchungstext;Buchungsbetrag;Sollkonto;Habenkonto;Kostenstelle
@@ -32,7 +35,16 @@ public class AccountingExportFile {
 		writer.write(AccountingExportFile.accountingExportHeader());
 		for (PosCashBalance bal :  ae.getBalances()) {
 			try {
-				writer.write(AccountingExportFile.accountingExport(bal));
+				List<LedgerEntry> e = BalanceAccounting.convertBalanceToLedger(bal);
+				writer.write(AccountingExportFile.accountingExport(e));
+			} catch (Exception e) {
+				writer.write("\n\n\nproblem creating cashBalance " + e.toString() + "\n\n\n\n");
+			}
+		}
+		for (PosInvoice inv :  ae.getInvoices()) {
+			try {
+				List<LedgerEntry> e = InvoiceAccounting.convertBalanceToLedger(inv);
+				writer.write(AccountingExportFile.accountingExport(e));
 			} catch (Exception e) {
 				writer.write("\n\n\nproblem creating cashBalance " + e.toString() + "\n\n\n\n");
 			}
@@ -44,158 +56,12 @@ public class AccountingExportFile {
 		return "Belegdatum;Buchungstext;Buchungsbetrag;Sollkonto;Habenkonto;Kostenstelle\r\n";
 	}
 
-	private static String getKostenStelle(PosCashBalance bal) {
-		return "";
-	}
-
-	public static int getKassenkonto(int pointid) {
-		switch(pointid) {
-		case 1 : return 1600;
-		case 2 : return 1610;
-		case 3 : return 1620;
-		default: return 1370;
-		}
-	}
-
-	private static int getKassenkonto(PosCashBalance bal) {
-		return getKassenkonto(bal.getPointid());
-	}
-
-	public static String accountingExport(PosCashBalance bal) {
+	public static String accountingExport(List<LedgerEntry> entries) {
 		StringBuilder sb = new StringBuilder();
-		// den Datumstring...
-		
-		String dateShort = bal.getLastCovered().toString("dd.MM.");
-		
-		
-		// zuerst die Einnahmen
-		List<Booking> einnahmen = new ArrayList<>();
-		long ges = 0;
-		
-		Booking soll = new Booking();
-		soll.setAccount(getKassenkonto(bal));
-		soll.setDate(bal.getLastCovered());
-		soll.setText("Einnahmen " + dateShort);
-		soll.setBetrag(bal.getGoodsOut());
-		soll.setCode(null);
-		einnahmen.add(soll);
-		
-		// jetzt die einzelnen MWSt-Sätze
-		for (Map.Entry<Tax, Long> entry : bal.getTaxBalance().entrySet()) {
-			if (entry.getKey().equals(Tax.NONE)) {
-				// 0% wollen wir aufteilen
-				continue;
-			}
-			Booking taxEntry = new Booking();
-			taxEntry.setAccount(entry.getKey().getAccount() + bal.getPointid());
-			taxEntry.setBetrag(entry.getValue());
-			taxEntry.setText("Warenausgang " + entry.getKey().getAccountText() + " " + dateShort);
-			taxEntry.setCode(getKostenStelle(bal));
-			ges += entry.getValue();
-			einnahmen.add(taxEntry);
-		}
-		
-		// jetzt die Gutschein werte
-		for (Map.Entry<String, Long> entry : bal.getNewCoupon().entrySet()) {
-			Booking couponEntry = new Booking();
-			ArticleGroup grp = ArticleGroup.getArticleGroups().get(entry.getKey());
-			couponEntry.setBetrag(entry.getValue());
-			if (grp != null && grp.getAccount() != null) {
-				couponEntry.setAccount(grp.getAccount());
-				couponEntry.setText(grp.getText() + " " + dateShort);
-			} else {
-				couponEntry.setAccount(1371);
-				couponEntry.setText("Gutsch " + dateShort);
-			}
-			couponEntry.setCode(null);
-			ges += entry.getValue();
-			einnahmen.add(couponEntry);
-		}
-
-		// jetzt die Artikelgruppen mit eigener Buchungseinheit
-		for (Map.Entry<String, Long> entry : bal.getArticleGroupBalance().entrySet()) {
-			Booking grpEntry = new Booking();
-			ArticleGroup grp = ArticleGroup.getArticleGroups().get(entry.getKey()); 
-			if (grp == null || grp.getAccount() == null) {
-				continue;
-			}
-			grpEntry.setAccount(grp.getAccount());
-			grpEntry.setBetrag(entry.getValue());
-			grpEntry.setText(grp.getText() + " " + dateShort);
-			grpEntry.setCode(null);
-			ges += entry.getValue();
-			einnahmen.add(grpEntry);
-		}
-
-		soll.setBetrag(ges);
-		sb.append(convertBookingsToCSV(einnahmen, true));
-
-		// jetzt die Ausgaben
-		List<Booking> ausgaben = new ArrayList<>();
-		ges = 0;
-		
-		soll = new Booking();
-		soll.setAccount(getKassenkonto(bal));
-		soll.setDate(bal.getLastCovered());
-		soll.setText("Kassenausgang " + dateShort);
-		soll.setBetrag(bal.getGoodsOut());
-		soll.setCode(null);
-		ausgaben.add(soll);
-		if (bal.getPaymentMethodBalance().get(PaymentMethod.TELE) != null) {
-			Booking couponEntry = new Booking();
-			couponEntry.setAccount(PaymentMethod.TELE.getAccount());
-			couponEntry.setBetrag(bal.getPaymentMethodBalance().get(PaymentMethod.TELE));
-			couponEntry.setText(PaymentMethod.TELE.getAccountText() + " " + dateShort);
-			ges += bal.getPaymentMethodBalance().get(PaymentMethod.TELE);
-			ausgaben.add(couponEntry);
-		}
-		Booking cashAbsorpEntry = new Booking();
-		cashAbsorpEntry.setAccount(PaymentMethod.CASH.getAccount()+bal.getPointid());
-		cashAbsorpEntry.setBetrag(bal.getAbsorption());
-		cashAbsorpEntry.setText(PaymentMethod.CASH.getAccountText() + " " + dateShort);
-		ges += bal.getAbsorption();
-		ausgaben.add(cashAbsorpEntry);
-		// jetzt die Gutschein werte
-		for (Map.Entry<String, Long> entry : bal.getOldCoupon().entrySet()) {
-			Booking couponEntry = new Booking();
-			ArticleGroup grp = ArticleGroup.getArticleGroups().get(entry.getKey());
-			couponEntry.setBetrag(-entry.getValue());
-			if (grp != null && grp.getAccount() != null) {
-				couponEntry.setAccount(grp.getAccount());
-				couponEntry.setText("Eingelöst " + grp.getText() + " " + dateShort);
-			} else {
-				couponEntry.setAccount(1371);
-				couponEntry.setText("Eingelöst Gutsch " + dateShort);
-			}
-			ges += -entry.getValue();
-			ausgaben.add(couponEntry);
-		}
-
-		soll.setBetrag(ges);
-		sb.append(convertBookingsToCSV(ausgaben, false));
-
-		// und jetzt die Kassendifferenz.
-		if (bal.getCashDiff() != 0) {
-			// natürlich nur, wenn es eine gibt..
-			List<Booking> kassdiff = new ArrayList<>();
-			soll = new Booking();
-			soll.setAccount(getKassenkonto(bal));
-			soll.setDate(bal.getLastCovered());
-			soll.setText("Kassendifferenz " + dateShort);
-			soll.setBetrag(bal.getCashDiff());
-			soll.setCode(null);
-			kassdiff.add(soll);
-			Booking haben = new Booking();
-			haben.setAccount(7400);		
-			haben.setCode(null);
-			kassdiff.add(haben);
-
-			sb.append(convertBookingsToCSV(kassdiff, true));
-		}
-		
+		entries.forEach(e -> sb.append(convertBookingsToCSV(e)));
 		return sb.toString();
 	}
-	
+
 	/**
 	 * erzeugt aus einer List mit Buchungen einen CSV-String.
 	 * Wenn es mehr als 2 Buchungen sind, wird eine Split-Buchung erzeugt, aonsten eine normale Soll-Haben Buchung
@@ -204,103 +70,65 @@ public class AccountingExportFile {
 	 * @param soll
 	 * @return String in CSV-Format
 	 */
-	private static String convertBookingsToCSV(List<Booking> bookings, boolean soll) {
-		String dateLong = bookings.get(0).getDate().toString("dd.MM.yyyy");
+	private static String convertBookingsToCSV(LedgerEntry entry) {
+		String dateLong = entry.getBookings().get(0).getDate().toString("dd.MM.yyyy"); // oder das aus dem entry
+		String number = entry.getNumber();
+		
 		StringBuilder sb = new StringBuilder();
-		if (bookings.size() > 2) {
+		if (entry.getBookings().size() > 2) {
 			// wir haben ein split-booking
-			sb.append(dateLong).append(";").append(bookings.get(0).getText()).append(";");
-			sb.append(new BigDecimal(bookings.get(0).getBetrag()).movePointLeft(2).toPlainString()).append(";");
-			if (soll == false) {
+			sb.append(dateLong).append(";");
+			sb.append(number).append(";");
+			sb.append(entry.getBookings().get(0).getText()).append(";");
+			sb.append(new BigDecimal(entry.getBookings().get(0).getBetrag()).movePointLeft(2).toPlainString()).append(";");
+			if (entry.isSoll() == false) {
 				sb.append("0;"); // ein haben split booking
 			}
-			sb.append(bookings.get(0).getAccount());
-			if (soll == true) {
-				sb.append(";0;"); // ein soll split booking
+			sb.append(entry.getBookings().get(0).getAccount());
+			if (entry.isSoll() == true) {
+				sb.append(";0;"); // ein entry.isSoll() split booking
 			}
 			sb.append("\r\n");
-			for (int i = 1; i < bookings.size(); i++) {
-				if (bookings.get(i).getBetrag() == 0) {
+			for (int i = 1; i < entry.getBookings().size(); i++) {
+				if (entry.getBookings().get(i).getBetrag() == 0) {
 					continue;
 				}
-				sb.append(";").append(bookings.get(i).getText()).append(";");
-				sb.append(new BigDecimal(bookings.get(i).getBetrag()).movePointLeft(2).toPlainString()).append(";");
-				if (soll == true) {
+				sb.append(";");
+				sb.append(";");
+				sb.append(entry.getBookings().get(i).getText()).append(";");
+				sb.append(new BigDecimal(entry.getBookings().get(i).getBetrag()).movePointLeft(2).toPlainString()).append(";");
+				if (entry.isSoll() == true) {
 					sb.append(";");
 				}
-				sb.append(bookings.get(i).getAccount()).append(";");
-				if (soll == false) {
+				sb.append(entry.getBookings().get(i).getAccount()).append(";");
+				if (entry.isSoll() == false) {
 					sb.append(";");
 				}
-				if (bookings.get(i).getCode() != null) {
-					sb.append(bookings.get(i).getCode());
+				if (entry.getBookings().get(i).getCode() != null) {
+					sb.append(entry.getBookings().get(i).getCode());
 				}
 				sb.append("\r\n");
 			}
 		} else {
 			// es ist ein einfaches booking;
-			sb.append(dateLong).append(";").append(bookings.get(0).getText()).append(";");
-			sb.append(new BigDecimal(bookings.get(0).getBetrag()).movePointLeft(2).toPlainString()).append(";");
-			if (soll == true) {
-				sb.append(bookings.get(0).getAccount()).append(";");
-				sb.append(bookings.get(1).getAccount()).append(";");
+			sb.append(dateLong).append(";");
+			sb.append(number).append(";");
+			sb.append(entry.getBookings().get(0).getText()).append(";");
+			sb.append(new BigDecimal(entry.getBookings().get(0).getBetrag()).movePointLeft(2).toPlainString()).append(";");
+			if (entry.isSoll() == true) {
+				sb.append(entry.getBookings().get(0).getAccount()).append(";");
+				sb.append(entry.getBookings().get(1).getAccount()).append(";");
 			} else {
-				sb.append(bookings.get(1).getAccount()).append(";");
-				sb.append(bookings.get(0).getAccount()).append(";");
+				sb.append(entry.getBookings().get(1).getAccount()).append(";");
+				sb.append(entry.getBookings().get(0).getAccount()).append(";");
 			}
-			if (bookings.get(1).getCode() != null) {
-				sb.append(bookings.get(1).getCode());
+			if (entry.getBookings().get(1).getCode() != null) {
+				sb.append(entry.getBookings().get(1).getCode());
 			}
 			sb.append("\r\n");
 		}
 		
 		return sb.toString();
 	}
-
-
-	/**
-	 * Helferklasse. Eine einfach Buchung auf ein Konto. 2 Stück davon ergeben eine Doppik
-	 * @author Markus Blaurock
-	 *
-	 */
-	private static class Booking {
-		private int account;
-		private long betrag;
-		private String text;
-		private DateTime date;
-		private String code;
-		public int getAccount() {
-			return account;
-		}
-		public void setAccount(int account) {
-			this.account = account;
-		}
-		public long getBetrag() {
-			return betrag;
-		}
-		public void setBetrag(long betrag) {
-			this.betrag = betrag;
-		}
-		public String getText() {
-			return text;
-		}
-		public void setText(String text) {
-			this.text = text;
-		}
-		public DateTime getDate() {
-			return date;
-		}
-		public String getCode() {
-			return code;
-		}
-		public void setCode(String code) {
-			this.code = code;
-		}
-		public void setDate(DateTime date) {
-			this.date = date;
-		}
-	}
-	
-	
 	
 }

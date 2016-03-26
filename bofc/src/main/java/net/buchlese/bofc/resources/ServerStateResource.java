@@ -14,11 +14,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import net.buchlese.bofc.api.bofc.PosState;
 import net.buchlese.bofc.api.bofc.ServerState;
 
-import org.joda.time.Instant;
-import org.joda.time.LocalDate;
 import org.slf4j.LoggerFactory;
 
 @Path("/serverState")

@@ -19,6 +19,7 @@ import org.joda.time.DateTime;
 public class CashBalView extends View {
 
 	private final PosCashBalance cashBal;
+	@SuppressWarnings("deprecation")
 	private final BeansWrapper wrapper = BeansWrapper.getDefaultInstance();
 	
 	public CashBalView(PosCashBalance cashBal) {

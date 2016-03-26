@@ -33,7 +33,7 @@ public class BackOfcApplication extends Application<BackOfcConfiguration> {
 
 	    bootstrap.addBundle(guiceBundle);
 //
-	    bootstrap.addBundle(new ViewBundle());
+	    bootstrap.addBundle(new ViewBundle<BackOfcConfiguration>());
 //		
 //		// wir geben was her. unsere bilder und css - dinger
 		bootstrap.addBundle(new AssetsBundle());
