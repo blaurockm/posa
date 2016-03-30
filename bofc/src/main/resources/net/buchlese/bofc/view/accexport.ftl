@@ -46,7 +46,7 @@ function drucken() {
    <table border="1">
    <thead>
    <tr>
-     <th>Rechnung Nr</th><th>Belegdatum</th><th>Kunde</th><th>Betrag</th>
+     <th>Rechnung Nr</th><th>Belegdatum</th><th>Kunde</th><th>Debitkto</th><th>Betrag</th>
    </tr>
    </thead>
    <tbody>
@@ -54,7 +54,8 @@ function drucken() {
      <tr>
       <td>${inv.number}</td>
       <td><#if inv.date??>${inv.date.toString("dd.MM.yyyy")}<#else> kein Datum?</#if>  </td> 
-      <td>${inv.name1}</td>
+      <td>${inv.name1} (${inv.customerId})</td>
+      <td align="right">${inv.debitorId}</td>
    	  <td align="right" style="padding-left:10mm">${money(inv.amount)}</td>
 	  <td align="center"><a href="/invoice/${inv.number}" target="_new">view</a></td>
 	 </tr>   

@@ -54,6 +54,9 @@ public class InvoiceAccounting {
 	}
 	
 	public static int getDebitAccount(PosInvoice inv) {
+		if (inv.getDebitorId() > 0) {
+			return inv.getDebitorId();
+		}
 		return 10000;
 	}
 	
