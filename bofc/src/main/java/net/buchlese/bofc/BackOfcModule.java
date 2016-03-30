@@ -4,6 +4,7 @@ import io.dropwizard.jdbi.DBIFactory;
 import io.dropwizard.setup.Environment;
 import net.buchlese.bofc.jdbi.bofc.JodaLocalDateArgumentFactory;
 import net.buchlese.bofc.jdbi.bofc.JodaLocalDateMapper;
+import net.buchlese.bofc.jdbi.bofc.MappingDAO;
 import net.buchlese.bofc.jdbi.bofc.PayMethArgumentFactory;
 import net.buchlese.bofc.jdbi.bofc.PosCashBalanceDAO;
 import net.buchlese.bofc.jdbi.bofc.PosInvoiceDAO;
@@ -60,6 +61,10 @@ public class BackOfcModule extends AbstractModule {
 	@Provides @Inject
 	public PosInvoiceDAO providePosInvoiceDAO(@Named("bofcdb")DBI posDBI) {
 		return posDBI.onDemand(PosInvoiceDAO.class);
+	}
+	@Provides @Inject
+	public MappingDAO provideMappingDAO(@Named("bofcdb")DBI posDBI) {
+		return posDBI.onDemand(MappingDAO.class);
 	}
 	@Provides @Inject
 	public ShiftCalDAO provideShiftCalDAO(@Named("bofcdb")DBI posDBI) {
