@@ -25,7 +25,7 @@ public class InvoiceAccounting {
 		Booking soll = new Booking();
 		soll.setAccount(getDebitAccount(inv)); // das debitorenkonto
 		soll.setBetrag(inv.getAmount());
-		soll.setText("Rg " + inv.getNumber() + "("+inv.getName1()+")");
+		soll.setText("Rg " + inv.getNumber() + "("+ inv.getCustomerId() + "," +inv.getName1()+")");
 		soll.setDate(inv.getDate().toDateTimeAtStartOfDay());
 		entry.add(soll);
 		if (inv.getAmountNone() != null && inv.getAmountNone().longValue() != 0L) {

@@ -55,6 +55,11 @@ public class InvoiceResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response acceptBalance(PosInvoice invoice)  {
 		try {
+			// mapping der Debitor-Nummer
+			Integer debNo = dao.mapDebitor(invoice.getPointid(), invoice.getCustomerId());
+			if (debNo != null) {
+				invoice.setDebitorId(debNo.intValue());
+			}
 			dao.insert(invoice);
 			return Response.ok().build();
 		} catch (Throwable t) {

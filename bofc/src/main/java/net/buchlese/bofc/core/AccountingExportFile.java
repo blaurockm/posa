@@ -53,7 +53,7 @@ public class AccountingExportFile {
 	
 	
 	public static String accountingExportHeader() {
-		return "Belegdatum;Buchungstext;Buchungsbetrag;Sollkonto;Habenkonto;Kostenstelle\r\n";
+		return "Belegdatum;Belegnummer;Buchungstext;Buchungsbetrag;Sollkonto;Habenkonto;Kostenstelle\r\n";
 	}
 
 	public static String accountingExport(List<LedgerEntry> entries) {

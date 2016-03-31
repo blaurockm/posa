@@ -42,4 +42,7 @@ public interface PosInvoiceDAO {
 	" values (:number, :customerId, :pointid, :debitorId, :amount, :amountFull, :amountHalf, :amountNone, :date,:creationTime, :printTime, :name1, :name2, :name3, :street, :city)")
 	void insert(@Valid @BindBean PosInvoice inv);
 
+	@SqlQuery("select max(debitor) from posinvoice where pointid = :pointid and customer = :customerid ")
+	Integer mapDebitor(@Bind("pointid") Integer pointid, @Bind("customerid") Integer customerId);
+
 }
