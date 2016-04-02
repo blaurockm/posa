@@ -21,13 +21,13 @@ import com.google.common.base.Optional;
 @RegisterMapper(PosInvoiceMapper.class)
 public interface PosInvoiceDAO {
 
-	@SqlQuery("select * from posinvoice where number = :nummer")
+	@SqlQuery("select * from posinvoice where number = :nummer order by number asc")
 	List<PosInvoice> fetch(@Bind("nummer") String num);
 
-	@SqlQuery("select * from posinvoice where pointid = :kasse and invDate >= :from and invDate <= :till")
+	@SqlQuery("select * from posinvoice where pointid = :kasse and invDate >= :from and invDate <= :till order by number asc")
 	List<PosInvoice> fetch(@Bind("kasse") Integer kasse, @Bind("from") java.util.Date from, @Bind("till") Optional<java.util.Date> till);
 
-	@SqlQuery("select * from posinvoice where invDate > :date")
+	@SqlQuery("select * from posinvoice where invDate > :date order by number asc")
 	List<PosInvoice> fetchAllAfter(@Bind("date") java.util.Date num);
 
 	@SqlQuery("select max(creationtime) from posinvoice")

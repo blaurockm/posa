@@ -4,6 +4,6 @@ Priority: optional
 Architecture: all
 Homepage: http://buchlese.net
 Depends: 
-Version: 1.2
+Version: 1.3
 Maintainer: Markus Blaurock blaurock@buchlese.net
 Description: BackOffice for Pos-Adapters

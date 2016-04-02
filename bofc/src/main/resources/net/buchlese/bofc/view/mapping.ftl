@@ -27,7 +27,7 @@ function drucken() {
       <td align="right">${ma.debitorId}</td>
    	  <td align="right" style="padding-left:10mm">${ma.count}</td>
    	  <td>
-   	  <form action="/mapping/update" method="post">
+   	  <form action="/mapping/update" method="post" target="_blank">
    	     <input type="hidden" name="point" value="${ma.pointid?string.computer}"/>
    	     <input type="hidden" name="cust" value="${ma.customerId?string.computer}"/>
    	     <input type="text" name="deb" value=""/>
