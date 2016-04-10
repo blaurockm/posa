@@ -32,9 +32,9 @@ public class SynchronizePosInvoice extends AbstractSynchronizer {
 	 * @param syncStart
 	 */
 	public void fetchNewInvoices(DateTime syncStart) {
-		Optional<DateTime> maxId = Optional.fromNullable(invDAO.getLastErfasst());
+		Optional<Integer> maxId = Optional.fromNullable(invDAO.getLastErfasst());
 
-		List<KleinteilKopf> rechnungen = rechnungsDAO.fetchAllAfter(maxId.or(syncStart));
+		List<KleinteilKopf> rechnungen = rechnungsDAO.fetchAllAfter(maxId.or(1160000));
 
 		// für jeden nicht vorhandenen neuen Abschluss eine CashBalance anlegen.
 		List<PosInvoice> pcb = createNewInvoices(rechnungen);
@@ -57,6 +57,8 @@ public class SynchronizePosInvoice extends AbstractSynchronizer {
 	
 	public PosInvoice createInvoice(KleinteilKopf rech) {
 		PosInvoice inv = new PosInvoice();
+		inv.setActionum(rech.getId());
+		inv.setPayed(rech.getBezahlt());
 		inv.setNumber(rech.getRechnungsNummer());
 		inv.setDate(rech.getRechnungsDatum().toLocalDate());
 		inv.setCustomerId(rech.getKundenNummer());
@@ -72,6 +74,7 @@ public class SynchronizePosInvoice extends AbstractSynchronizer {
 		updStr(inv::setName3, inv.getName3(), rech.getName3());
 		updStr(inv::setStreet, inv.getStreet(), rech.getStrasse());
 		updStr(inv::setCity, inv.getCity(), rech.getOrt());
+		
 		return inv;
 	}
 	

@@ -37,6 +37,13 @@ public class PosInvoice {
 	@JsonProperty
 	private Long amountNone;     // Rechnungsbetrag ohne MwSt
 
+	
+	@JsonProperty
+	private int actionum;
+	@JsonProperty
+	private Boolean payed;
+	@JsonProperty
+	private Boolean cancelled;
 	@JsonProperty
 	private DateTime creationTime;
 	@JsonProperty
@@ -148,5 +155,23 @@ public class PosInvoice {
 
 	public String toString() {
 		return "PosInvoice " + number + " of " + String.valueOf(date) + (amount != null ? (" amount " + String.valueOf(amount / 100)) : "n.bek."); 
+	}
+	public int getActionum() {
+		return actionum;
+	}
+	public void setActionum(int actionum) {
+		this.actionum = actionum;
+	}
+	public Boolean getPayed() {
+		return payed;
+	}
+	public void setPayed(Boolean payed) {
+		this.payed = payed;
+	}
+	public Boolean getCancelled() {
+		return cancelled;
+	}
+	public void setCancelled(Boolean cancelled) {
+		this.cancelled = cancelled;
 	}
 }

@@ -96,4 +96,13 @@
          <column name="debitor" type="int"/>
       </createTable>
    </changeSet>
+   
+   <changeSet id="invoicesII" author="mblaurock">
+     <addColumn tableName="posInvoice">
+         <column name="payed" type="boolean"/>
+         <column name="actionum" type="int"/>
+         <column name="cancelled" type="boolean"/>
+     </addColumn>
+   </changeSet>
+   
 </databaseChangeLog>

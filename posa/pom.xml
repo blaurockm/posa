@@ -88,6 +88,11 @@
 		  <artifactId>jsch</artifactId>
 		  <version>0.1.51</version>
 	  </dependency>
+      <dependency>
+         <groupId>com.thetransactioncompany</groupId>
+         <artifactId>jsonrpc2-base</artifactId>
+         <version>1.38</version>
+      </dependency>
    </dependencies>
 
    <build>
