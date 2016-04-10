@@ -23,6 +23,14 @@ public interface MappingDAO {
 			+ " count(*) as anz  from posinvoice where pointid = :pointid group by pointid, customerid order by customerid")
 	List<Mapping> fetch(@Bind("pointid") int point);
 
+	@SqlQuery("select max(debitor) as debitorId, pointid, customer as customerId, max(name1) as name1, "
+			+ " count(*) as anz  from posinvoice where pointid = :pointid and debitor = 0 group by pointid, customerid order by customerid")
+	List<Mapping> fetchEmpty(@Bind("pointid") int point);
+
+	@SqlQuery("select max(debitor) as debitorId, pointid, customer as customerId, max(name1) as name1, "
+			+ " count(*) as anz  from posinvoice where debitor = 0 group by pointid, customerid order by customerid")
+	List<Mapping> fetchAll();
+
 	@SqlUpdate("update posinvoice set debitor = :debitorId where pointid = :pointid and customer = :customerId")
 	void insert(@Valid @BindBean Mapping inv);
 

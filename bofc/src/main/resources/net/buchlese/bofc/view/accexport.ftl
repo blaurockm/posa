@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta http-equiv="Content-type" content="text/html; charset=iso8859-1">
+<meta http-equiv="Content-type" content="text/html; charset=utf-8">
 <title>${export.description?html}</title>
 
 <script>
@@ -33,7 +33,7 @@ function drucken() {
    	  <td align="right" style="padding-left:10mm">${money(inv.revenue)}</td>
    	  <td align="right" style="padding-left:10mm">${money(inv.cashDiff)}</td>
    	  <td align="right" style="padding-left:10mm">${money(inv.cashEnd)}</td>
-   	  <td align="center"><a href="view/${inv.id}" target="_new">§</a>
+   	  <td align="center"><a href="view/${inv.id}" target="_new">Â§</a>
    	  <a href="pdf/${inv.id}">#</a></td>
    	</tr>
    </#list>
@@ -65,7 +65,7 @@ function drucken() {
 
    <hr>
    <p>
-   <a href="/cashbalance/fibuexportfile?key=${export.key}">Dateidownload</a>
+   <a href="/fibu/exportfile?key=${export.key}">Dateidownload</a>
    <p>
    <a href="javascript:drucken()">Protokoll drucken</a>
      

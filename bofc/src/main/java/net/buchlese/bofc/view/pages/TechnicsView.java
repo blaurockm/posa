@@ -1,15 +1,16 @@
 package net.buchlese.bofc.view.pages;
 
+import io.dropwizard.setup.Environment;
+
 import java.text.DecimalFormat;
+
+import net.buchlese.bofc.BackOfcConfiguration;
+import net.buchlese.bofc.view.AbstractBofcView;
 
 import com.codahale.metrics.Gauge;
 import com.codahale.metrics.Timer;
 
-import io.dropwizard.setup.Environment;
-import io.dropwizard.views.View;
-import net.buchlese.bofc.BackOfcConfiguration;
-
-public class TechnicsView extends View {
+public class TechnicsView extends AbstractBofcView {
 
 	private final Environment app;
 	private final BackOfcConfiguration cfg;

@@ -31,6 +31,9 @@ public class PosInvoiceMapper implements ResultSetMapper<PosInvoice> {
 		tx.setName3(rs.getString("name3"));
 		tx.setStreet(rs.getString("street"));
 		tx.setCity(rs.getString("city"));
+		tx.setPayed(rs.getBoolean("payed"));
+		tx.setCancelled(rs.getBoolean("cancelled"));
+		tx.setActionum(rs.getInt("actionum"));
 		return tx;
 	}
 

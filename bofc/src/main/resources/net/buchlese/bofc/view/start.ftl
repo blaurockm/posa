@@ -18,12 +18,9 @@
 
 	<link href='https://fonts.googleapis.com/css?family=Roboto:700' rel='stylesheet' type='text/css'>
 
-	<!-- load angularjs and the seperate route module -->
-	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular.min.js"></script>
-	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-route.min.js"></script>
+    <!--  rout definitions -->
+	<script type="text/javascript" src="https://raw.github.com/mtrpcic/pathjs/master/path.js"></script>
 	
-	<!-- load up our app -->
-	<script src="assets/bofc/startapp.js"></script>
   </head>
   <body>
     <nav class="navbar navbar-default navbar-static-top">
@@ -35,13 +32,22 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#">Buchlese</a>
+          <a class="navbar-brand" href="#index">Buchlese</a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
            <ul class="nav navbar-nav">
              <li><a href="#export">Kassenberichte</a></li>
              <li><a href="#rechnungen">Ausgangsrechnungen</a></li>
-             <li><a href="#mappings">Mappings</a></li>
+             <li><a href="#exports">Exporte</a></li>
+             <li>
+<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Mappings <span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><a href="#mappings/1">Dornhan</a></li>
+            <li><a href="#mappings/2">Sulz</a></li>
+            <li><a href="#mappings/3">Schramberg</a></li>
+            <li role="separator" class="divider"></li>
+            <li><a href="#mappings">Alle</a></li>
+          </ul>             
              <li><a href="#commands">Kommandos</a></li>
              <li><a href="#technics">Interna</a></li>
            </ul>
@@ -50,9 +56,9 @@
     </nav>
     
 
-    <div class="container">
+    <div class="container" id="output">
        <!-- content is injected here -->
-      <div ng-view></div>
+      <div class="content"></div>
     </div>  
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
@@ -61,5 +67,7 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed 
     <script src="js/bootstrap.min.js"></script> -->
+	<!-- load up our app -->
+	<script src="assets/bofc/startapp.js"></script>
 </body>
 </html>

@@ -14,7 +14,7 @@ import javax.ws.rs.QueryParam;
 
 import net.buchlese.bofc.api.bofc.Mapping;
 import net.buchlese.bofc.jdbi.bofc.MappingDAO;
-import net.buchlese.bofc.view.MappingView;
+import net.buchlese.bofc.view.pages.MappingView;
 
 import com.google.inject.Inject;
 

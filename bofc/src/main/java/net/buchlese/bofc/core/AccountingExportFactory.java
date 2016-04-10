@@ -1,6 +1,7 @@
 package net.buchlese.bofc.core;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -136,6 +137,10 @@ public class AccountingExportFactory {
 
 	public static AccountingExport getExport(int key) {
 		return cache.get(key);
+	}
+
+	public static Collection<AccountingExport> getExports() {
+		return cache.values();
 	}
 	
 	

@@ -1,5 +1,6 @@
 package net.buchlese.bofc.view;
 
+import java.nio.charset.Charset;
 import java.util.List;
 
 import org.joda.time.DateTime;
@@ -13,7 +14,7 @@ import io.dropwizard.views.View;
 public abstract class AbstractBofcView extends View {
 	
 	public AbstractBofcView(String string) {
-		super(string);
+		super(string, Charset.forName("UTF-8"));
 	}
 
 	public TemplateMethodModelEx getMoney() {
