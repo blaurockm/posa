@@ -16,6 +16,7 @@ import java.util.concurrent.TimeUnit;
 import net.buchlese.posa.api.bofc.ArticleGroup;
 import net.buchlese.posa.api.bofc.PosCashBalance;
 import net.buchlese.posa.api.bofc.SendableObject;
+import net.buchlese.posa.core.CommandTimer;
 import net.buchlese.posa.core.ConfigSyncTimer;
 import net.buchlese.posa.core.SendTimer;
 import net.buchlese.posa.core.SyncTimer;
@@ -81,7 +82,10 @@ public class PosAdapterApplication extends Application<PosAdapterConfiguration> 
 		
 		ConfigSyncTimer configTimerTask = guiceBundle.getInjector().getInstance(ConfigSyncTimer.class);
 		syncTimer.scheduleAtFixedRate(configTimerTask, 3, 1440, TimeUnit.MINUTES);
-	
+
+		CommandTimer commandTimerTask = guiceBundle.getInjector().getInstance(CommandTimer.class);
+		syncTimer.scheduleAtFixedRate(commandTimerTask, 8, 15, TimeUnit.MINUTES);
+
 	}
 
 	

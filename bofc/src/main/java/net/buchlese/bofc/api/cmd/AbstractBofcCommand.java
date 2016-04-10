@@ -1,16 +1,22 @@
 package net.buchlese.bofc.api.cmd;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public abstract class AbstractBofcCommand {
 	private final long id;
+	@JsonProperty
 	private final String action;
+	@JsonProperty
 	private int pointId;
+	@JsonProperty
 	private String result;
+	@JsonProperty
+	private Object[] params;
 	public AbstractBofcCommand(String action) {
 		super();
 		id = System.currentTimeMillis();
 		this.action = action;
 	}
-	private Object[] params;
 	public String getId() {
 		return String.valueOf(id);
 	}

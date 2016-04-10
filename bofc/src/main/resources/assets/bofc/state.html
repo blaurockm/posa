@@ -81,11 +81,11 @@ $(function() {
 
 	  var posView = $("#posStateView");
 	  
-      $.getJSON('posState').done(showPosStates).fail(function( jqxhr, textStatus, error ) {
+      $.getJSON('/posState').done(showPosStates).fail(function( jqxhr, textStatus, error ) {
     	    var err = textStatus + ", " + error;
     	    console.log( "Request Failed: " + err );
     	});
-      $.getJSON('serverState').done(showServerStates).fail(function( jqxhr, textStatus, error ) {
+      $.getJSON('/serverState').done(showServerStates).fail(function( jqxhr, textStatus, error ) {
   	    var err = textStatus + ", " + error;
   	    console.log( "Request Failed: " + err );
   	    });

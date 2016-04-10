@@ -1,14 +1,13 @@
 package net.buchlese.bofc.resources;
 
+import io.dropwizard.views.View;
+
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.List;
-
-import io.dropwizard.setup.Environment;
-import io.dropwizard.views.View;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
@@ -23,9 +22,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 
-import org.joda.time.LocalDate;
-import org.joda.time.format.DateTimeFormat;
-
 import net.buchlese.bofc.BackOfcConfiguration;
 import net.buchlese.bofc.api.bofc.AccountingExport;
 import net.buchlese.bofc.core.AccountingExportFactory;
@@ -33,11 +29,11 @@ import net.buchlese.bofc.core.AccountingExportFile;
 import net.buchlese.bofc.jdbi.bofc.PosCashBalanceDAO;
 import net.buchlese.bofc.jdbi.bofc.PosInvoiceDAO;
 import net.buchlese.bofc.view.AccountingExportView;
-import net.buchlese.bofc.view.AppView;
 import net.buchlese.bofc.view.MobileView;
 import net.buchlese.bofc.view.StartView;
-import net.buchlese.bofc.view.StateView;
-import net.buchlese.bofc.view.TechnicsView;
+
+import org.joda.time.LocalDate;
+import org.joda.time.format.DateTimeFormat;
 
 import com.google.common.base.Optional;
 import com.google.inject.Inject;
@@ -47,14 +43,12 @@ import com.google.inject.Inject;
 public class AppResource {
 
 	private final BackOfcConfiguration cfg;
-	private final Environment app;
 	private final PosInvoiceDAO daoInv;
 	private final PosCashBalanceDAO daoBal;
 	
 	@Inject
-	public AppResource(BackOfcConfiguration config, Environment app, PosInvoiceDAO daoInv, PosCashBalanceDAO dalBal) {
+	public AppResource(BackOfcConfiguration config, PosInvoiceDAO daoInv, PosCashBalanceDAO dalBal) {
 		this.cfg = config;
-		this.app = app;
 		this.daoInv = daoInv;
 		this.daoBal = dalBal;
 	}
@@ -76,27 +70,9 @@ public class AppResource {
 	}
 
 	@GET
-	@Path("/app")
-	public View getStatistics() {
-		return new AppView(cfg);
-	}
-
-	@GET
-	@Path("/technics")
-	public View getTechnics() {
-		return new TechnicsView(cfg, app);
-	}
-
-	@GET
 	@Path("/start")
 	public View getDesktop() {
-		return new StartView(cfg, daoInv);
-	}
-
-	@GET
-	@Path("/state")
-	public View getState() {
-		return new StateView(cfg);
+		return new StartView(cfg);
 	}
 
 	@GET

@@ -1,4 +1,4 @@
-package net.buchlese.bofc.view;
+package net.buchlese.bofc.view.pages;
 
 import java.text.DecimalFormat;
 

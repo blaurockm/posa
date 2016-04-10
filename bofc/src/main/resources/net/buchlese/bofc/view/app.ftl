@@ -70,11 +70,6 @@ registry: "dijit/registry"
 				</div>
 		    </div>
 
-  		    <!--  technisches brimborium -->
-  		    <a href="/state" data-dojo-type="dijit/layout/LinkPane">Status</a>
-
-  		    <!--  technisches brimborium -->
-  		    <a href="/technics" data-dojo-type="dijit/layout/LinkPane">Technisches</a>
 		</div>
 	</div>
 

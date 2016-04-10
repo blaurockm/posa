@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 "http://www.w3.org/TR/html4/loose.dtd">
-<html lang="en">
+<html lang="en" ng-app="phpro">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -18,12 +18,12 @@
 
 	<link href='https://fonts.googleapis.com/css?family=Roboto:700' rel='stylesheet' type='text/css'>
 
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
+	<!-- load angularjs and the seperate route module -->
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-route.min.js"></script>
+	
+	<!-- load up our app -->
+	<script src="assets/bofc/startapp.js"></script>
   </head>
   <body>
     <nav class="navbar navbar-default navbar-static-top">
@@ -39,189 +39,21 @@
         </div>
         <div id="navbar" class="navbar-collapse collapse">
            <ul class="nav navbar-nav">
-             <li><a href="#kasse">Kassenberichte</a></li>
+             <li><a href="#export">Kassenberichte</a></li>
              <li><a href="#rechnungen">Ausgangsrechnungen</a></li>
+             <li><a href="#mappings">Mappings</a></li>
+             <li><a href="#commands">Kommandos</a></li>
+             <li><a href="#technics">Interna</a></li>
            </ul>
         </div><!--/.navbar-collapse -->
       </div>
     </nav>
     
-    <!-- Main jumbotron for a primary marketing message or call to action -->
-    <div class="jumbotron" style="background:#a4c408; font-family: 'Roboto', sans-serif">
-		<div class="container">
-			<div >
-			  	<iframe  class="col-md-12" height="300px" src="/state"> </iframe> 
-			</div>
-		</div>
-	</div>
 
-    <section id="kasse">
     <div class="container">
-      <!-- Example row of columns -->
-      <div class="row">
-        <div class="col-md-4">
-          <h2>Kasse Dornhan</h2>
-          <form class="form-horizontal" action="/fibuexport" method="POST">
-            <input type="hidden" name="kasse" value="1">
-            <div class="form-group">
-              <label for="dornhanFrom">Ab Datum</label>
-              <input type="date" placeholder="ab" name="from" class="form-control" id="dornhanFrom" value="${dornhanFrom}">
-            </div>
-            <div class="form-group">
-              <label for="dornhanTill">Bis Datum</label>
-              <input type="date" placeholder="bis" name="till" class="form-control" id="dornhanTill" value="${dornhanTill}">
-            </div>
-            <button type="submit" class="btn btn-success">Export</button>
-          </form>  
-    	</div>
-        <div class="col-md-4">
-          <h2>Kasse Sulz</h2>
-          <form class="form-horizontal" action="/fibuexport" method="POST">
-            <input type="hidden" name="kasse" value="2">
-            <div class="form-group">
-              <label for="sulzFrom">Ab Datum</label>
-              <input type="date" placeholder="ab" name="from" class="form-control" id="sulzFrom" value="${sulzFrom}">
-            </div>
-            <div class="form-group">
-              <label for="sulzTill">Bis Datum</label>
-              <input type="date" placeholder="bis" name="till" class="form-control" id="sulzTill" value="${sulzTill}">
-            </div>
-            <button type="submit" class="btn btn-success">Export</button>
-          </form>  
-    	</div>
-        <div class="col-md-4">
-          <h2>Kasse Schramberg</h2>
-          <form class="form-horizontal" action="/fibuexport" method="POST">
-            <input type="hidden" name="kasse" value="3">
-            <div class="form-group">
-              <label for="schrambergFrom">Ab Datum</label>
-              <input type="date" placeholder="ab" name="from" class="form-control" id="schrambergFrom" value="${schrambergFrom}">
-            </div>
-            <div class="form-group">
-              <label for="schrambergTill">Bis Datum</label>
-              <input type="date" placeholder="ab" name="till" class="form-control" id="schrambergTill" value="${schrambergTill}">
-            </div>
-            <button type="submit" class="btn btn-success">Export</button>
-          </form>  
-    	</div>
-	  </div>
-      <!-- Export für Kassenberichte -->
-      <div class="row">
-        <div class="col-md-4">
-          <h2>Kasse Dornhan</h2>
-          <form class="form-horizontal" action="/cashbalance/fibuexport" method="POST">
-            <input type="hidden" name="kasse" value="1">
-            <div class="form-group">
-              <label for="dornhanFrom">Ab Datum</label>
-              <input type="date" placeholder="ab" name="from" class="form-control" id="dornhanFrom" value="${dornhanFrom}">
-            </div>
-            <div class="form-group">
-              <label for="dornhanTill">Bis Datum</label>
-              <input type="date" placeholder="bis" name="till" class="form-control" id="dornhanTill" value="${dornhanTill}">
-            </div>
-            <button type="submit" class="btn btn-success">Export</button>
-          </form>  
-    	</div>
-        <div class="col-md-4">
-          <h2>Kasse Sulz</h2>
-          <form class="form-horizontal" action="/cashbalance/fibuexport" method="POST">
-            <input type="hidden" name="kasse" value="2">
-            <div class="form-group">
-              <label for="sulzFrom">Ab Datum</label>
-              <input type="date" placeholder="ab" name="from" class="form-control" id="sulzFrom" value="${sulzFrom}">
-            </div>
-            <div class="form-group">
-              <label for="sulzTill">Bis Datum</label>
-              <input type="date" placeholder="bis" name="till" class="form-control" id="sulzTill" value="${sulzTill}">
-            </div>
-            <button type="submit" class="btn btn-success">Export</button>
-          </form>  
-    	</div>
-        <div class="col-md-4">
-          <h2>Kasse Schramberg</h2>
-          <form class="form-horizontal" action="/cashbalance/fibuexport" method="POST">
-            <input type="hidden" name="kasse" value="3">
-            <div class="form-group">
-              <label for="schrambergFrom">Ab Datum</label>
-              <input type="date" placeholder="ab" name="from" class="form-control" id="schrambergFrom" value="${schrambergFrom}">
-            </div>
-            <div class="form-group">
-              <label for="schrambergTill">Bis Datum</label>
-              <input type="date" placeholder="ab" name="till" class="form-control" id="schrambergTill" value="${schrambergTill}">
-            </div>
-            <button type="submit" class="btn btn-success">Export</button>
-          </form>  
-    	</div>
-	  </div>
-	  <!-- die optionen für die rechnungen -->    	
-      <div class="row">
-        <div class="col-md-4">
-          <h2>Kasse Dornhan</h2>
-          <form class="form-horizontal" action="/invoice/fibuexport" method="POST">
-            <input type="hidden" name="kasse" value="1">
-            <div class="form-group">
-              <label for="dornhanFrom">Ab Datum</label>
-              <input type="date" placeholder="ab" name="from" class="form-control" id="dornhanFrom" value="${dornhanFrom}">
-            </div>
-            <div class="form-group">
-              <label for="dornhanTill">Bis Datum</label>
-              <input type="date" placeholder="bis" name="till" class="form-control" id="dornhanTill" value="${dornhanTill}">
-            </div>
-            <button type="submit" class="btn btn-success">Export</button>
-          </form>  
-    	</div>
-        <div class="col-md-4">
-          <h2>Kasse Sulz</h2>
-          <form class="form-horizontal" action="/invoice/fibuexport" method="POST">
-            <input type="hidden" name="kasse" value="2">
-            <div class="form-group">
-              <label for="sulzFrom">Ab Datum</label>
-              <input type="date" placeholder="ab" name="from" class="form-control" id="sulzFrom" value="${sulzFrom}">
-            </div>
-            <div class="form-group">
-              <label for="sulzTill">Bis Datum</label>
-              <input type="date" placeholder="bis" name="till" class="form-control" id="sulzTill" value="${sulzTill}">
-            </div>
-            <button type="submit" class="btn btn-success">Export</button>
-          </form>  
-    	</div>
-        <div class="col-md-4">
-          <h2>Kasse Schramberg</h2>
-          <form class="form-horizontal" action="/invoice/fibuexport" method="POST">
-            <input type="hidden" name="kasse" value="3">
-            <div class="form-group">
-              <label for="schrambergFrom">Ab Datum</label>
-              <input type="date" placeholder="ab" name="from" class="form-control" id="schrambergFrom" value="${schrambergFrom}">
-            </div>
-            <div class="form-group">
-              <label for="schrambergTill">Bis Datum</label>
-              <input type="date" placeholder="ab" name="till" class="form-control" id="schrambergTill" value="${schrambergTill}">
-            </div>
-            <button type="submit" class="btn btn-success">Export</button>
-          </form>  
-    	</div>
-	  </div>    	
-    
-    </div> <!-- /container -->
-	</section>
-	
-	<section id="rechnungen">
-	   <div class="container">
-	      <div class="col-md-12">
-          <h2>Ausgangsrechnungen</h2>
-	        <ul class="list-group">
-   <#list invoices as inv>
-     <li class="list-group-item">
-      ${inv.number}
-      ${inv.name1} (${inv.customerId})
-   	  ${money(inv.amount)} vom <#if inv.date??>${inv.date.toString("dd.MM.yyyy")}<#else> kein Datum?</#if>  
-   	  <span class="badge">${inv.debitorId}</span>
-	 </li>   
-   </#list>
-	        </ul>
-	      </div>
-	   </div>
-	</section>
+       <!-- content is injected here -->
+      <div ng-view></div>
+    </div>  
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>

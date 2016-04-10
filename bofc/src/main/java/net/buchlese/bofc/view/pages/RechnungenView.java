@@ -1,4 +1,4 @@
-package net.buchlese.bofc.view;
+package net.buchlese.bofc.view.pages;
 
 import freemarker.ext.beans.BeanModel;
 import freemarker.template.TemplateMethodModelEx;
@@ -7,20 +7,25 @@ import freemarker.template.TemplateNumberModel;
 import io.dropwizard.views.View;
 
 import java.nio.charset.Charset;
+import java.util.Collections;
 import java.util.List;
 
 import net.buchlese.bofc.BackOfcConfiguration;
+import net.buchlese.bofc.api.bofc.PosInvoice;
+import net.buchlese.bofc.jdbi.bofc.PosInvoiceDAO;
 
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 
-public class StartView extends View {
+public class RechnungenView extends View {
 
 	private final BackOfcConfiguration cfg;
+	private final PosInvoiceDAO daoInv;
 
-	
-	public StartView(BackOfcConfiguration config) {
-		super("start.ftl", Charset.forName("UTF-8"));
+	public RechnungenView(BackOfcConfiguration config, PosInvoiceDAO daoInv) {
+		super("rechnungen.ftl", Charset.forName("UTF-8"));
 		this.cfg = config;
+		this.daoInv = daoInv;
 	}
 
 	public String getPosName() {
@@ -28,6 +33,11 @@ public class StartView extends View {
 		return "Backend";
 	}
 	
+	public List<PosInvoice> getInvoices() {
+		List<PosInvoice> res = daoInv.fetchAllAfter(LocalDate.now().minusDays(10).toDateTimeAtStartOfDay().toDate());
+		Collections.reverse(res);
+		return res;
+	}
 
 	public TemplateMethodModelEx getMoney() {
     	return new TemplateMethodModelEx() {

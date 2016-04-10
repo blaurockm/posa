@@ -9,7 +9,7 @@ import net.buchlese.bofc.api.bofc.PosCashBalance;
 import net.buchlese.bofc.api.bofc.PosInvoice;
 import net.buchlese.bofc.jdbi.bofc.PosCashBalanceDAO;
 import net.buchlese.bofc.jdbi.bofc.PosInvoiceDAO;
-import net.buchlese.bofc.view.StartView;
+import net.buchlese.bofc.view.pages.ExportView;
 
 import org.joda.time.LocalDate;
 
@@ -51,7 +51,7 @@ public class AccountingExportFactory {
 		} else {
 			res.setTill(ti);
 		}
-		StartView.setFromDate(kasse, ti);
+		ExportView.setFromDate(kasse, ti);
 		res.setKey(key);
 		cache.put(key++, res);
 		return res;
@@ -87,7 +87,7 @@ public class AccountingExportFactory {
 		} else {
 			res.setTill(ti);
 		}
-		StartView.setFromDate(kasse, ti);
+		ExportView.setFromDate(kasse, ti);
 		res.setKey(key);
 		cache.put(key++, res);
 		return res;
@@ -128,7 +128,7 @@ public class AccountingExportFactory {
 		} else {
 			res.setTill(ti);
 		}
-		StartView.setFromDate(kasse, ti);
+		ExportView.setFromDate(kasse, ti);
 		res.setKey(key);
 		cache.put(key++, res);
 		return res;
