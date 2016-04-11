@@ -1,59 +1,60 @@
-package net.buchlese.posa.core;
+package net.buchlese.posa.core.cmd;
 
 import java.io.IOException;
 import java.net.ConnectException;
-import java.util.TimerTask;
 
 import javax.ws.rs.core.MediaType;
 
 import net.buchlese.posa.PosAdapterApplication;
 import net.buchlese.posa.PosAdapterConfiguration;
-import net.buchlese.posa.core.cmd.AbstractCommand;
-import net.buchlese.posa.core.cmd.PayOffCouponCommand;
-import net.buchlese.posa.core.cmd.PayOffInvoiceCommand;
+import net.buchlese.posa.core.CloudConnect;
+import net.buchlese.posa.core.CommandTimer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
-import com.google.inject.Inject;
 import com.jcraft.jsch.JSchException;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
-import com.thetransactioncompany.jsonrpc2.JSONRPC2ParseException;
+import com.sun.jersey.api.representation.Form;
 import com.thetransactioncompany.jsonrpc2.JSONRPC2Request;
+import com.thetransactioncompany.jsonrpc2.JSONRPC2Response;
 
-public class CommandTimer extends TimerTask {
+public abstract class AbstractCommand {
+	private final static String homeResource = "answercmds";
 
-	private final static String homeResource = "getcmds";
-
+	private AbstractCommand successor;
 	private final Logger logger;
 	private final PosAdapterConfiguration config;
 	private final String homeUrl;
-	private final AbstractCommand commandChain;
-
-	public static long lastRun;
-
-	@Inject
-	public CommandTimer(PosAdapterConfiguration config) {
+	
+	public AbstractCommand(PosAdapterConfiguration config) {
+		super();
 		this.config = config;
 		this.homeUrl = config.getHomeUrl();
 		logger = LoggerFactory.getLogger(CommandTimer.class);
-		AbstractCommand chain = new PayOffCouponCommand(config);
-		commandChain = chain.concat(new PayOffInvoiceCommand(config));
 	}
 
-	@Override
-	public void run() {
-		if (homeUrl == null || homeUrl.isEmpty() || homeUrl.equals("homeless") ) {
-			// do nothing;
-			return;
+	public void handle(JSONRPC2Request req) {
+		if (canHandle(req)) {
+			try {
+				sendBack(execute(req), req.getID());
+			} catch (Throwable t) {
+				sendBack("FATAL ERROR " + t.getMessage(), req.getID());
+			}
+		} else {
+			if (successor != null) {
+				successor.handle(req);
+			} else {
+				sendBack("unknownRequestMethod", req.getID());
+			}
 		}
-
-		lastRun = System.currentTimeMillis();
-		JSONRPC2Request reqIn = null;
+	}
+	
+	protected void sendBack(Object result, Object id) {
 		synchronized(PosAdapterApplication.homingQueue) {
 
 			try (CloudConnect cloud = new CloudConnect(config, logger)) {
@@ -62,17 +63,13 @@ public class CommandTimer extends TimerTask {
 				clientConfig.getClasses().add(JacksonJsonProvider.class);
 				Client client = Client.create(clientConfig);
 
-				WebResource r = client.resource(homeUrl + homeResource);
-				r = r.queryParam("pos", String.valueOf(config.getPointOfSaleId()));
-				
-				String jsonString = r.accept(MediaType.APPLICATION_JSON_TYPE).get(String.class);
+				WebResource r = client.resource(homeUrl + homeResource);				
+				JSONRPC2Response respIn = new JSONRPC2Response(result, id );
 
-				try {
-					reqIn = JSONRPC2Request.parse(jsonString);
+				Form f = new Form();
+				f.add("jsonAnswer", respIn.toString());
 
-				} catch (JSONRPC2ParseException e) {
-					logger.error("problem parsing command", e);
-				}
+				r.entity(f, MediaType.APPLICATION_FORM_URLENCODED_TYPE).post();
 				
 			} catch (ConnectException e) {
 				// wir konnten keine Verbindung aufbauen.
@@ -86,8 +83,14 @@ public class CommandTimer extends TimerTask {
 				logger.error("problem closing session", e);
 			}
 		}
-		
-		commandChain.handle(reqIn);
+	
 	}
-
+	
+	public abstract boolean canHandle(JSONRPC2Request req);
+	public abstract Object execute(JSONRPC2Request req);
+	
+	public AbstractCommand concat(AbstractCommand succ) {
+		this.successor = succ;
+		return succ;
+	}
 }
