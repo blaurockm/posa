@@ -26,7 +26,7 @@ public interface PosInvoiceDAO {
 	@SqlQuery("select max(actionum) from posinvoice")
 	Integer getLastErfasst();
 
-	@SqlBatch("insert into posinvoice (number, customer, debitor, amount, amountFull, amountHalf, amountNone, invDate, creationtime, printdate, name1, name2, name3,  street, city, actionnum, payed) " +
+	@SqlBatch("insert into posinvoice (number, customer, debitor, amount, amountFull, amountHalf, amountNone, invDate, creationtime, printdate, name1, name2, name3,  street, city, actionum, payed) " +
 	" values (:number, :customerId, :debitorId, :amount, :amountFull, :amountHalf, :amountNone, :date,:creationTime, :printTime, :name1, :name2, :name3, :street, :city, :actionum, :payed)")
 	@BatchChunkSize(500)
 	void insertAll(@Valid @BindBean Iterator<PosInvoice> transactions);
