@@ -20,7 +20,7 @@ public interface KleinteilDAO {
 	List<KleinteilElement> fetchElemente(@Bind("nr") String nr);
 
 	// die die neu sind und in den letzten 50 tagen erfasst wurden
-	@SqlQuery("select * from [dbo].KleinteilKopf where Nummer > :nr and ErfassungsDatum > and erfassungsdatum > current_timestamp - 50")
+	@SqlQuery("select * from [dbo].KleinteilKopf where Nummer > :nr and ErfassungsDatum > current_timestamp - 50")
 	@RegisterMapper(KleinteilKopfMapper.class)
 	List<KleinteilKopf> fetchAllAfter(@Bind("nr") Integer or);
 
