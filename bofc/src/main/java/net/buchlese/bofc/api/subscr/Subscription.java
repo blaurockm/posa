@@ -32,4 +32,12 @@ public class Subscription {
 	private LocalDate startDate;
 	@JsonProperty
 	private LocalDate endDate;
+	@JsonProperty
+	private Address deliveryAddress;
+	@JsonProperty
+	private String deliveryInfo1;
+	@JsonProperty
+	private String deliveryInfo2;
+	
+	
 }

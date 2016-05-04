@@ -15,13 +15,16 @@ public class SubscrArticle {
 	private String name;
 
 	@JsonProperty
+	private String productAbbrev;
+
+	@JsonProperty
 	private String isbn;
 	@JsonProperty
 	private long brutto;
 	@JsonProperty
-	private long netto_half;
+	private long brutto_half;
 	@JsonProperty
-	private long netto_full;
+	private long brutto_full;
 	@JsonProperty
 	private long tax_half;
 	@JsonProperty

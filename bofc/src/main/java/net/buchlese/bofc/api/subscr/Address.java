@@ -4,18 +4,22 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class Subscriber {
+public class Address {
 	@NotEmpty
 	@JsonProperty
 	private long id;
 	@JsonProperty
-	private int pointid;
-
+	private String name1;
 	@JsonProperty
-	private int debitorId;
+	private String name2;
 	@JsonProperty
-	private int customerId;
+	private String name3;
 	@JsonProperty
-	private Address invoiceAddress;
+	private String street;
+	@JsonProperty
+	private String postalcode;
+	@JsonProperty
+	private String city;
+	
 
 }

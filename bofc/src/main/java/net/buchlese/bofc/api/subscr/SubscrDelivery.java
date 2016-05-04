@@ -1,6 +1,7 @@
 package net.buchlese.bofc.api.subscr;
 
 import org.hibernate.validator.constraints.NotEmpty;
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -19,9 +20,15 @@ public class SubscrDelivery {
 	@JsonProperty
 	private SubscrArticle article;
 	@JsonProperty
+	private long total;
+	@JsonProperty
+	private long shipmentCosts;
+	@JsonProperty
 	private boolean hasDeliveryNote;
 	@JsonProperty
 	private boolean hasInvoice;
 	@JsonProperty
 	private boolean payed;
+	@JsonProperty
+	private DateTime creationDate;
 }

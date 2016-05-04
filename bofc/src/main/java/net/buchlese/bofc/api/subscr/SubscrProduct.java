@@ -24,5 +24,9 @@ public class SubscrProduct {
 	private LocalDate lastDelivery;
 	@JsonProperty
 	private LocalDate nextDelivery;
+	@JsonProperty
+	private LocalDate startDate;
+	@JsonProperty
+	private int quantity;
 
 }
