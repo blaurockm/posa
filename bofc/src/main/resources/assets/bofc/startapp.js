@@ -24,6 +24,14 @@ Path.map("#export").to(function(){
     $("#output .content").load("/pages/export");
 }).enter(setPageBackground);
 
+Path.map("#subscr").to(function(){
+    $("#output .content").load("/subscr");
+}).enter(setPageBackground);
+
+Path.map("#subscrProduct/:id").to(function(){
+    $("#output .content").load("/subscr/product/" + this.params["id"]);
+}).enter(setPageBackground);
+
 Path.map("#exports").to(function(){
     $("#output .content").load("/pages/exports");
 }).enter(setPageBackground);

@@ -36,11 +36,19 @@
         </div>
         <div id="navbar" class="navbar-collapse collapse">
            <ul class="nav navbar-nav">
+             <li><a href="#subscr" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Periodika <span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><a href="#subscr">Dashboard</a></li>
+            <li><a href="#subscrSubs">Periodikabos</a></li>
+            <li><a href="#subscrCust">Kunden</a></li>
+            <li role="separator" class="divider"></li>
+            <li><a href="#subscrProd">Periodika</a></li>
+          </ul>             
+
              <li><a href="#export">Kassenberichte</a></li>
              <li><a href="#rechnungen">Ausgangsrechnungen</a></li>
              <li><a href="#exports">Exporte</a></li>
-             <li>
-<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Mappings <span class="caret"></span></a>
+             <li><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Mappings <span class="caret"></span></a>
           <ul class="dropdown-menu">
             <li><a href="#mappings/1">Dornhan</a></li>
             <li><a href="#mappings/2">Sulz</a></li>
