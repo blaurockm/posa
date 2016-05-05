@@ -45,6 +45,10 @@ public class SubscrTestDataDAO implements SubscrDAO {
 		return products.stream().filter(x -> x.getId() == id).findFirst().orElse(null);
 	}
 
+	public Subscription getSubscription(final long id) {
+		return subscriptions.stream().filter(x -> x.getId() == id).findFirst().orElse(null);
+	}
+
 	public List<SubscrProduct> getSubscrProducts() {
 		return products;
 	}
@@ -55,6 +59,14 @@ public class SubscrTestDataDAO implements SubscrDAO {
 
 	public List<Subscription> getSubscriptionsForProduct(long prodid) {
 		return subscriptions.stream().filter(x -> x.getProductId() == prodid).collect(Collectors.toList());
+	}
+
+	public SubscrArticle getSubscrArticle(final long id) {
+		return articles.stream().filter(x -> x.getId() == id).findFirst().orElse(null);
+	}
+
+	public SubscrDelivery getSubscrDelivery(final long id) {
+		return deliveries.stream().filter(x -> x.getId() == id).findFirst().orElse(null);
 	}
 
 	public List<SubscrArticle> getArticlesOfProduct(final long prodid) {
@@ -73,10 +85,31 @@ public class SubscrTestDataDAO implements SubscrDAO {
 		return deliveries.stream().filter(x -> x.getSubcriptionId() == subid).collect(Collectors.toList());
 	}
 
+	@Override
+	public SubscrDelivery createDelivery(Subscription subscription,	SubscrArticle article, LocalDate deliveryDate) {
+		SubscrDelivery d = new SubscrDelivery();
+		d.setId(idcounter++); 
+		d.setArticle(article);
+		d.setDeliveryDate(deliveryDate);
+		d.setSubcriptionId(subscription.getId());
+		d.setSubscriberId(subscription.getSubscriberId());
+		d.setArticleId(article.getId());
+		d.setQuantity(subscription.getQuantity());
+		d.setTotal(subscription.getQuantity() * article.getBrutto());
+		d.setCreationDate(DateTime.now());
+		deliveries.add(d);
+		return d;
+	}
+
+	//==============================================================================================
+	//==============================================================================================
+	//==============================================================================================
+	//==============================================================================================
+	
 	private void createDeliveriesForToday() {
 		for (Subscription s : getSubscriptions()) {
 			if (Math.random() > 0.5) {
-				createDelivery(getNewestArticleOfProduct(s.getProductId()), s, LocalDate.now());
+				createDelivery(s, getNewestArticleOfProduct(s.getProductId()), LocalDate.now());
 			}
 		}
 	}
@@ -92,22 +125,9 @@ public class SubscrTestDataDAO implements SubscrDAO {
 
 	private void createDeliveries(Subscription s, List<SubscrArticle> artList) {
 		for(SubscrArticle a : artList ) {
-			createDelivery(a, s, a.getTimest().toLocalDate().plusDays((int) (2 * Math.random() + 0.5d)));
+			createDelivery(s, a, a.getTimest().toLocalDate().plusDays((int) (2 * Math.random() + 0.5d)));
 		}
 		
-	}
-
-	private void createDelivery(SubscrArticle article, Subscription subscription, LocalDate deliveryDate) {
-		SubscrDelivery d = new SubscrDelivery();
-		d.setArticle(article);
-		d.setDeliveryDate(deliveryDate);
-		d.setSubcriptionId(subscription.getId());
-		d.setSubscriberId(subscription.getSubscriberId());
-		d.setArticleId(article.getId());
-		d.setQuantity(subscription.getQuantity());
-		d.setTotal(subscription.getQuantity() * article.getBrutto());
-		d.setCreationDate(DateTime.now());
-		deliveries.add(d);
 	}
 
 	private void createArticles() {
@@ -206,6 +226,7 @@ public class SubscrTestDataDAO implements SubscrDAO {
 
 	private SubscrArticle createArticle(int productId, String name, int count, long brutto, double halfPercentage, DateTime timest) {
 		SubscrArticle a = new SubscrArticle();
+		a.setId(idcounter++);
 		a.setProductId(productId);
 		a.setNamePattern(name);
 		a.setCount(count);
@@ -220,6 +241,7 @@ public class SubscrTestDataDAO implements SubscrDAO {
 	
 	private SubscrArticle createNextArticle(SubscrArticle olda) {
 		SubscrArticle a = olda.clone();
+		a.setId(idcounter++);
 		a.setBrutto((long) (olda.getBrutto() *  (1d + Math.random() * 0.05d)));
 		a.initializeBrutto();
 		Period p = getSubscrProduct(a.getProductId()).getPeriod();
@@ -281,6 +303,7 @@ public class SubscrTestDataDAO implements SubscrDAO {
 		p.setPeriod(period);
 		products.add(p);
 	}
+
 
 
 

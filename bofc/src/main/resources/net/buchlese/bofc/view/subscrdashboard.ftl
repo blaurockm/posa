@@ -1,5 +1,5 @@
 
-<h1>heutige Lieferungen</h1>
+<h1>heutige Lieferungen</h1> <a href="/subscr/deliveraddresslist/" target="_blank">Adressliste</a>
 <table class="table table-striped">
 	<thead>
 		<tr>
@@ -33,10 +33,10 @@
 		<tr>
 			<th>Verlag</th>
 			<th>Publikation</th>
-			<th>Abk�</th>
+			<th>Abkü</th>
 			<th># Abos</th>
 			<th>letzer Eingang</th>
-			<th>n�chster Eingang</th>
+			<th>nächster Eingang</th>
 			<th></th>
 		</tr>
 	</thead>
@@ -49,7 +49,7 @@
 			<td></td>
 			<td><#if p.lastDelivery??>${p.lastDelivery.toString("dd.MM.yy")}</#if></td>
 			<td><#if p.nextDelivery??>${p.nextDelivery.toString("dd.MM.yy")}</#if></td>
-			<td><a href="/subscr/dispo/${p.id}">dispo</a> <a href="#subscrProduct/${p.id}">details</a> </td>
+			<td><a href="#subscrDispo/${p.id}">dispo</a> <a href="#subscrProduct/${p.id}">details</a> </td>
 		</tr>
 		</#list>
 	</tbody>

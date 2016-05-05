@@ -32,6 +32,14 @@ Path.map("#subscrProduct/:id").to(function(){
     $("#output .content").load("/subscr/product/" + this.params["id"]);
 }).enter(setPageBackground);
 
+Path.map("#subscrDispo/:id").to(function(){
+    $("#output .content").load("/subscr/dispo/" + this.params["id"]);
+}).enter(setPageBackground);
+
+Path.map("#subscrDelivery/:id").to(function(){
+    $("#output .content").load("/subscr/delivery/" + this.params["id"]);
+}).enter(setPageBackground);
+
 Path.map("#exports").to(function(){
     $("#output .content").load("/pages/exports");
 }).enter(setPageBackground);

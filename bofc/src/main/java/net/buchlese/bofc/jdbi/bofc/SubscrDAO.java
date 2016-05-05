@@ -27,6 +27,14 @@ public interface SubscrDAO {
 
 	List<SubscrDelivery> getDeliveriesForSubscription(long id);
 	
-	List<Subscription> getSubscriptionsForProduct(long productId); 
+	List<Subscription> getSubscriptionsForProduct(long productId);
+
+	SubscrArticle getSubscrArticle(long id);
+
+	SubscrDelivery getSubscrDelivery(long delId);
+
+	Subscription getSubscription(long subId);
+
+	SubscrDelivery createDelivery(Subscription subscription, SubscrArticle subscrArticle, LocalDate d); 
 
 }

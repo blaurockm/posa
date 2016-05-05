@@ -16,8 +16,9 @@ $( "#button${sub.id}" ).click(function() {
 });
 </script>
 
-<li> Abo Nr ${sub.id},  Anzahl ${sub.quantity}, ${kunde(sub)} seit ${sub.startDate.toString("dd.MM.yy")} 
-<button id="button${sub.id}">Alle Lieferungen</button>
+<li> Abo Nr ${sub.id},  Anzahl ${sub.quantity}, ${kunde(sub)}  seit ${sub.startDate.toString("dd.MM.yy")} <br> 
+    ${sub.deliveryInfo1!""}, ${sub.deliveryInfo2!""} <br>
+	<button id="button${sub.id}">Alle Lieferungen</button>
 
 <div id="delivs${sub.id}" style="display:none">
 <table class="table table-striped">
