@@ -63,10 +63,10 @@ public class PageResource {
 	@Path("/mappings")
 	public View getMappings( @QueryParam("point") Integer pi) {
 		if (pi != null) {
-			List<Mapping> res = mapDao.fetchEmpty(pi.intValue());
+			List<Mapping> res = mapDao.fetch(pi.intValue());
 			return new MappingView(res);
 		}
-		return new MappingView(mapDao.fetchAll());
+		return new MappingView(mapDao.fetchAllEmpty());
 	}
 
 	@GET

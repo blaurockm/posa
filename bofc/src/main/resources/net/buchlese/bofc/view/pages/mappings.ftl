@@ -14,20 +14,17 @@
 		<#list mappings as ma>
 		<tr>
 			<td>${ma.pointid}</td>
-			<td>${ma.customerId?string.computer}</td>
-			<td>${ma.name1}</td>
-			<td align="right">${ma.debitorId}</td>
+			<td>${ma.customerId?c}</td>
+			<td>${ma.name1!"no name"}</td>
 			<td align="right" style="padding-left: 10mm">${ma.count}</td>
-			<td>
-				<form action="/mapping/update" method="post" target="_blank">
-					<input type="hidden" name="point"
-						value="${ma.pointid?string.computer}" /> <input type="hidden"
-						name="cust" value="${ma.customerId?string.computer}" /> <input
-						type="text" name="deb" value="" /> <input type="submit"
-						value="upd" />
-				</form>
+			<td align="right">
+			<a href="#" class="editable" data-type="text" data-pk="${ma.pointid?c}" data-name="${ma.customerId?c}" data-url="/mapping/update" data-title="Debitor-Konto">${ma.debitorId?c}</a>
 			<td>
 		</tr>
 		</#list>
 	</tbody>
 </table>
+
+<script>
+$('.editable').editable();
+</script>

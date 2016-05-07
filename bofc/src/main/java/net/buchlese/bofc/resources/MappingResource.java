@@ -2,7 +2,6 @@ package net.buchlese.bofc.resources;
 
 import io.dropwizard.views.View;
 
-import java.util.Collections;
 import java.util.List;
 
 import javax.ws.rs.FormParam;
@@ -31,14 +30,12 @@ public class MappingResource {
 
 	@POST
 	@Path("/update")
-	@Produces({"text/html"})
-	public View updateMaping( @FormParam("point") Integer pi, @FormParam("deb") Integer deb, @FormParam("cust") Integer cust) {
+	public void updateMaping( @FormParam("pk") Integer pi, @FormParam("name") Integer cust, @FormParam("value") Integer deb) {
 		Mapping um = new Mapping();
 		um.setPointid(pi);
 		um.setCustomerId(cust);
 		um.setDebitorId(deb);
-		dao.insert(um);
-		return new MappingView(Collections.emptyList());
+		dao.update(um);
 	}
 
 	@GET

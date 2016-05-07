@@ -8,7 +8,7 @@
         }
 
         function setPageBackground(){
-            $("#output .content").removeClass("error");
+            $("#output .content").removeClass("alert alert-danger");
         }        
 
 // Here we define our routes.  You'll notice that I only define three routes, even
