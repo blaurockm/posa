@@ -1,9 +1,13 @@
 package net.buchlese.bofc.api.bofc;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class PosInvoice {
@@ -50,6 +54,38 @@ public class PosInvoice {
 	private LocalDate date;
 	@JsonProperty
 	private DateTime printTime;
+	
+	@JsonProperty
+	private List<PosInvoiceDetail> details;
+	
+	@JsonIgnore
+	public PosInvoiceDetail addInvoiceDetail(PosInvoiceDetail detail) {
+		if (detail == null) {
+			return null;
+		}
+		if (getDetails() == null) {
+			setDetails(new ArrayList<PosInvoiceDetail>());
+		}
+		getDetails().add(detail);
+		setAmount(safeAdd(getAmount(),detail.getAmount()));
+		setAmountFull(safeAdd(getAmountFull(), detail.getAmountFull()));
+		setAmountHalf(safeAdd(getAmountHalf(), detail.getAmountHalf()));
+		return detail;
+	}
+	
+	private Long safeAdd(Long a, Long b) {
+		if (a == null && b == null) {
+			return null;
+		}
+		if (a != null && b == null) {
+			return a;
+		}
+		if (a == null && b != null) {
+			return b;
+		}
+		return Long.valueOf(a + b);
+	}
+	
 	public long getId() {
 		return id;
 	}
@@ -173,5 +209,11 @@ public class PosInvoice {
 	}
 	public void setCancelled(Boolean cancelled) {
 		this.cancelled = cancelled;
+	}
+	public List<PosInvoiceDetail> getDetails() {
+		return details;
+	}
+	public void setDetails(List<PosInvoiceDetail> details) {
+		this.details = details;
 	}
 }

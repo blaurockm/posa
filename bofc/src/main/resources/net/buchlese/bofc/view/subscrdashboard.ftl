@@ -1,3 +1,4 @@
+<div class="container">
 
 <h1>heutige Lieferungen</h1> <a href="/subscr/deliveraddresslist/" target="_blank">Adressliste</a>
 <table class="table table-striped">
@@ -51,10 +52,33 @@
 			<td></td>
 			<td><#if p.lastDelivery??>${p.lastDelivery.toString("dd.MM.yy")}</#if></td>
 			<td><#if p.nextDelivery??>${p.nextDelivery.toString("dd.MM.yy")}</#if></td>
-			<td><a href="#subscrDispo/${p.id}">dispo</a> <a href="#subscrProduct/${p.id}">details</a> </td>
+			<td><a href="#subscrDispo/${p.id?c}">dispo</a> <a href="#subscrProduct/${p.id?c}">details</a> </td>
 		</tr>
 		</#list>
 	</tbody>
 </table>
 
-		
+<h1>Abonnenten</h1>
+<table class="table table-striped">
+	<thead>
+		<tr>
+			<th>Name</th>
+			<th># Abos</th>
+			<th>letze Rechnung</th>
+			<th>Letzte Lieferung</th>
+			<th></th>
+		</tr>
+	</thead>
+	<tbody>
+		<#list subscribers as s>
+		<tr>
+			<td>${s.name}</td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td><a href="#subscriber/${s.id?c}">details</a> </td>
+		</tr>
+		</#list>
+	</tbody>
+</table>
+</div>		

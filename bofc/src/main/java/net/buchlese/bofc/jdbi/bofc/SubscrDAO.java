@@ -25,16 +25,27 @@ public interface SubscrDAO {
 
 	List<SubscrDelivery> getDeliveries(LocalDate now);
 
+	List<SubscrDelivery> getDeliveriesForSubscriptionUnrecorded(long id);
+
+	List<SubscrDelivery> getDeliveriesForSubscriptionRecorded(long id);
+
 	List<SubscrDelivery> getDeliveriesForSubscription(long id);
-	
+
 	List<Subscription> getSubscriptionsForProduct(long productId);
 
+	List<Subscription> getSubscriptionsForSubscriber(long id);
+	
 	SubscrArticle getSubscrArticle(long id);
 
 	SubscrDelivery getSubscrDelivery(long delId);
 
 	Subscription getSubscription(long subId);
 
-	SubscrDelivery createDelivery(Subscription subscription, SubscrArticle subscrArticle, LocalDate d); 
+	SubscrDelivery createDelivery(Subscription subscription, SubscrArticle subscrArticle, LocalDate d);
+
+	void recordDetailsOnvInvoice(List<SubscrDelivery> deliveries, String invNumber);
+
+	List<Subscriber> getSubscribers();
+
 
 }

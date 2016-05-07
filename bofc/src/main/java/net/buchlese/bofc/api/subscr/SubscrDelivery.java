@@ -28,6 +28,10 @@ public class SubscrDelivery {
 	@JsonProperty
 	private long total;
 	@JsonProperty
+	private long totalFull;
+	@JsonProperty
+	private long totalHalf;
+	@JsonProperty
 	private long shipmentCosts;
 	@JsonProperty
 	private boolean hasDeliveryNote;
@@ -123,6 +127,18 @@ public class SubscrDelivery {
 	}
 	public void setSubscriberId(long subscriberId) {
 		this.subscriberId = subscriberId;
+	}
+	public long getTotalFull() {
+		return totalFull;
+	}
+	public void setTotalFull(long totalFull) {
+		this.totalFull = totalFull;
+	}
+	public long getTotalHalf() {
+		return totalHalf;
+	}
+	public void setTotalHalf(long totalHalf) {
+		this.totalHalf = totalHalf;
 	}
 	
 }

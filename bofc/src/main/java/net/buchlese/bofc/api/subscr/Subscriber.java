@@ -19,6 +19,13 @@ public class Subscriber {
 	private String name;
 	@JsonProperty
 	private Address invoiceAddress;
+	@JsonProperty
+	private boolean collectiveInvoice;
+	@JsonProperty
+	private boolean needsDeliveryNote;
+	@JsonProperty
+	private ShipType shipmentType;
+
 	public long getId() {
 		return id;
 	}
@@ -54,6 +61,24 @@ public class Subscriber {
 	}
 	public void setName(String name) {
 		this.name = name;
+	}
+	public boolean isCollectiveInvoice() {
+		return collectiveInvoice;
+	}
+	public void setCollectiveInvoice(boolean collectiveInvoice) {
+		this.collectiveInvoice = collectiveInvoice;
+	}
+	public boolean isNeedsDeliveryNote() {
+		return needsDeliveryNote;
+	}
+	public void setNeedsDeliveryNote(boolean needsDeliveryNote) {
+		this.needsDeliveryNote = needsDeliveryNote;
+	}
+	public ShipType getShipmentType() {
+		return shipmentType;
+	}
+	public void setShipmentType(ShipType shipmentType) {
+		this.shipmentType = shipmentType;
 	}
 
 }

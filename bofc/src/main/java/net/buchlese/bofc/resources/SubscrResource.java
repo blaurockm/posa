@@ -22,11 +22,13 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 
 import net.buchlese.bofc.api.bofc.Mapping;
+import net.buchlese.bofc.api.bofc.PosInvoice;
 import net.buchlese.bofc.api.subscr.Address;
 import net.buchlese.bofc.api.subscr.SubscrArticle;
 import net.buchlese.bofc.api.subscr.SubscrDelivery;
 import net.buchlese.bofc.api.subscr.Subscriber;
 import net.buchlese.bofc.api.subscr.Subscription;
+import net.buchlese.bofc.core.SubscriptionInvoiceCreator;
 import net.buchlese.bofc.jdbi.SubscrTestDataDAO;
 import net.buchlese.bofc.jdbi.bofc.SubscrDAO;
 import net.buchlese.bofc.view.SubscrDashboardView;
@@ -34,6 +36,7 @@ import net.buchlese.bofc.view.pages.MappingView;
 import net.buchlese.bofc.view.subscr.SubscrDeliveryView;
 import net.buchlese.bofc.view.subscr.SubscrDispoView;
 import net.buchlese.bofc.view.subscr.SubscrProductDetailView;
+import net.buchlese.bofc.view.subscr.SubscriberDetailView;
 import net.buchlese.bofc.view.subscr.SubscriptionDetailView;
 
 import org.joda.time.LocalDate;
@@ -160,7 +163,30 @@ public class SubscrResource {
 		return new SubscriptionDetailView(dao, dao.getSubscription(subId));
 	}
 
-	// missing Subscription
+	@GET
+	@Path("/subscriber/{sub}")
+	@Produces({"text/html"})
+	public View showSubscriber(@PathParam("sub") String subdIdP) {
+		long subId = Long.parseLong(subdIdP);
+		return new SubscriberDetailView(dao, dao.getSubscriber(subId));
+	}
+
+	@GET
+	@Path("/createInvoice/{sub}")
+	@Produces({"application/json"})
+	public PosInvoice createInvoice(@PathParam("sub") String subIdP) {
+		long subId = Long.parseLong(subIdP);
+		return SubscriptionInvoiceCreator.createSubscription(dao, dao.getSubscription(subId));
+	}
+
+	@GET
+	@Path("/createCollInvoice/{sub}")
+	@Produces({"application/json"})
+	public PosInvoice createCollInvoice(@PathParam("sub") String subIdP) {
+		long subId = Long.parseLong(subIdP);
+		return SubscriptionInvoiceCreator.createCollectiveSubscription(dao, dao.getSubscriber(subId));
+	}
+
 	// missing Subscriber
 	
 	@GET

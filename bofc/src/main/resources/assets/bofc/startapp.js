@@ -36,6 +36,10 @@ Path.map("#subscription/:id").to(function(){
     $("#output .content").load("/subscr/subscription/" + this.params["id"]);
 }).enter(setPageBackground);
 
+Path.map("#subscriber/:id").to(function(){
+    $("#output .content").load("/subscr/subscriber/" + this.params["id"]);
+}).enter(setPageBackground);
+
 Path.map("#subscrDispo/:id").to(function(){
     $("#output .content").load("/subscr/dispo/" + this.params["id"]);
 }).enter(setPageBackground);

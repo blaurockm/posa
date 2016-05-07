@@ -25,6 +25,9 @@ public class SubscrDashboardView extends AbstractBofcView {
 		return products;
 	}
 
+	public List<Subscriber> getSubscribers() {
+		return dao.getSubscribers();
+	}
 
 	public List<SubscrDelivery> getDeliveries() {
 		return deliveries;

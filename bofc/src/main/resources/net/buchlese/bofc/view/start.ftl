@@ -41,10 +41,8 @@
              <li><a href="#subscr" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Periodika <span class="caret"></span></a>
           <ul class="dropdown-menu">
             <li><a href="#subscr">Dashboard</a></li>
-            <li><a href="#subscrSubs">Periodikabos</a></li>
-            <li><a href="#subscrCust">Kunden</a></li>
             <li role="separator" class="divider"></li>
-            <li><a href="#subscrProd">Periodika</a></li>
+            <li><a href="#subscrCust">Kunden</a></li>
           </ul>             
 
              <li><a href="#export">Kassenberichte</a></li>

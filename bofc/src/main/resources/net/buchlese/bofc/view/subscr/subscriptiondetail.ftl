@@ -8,7 +8,7 @@
       <h4 class="panel-title">
         <a data-toggle="collapse" data-parent="#accordion" href="#delivsWithout" aria-expanded="false" aria-controls="delivsWithout">
           Lieferungen unberechnet <span class="label label-pill label-default">${sub.quantity}</span> 
-          <a href="/subscr/createInvoice/${sub.id?c}" class="btn btn-primary">Rechnung erstellen</a>
+          <a href="/subscr/createInvoice/${sub.id?c}" class="btn btn-primary" target="_blank">Rechnung erstellen</a>
         </a>
       </h4>
     </div>
@@ -54,7 +54,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				<#list deliveriesWithout as d>
+				<#list deliveriesWith as d>
 					<tr>
 						<td>${d.deliveryDate.toString("dd.MM.yy")}</td>
 						<td>${artikelbez(d)!"n.bek."}</td>

@@ -19,12 +19,6 @@ public class Subscription {
 	@JsonProperty
 	private int quantity;
 	@JsonProperty
-	private boolean needsInvoice;
-	@JsonProperty
-	private boolean needsDeliveryNote;
-	@JsonProperty
-	private boolean collectiveInvoice;
-	@JsonProperty
 	private LocalDate startDate;
 	@JsonProperty
 	private LocalDate endDate;
@@ -40,6 +34,9 @@ public class Subscription {
 
 	@JsonProperty
 	private long shipmentCost;
+
+	@JsonProperty
+	private String invoiceNumber;
 
 	
 	public long getId() {
@@ -71,24 +68,6 @@ public class Subscription {
 	}
 	public void setQuantity(int quantity) {
 		this.quantity = quantity;
-	}
-	public boolean isNeedsInvoice() {
-		return needsInvoice;
-	}
-	public void setNeedsInvoice(boolean needsInvoice) {
-		this.needsInvoice = needsInvoice;
-	}
-	public boolean isNeedsDeliveryNote() {
-		return needsDeliveryNote;
-	}
-	public void setNeedsDeliveryNote(boolean needsDeliveryNote) {
-		this.needsDeliveryNote = needsDeliveryNote;
-	}
-	public boolean isCollectiveInvoice() {
-		return collectiveInvoice;
-	}
-	public void setCollectiveInvoice(boolean collectiveInvoice) {
-		this.collectiveInvoice = collectiveInvoice;
 	}
 	public LocalDate getStartDate() {
 		return startDate;
@@ -131,6 +110,12 @@ public class Subscription {
 	}
 	public void setShipmentCost(long shipmentCost) {
 		this.shipmentCost = shipmentCost;
+	}
+	public String getInvoiceNumber() {
+		return invoiceNumber;
+	}
+	public void setInvoiceNumber(String invoiceNumber) {
+		this.invoiceNumber = invoiceNumber;
 	}
 	
 	

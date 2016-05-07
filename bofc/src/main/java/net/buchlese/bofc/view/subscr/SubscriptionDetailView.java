@@ -30,11 +30,11 @@ public class SubscriptionDetailView extends AbstractBofcView{
 	}
 
 	public List<SubscrDelivery> getDeliveriesWithout() {
-		return dao.getDeliveriesForSubscription(sub.getId());
+		return dao.getDeliveriesForSubscriptionUnrecorded(sub.getId());
 	}
 
 	public List<SubscrDelivery> getDeliveriesWith() {
-		return dao.getDeliveriesForSubscription(sub.getId());
+		return dao.getDeliveriesForSubscriptionRecorded(sub.getId());
 	}
 
 	public String kunde(Subscription s) {
