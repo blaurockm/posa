@@ -34,6 +34,7 @@ import net.buchlese.bofc.view.pages.MappingView;
 import net.buchlese.bofc.view.subscr.SubscrDeliveryView;
 import net.buchlese.bofc.view.subscr.SubscrDispoView;
 import net.buchlese.bofc.view.subscr.SubscrProductDetailView;
+import net.buchlese.bofc.view.subscr.SubscriptionDetailView;
 
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
@@ -149,6 +150,14 @@ public class SubscrResource {
 	public View showProduct(@PathParam("prod") String product) {
 		long productId = Long.parseLong(product);
 		return new SubscrProductDetailView(dao, dao.getSubscrProduct(productId ), dao.getSubscriptionsForProduct(productId));
+	}
+
+	@GET
+	@Path("/subscription/{sub}")
+	@Produces({"text/html"})
+	public View showSubscription(@PathParam("sub") String subdIdP) {
+		long subId = Long.parseLong(subdIdP);
+		return new SubscriptionDetailView(dao, dao.getSubscription(subId));
 	}
 
 	// missing Subscription

@@ -13,13 +13,11 @@ public class Subscription {
 	private int pointid;
 
 	@JsonProperty
-	private int subscriberId;
+	private long subscriberId;
 	@JsonProperty
-	private int productId;
+	private long productId;
 	@JsonProperty
 	private int quantity;
-//	@JsonProperty
-//	private List<SubscrDelivery> deliveries;
 	@JsonProperty
 	private boolean needsInvoice;
 	@JsonProperty
@@ -36,6 +34,14 @@ public class Subscription {
 	private String deliveryInfo1;
 	@JsonProperty
 	private String deliveryInfo2;
+	
+	@JsonProperty
+	private ShipType shipmentType;
+
+	@JsonProperty
+	private long shipmentCost;
+
+	
 	public long getId() {
 		return id;
 	}
@@ -48,16 +54,16 @@ public class Subscription {
 	public void setPointid(int pointid) {
 		this.pointid = pointid;
 	}
-	public int getSubscriberId() {
+	public long getSubscriberId() {
 		return subscriberId;
 	}
-	public void setSubscriberId(int subscriberId) {
+	public void setSubscriberId(long subscriberId) {
 		this.subscriberId = subscriberId;
 	}
-	public int getProductId() {
+	public long getProductId() {
 		return productId;
 	}
-	public void setProductId(int productId) {
+	public void setProductId(long productId) {
 		this.productId = productId;
 	}
 	public int getQuantity() {
@@ -113,6 +119,18 @@ public class Subscription {
 	}
 	public void setDeliveryInfo2(String deliveryInfo2) {
 		this.deliveryInfo2 = deliveryInfo2;
+	}
+	public ShipType getShipmentType() {
+		return shipmentType;
+	}
+	public void setShipmentType(ShipType shipmentType) {
+		this.shipmentType = shipmentType;
+	}
+	public long getShipmentCost() {
+		return shipmentCost;
+	}
+	public void setShipmentCost(long shipmentCost) {
+		this.shipmentCost = shipmentCost;
 	}
 	
 	

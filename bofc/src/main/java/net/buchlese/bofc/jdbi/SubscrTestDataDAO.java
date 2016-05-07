@@ -125,7 +125,7 @@ public class SubscrTestDataDAO implements SubscrDAO {
 
 	private void createDeliveries(Subscription s, List<SubscrArticle> artList) {
 		for(SubscrArticle a : artList ) {
-			createDelivery(s, a, a.getTimest().toLocalDate().plusDays((int) (2 * Math.random() + 0.5d)));
+			createDelivery(s, a, a.getErschTag().plusDays((int) (2 * Math.random() + 0.5d)));
 		}
 		
 	}
@@ -133,38 +133,39 @@ public class SubscrTestDataDAO implements SubscrDAO {
 	private void createArticles() {
 		articles = new ArrayList<>();
 		SubscrArticle a = null;
-		// Der Archivar, halbjärhlich
-		a = createArticle(1, "Archivar {number}", 2004, 20456,1d, new DateTime(2004,6,10,10,55));
+		// Der Archivar, halbjährlich
+		a = createArticle(1,  22,20456, 1d, new LocalDate(2004,6,10));
 		createRepetitions(a, 12);
 		// Steuergesetze, monatlich
-		a = createArticle(2, "Steuergesetze {number}, 55 S.", 156, 5456,1d, new DateTime(2008,6,10,10,55));
+		a = createArticle(2,  22,5456, 1d, new LocalDate(2008,1,1));
 		createRepetitions(a, 12 * 8);
 		// Bürgerliche Gesetze, monatlich
-		a = createArticle(3, "BGB-Ergänzung {number}, 12 S.", 956, 2126,1d, new DateTime(2008,6,10,10,55));
+		a = createArticle(3,  22,2126, 1d, new LocalDate(2008,1,1));
 		createRepetitions(a, 12 * 12);
 		// Verwaltungsvorschriften BW, monatlich
-		a = createArticle(4, "Verwaltungsvorschiften {number}", 756, 9827,1d, new DateTime(2008,6,10,10,55));
+		a = createArticle(4,  22,9827, 1d, new LocalDate(2008,1,1));
 		createRepetitions(a, 8 * 12);
 		// Baugesetzbuch, 3monatlich
-		a = createArticle(5, "Baugesetzbuch {number}", 2004, 19827,1d, new DateTime(2008,6,10,10,55));
+		a = createArticle(5,  22,19827, 1d, new LocalDate(2008,4,1));
 		createRepetitions(a, 4 * 8);
 		// Brandschutz, jährlich
-		a = createArticle(6, "Der Feuerwehrmann {date:yyyy}", 2004, 19827,1d, new DateTime(2008,6,10,10,55));
+		a = createArticle(6,  22,19827, 1d, new LocalDate(2008,1,1));
 		createRepetitions(a, 8);
-		// Altenpflege,2 monatlich
-		a = createArticle(7, "Altenpflege für Anfänger {date:yyyy/MM}", 2004, 19827,1d, new DateTime(2008,6,10,10,55));
+		// Altenpflege, 2 monatlich
+		a = createArticle(7,  22,19827, 0.98d, new LocalDate(2008,3,5));
 		createRepetitions(a, 6 * 8);
 		// Atelier, 3monatlich
-		a = createArticle(8, "Das Atelier {date:yyyy/MM}", 2004, 19827,1d, new DateTime(2008,6,10,10,55));
+		a = createArticle(8,  22, 19827, 0.95d, new LocalDate(2008,4,4));
 		createRepetitions(a, 4 * 8);
 		// Autowelt, 14 tägig
-		a = createArticle(9, "Auto, Motor & Sport {date:yy/MM}", 2004, 19827,1d, new DateTime(2008,6,10,10,55));
+		a = createArticle(9,  22,19827, 0.78d, new LocalDate(2008,8,10));
 		createRepetitions(a, 26 * 12);
 	}
 
 	private void createRepetitions(SubscrArticle a, int c) {
+		SubscrProduct p = getSubscrProduct(a.getProductId());
 		while (c > 0) {
-			a = createNextArticle(a);
+			a = createNextArticle(a, p);
 			c--;
 		}
 	}
@@ -213,41 +214,35 @@ public class SubscrTestDataDAO implements SubscrDAO {
 
 	private void createProducts() {
 		products = new ArrayList<>();
-		createProduct(1,"Arch"  ,"Der Archivar"          ,"Cornelsen"   ,2,new LocalDate(1995,7,15),new LocalDate(2016,1,5),  new Period(0,6,0,0,0,0,0,0));
-		createProduct(2,"StG"   ,"Steuergesetze"         ,"C.H. Beck"   ,5,new LocalDate(1996,7,17),new LocalDate(2016,5,3),  new Period(0,1,0,0,0,0,0,0));
-		createProduct(3,"BGB"   ,"Bürgerliche Gesetze"   ,"C.H. Beck"   ,6,new LocalDate(1997,8,25),new LocalDate(2016,4,25), new Period(0,1,0,0,0,0,0,0));
-		createProduct(4,"VwBW"  ,"Verwaltungsvorschr BW" ,"C.H. Beck"   ,3,new LocalDate(1998,8,17),new LocalDate(2016,4,21), new Period(0,1,0,0,0,0,0,0));
-		createProduct(5,"BauG"  ,"Baugesetzbuch"         ,"Boorberg"    ,2,new LocalDate(1999,9,25),new LocalDate(2016,5,25), new Period(0,3,0,0,0,0,0,0));
-		createProduct(6,"BS"    ,"Brandschutz"           ,"Boorberg"    ,1,new LocalDate(1991,9,18),new LocalDate(2016,1,2),  new Period(1,0,0,0,0,0,0,0));
-		createProduct(7,"AltP"  ,"Altenpflege"           ,"Hanser"      ,1,new LocalDate(1992,2,29),new LocalDate(2016,3,10), new Period(0,2,0,0,0,0,0,0));
-		createProduct(8,"At"    ,"Atelier"               ,"Kunstwerk"   ,1,new LocalDate(1993,2,10),new LocalDate(2016,4,4),  new Period(0,3,0,0,0,0,0,0));
-		createProduct(9,"AW"    ,"Autowelt"              ,"Motorwelt"   ,1,new LocalDate(2013,1,20),new LocalDate(2016,5,2),  new Period(0,0,14,0,0,0,0,0));
+		createProduct(1,"Arch"  ,"Der Archivar"          ,"Cornelsen"   ,true,new LocalDate(1995,7,15),new LocalDate(2016,1,5),  new Period(0,6,0,0,0,0,0,0), 2, "Archivar {number}", 12);
+		createProduct(2,"StG"   ,"Steuergesetze"         ,"C.H. Beck"   ,false,new LocalDate(1996,7,17),new LocalDate(2016,5,3),  new Period(0,1,0,0,0,0,0,0), 5, "Steuergesetze {number}, 55 S.", 12);
+		createProduct(3,"BGB"   ,"Bürgerliche Gesetze"   ,"C.H. Beck"   ,false,new LocalDate(1997,8,25),new LocalDate(2016,4,25), new Period(0,1,0,0,0,0,0,0), 6, "BGB-Ergänzung {number}, 12 S.", 12);
+		createProduct(4,"VwBW"  ,"Verwaltungsvorschr BW" ,"C.H. Beck"   ,false,new LocalDate(1998,8,17),new LocalDate(2016,4,21), new Period(0,1,0,0,0,0,0,0), 3, "Verwaltungsvorschiften {number}", 12);
+		createProduct(5,"BauG"  ,"Baugesetzbuch"         ,"Boorberg"    ,false,new LocalDate(1999,9,25),new LocalDate(2016,5,25), new Period(0,3,0,0,0,0,0,0), 2, "Baugesetzbuch {number}", 12);
+		createProduct(6,"BS"    ,"Brandschutz"           ,"Boorberg"    ,false,new LocalDate(1991,9,18),new LocalDate(2016,1,2),  new Period(1,0,0,0,0,0,0,0),  1, "Der Feuerwehrmann {date:yyyy}", 12);
+		createProduct(7,"AltP"  ,"Altenpflege"           ,"Hanser"      ,true,new LocalDate(1992,2,29),new LocalDate(2016,3,10), new Period(0,2,0,0,0,0,0,0), 1, "Altenpflege für Anfänger {date:yyyy/MM}", 12);
+		createProduct(8,"At"    ,"Atelier"               ,"Kunstwerk"   ,true,new LocalDate(1993,2,10),new LocalDate(2016,4,4),  new Period(0,3,0,0,0,0,0,0), 1, "Das Atelier {date:yyyy/MM}", 12);
+		createProduct(9,"AW"    ,"Autowelt"              ,"Motorwelt"   ,true,new LocalDate(2013,1,20),new LocalDate(2016,5,2),  new Period(0,0,14,0,0,0,0,0), 1, "Auto, Motor & Sport {date:yy/MM}", 12);
 	}
 
-	private SubscrArticle createArticle(int productId, String name, int count, long brutto, double halfPercentage, DateTime timest) {
+	private SubscrArticle createArticle(int productId, int issue, long brutto, double halfPercentage, LocalDate erschTag) {
 		SubscrArticle a = new SubscrArticle();
 		a.setId(idcounter++);
 		a.setProductId(productId);
-		a.setNamePattern(name);
-		a.setCount(count);
 		a.setBrutto(brutto);
 		a.setHalfPercentage(halfPercentage);
-		a.setTimest(timest);
-		a.initializeName();
+		a.setErschTag(erschTag);
+		a.setIssueNo(issue);
 		a.initializeBrutto();
 		articles.add(a);
 		return a;
 	}
 	
-	private SubscrArticle createNextArticle(SubscrArticle olda) {
-		SubscrArticle a = olda.clone();
+	private SubscrArticle createNextArticle(SubscrArticle olda, SubscrProduct p) {
+		SubscrArticle a = p.createNextArticle(olda.getErschTag().plus(p.getPeriod()));
 		a.setId(idcounter++);
 		a.setBrutto((long) (olda.getBrutto() *  (1d + Math.random() * 0.05d)));
 		a.initializeBrutto();
-		Period p = getSubscrProduct(a.getProductId()).getPeriod();
-		a.setCount(olda.getCount()+1);
-		a.setTimest(olda.getTimest().plus(p));
-		a.initializeName();
 		articles.add(a);
 		return a;
 	}
@@ -291,16 +286,19 @@ public class SubscrTestDataDAO implements SubscrDAO {
 	}
 	
 	
-	private void createProduct(int id, String abbrev, String name, String publisher, int quantity, LocalDate startDate, LocalDate lastDelivery, Period period) {
+	private void createProduct(int id, String abbrev, String name, String publisher, boolean payAdv, LocalDate startDate, LocalDate lastDelivery, Period period, int quantity, String namePattern, int count) {
 		SubscrProduct p = new SubscrProduct();
 		p.setId(id);
 		p.setAbbrev(abbrev);
 		p.setName(name);
 		p.setPublisher(publisher);
+		p.setPayedInAdvance(payAdv);
 		p.setQuantity(quantity);
 		p.setStartDate(startDate);
 		p.setLastDelivery(lastDelivery);
 		p.setPeriod(period);
+		p.setNamePattern(namePattern);
+		p.setCount(count);
 		products.add(p);
 	}
 

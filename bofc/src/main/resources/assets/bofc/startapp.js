@@ -32,6 +32,10 @@ Path.map("#subscrProduct/:id").to(function(){
     $("#output .content").load("/subscr/product/" + this.params["id"]);
 }).enter(setPageBackground);
 
+Path.map("#subscription/:id").to(function(){
+    $("#output .content").load("/subscr/subscription/" + this.params["id"]);
+}).enter(setPageBackground);
+
 Path.map("#subscrDispo/:id").to(function(){
     $("#output .content").load("/subscr/dispo/" + this.params["id"]);
 }).enter(setPageBackground);

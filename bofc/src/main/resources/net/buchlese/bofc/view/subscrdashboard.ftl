@@ -8,8 +8,9 @@
 			<th>Menge</th>
 			<th>Versandart</th>
 			<th align="right">Betrag</th>
-			<th>Rechnung</th>
-			<th>Lieferschein</th>
+			<th>Berechnet</th>
+			
+			<th>Aktionen</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -20,8 +21,9 @@
 			<td>${d.quantity}</td>
 			<td></td>
 			<td align="right">${money(d.total)}</td>
-			<td><a href="/subscr/inv/${d.id}">rech</a></td>
-			<td><a href="/subscr/delivnote/${d.id}">LS</a></td>
+			<td>${d.payed?c}</td>
+			<td><a href="#subscrDelivery/${d.id?c}">see</a>
+			<a href="/subscr/delivnote/${d.id?c}">LS</a></td>
 		</tr>
 		</#list>
 	</tbody>

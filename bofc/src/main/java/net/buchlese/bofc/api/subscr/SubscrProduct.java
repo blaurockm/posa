@@ -5,6 +5,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.LocalDate;
 import org.joda.time.Period;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class SubscrProduct {
@@ -28,6 +29,36 @@ public class SubscrProduct {
 	private LocalDate startDate;
 	@JsonProperty
 	private int quantity;
+	@JsonProperty
+	private String namePattern;
+	@JsonProperty
+	private double halfPercentage; // prozentuale Anteil am Gesamtpreis , halber Steuersatz, 0 < x < 1
+	@JsonProperty
+	private long baseBrutto;
+
+	@JsonProperty
+	private int count;
+
+	@JsonProperty
+	private boolean payedInAdvance; // vorausbezahlt: bei Abos, Fortsetzungen bei jeder jeder Lieferung
+
+	@JsonProperty
+	private int issuePayInterval = 1; // mit einer Zahlen werden x deliveries auf einmal bezahlt
+	
+	@JsonIgnore
+	public SubscrArticle createNextArticle(LocalDate erschTag) {
+		SubscrArticle na = new SubscrArticle();
+		na.setProductId(getId());
+		na.setHalfPercentage(halfPercentage);
+		na.setBrutto(baseBrutto);
+		na.initializeBrutto();
+		na.setErschTag(erschTag);
+		na.setIssueNo(count++);
+		na.setName(na.initializeName(namePattern));
+		return na;
+	}
+	
+
 	public long getId() {
 		return id;
 	}
@@ -81,6 +112,60 @@ public class SubscrProduct {
 	}
 	public void setQuantity(int quantity) {
 		this.quantity = quantity;
+	}
+
+	public String getNamePattern() {
+		return namePattern;
+	}
+
+	public void setNamePattern(String namePattern) {
+		this.namePattern = namePattern;
+	}
+
+	public double getHalfPercentage() {
+		return halfPercentage;
+	}
+
+	public void setHalfPercentage(double halfPercentage) {
+		this.halfPercentage = halfPercentage;
+	}
+
+	public int getCount() {
+		return count;
+	}
+
+	public void setCount(int count) {
+		this.count = count;
+	}
+
+
+	public long getBaseBrutto() {
+		return baseBrutto;
+	}
+
+
+	public void setBaseBrutto(long baseBrutto) {
+		this.baseBrutto = baseBrutto;
+	}
+
+
+	public boolean isPayedInAdvance() {
+		return payedInAdvance;
+	}
+
+
+	public void setPayedInAdvance(boolean payedInAdvance) {
+		this.payedInAdvance = payedInAdvance;
+	}
+
+
+	public int getIssuePayInterval() {
+		return issuePayInterval;
+	}
+
+
+	public void setIssuePayInterval(int issuePayInterval) {
+		this.issuePayInterval = issuePayInterval;
 	}
 
 }

@@ -1,28 +1,48 @@
 
+<div class="container">
 <h1>Periodikadisposition ${p.name}</h1>
 
-<p>von ${p.publisher}
-<p>für den ${dispoDate.toString("dd.MM.yy")}
-<p>Bestellte Menge ${p.quantity}
+<div class="row">
+<div class="col-md-6">von ${p.publisher}</div>
+</div>
+<div class="row">
+<div class="col-md-6">für den ${dispoDate.toString("dd.MM.yy")}</div>
+</div>
+<div class="row">
+<div class="col-md-6">Bestellte Menge ${p.quantity}</div>
+</div>
 
-<h2>auszuliefernder Artikel ${art.id?c}</h2>
+<div class="row">
 
-<form action="subscr/updatearticle">
-Name <input type="text" value="${art.name}" size=50> <br>
-Preis Gesamt Brutto <input type="text" value = "${art.brutto}"> € <br>
-       7% Brutto <input type="text" value = "${art.brutto_half}"> €   prozentualer Anteil <input type="text" value = "${art.halfPercentage}"> <br>
-	   19% Brutto <input type="text" value = "${art.brutto_full}"> € <br> 
+<div class="col-md-5">
+  <div class="card card-block">
+    <h3 class="card-title">auszuliefernder Artikel</h3>
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item">Artikel-ID ${art.id?c}</li>
+      <li class="list-group-item">Name <a href="#"  class="editable" data-type="text"  data-name="article.name"  data-title="Artikelbezeichnung">${art.name}</a></li>
+      <li class="list-group-item">Erscheinungsdatum <a href="#" class="editable" data-type="date"  data-name="article.erschTag"  data-title="Betrag Print-Anteil"  >${art.erschTag.toString("dd.MM.yy")}</a></li>
+      <li class="list-group-item">Ausgabe <a href="#" class="editable" data-type="number"  data-name="article.issueNo"  data-title="Betrag Print-Anteil" >${art.issueNo}</a></li>
+    </ul>
+   </div>
+</div>
 
-Zählung <input type="text" value="${art.count}"> <br>
-Erscheinungsdatum ${art.timest.toString("dd.MM.yy")} <br>
+<div class="col-md-5">
+  <div class="card card-block">
+   <h3 class="card-title">Preis</h3>
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item">Gesamt Brutto <a href="#" class="editable" data-type="text"  data-name="article.brutto"  data-title="Gesamtbetrag">${art.brutto?c}</a> € </li>
+      <li class="list-group-item">7% Brutto <a href="#" class="editable" data-type="text"  data-name="article.brutto_half"  data-title="Betrag Print-Anteil" >${art.brutto_half?c}</a> €    % Anteil <a href="#"  class="editable" data-type="text"  data-name="article.halfPercentage"  data-title="Prozent Print-Anteil" >${art.halfPercentage?c}</a></li>
+      <li class="list-group-item">19% Brutto <a href="#"  class="editable" data-type="text"  data-name="article.brutto_full"  data-title="Betrag Online-Anteil"  >${art.brutto_full?c}</a> € </li>
+	</ul>
+   </div>
+</div>      
+<div class="col-md-1">
+  <button id="#artikelpluseins" class="btn btn-primary">Artikel +1</button>
+</div>
+</div>
 
-<button>Änderungen Speichern</button> <button>Neuer Artikel</button>	   
-</form>
 
 <h2>betroffene Abos</h2>
-
-
-<ul>
 
 <table class="table table-striped">
 	<thead>
@@ -63,6 +83,14 @@ Erscheinungsdatum ${art.timest.toString("dd.MM.yy")} <br>
 </#list>
 	</tbody>
 </table>
+</div>
 
-
-</ul>
+<script>
+	$('.editable').editable({
+	    url: '/subscr/update', pk:'${art.id?c}'
+	});
+    $( "#artikelpluseins" ).click(function() {
+	 	 $.getJSON("/subscr/articlecreate/${art.id?c}", function() {console.log( "articlecreate success" );})
+	 	 $( "#artikelpluseins" ).hide();
+	});
+</script>
