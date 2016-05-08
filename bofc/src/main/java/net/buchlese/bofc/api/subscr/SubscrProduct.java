@@ -50,8 +50,7 @@ public class SubscrProduct {
 		SubscrArticle na = new SubscrArticle();
 		na.setProductId(getId());
 		na.setHalfPercentage(halfPercentage);
-		na.setBrutto(baseBrutto);
-		na.initializeBrutto();
+		na.updateBrutto(baseBrutto);
 		na.setErschTag(erschTag);
 		na.setIssueNo(count++);
 		na.setName(na.initializeName(namePattern));

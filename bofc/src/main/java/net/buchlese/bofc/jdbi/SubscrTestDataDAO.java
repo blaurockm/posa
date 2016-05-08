@@ -258,11 +258,10 @@ public class SubscrTestDataDAO implements SubscrDAO {
 		SubscrArticle a = new SubscrArticle();
 		a.setId(idcounter++);
 		a.setProductId(productId);
-		a.setBrutto(brutto);
 		a.setHalfPercentage(halfPercentage);
 		a.setErschTag(erschTag);
 		a.setIssueNo(issue);
-		a.initializeBrutto();
+		a.updateBrutto(brutto);
 		articles.add(a);
 		return a;
 	}
@@ -270,8 +269,7 @@ public class SubscrTestDataDAO implements SubscrDAO {
 	private SubscrArticle createNextArticle(SubscrArticle olda, SubscrProduct p) {
 		SubscrArticle a = p.createNextArticle(olda.getErschTag().plus(p.getPeriod()));
 		a.setId(idcounter++);
-		a.setBrutto((long) (olda.getBrutto() *  (1d + Math.random() * 0.05d)));
-		a.initializeBrutto();
+		a.updateBrutto((long) (olda.getBrutto() *  (1d + Math.random() * 0.05d)));
 		articles.add(a);
 		return a;
 	}

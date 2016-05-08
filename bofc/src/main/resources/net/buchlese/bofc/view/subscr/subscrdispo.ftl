@@ -19,9 +19,9 @@
     <h3 class="card-title">auszuliefernder Artikel</h3>
     <ul class="list-group list-group-flush">
       <li class="list-group-item">Artikel-ID ${art.id?c}</li>
-      <li class="list-group-item">Name <a href="#"  class="editable" data-type="text"  data-name="article.name"  data-title="Artikelbezeichnung">${art.name}</a></li>
-      <li class="list-group-item">Erscheinungsdatum <a href="#" class="editable" data-type="date"  data-name="article.erschTag"  data-title="Betrag Print-Anteil"  >${art.erschTag.toString("dd.MM.yy")}</a></li>
-      <li class="list-group-item">Ausgabe <a href="#" class="editable" data-type="number"  data-name="article.issueNo"  data-title="Betrag Print-Anteil" >${art.issueNo}</a></li>
+      <li class="list-group-item">Name <a href="#" id="artname" class="editable" data-type="text"  data-name="article.name"  data-title="Artikelbezeichnung">${art.name}</a></li>
+      <li class="list-group-item">Erscheinungsdatum <a href="#" class="namechangerfield" data-type="date" data-format="dd.mm.yyyy" data-name="article.erschTag"  data-title="Erscheinungstag" >${art.erschTag.toString("dd.MM.yyyy")}</a></li>
+      <li class="list-group-item">Ausgabe <a href="#" class="namechangerfield" data-type="number"  data-name="article.issueNo"  data-title="Ausgabennummer">${art.issueNo}</a></li>
     </ul>
    </div>
 </div>
@@ -30,14 +30,14 @@
   <div class="card card-block">
    <h3 class="card-title">Preis</h3>
     <ul class="list-group list-group-flush">
-      <li class="list-group-item">Gesamt Brutto <a href="#" class="editable" data-type="text"  data-name="article.brutto"  data-title="Gesamtbetrag">${art.brutto?c}</a> € </li>
-      <li class="list-group-item">7% Brutto <a href="#" class="editable" data-type="text"  data-name="article.brutto_half"  data-title="Betrag Print-Anteil" >${art.brutto_half?c}</a> €    % Anteil <a href="#"  class="editable" data-type="text"  data-name="article.halfPercentage"  data-title="Prozent Print-Anteil" >${art.halfPercentage?c}</a></li>
-      <li class="list-group-item">19% Brutto <a href="#"  class="editable" data-type="text"  data-name="article.brutto_full"  data-title="Betrag Online-Anteil"  >${art.brutto_full?c}</a> € </li>
+      <li class="list-group-item">Gesamt Brutto <a href="#" id="brutto" class="editablemoney" data-type="text"  data-name="article.brutto"  data-title="Gesamtbetrag">${art.brutto?c}</a></li>
+      <li class="list-group-item">7% Brutto <a href="#" id="brutto_half" class="editablemoney" data-type="text"  data-name="article.brutto_half"  data-title="Betrag Print-Anteil" >${art.brutto_half?c}</a>    Anteil am Gesamtpreis <a href="#" id="half_percent" class="percentagefield" data-type="text"  data-name="article.halfPercentage"  data-title="Prozent Print-Anteil" >${art.halfPercentage?c}</a></li>
+      <li class="list-group-item">19% Brutto <a href="#" id="brutto_full" class="editablemoney" data-type="text"  data-name="article.brutto_full"  data-title="Betrag Online-Anteil"  >${art.brutto_full?c}</a> </li>
 	</ul>
    </div>
 </div>      
 <div class="col-md-1">
-  <button id="#artikelpluseins" class="btn btn-primary">Artikel +1</button>
+  <button id="artikelpluseins" class="btn btn-primary">Artikel +1</button>
 </div>
 </div>
 
@@ -51,7 +51,6 @@
 			<th>Abonnent</th>
 			<th>Menge</th>
 			<th>LS</th>
-			<th>Rech?</th>
 			<th>Versandart</th>
 			<th></th>
 		</tr>
@@ -62,9 +61,8 @@
 			<td>${sub.id?c}</td>
 			<td>${kunde(sub)} ${sub.deliveryInfo1!""}, ${sub.deliveryInfo2!""}</td>
 			<td>${sub.quantity}</td>
-			<td>${sub.needsDeliveryNote?c}</td>
-			<td>${sub.needsInvoice?c}</td>
 			<td></td>
+			<td>${sub.shipmentType}</td>
 			<td>
 			<#assign deli = delivery(sub, art)!"hh" >
 			<#if deli != "hh" >
@@ -86,10 +84,61 @@
 </div>
 
 <script>
-	$('.editable').editable({
-	    url: '/subscr/update', pk:'${art.id?c}'
+   var formatMoney = function(n, c, d, t){
+	var c = isNaN(c = Math.abs(c)) ? 2 : c, 
+	    d = d == undefined ? "," : d, 
+	    t = t == undefined ? "." : t, 
+	    s = n < 0 ? "-" : "", 
+	    i = parseInt(n = Math.abs(+(n/100.0) || 0).toFixed(c)) + "", 
+	    j = (j = i.length) > 3 ? j % 3 : 0;
+	   return s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) + (c ? d + Math.abs(n - i).toFixed(c).slice(2) : "") + " €";
+	 };
+	var moneyUpdate = 
+	    
+    $('.editable').editable({
+	    url: '/subscr/update', pk:'${art.id?c}',
 	});
-    $( "#artikelpluseins" ).click(function() {
+	$('.namechangerfield').editable({
+	    url: '/subscr/update', pk:'${art.id?c}',
+	    mode : "popup",
+		success:function(res, newValue) {
+	        if(!res.success) return res.msg;
+	        $("#artname").editable('setValue',res.name, false);
+	    }
+    });
+	$('.percentagefield').editable({
+	    url: '/subscr/update', pk:'${art.id?c}',
+	    mode : "popup",
+	    display : function(value, jsonresponse) {
+	    	$(this).text(value * 100 + " %");
+	    },
+		success:function(res, newValue) {
+	        if(!res.success) return res.msg;
+	        $("#brutto_half").editable('setValue',res.bruttoHalf, true);
+	        $("#brutto_full").editable('setValue',res.bruttoFull, true);
+	    }
+    });
+	$('.editablemoney').editable({
+	    url: '/subscr/update', pk:'${art.id?c}',
+	    mode : "popup",
+	    display : function(value, jsonresponse) {
+	    	$(this).text(formatMoney(value));
+	    },
+	    success: function(res, newValue) {
+	        if(!res.success) return res.msg;
+	        $("#brutto").editable('setValue',res.brutto, true);
+	        $("#brutto_half").editable('setValue',res.bruttoHalf, true);
+	        $("#brutto_full").editable('setValue',res.bruttoFull, true);
+	        $("#half_percent").editable('setValue',res.halfPercentage, false);
+	    },
+	    validate: function(value) {
+	        if($.trim(value) == '') {
+	            return 'This field is required';
+	        }
+	    }
+	});
+	
+    $( '#artikelpluseins' ).click(function() {
 	 	 $.getJSON("/subscr/articlecreate/${art.id?c}", function() {console.log( "articlecreate success" );})
 	 	 $( "#artikelpluseins" ).hide();
 	});

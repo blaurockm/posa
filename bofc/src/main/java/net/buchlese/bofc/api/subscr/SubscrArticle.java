@@ -52,11 +52,34 @@ public class SubscrArticle implements Comparable<SubscrArticle> {
 	}
 
 	@JsonIgnore
-	public void initializeBrutto() {
+	public void updateBrutto(long br) {
+		brutto =  br;
 		brutto_half = (long) (brutto * halfPercentage);
 		brutto_full = brutto - brutto_half;
 	}
-	
+
+	@JsonIgnore
+	public void updateHalfPercentage(double p) {
+		halfPercentage = p;
+		brutto_half = (long) (brutto * halfPercentage);
+		brutto_full = brutto - brutto_half;
+	}
+
+	@JsonIgnore
+	public void updateBruttoHalf(long br) {
+		brutto_half =  br;
+		halfPercentage = ((double) br / (double) brutto);
+		brutto_full = brutto - brutto_half;
+	}
+
+	@JsonIgnore
+	public void updateBruttoFull(long br) {
+		brutto_full =  br;
+		halfPercentage =  1- ((double) br / (double) brutto);
+		brutto_half = brutto - brutto_full;
+	}
+
+
 	public long getId() {
 		return id;
 	}

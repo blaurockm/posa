@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.util.Collections;
 import java.util.List;
 
 import javax.ws.rs.FormParam;
@@ -21,7 +20,6 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 
-import net.buchlese.bofc.api.bofc.Mapping;
 import net.buchlese.bofc.api.bofc.PosInvoice;
 import net.buchlese.bofc.api.subscr.Address;
 import net.buchlese.bofc.api.subscr.SubscrArticle;
@@ -31,8 +29,9 @@ import net.buchlese.bofc.api.subscr.Subscription;
 import net.buchlese.bofc.core.SubscriptionInvoiceCreator;
 import net.buchlese.bofc.jdbi.SubscrTestDataDAO;
 import net.buchlese.bofc.jdbi.bofc.SubscrDAO;
+import net.buchlese.bofc.resources.helper.SubscrArticleUpdateHelper;
+import net.buchlese.bofc.resources.helper.UpdateResult;
 import net.buchlese.bofc.view.SubscrDashboardView;
-import net.buchlese.bofc.view.pages.MappingView;
 import net.buchlese.bofc.view.subscr.SubscrDeliveryView;
 import net.buchlese.bofc.view.subscr.SubscrDispoView;
 import net.buchlese.bofc.view.subscr.SubscrProductDetailView;
@@ -57,13 +56,18 @@ public class SubscrResource {
 
 	@POST
 	@Path("/update")
-	@Produces({"text/html"})
-	public View updateMaping( @FormParam("point") Integer pi, @FormParam("deb") Integer deb, @FormParam("cust") Integer cust) {
-		Mapping um = new Mapping();
-		um.setPointid(pi);
-		um.setCustomerId(cust);
-		um.setDebitorId(deb);
-		return new MappingView(Collections.emptyList());
+	@Produces({"application/json"})
+	public UpdateResult updateMaping( @FormParam("pk") String pk, @FormParam("name") String fieldname, @FormParam("value") String value) {
+		UpdateResult res = null;
+		if (fieldname.startsWith("article")) {
+			res = new SubscrArticleUpdateHelper(dao).updateArticle(pk, fieldname, value);
+		}
+		if (res == null) {
+			res = new UpdateResult();
+			res.success = false;
+			res.msg =" not implemented yet";
+		}
+		return res;
 	}
 
 
