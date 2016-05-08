@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.ws.rs.FormParam;
@@ -68,6 +69,40 @@ public class SubscrResource {
 			res.msg =" not implemented yet";
 		}
 		return res;
+	}
+
+	@GET
+	@Path("/subscrarticle/{dir}/{prod}/{art}")
+	@Produces({"application/json"})
+	public SubscrArticle getSubscrArticle(@PathParam("dir") String dir, @PathParam("prod") String prodIdP, @PathParam("art") String artIdP) {
+		long artId = Long.parseLong(artIdP);
+		if (dir.equals("ex")) {
+			return dao.getSubscrArticle(artId);
+		}
+		long prodId = Long.parseLong(prodIdP);
+		List<SubscrArticle> arts = dao.getArticlesOfProduct(prodId);
+		long[] artIds = arts.stream().mapToLong(SubscrArticle::getId).toArray();
+		int idx = Arrays.binarySearch(artIds, artId);
+		if (dir.equals("prev") && idx > 0) {
+			return dao.getSubscrArticle(artIds[idx-1]);
+		}
+		if (dir.equals("next") && idx >= 0 && idx < artIds.length-1) {
+			return dao.getSubscrArticle(artIds[idx+1]);
+		}
+		if (dir.equals("next") && idx == artIds.length-1) {
+			return dao.getSubscrArticle(artIds[idx]);
+		}
+		throw new WebApplicationException(404);
+	}
+
+	@GET
+	@Path("/subscrarticlecreate/{prod}")
+	@Produces({"application/json"})
+	public SubscrArticle createSubscrArticle(@PathParam("prod") String prodIdP) {
+		long prodId = Long.parseLong(prodIdP);
+		SubscrArticle art = dao.getSubscrProduct(prodId).createNextArticle(LocalDate.now());
+//		dao.insertArticle(art);
+		return art;
 	}
 
 

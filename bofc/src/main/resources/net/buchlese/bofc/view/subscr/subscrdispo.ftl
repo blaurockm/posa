@@ -18,10 +18,12 @@
   <div class="card card-block">
     <h3 class="card-title">auszuliefernder Artikel</h3>
     <ul class="list-group list-group-flush">
-      <li class="list-group-item">Artikel-ID ${art.id?c}</li>
+      <li class="list-group-item"><button onclick="loadPrevArticle()">&lt;&lt;</button> Artikel-ID <span id="artid">${art.id?c}</span>
+       <button onclick="loadNextArticle()">&gt;&gt;</button>
+      </li>
       <li class="list-group-item">Name <a href="#" id="artname" class="editable" data-type="text"  data-name="article.name"  data-title="Artikelbezeichnung">${art.name}</a></li>
-      <li class="list-group-item">Erscheinungsdatum <a href="#" class="namechangerfield" data-type="date" data-format="dd.mm.yyyy" data-name="article.erschTag"  data-title="Erscheinungstag" >${art.erschTag.toString("dd.MM.yyyy")}</a></li>
-      <li class="list-group-item">Ausgabe <a href="#" class="namechangerfield" data-type="number"  data-name="article.issueNo"  data-title="Ausgabennummer">${art.issueNo}</a></li>
+      <li class="list-group-item">Erscheinungsdatum <a href="#" id="artersch" class="namechangerfield" data-type="date" data-format="dd.mm.yyyy" data-name="article.erschTag"  data-title="Erscheinungstag" >${art.erschTag.toString("dd.MM.yyyy")}</a></li>
+      <li class="list-group-item">Ausgabe <a href="#" id="artcount" class="namechangerfield" data-type="number"  data-name="article.issueNo"  data-title="Ausgabennummer">${art.issueNo}</a></li>
     </ul>
    </div>
 </div>
@@ -71,7 +73,7 @@
 			   <button id="create${sub.id}">anlegen</button>
 			 <script>
    	   	 	   $( "#create${sub.id}" ).click(function() {
-   	    		 $.getJSON("/subscr/deliverycreate/${sub.id?c}/${art.id?c}/${dispoDate}", function() {console.log( "deliverycreate success" );})
+   	    		 $.getJSON("/subscr/deliverycreate/${sub.id?c}/" + article.id + "/${dispoDate}", function() {console.log( "deliverycreate success" );})
    	    		 $( "#create${sub.id}" ).hide();
 				});
 			 </script>
@@ -93,8 +95,29 @@
 	    j = (j = i.length) > 3 ? j % 3 : 0;
 	   return s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) + (c ? d + Math.abs(n - i).toFixed(c).slice(2) : "") + " €";
 	 };
-	var moneyUpdate = 
-	    
+
+	var article = null;
+	
+	var loadPrevArticle = function() {
+	 	 $.getJSON("/subscr/subscrarticle/prev/${art.productId?c}/" + article.id, displayArticle);
+	} 
+
+	var loadNextArticle = function() {
+	 	 $.getJSON("/subscr/subscrarticle/next/${art.productId?c}/" + article.id, displayArticle);
+	} 
+
+	var displayArticle = function(res) {
+		article = res;
+        $("#artname").editable('setValue',res.name, false);
+        $("#brutto").editable('setValue',res.brutto, true);
+        $("#brutto_half").editable('setValue',res.brutto_half, true);
+        $("#brutto_full").editable('setValue',res.brutto_full, true);
+        $("#half_percent").editable('setValue',res.halfPercentage, false);
+        $("#artid").text(res.id);
+        $("#artcount").editable('setValue',res.issueNo, true);
+	} 
+
+
     $('.editable').editable({
 	    url: '/subscr/update', pk:'${art.id?c}',
 	});
@@ -137,9 +160,13 @@
 	        }
 	    }
 	});
-	
     $( '#artikelpluseins' ).click(function() {
-	 	 $.getJSON("/subscr/articlecreate/${art.id?c}", function() {console.log( "articlecreate success" );})
+	 	 $.getJSON("/subscr/subscrarticlecreate/${art.productId?c}", displayArticle)
 	 	 $( "#artikelpluseins" ).hide();
 	});
+    
+    $.getJSON("/subscr/subscrarticle/ex/${art.productId?c}/${art.id?c}", displayArticle);
+    
+    
+    
 </script>
