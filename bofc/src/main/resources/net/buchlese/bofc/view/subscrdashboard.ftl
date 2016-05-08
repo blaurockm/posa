@@ -18,7 +18,7 @@
 		<#list deliveries as d>
 		<tr>
 			<td>${kunde(d)}</td>
-			<td>${artikelbez(d)}</td>
+			<td>${d.articleName}</td>
 			<td>${d.quantity}</td>
 			<td></td>
 			<td align="right">${money(d.total)}</td>

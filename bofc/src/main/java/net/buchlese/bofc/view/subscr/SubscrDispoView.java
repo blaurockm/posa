@@ -68,11 +68,4 @@ public class SubscrDispoView extends AbstractBofcView{
 		return "keine subId";
 	}
 
-	public String artikelbez(SubscrDelivery d) {
-		if (d.getArticle() != null) {
-			return d.getArticle().getName();
-		}
-		return "keine artId";
-	}
-
 }

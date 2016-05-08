@@ -6,12 +6,10 @@ import org.joda.time.LocalDate;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class SubscrDelivery {
+public class SubscrDelivery implements Comparable<SubscrDelivery> {
 	@NotEmpty
 	@JsonProperty
 	private long id;
-	@JsonProperty
-	private int pointid;
 
 	@JsonProperty
 	private LocalDate deliveryDate;
@@ -24,7 +22,7 @@ public class SubscrDelivery {
 	@JsonProperty
 	private long articleId;
 	@JsonProperty
-	private SubscrArticle article;
+	private String articleName;
 	@JsonProperty
 	private long total;
 	@JsonProperty
@@ -32,26 +30,17 @@ public class SubscrDelivery {
 	@JsonProperty
 	private long totalHalf;
 	@JsonProperty
-	private long shipmentCosts;
-	@JsonProperty
-	private boolean hasDeliveryNote;
-	@JsonProperty
-	private boolean hasInvoice;
-	@JsonProperty
 	private boolean payed;
 	@JsonProperty
+	private String invoiceNumber;
+	@JsonProperty
 	private DateTime creationDate;
+
 	public long getId() {
 		return id;
 	}
 	public void setId(long id) {
 		this.id = id;
-	}
-	public int getPointid() {
-		return pointid;
-	}
-	public void setPointid(int pointid) {
-		this.pointid = pointid;
 	}
 	public LocalDate getDeliveryDate() {
 		return deliveryDate;
@@ -65,35 +54,17 @@ public class SubscrDelivery {
 	public void setQuantity(int quantity) {
 		this.quantity = quantity;
 	}
-	public SubscrArticle getArticle() {
-		return article;
+	public String getArticleName() {
+		return articleName;
 	}
-	public void setArticle(SubscrArticle article) {
-		this.article = article;
+	public void setArticleName(String article) {
+		this.articleName = article;
 	}
 	public long getTotal() {
 		return total;
 	}
 	public void setTotal(long total) {
 		this.total = total;
-	}
-	public long getShipmentCosts() {
-		return shipmentCosts;
-	}
-	public void setShipmentCosts(long shipmentCosts) {
-		this.shipmentCosts = shipmentCosts;
-	}
-	public boolean isHasDeliveryNote() {
-		return hasDeliveryNote;
-	}
-	public void setHasDeliveryNote(boolean hasDeliveryNote) {
-		this.hasDeliveryNote = hasDeliveryNote;
-	}
-	public boolean isHasInvoice() {
-		return hasInvoice;
-	}
-	public void setHasInvoice(boolean hasInvoice) {
-		this.hasInvoice = hasInvoice;
 	}
 	public boolean isPayed() {
 		return payed;
@@ -139,6 +110,16 @@ public class SubscrDelivery {
 	}
 	public void setTotalHalf(long totalHalf) {
 		this.totalHalf = totalHalf;
+	}
+	public String getInvoiceNumber() {
+		return invoiceNumber;
+	}
+	public void setInvoiceNumber(String invoiceNumber) {
+		this.invoiceNumber = invoiceNumber;
+	}
+	@Override
+	public int compareTo(SubscrDelivery o) {
+		return getDeliveryDate().compareTo(o.getDeliveryDate());
 	}
 	
 }

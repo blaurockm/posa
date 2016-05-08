@@ -47,5 +47,7 @@ public interface SubscrDAO {
 
 	List<Subscriber> getSubscribers();
 
+	SubscrDelivery getLastDeliveryForSubscription(long id);
+
 
 }

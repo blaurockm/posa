@@ -67,7 +67,7 @@
 				<#list deliveries(sub) as d>
 					<tr>
 						<td>${d.deliveryDate.toString("dd.MM.yy")}</td>
-						<td>${artikelbez(d)}</td>
+						<td>${d.articleName}</td>
 						<td>${money(d.article.brutto)}</td>
 						<td>  <a href="#subscrDelivery/${d.id?c}">see</a> </td>
 					</tr>

@@ -35,8 +35,6 @@ public class Subscription {
 	@JsonProperty
 	private long shipmentCost;
 
-	@JsonProperty
-	private String invoiceNumber;
 
 	
 	public long getId() {
@@ -111,12 +109,5 @@ public class Subscription {
 	public void setShipmentCost(long shipmentCost) {
 		this.shipmentCost = shipmentCost;
 	}
-	public String getInvoiceNumber() {
-		return invoiceNumber;
-	}
-	public void setInvoiceNumber(String invoiceNumber) {
-		this.invoiceNumber = invoiceNumber;
-	}
-	
 	
 }

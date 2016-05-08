@@ -50,6 +50,8 @@ public class SubscriptionInvoiceCreator {
 			// details per Delivery;
 			for (SubscrDelivery deliv : deliveries) {
 				inv.addInvoiceDetail(createInvoiceDetailForDelivery(deliv,dao.getSubscrArticle(deliv.getArticleId())));
+				deliv.setInvoiceNumber(inv.getNumber());
+				deliv.setPayed(true);
 			}
 			dao.recordDetailsOnvInvoice(deliveries, inv.getNumber());
 			// Versandkosten
@@ -57,7 +59,6 @@ public class SubscriptionInvoiceCreator {
 				addShipmentCostDetail(inv, sub.getShipmentCost());
 			}
 
-			sub.setInvoiceNumber(inv.getNumber());
 		}
 		return inv;
 	}

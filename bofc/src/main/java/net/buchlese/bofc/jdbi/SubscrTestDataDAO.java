@@ -78,6 +78,10 @@ public class SubscrTestDataDAO implements SubscrDAO {
 		return deliveries.stream().filter(x -> x.getId() == id).findFirst().orElse(null);
 	}
 
+	public SubscrDelivery getLastDeliveryForSubscription(final long subid) {
+		return deliveries.stream().filter(x -> x.getSubcriptionId() == subid).max(Comparator.naturalOrder()).orElse(null);
+	}
+
 	public List<SubscrArticle> getArticlesOfProduct(final long prodid) {
 		return articles.stream().filter(x -> x.getProductId() == prodid).collect(Collectors.toList());
 	}
@@ -111,7 +115,7 @@ public class SubscrTestDataDAO implements SubscrDAO {
 	public SubscrDelivery createDelivery(Subscription subscription,	SubscrArticle article, LocalDate deliveryDate) {
 		SubscrDelivery d = new SubscrDelivery();
 		d.setId(idcounter++); 
-		d.setArticle(article);
+		d.setArticleName(article.getName());
 		d.setDeliveryDate(deliveryDate);
 		d.setSubcriptionId(subscription.getId());
 		d.setSubscriberId(subscription.getSubscriberId());

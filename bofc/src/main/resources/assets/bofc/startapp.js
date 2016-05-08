@@ -84,9 +84,8 @@ Path.root("#index");
 // route is defined, it calls this method instead.
 Path.rescue(notFound);
 
-Number.prototype.formatMoney = function(c, d, t){
-	var n = this, 
-	    c = isNaN(c = Math.abs(c)) ? 2 : c, 
+var formatMoney = function(n, c, d, t){
+	var c = isNaN(c = Math.abs(c)) ? 2 : c, 
 	    d = d == undefined ? "," : d, 
 	    t = t == undefined ? "." : t, 
 	    s = n < 0 ? "-" : "", 
@@ -101,3 +100,6 @@ $(document).ready(function(){
     // relies on DOM elements that may not yet be ready.
     Path.listen();
 });
+
+var shiptypesList = [{value:"MAIL", text:"Per Post"},{value:"PICKUP",text:"Abholung"}, {value:"PUBLISHER", text:"über Verlag"}, {value:"DELIVERY", text:"Lieferung d. Buchlese"}];
+var laedenList = [{value:1, text:"Dornhan"},{value:2, text:"Sulz"},{value:3, text:"Schramberg"}];
