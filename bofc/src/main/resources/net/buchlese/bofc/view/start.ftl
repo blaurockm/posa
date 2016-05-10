@@ -63,12 +63,47 @@
       </div>
     </nav>
     
+    <center><div id="postresult"></div></center>
 
     <div class="container" id="output">
        <!-- content is injected here -->
       <div class="content"></div>
     </div>  
 
+	<div class="modal bs-example-modal-lg" tabindex="-1" role="dialog" id="myModal" aria-labelledby="modal-title">
+  	<div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="modal-title">Modal title</h4>
+      </div>
+      <div class="modal-body" id="modal-output">
+         <!-- content is injected here -->
+         <div class="content"></div>
+      </div>
+    </div>
+  	</div>
+	</div>
+
+	<div class="modal bs-example-modal-lg" tabindex="-1" role="dialog" id="entryModal" aria-labelledby="entrymodal-title">
+  	<div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="entrymodal-title">Modal title</h4>
+      </div>
+      <div class="modal-body" id="entrymodal-output">
+         <!-- content is injected here -->
+         <div class="content"></div>
+      </div>
+	  <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Abbrechen</button>
+        <button type="button" id="saveEntry" class="btn btn-primary">Speichern</button>
+      </div>
+    </div>
+  	</div>
+	</div>
+   
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <!-- Latest compiled and minified JavaScript -->
@@ -82,6 +117,31 @@
 	    $(document).ready(function() {
 			$.fn.editable.defaults.mode = 'inline';
 	    });
+	    $('#myModal').on('hidden.bs.modal', function (e) {
+	    	  window.history.back();  // in der history einen schritt zurückgehen
+	    })
+	    $('#entryModal').on('hidden.bs.modal', function (e) {
+	    	  window.history.back();  // in der history einen schritt zurückgehen
+	    })
+	    $('#saveEntry').on('click', function () {
+    		// $('#entryForm').submit();
+    		$.post( $('#entryForm').prop('action') , $( "#entryForm" ).serialize(), function(info) { 
+                $("#postresult").html("Erfolgreich gespeichert!"); 
+                //adding class
+                $("#postresult").addClass("alert alert-success");
+                //timing the alert box to close after 5 seconds
+                window.setTimeout(function () {
+                    $(".alert").fadeTo(500, 0).slideUp(500, function () {
+                        $(this).remove();
+                    });
+                }, 5000);
+            }).fail(function(jqXHR, textStatus) {
+                $("#postresult").html("Problem beim Speichern: " + textStatus); 
+                //adding class
+                $("#postresult").addClass("alert alert-danger");
+            });
+    	    $("#entryModal").modal('hide');
+  		})
 	</script>
 </body>
 </html>

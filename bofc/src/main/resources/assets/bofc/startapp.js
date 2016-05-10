@@ -25,7 +25,11 @@ Path.map("#export").to(function(){
 }).enter(setPageBackground);
 
 Path.map("#subscr").to(function(){
-    $("#output .content").load("/subscr");
+    $("#output .content").load("/subscr/dashboard");
+}).enter(setPageBackground);
+
+Path.map("#subscrCust").to(function(){
+    $("#output .content").load("/subscr/customers");
 }).enter(setPageBackground);
 
 Path.map("#subscrProduct/:id").to(function(){
@@ -45,7 +49,31 @@ Path.map("#subscrDispo/:id").to(function(){
 }).enter(setPageBackground);
 
 Path.map("#subscrDelivery/:id").to(function(){
-    $("#output .content").load("/subscr/delivery/" + this.params["id"]);
+	// this is a modal window content
+    $("#modal-output .content").load("/subscr/delivery/" + this.params["id"]);
+    $("#modal-title").text("Auslieferungsdetails");
+    $("#myModal").modal('show');
+}).enter(setPageBackground);
+
+Path.map("#subscrCustAdd").to(function(){
+	// this is a modal window content
+    $("#entrymodal-output .content").load("/subscr/customerCreateForm");
+    $("#entrymodal-title").text("Neuen Abonnenten anlegen");
+    $("#entryModal").modal('show');
+}).enter(setPageBackground);
+
+Path.map("#subscrSubscrAdd").to(function(){
+	// this is a modal window content
+    $("#entrymodal-output .content").load("/subscr/subscriptionCreateForm");
+    $("#entrymodal-title").text("Neues Abo anlegen");
+    $("#entryModal").modal('show');
+}).enter(setPageBackground);
+
+Path.map("#subscrProductAdd").to(function(){
+	// this is a modal window content
+    $("#entrymodal-output .content").load("/subscr/productCreateForm");
+    $("#entrymodal-title").text("Neues Periodika anlegen");
+    $("#entryModal").modal('show');
 }).enter(setPageBackground);
 
 Path.map("#exports").to(function(){

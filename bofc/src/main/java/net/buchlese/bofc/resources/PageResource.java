@@ -18,7 +18,6 @@ import net.buchlese.bofc.api.bofc.Mapping;
 import net.buchlese.bofc.jdbi.bofc.MappingDAO;
 import net.buchlese.bofc.jdbi.bofc.PosCashBalanceDAO;
 import net.buchlese.bofc.jdbi.bofc.PosInvoiceDAO;
-import net.buchlese.bofc.view.SubscrDashboardView;
 import net.buchlese.bofc.view.pages.CommandsView;
 import net.buchlese.bofc.view.pages.ExportView;
 import net.buchlese.bofc.view.pages.ExportsView;
@@ -26,6 +25,7 @@ import net.buchlese.bofc.view.pages.MappingView;
 import net.buchlese.bofc.view.pages.RechnungenView;
 import net.buchlese.bofc.view.pages.StateView;
 import net.buchlese.bofc.view.pages.TechnicsView;
+import net.buchlese.bofc.view.subscr.SubscrDashboardView;
 
 import com.google.inject.Inject;
 

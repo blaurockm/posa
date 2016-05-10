@@ -1,4 +1,4 @@
-package net.buchlese.bofc.view;
+package net.buchlese.bofc.view.subscr;
 
 import java.util.List;
 
@@ -6,6 +6,7 @@ import net.buchlese.bofc.api.subscr.SubscrDelivery;
 import net.buchlese.bofc.api.subscr.SubscrProduct;
 import net.buchlese.bofc.api.subscr.Subscriber;
 import net.buchlese.bofc.jdbi.bofc.SubscrDAO;
+import net.buchlese.bofc.view.AbstractBofcView;
 
 public class SubscrDashboardView extends AbstractBofcView {
 

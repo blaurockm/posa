@@ -64,7 +64,7 @@
 				<#list deliveriesWithout(s) as d>
 					<tr>
 						<td>${d.deliveryDate.toString("dd.MM.yy")}</td>
-						<td>${d.articleName}</td>
+						<td>${d.articleName!}</td>
 						<td>${money(d.total)}</td>
 						<td>  <a href="#subscrDelivery/${d.id?c}">see</a> </td>
 					</tr>

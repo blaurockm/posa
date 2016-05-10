@@ -10,6 +10,7 @@ import java.io.Writer;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -18,6 +19,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 
@@ -32,7 +34,9 @@ import net.buchlese.bofc.jdbi.SubscrTestDataDAO;
 import net.buchlese.bofc.jdbi.bofc.SubscrDAO;
 import net.buchlese.bofc.resources.helper.SubscrArticleUpdateHelper;
 import net.buchlese.bofc.resources.helper.UpdateResult;
-import net.buchlese.bofc.view.SubscrDashboardView;
+import net.buchlese.bofc.view.subscr.CustomerAddView;
+import net.buchlese.bofc.view.subscr.SubscrCustomerView;
+import net.buchlese.bofc.view.subscr.SubscrDashboardView;
 import net.buchlese.bofc.view.subscr.SubscrDeliveryView;
 import net.buchlese.bofc.view.subscr.SubscrDispoView;
 import net.buchlese.bofc.view.subscr.SubscrProductDetailView;
@@ -107,11 +111,61 @@ public class SubscrResource {
 
 
 	@GET
+	@Path("/dashboard")
 	@Produces({"text/html"})
 	public View showDashboard() {
 		return new SubscrDashboardView(dao, dao.getSubscrProducts(), dao.getDeliveries(LocalDate.now()));
 	}
-	
+
+	@GET
+	@Path("/customers")
+	@Produces({"text/html"})
+	public View showCustomers() {
+		return new SubscrCustomerView(dao);
+	}
+
+	@GET
+	@Path("/customerCreateForm")
+	@Produces({"text/html"})
+	public View showCustomerAddForm() {
+		return new CustomerAddView(dao);
+	}
+
+	@POST
+	@Path("/customerCreate")
+	@Consumes("application/x-www-form-urlencoded")
+	public View addCustomer(MultivaluedMap<String, String> formParams) {
+		return new SubscrCustomerView(dao);
+	}
+
+	@GET
+	@Path("/subscriptionCreateForm")
+	@Produces({"text/html"})
+	public View showSubscriptionAddForm() {
+		return new CustomerAddView(dao);
+	}
+
+	@POST
+	@Path("/subscriptionCreate")
+	@Consumes("application/x-www-form-urlencoded")
+	public View addSubscription(MultivaluedMap<String, String> formParams) {
+		return new SubscrCustomerView(dao);
+	}
+
+	@GET
+	@Path("/productCreateForm")
+	@Produces({"text/html"})
+	public View showProductAddForm() {
+		return new CustomerAddView(dao);
+	}
+
+	@POST
+	@Path("/productCreate")
+	@Consumes("application/x-www-form-urlencoded")
+	public View addSubscrProduct(MultivaluedMap<String, String> formParams) {
+		return new SubscrCustomerView(dao);
+	}
+
 	@GET
 	@Path("/dispo/{prod}")
 	@Produces({"text/html"})

@@ -1,7 +1,7 @@
 
 <h1>Lieferungsdetails</h1>
 
-<p>Artikel ${d.articleName}
+<p>Artikel ${d.articleName!}
 <p>am ${d.deliveryDate.toString("dd.MM.yyyy")}
 <p>an ${kunde(d)}
 
