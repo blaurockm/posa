@@ -1,3 +1,7 @@
+<ol class="breadcrumb">
+  <li><a href="#subscr">Dashboard</a></li>
+  <li class="active">Dispo</li>
+</ol>
 
 <div class="container">
 <h1>Periodikadisposition ${p.name}</h1>
@@ -37,7 +41,7 @@
       <li class="list-group-item">19% Brutto <a href="#" id="brutto_full" class="editablemoney" data-type="text"  data-name="article.brutto_full"  data-title="Betrag Online-Anteil"  >${art.brutto_full?c}</a> </li>
 	</ul>
    </div>
-</div>      
+</div>
 <div class="col-md-1">
   <button id="artikelpluseins" class="btn btn-primary">Artikel +1</button>
 </div>
@@ -68,13 +72,13 @@
 			<td>
 			<#assign deli = delivery(sub, art)!"hh" >
 			<#if deli != "hh" >
-   			   <a href="#subscrDelivery/${deli.id?c}">see</a>
+   	  	  	   <a href="#subscrDelivery/${deli.id?c}" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
 			<#else>
-			   <button id="create${sub.id}">anlegen</button>
+			   <button id="create${sub.id?c}" class="btn btn-default">anlegen</button>
 			 <script>
-   	   	 	   $( "#create${sub.id}" ).click(function() {
+   	   	 	   $( "#create${sub.id?c}" ).click(function() {
    	    		 $.getJSON("/subscr/deliverycreate/${sub.id?c}/" + article.id + "/${dispoDate}", function() {console.log( "deliverycreate success" );})
-   	    		 $( "#create${sub.id}" ).hide();
+   	    		 $( "#create${sub.id?c}" ).hide();
 				});
 			 </script>
 			</#if>

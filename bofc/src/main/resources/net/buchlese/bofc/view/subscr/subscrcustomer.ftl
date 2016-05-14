@@ -1,3 +1,7 @@
+<ol class="breadcrumb">
+  <li class="active">Kundenstamm</li>
+</ol>
+
 <div class="container">
 
 <div class="row">

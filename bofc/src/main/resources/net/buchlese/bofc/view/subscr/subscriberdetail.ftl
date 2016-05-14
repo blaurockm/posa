@@ -1,9 +1,11 @@
-<div class="container">
+<ol class="breadcrumb">
+  <li><a href="#subscrCust">Kundenstamm</a></li>
+  <li class="active">Abonnent</li>
+</ol>
 
 <div class="container">
-<h1>Abonnent ${sub.customerId?c}</h1>
+<h1>Abonnent ${sub.customerId?c}  <a href="#" class="editable" data-type="text" data-name="subscriber.name">${sub.name}</a></h1>
 
-<h3><a href="#" class="editable" data-type="text" data-name="subscriber.name">${sub.name}</a> </h3>
 <div class="row">
 <div class="col-md-2">Ladengeschäft</div>
 <div class="col-md-2"><a href="#" id="laeden"></a></div>
@@ -40,7 +42,7 @@
 
 <div class="row">
 <div class="col-md-3"><h3>Abos</h3></div>
-<div class="col-md-offset-6 col-md-2"><a href="#subscrSubscrAdd/${sub.id?c}" class="btn btn-primary">Neues Abo</a></div>
+<div class="col-md-offset-6 col-md-2"><a href="#subscrSubscrAdd/${sub.id?c}/0" class="btn btn-primary">Neues Abo</a></div>
 </div>
 <div id="accordion" role="tablist" aria-multiselectable="true">
 <#list subscriptions as s>

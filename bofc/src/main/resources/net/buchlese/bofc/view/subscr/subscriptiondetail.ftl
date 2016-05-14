@@ -1,3 +1,9 @@
+<ol class="breadcrumb">
+  <li><a href="#subscr">Dashboard</a></li>
+  <li><a href="#subscrProduct/${p.id?c}">Periodikum</a></li>
+  <li class="active">Abonnement</li>
+</ol>
+
 <div class="container">
 <h1>Abonnement ${sub.id}</h1>
 
@@ -5,7 +11,7 @@
   <h4>Abonnent <a href="#" class="editable" data-type="text" data-name="subscriber.name">${kunde()}</a></h4>
 <div class="row">
   <div class="col-md-2">Letzte Lieferung</div>
-  <div class="col-md-4">${lastDelivery.articleName} am ${lastDelivery.deliveryDate.toString("dd.MM.yyyy")}</div>
+  <div class="col-md-4">${(lastDelivery.articleName)!} am ${(lastDelivery.deliveryDate.toString("dd.MM.yyyy"))!}</div>
   <div class="col-md-2  col-md-offset-4">
       <a href="/subscr/createInvoice/${sub.id?c}" class="btn btn-primary" target="_blank">Rechnung erstellen</a>
   </div>
@@ -92,9 +98,21 @@
 					<th>Rechnungsnummer</th>
 					<th>Datum</th>
 					<th>Betrag</th>
+					<th>bezahlt</th>
 					<th></th>
 				</tr>
 			</thead>
+			<tbody>
+				<#list invoices as inv>
+					<tr>
+						<td>${inv.number}</td>
+						<td><#if inv.date??>${inv.date.toString("dd.MM.yyyy")}<#else>kein Datum!</#if></td>
+						<td align="right">${money(inv.amount)}</td>
+						<td align="right">${money(inv.payed)}</td>
+						<td>  <a href="/invoice/${inv.number}" target="_blank">view</a> </td>
+					</tr>
+				</#list>
+			</tbody>
 		</table>
     </div>
   </div>

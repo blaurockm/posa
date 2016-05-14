@@ -62,9 +62,16 @@ Path.map("#subscrCustAdd").to(function(){
     $("#entryModal").modal('show');
 }).enter(setPageBackground);
 
-Path.map("#subscrSubscrAdd/:id").to(function(){
+Path.map("#subscrSubscrAdd/:id/:id2").to(function(){
 	// this is a modal window content
-    $("#entrymodal-output .content").load("/subscr/subscriptionCreateForm?sub=" + this.params['id']);
+	var url = "/subscr/subscriptionCreateForm?";
+	if (this.params['id'] > 0) {
+		url += "sub=" + this.params['id'] + "&";
+	}
+	if (this.params['id2'] > 0) {
+		url += "prod=" + this.params['id2'];
+	}
+    $("#entrymodal-output .content").load(url);
     $("#entrymodal-title").text("Neues Abo anlegen");
     $("#entryModal").modal('show');
 }).enter(setPageBackground);

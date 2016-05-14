@@ -21,8 +21,11 @@
 	<script type="text/javascript" src="https://raw.github.com/mtrpcic/pathjs/master/path.js"></script>
 
 	<!--  in place editing -->
-	<link href="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.1/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet"/>
-
+	<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.1/bootstrap3-editable/css/bootstrap-editable.css"/>
+	
+	<!-- select2 CSS -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.2/css/select2.min.css" rel="stylesheet" />
+	<link rel="stylesheet" href="/assets/bofc/select2-bootstrap.min.css">
   </head>
   <body>
     <nav class="navbar navbar-default navbar-static-top">
@@ -111,12 +114,15 @@
     <!-- Include all compiled plugins (below), or include individual files as needed 
     <script src="js/bootstrap.min.js"></script> -->
 	<script src="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.1/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
+	<!-- select2 scripts -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.2/js/select2.min.js"></script>
 	<!-- load up our app -->
 	<script src="assets/bofc/startapp.js"></script>
 	<script>
 	    $(document).ready(function() {
 			$.fn.editable.defaults.mode = 'inline';
-	    });
+			$.fn.modal.Constructor.prototype.enforceFocus = function() {}; // fix for select2 inside modal
+		});
 	    $('#myModal').on('hidden.bs.modal', function (e) {
 	    	  window.history.back();  // in der history einen schritt zurückgehen
 	    })
@@ -126,19 +132,28 @@
 	    $('#saveEntry').on('click', function () {
     		// $('#entryForm').submit();
     		$.post( $('#entryForm').prop('action') , $( "#entryForm" ).serialize(), function(info) { 
+                $("#postresult").show();
                 $("#postresult").html("Erfolgreich gespeichert!"); 
                 //adding class
                 $("#postresult").addClass("alert alert-success");
                 //timing the alert box to close after 5 seconds
                 window.setTimeout(function () {
-                    $(".alert").fadeTo(500, 0).slideUp(500, function () {
-                        $(this).remove();
-                    });
+                    $("#postresult").slideUp();
                 }, 5000);
-            }).fail(function(jqXHR, textStatus) {
-                $("#postresult").html("Problem beim Speichern: " + textStatus); 
+                if (typeof info != "undefined") {
+                    window.setTimeout(function () {
+	                	$("#output .content").html(info);
+                    }, 10);
+                }
+            }).fail(function(jqXHR, textStatus, errThrown) {
+                $("#postresult").show();
+                $("#postresult").html("Problem beim Speichern: " + errThrown); 
                 //adding class
                 $("#postresult").addClass("alert alert-danger");
+                //timing the alert box to close after 5 seconds
+                window.setTimeout(function () {
+                    $("#postresult").slideUp();
+                }, 10000);
             });
     	    $("#entryModal").modal('hide');
   		})

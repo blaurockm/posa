@@ -8,6 +8,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -25,6 +26,7 @@ import javax.ws.rs.core.StreamingOutput;
 
 import net.buchlese.bofc.api.bofc.PosInvoice;
 import net.buchlese.bofc.api.subscr.Address;
+import net.buchlese.bofc.api.subscr.ShipType;
 import net.buchlese.bofc.api.subscr.SubscrArticle;
 import net.buchlese.bofc.api.subscr.SubscrDelivery;
 import net.buchlese.bofc.api.subscr.SubscrProduct;
@@ -32,6 +34,7 @@ import net.buchlese.bofc.api.subscr.Subscriber;
 import net.buchlese.bofc.api.subscr.Subscription;
 import net.buchlese.bofc.core.SubscriptionInvoiceCreator;
 import net.buchlese.bofc.jdbi.SubscrTestDataDAO;
+import net.buchlese.bofc.jdbi.bofc.PosInvoiceDAO;
 import net.buchlese.bofc.jdbi.bofc.SubscrDAO;
 import net.buchlese.bofc.resources.helper.SubscrArticleUpdateHelper;
 import net.buchlese.bofc.resources.helper.UpdateResult;
@@ -47,6 +50,7 @@ import net.buchlese.bofc.view.subscr.SubscriptionAddView;
 import net.buchlese.bofc.view.subscr.SubscriptionDetailView;
 
 import org.joda.time.LocalDate;
+import org.joda.time.Period;
 import org.joda.time.format.DateTimeFormat;
 
 import com.google.common.base.Optional;
@@ -56,10 +60,12 @@ import com.google.inject.Inject;
 public class SubscrResource {
 
 	private static SubscrDAO dao = new SubscrTestDataDAO();
+	private final PosInvoiceDAO invDao;
 	
 	@Inject
-	public SubscrResource() {
+	public SubscrResource(PosInvoiceDAO invd) {
 		super();
+		this.invDao = invd;
 	}
 
 	@POST
@@ -108,10 +114,24 @@ public class SubscrResource {
 	public SubscrArticle createSubscrArticle(@PathParam("prod") String prodIdP) {
 		long prodId = Long.parseLong(prodIdP);
 		SubscrArticle art = dao.getSubscrProduct(prodId).createNextArticle(LocalDate.now());
-//		dao.insertArticle(art);
+		dao.insertArticle(art);
 		return art;
 	}
 
+
+	@GET
+	@Path("/queryproduct")
+	@Produces({"application/json"})
+	public List<SubscrProduct> getSubscrProducts(@QueryParam("q") Optional<String> query) {
+		return dao.querySubscrProducts(query);
+	}
+
+	@GET
+	@Path("/querycustomers")
+	@Produces({"application/json"})
+	public List<Subscriber> getSubscribers(@QueryParam("q") Optional<String> query) {
+		return dao.querySubscribers(query);
+	}
 
 	@GET
 	@Path("/dashboard")
@@ -137,7 +157,35 @@ public class SubscrResource {
 	@POST
 	@Path("/customerCreate")
 	@Consumes("application/x-www-form-urlencoded")
-	public View addCustomer(MultivaluedMap<String, String> formParams) {
+	public View addCustomer(MultivaluedMap<String, String> par) {
+		Subscriber s = new Subscriber();
+		s.setName(par.getFirst("name"));
+		s.setPointid(Integer.parseInt(par.getFirst("pointId")));
+		if (par.containsKey("customerId") && par.getFirst("customerId").isEmpty() == false) {
+			s.setCustomerId(Integer.parseInt(par.getFirst("customerId")));
+		} else {
+			throw new WebApplicationException("ohne Kundennummer geht nix");
+		}
+		if (par.containsKey("collectiveInvoice")) {
+			s.setCollectiveInvoice(true);
+		}
+		if (par.containsKey("needsDeliveryNote")) {
+			s.setNeedsDeliveryNote(true);
+		}
+		if (par.containsKey("shipmentType")) {
+			s.setShipmentType(ShipType.valueOf(par.getFirst("shipmentType")));
+		} else {
+			s.setShipmentType(ShipType.DELIVERY);
+		}
+		Address a = new Address();
+		a.setName1(par.getFirst("invoiceAddress.line1"));
+		a.setName2(par.getFirst("invoiceAddress.line2"));
+		a.setName3(par.getFirst("invoiceAddress.line3"));
+		a.setStreet(par.getFirst("invoiceAddress.street"));
+		a.setPostalcode(par.getFirst("invoiceAddress.postalcode"));
+		a.setCity(par.getFirst("invoiceAddress.city"));
+		s.setInvoiceAddress(a);
+		dao.insertSubscriber(s);
 		return new SubscrCustomerView(dao);
 	}
 
@@ -153,8 +201,41 @@ public class SubscrResource {
 	@POST
 	@Path("/subscriptionCreate")
 	@Consumes("application/x-www-form-urlencoded")
-	public View addSubscription(MultivaluedMap<String, String> formParams) {
-		return new SubscriberDetailView(dao, dao.getSubscriber(Long.parseLong(formParams.getFirst("subscriberId"))));
+	public void addSubscription(MultivaluedMap<String, String> par) {
+		Subscription s = new Subscription();
+		if (par.containsKey("subscriberId") && par.getFirst("subscriberId").isEmpty() == false) {
+			s.setSubscriberId(Long.parseLong(par.getFirst("subscriberId")));
+		} else {
+			throw new WebApplicationException("ohne Kundennummer geht nix");
+		}
+		if (par.containsKey("productId") && par.getFirst("productId").isEmpty() == false) {
+			s.setProductId(Long.parseLong(par.getFirst("productId")));
+		} else {
+			throw new WebApplicationException("ohne Periodikumnummer geht nix");
+		}
+		s.setDeliveryInfo1(par.getFirst("deliveryInfo1"));
+		s.setDeliveryInfo1(par.getFirst("deliveryInfo2"));
+		if (par.containsKey("shipmentType")) {
+			s.setShipmentType(ShipType.valueOf(par.getFirst("shipmentType")));
+		} else {
+			s.setShipmentType(ShipType.DELIVERY);
+		}
+		if (par.containsKey("quantity") && par.getFirst("quantity").isEmpty() == false) {
+			s.setQuantity(Integer.parseInt(par.getFirst("quantity")));
+		} else {
+			s.setQuantity(1);
+		}
+		s.setStartDate(LocalDate.now());
+		if (par.containsKey("deliveryAddress.line1")) {
+			Address a = new Address();
+			a.setName1(par.getFirst("deliveryAddress.line1"));
+			a.setName2(par.getFirst("deliveryAddress.line2"));
+			a.setName3(par.getFirst("deliveryAddress.line3"));
+			a.setStreet(par.getFirst("deliveryAddress.street"));
+			a.setPostalcode(par.getFirst("deliveryAddress.postalcode"));
+			a.setCity(par.getFirst("deliveryAddress.city"));
+		}
+		dao.insertSubscription(s);
 	}
 
 	@GET
@@ -167,8 +248,31 @@ public class SubscrResource {
 	@POST
 	@Path("/productCreate")
 	@Consumes("application/x-www-form-urlencoded")
-	public View addSubscrProduct(MultivaluedMap<String, String> formParams) {
-		return new SubscrDashboardView(dao, dao.getSubscrProducts(), dao.getDeliveries(LocalDate.now()));
+	public View addSubscrProduct(MultivaluedMap<String, String> par) {
+		SubscrProduct p = new SubscrProduct();
+		p.setAbbrev(par.getFirst("abbrev"));
+		p.setName(par.getFirst("name"));
+		p.setPublisher(par.getFirst("publisher"));
+		p.setNamePattern(par.getFirst("namePattern"));
+		if (par.containsKey("period") && par.getFirst("period").isEmpty() == false) {
+			p.setPeriod(Period.months(Integer.parseInt(par.getFirst("period"))));
+		} else {
+			p.setPeriod(Period.months(1));
+		}
+		if (par.containsKey("quantity") && par.getFirst("quantity").isEmpty() == false) {
+			p.setQuantity(Integer.parseInt(par.getFirst("quantity")));
+		} else {
+			p.setQuantity(1);
+		}
+		if (par.containsKey("halfPercentage") && par.getFirst("halfPercentage").isEmpty() == false) {
+			p.setHalfPercentage(Double.parseDouble(par.getFirst("halfPercentage")));
+		} else {
+			p.setHalfPercentage(1d);
+		}
+		dao.insertSubscrProduct(p);
+		SubscrArticle art = p.createNextArticle(LocalDate.now());
+		dao.insertArticle(art);
+		return new SubscrProductDetailView(dao, p, Collections.emptyList());
 	}
 
 	@GET
@@ -258,7 +362,7 @@ public class SubscrResource {
 	@Produces({"text/html"})
 	public View showSubscription(@PathParam("sub") String subdIdP) {
 		long subId = Long.parseLong(subdIdP);
-		return new SubscriptionDetailView(dao, dao.getSubscription(subId));
+		return new SubscriptionDetailView(dao, invDao, dao.getSubscription(subId));
 	}
 
 	@GET
@@ -274,7 +378,9 @@ public class SubscrResource {
 	@Produces({"application/json"})
 	public PosInvoice createInvoice(@PathParam("sub") String subIdP) {
 		long subId = Long.parseLong(subIdP);
-		return SubscriptionInvoiceCreator.createSubscription(dao, dao.getSubscription(subId));
+		PosInvoice inv =  SubscriptionInvoiceCreator.createSubscription(dao, dao.getSubscription(subId));
+		invDao.insert(inv);
+		return inv;
 	}
 
 	@GET
@@ -282,17 +388,11 @@ public class SubscrResource {
 	@Produces({"application/json"})
 	public PosInvoice createCollInvoice(@PathParam("sub") String subIdP) {
 		long subId = Long.parseLong(subIdP);
-		return SubscriptionInvoiceCreator.createCollectiveSubscription(dao, dao.getSubscriber(subId));
+		PosInvoice inv = SubscriptionInvoiceCreator.createCollectiveSubscription(dao, dao.getSubscriber(subId));
+		invDao.insert(inv);
+		return inv;
 	}
 
-	// missing Subscriber
-	
-	@GET
-	@Path("/subscrinvoice/{id}")
-	@Produces({"text/html"})
-	public View showSubscriptionInvoice(@PathParam("id") String invId) {
-		return null;
-	}
 	
 	@GET
 	@Path("/deliverynote/{id}")

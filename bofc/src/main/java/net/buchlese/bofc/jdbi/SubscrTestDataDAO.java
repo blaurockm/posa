@@ -1,8 +1,11 @@
 package net.buchlese.bofc.jdbi;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import net.buchlese.bofc.api.subscr.Address;
@@ -17,6 +20,8 @@ import net.buchlese.bofc.jdbi.bofc.SubscrDAO;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.Period;
+
+import com.google.common.base.Optional;
 
 public class SubscrTestDataDAO implements SubscrDAO {
 
@@ -106,9 +111,45 @@ public class SubscrTestDataDAO implements SubscrDAO {
 		return deliveries.stream().filter(x -> x.getSubcriptionId() == subid).collect(Collectors.toList());
 	}
 
+	public Collection<String> getInvoiceNumsForSubscription(long subid) {
+		List<SubscrDelivery> delivs = getDeliveriesForSubscription(subid);
+		Set<String> invNums = new HashSet<String>();
+		for (SubscrDelivery d : delivs) {
+			if (d.isPayed() && d.getInvoiceNumber() != null) {
+				invNums.add(d.getInvoiceNumber());
+			}
+		}
+		return invNums;
+	}
+	
 	@Override
 	public void recordDetailsOnvInvoice(List<SubscrDelivery> deliveries, String invNumber) {
 		deliveries.stream().forEach(x -> x.setPayed(true));
+	}
+	
+
+	@Override
+	public void insertSubscrProduct(SubscrProduct p) {
+		p.setId(idcounter++);
+		products.add(p);
+	}
+
+	@Override
+	public void insertSubscription(Subscription p) {
+		p.setId(idcounter++);
+		subscriptions.add(p);
+	}
+
+	@Override
+	public void insertSubscriber(Subscriber p) {
+		p.setId(idcounter++);
+		subscribers.add(p);
+	}
+	
+	@Override
+	public void insertArticle(SubscrArticle p) {
+		p.setId(idcounter++);
+		articles.add(p);
 	}
 	
 	@Override
@@ -132,6 +173,16 @@ public class SubscrTestDataDAO implements SubscrDAO {
 		d.setCreationDate(DateTime.now());
 		deliveries.add(d);
 		return d;
+	}
+
+	@Override
+	public List<SubscrProduct> querySubscrProducts(Optional<String> query) {
+		return products.stream().filter(x -> query.isPresent() == false || x.getName().contains(query.get())).collect(Collectors.toList());
+	}
+
+	@Override
+	public List<Subscriber> querySubscribers(Optional<String> query) {
+		return subscribers.stream().filter(x -> query.isPresent() == false || x.getName().contains(query.get()) || String.valueOf(x.getCustomerId()).contains(query.get())).collect(Collectors.toList());
 	}
 
 	//==============================================================================================
@@ -282,6 +333,7 @@ public class SubscrTestDataDAO implements SubscrDAO {
 	private void createSubscription(int productId, int subscriberId, int quantity, LocalDate startDate, Address deliveryAddress, String deliveryInfo1, String deliveryInfo2, ShipType shipType, long shipCost) {
 		Subscription s = new Subscription();
 		s.setId(idcounter++);
+		s.setPointid(3);
 		s.setProductId(productId);
 		s.setSubscriberId(subscriberId);
 		s.setQuantity(quantity);
@@ -297,6 +349,7 @@ public class SubscrTestDataDAO implements SubscrDAO {
 	private void createSubscriber(int customerId, int debitorId, String name1, String name2, String name3, String strasse, String plz, String ort, boolean collectiveInvoice, boolean needsDeliveryNote, ShipType shipType) {
 		Subscriber s = new Subscriber();
 		s.setId(customerId);
+		s.setPointid(3);
 		s.setCustomerId(customerId);
 		s.setDebitorId(debitorId);
 		s.setName(name1);
@@ -336,6 +389,7 @@ public class SubscrTestDataDAO implements SubscrDAO {
 		p.setHalfPercentage(halfPercentage);
 		products.add(p);
 	}
+
 
 
 }

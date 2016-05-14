@@ -1,3 +1,6 @@
+<ol class="breadcrumb">
+  <li class="active">Dashboard</li>
+</ol>
 <div class="container">
 
 <div class="row">
