@@ -66,6 +66,8 @@ public interface SubscrDAO {
 
 	List<Subscriber> querySubscribers(Optional<String> query);
 
+	List<SubscrDelivery> getDeliveriesForSubscription(long id, LocalDate from,	LocalDate till);
+
 
 
 }

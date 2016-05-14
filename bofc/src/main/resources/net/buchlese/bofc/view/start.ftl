@@ -116,7 +116,7 @@
 	<script src="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.1/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
 	<!-- select2 scripts -->
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.2/js/select2.min.js"></script>
-	<!-- load up our app -->
+    <!-- load up our app -->
 	<script src="assets/bofc/startapp.js"></script>
 	<script>
 	    $(document).ready(function() {

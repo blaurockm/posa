@@ -51,6 +51,25 @@
   </div>
 
   <div class="form-group">
+    <label for="deliveryInfo2" class="col-sm-3 control-label">Zahlweise</label>
+    <div class="col-sm-8">
+       <select name="paymentType" class="form-control">
+       <option value="EACHDELIVERY" selected>Pro Lieferung</option>
+       <option value="MONTHLY">Monatlich</option>
+       <option value="HALFYEARLY">Halbjährlich</option>
+       <option value="YEARLY">Jährlich</option>
+       </select>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label for="shipmentCost" class="col-sm-3 control-label">bezahlt bis</label>
+    <div class="col-sm-8">
+	    <input type="type" class="form-control" name="payedUntil" placeholder="mm/jj">
+	</div>    
+  </div>
+
+  <div class="form-group">
     <label for="deliveryInfo2" class="col-sm-3 control-label">Versandart</label>
     <div class="col-sm-8">
        <select name="shipmentType" class="form-control">

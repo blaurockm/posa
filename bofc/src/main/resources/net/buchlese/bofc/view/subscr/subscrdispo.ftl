@@ -58,6 +58,7 @@
 			<th>Menge</th>
 			<th>LS</th>
 			<th>Versandart</th>
+			<th>Zahlweise</th>
 			<th></th>
 		</tr>
 	</thead>
@@ -68,7 +69,8 @@
 			<td>${kunde(sub)} ${sub.deliveryInfo1!""}, ${sub.deliveryInfo2!""}</td>
 			<td>${sub.quantity}</td>
 			<td></td>
-			<td>${sub.shipmentType}</td>
+			<td>${sub.shipmentType.text}</td>
+			<td>${sub.paymentType.text}</td>
 			<td>
 			<#assign deli = delivery(sub, art)!"hh" >
 			<#if deli != "hh" >

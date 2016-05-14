@@ -138,3 +138,4 @@ $(document).ready(function(){
 
 var shiptypesList = [{value:"MAIL", text:"Per Post"},{value:"PICKUP",text:"Abholung"}, {value:"PUBLISHER", text:"über Verlag"}, {value:"DELIVERY", text:"Lieferung d. Buchlese"}];
 var laedenList = [{value:1, text:"Dornhan"},{value:2, text:"Sulz"},{value:3, text:"Schramberg"}];
+var paytypesList = [{value:"EACHDELIVERY", text:"Pro Lieferung"},{value:"MONTHLY",text:"Monatlich"}, {value:"HALFYEARLY", text:"Halbjährlich"}, {value:"YEARLY", text:"Jährlich"}];

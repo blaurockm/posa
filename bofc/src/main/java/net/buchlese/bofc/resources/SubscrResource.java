@@ -26,6 +26,7 @@ import javax.ws.rs.core.StreamingOutput;
 
 import net.buchlese.bofc.api.bofc.PosInvoice;
 import net.buchlese.bofc.api.subscr.Address;
+import net.buchlese.bofc.api.subscr.PayIntervalType;
 import net.buchlese.bofc.api.subscr.ShipType;
 import net.buchlese.bofc.api.subscr.SubscrArticle;
 import net.buchlese.bofc.api.subscr.SubscrDelivery;
@@ -52,6 +53,7 @@ import net.buchlese.bofc.view.subscr.SubscriptionDetailView;
 import org.joda.time.LocalDate;
 import org.joda.time.Period;
 import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 import com.google.common.base.Optional;
 import com.google.inject.Inject;
@@ -220,12 +222,22 @@ public class SubscrResource {
 		} else {
 			s.setShipmentType(ShipType.DELIVERY);
 		}
+		if (par.containsKey("paymentType")) {
+			s.setPaymentType(PayIntervalType.valueOf(par.getFirst("paymentType")));
+		} else {
+			s.setPaymentType(PayIntervalType.EACHDELIVERY);
+		}
 		if (par.containsKey("quantity") && par.getFirst("quantity").isEmpty() == false) {
 			s.setQuantity(Integer.parseInt(par.getFirst("quantity")));
 		} else {
 			s.setQuantity(1);
 		}
 		s.setStartDate(LocalDate.now());
+		if (par.containsKey("payedUntil") && par.getFirst("payedUntil").isEmpty() == false) {
+			s.setPayedUntil(org.joda.time.YearMonth.parse(par.getFirst("payedUntil"), DateTimeFormat.forPattern("MM/yy")).toLocalDate(1));
+		} else {
+			s.setPayedUntil(null);
+		}
 		if (par.containsKey("deliveryAddress.line1")) {
 			Address a = new Address();
 			a.setName1(par.getFirst("deliveryAddress.line1"));

@@ -9,6 +9,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import net.buchlese.bofc.api.subscr.Address;
+import net.buchlese.bofc.api.subscr.PayIntervalType;
 import net.buchlese.bofc.api.subscr.ShipType;
 import net.buchlese.bofc.api.subscr.SubscrArticle;
 import net.buchlese.bofc.api.subscr.SubscrDelivery;
@@ -124,7 +125,7 @@ public class SubscrTestDataDAO implements SubscrDAO {
 	
 	@Override
 	public void recordDetailsOnvInvoice(List<SubscrDelivery> deliveries, String invNumber) {
-		deliveries.stream().forEach(x -> x.setPayed(true));
+		deliveries.stream().forEach(x -> { x.setPayed(true); x.setInvoiceNumber(invNumber); } );
 	}
 	
 
@@ -170,6 +171,11 @@ public class SubscrTestDataDAO implements SubscrDAO {
 			d.setTotalFull(subscription.getQuantity() * article.getBrutto_full());
 			d.setTotalHalf(d.getTotal() - d.getTotalFull());
 		}
+		if (subscription.getPayedUntil() != null && deliveryDate.isBefore(subscription.getPayedUntil())) {
+			d.setPayed(true);
+		} else {
+			d.setPayed(false);
+		}
 		d.setCreationDate(DateTime.now());
 		deliveries.add(d);
 		return d;
@@ -183,6 +189,11 @@ public class SubscrTestDataDAO implements SubscrDAO {
 	@Override
 	public List<Subscriber> querySubscribers(Optional<String> query) {
 		return subscribers.stream().filter(x -> query.isPresent() == false || x.getName().contains(query.get()) || String.valueOf(x.getCustomerId()).contains(query.get())).collect(Collectors.toList());
+	}
+
+	@Override
+	public List<SubscrDelivery> getDeliveriesForSubscription(long subid, LocalDate from, LocalDate till) {
+		return deliveries.stream().filter(x -> x.getSubcriptionId() == subid && x.getDeliveryDate().compareTo(from) >= 0 && x.getDeliveryDate().compareTo(till) <= 0).collect(Collectors.toList());
 	}
 
 	//==============================================================================================
@@ -256,31 +267,31 @@ public class SubscrTestDataDAO implements SubscrDAO {
 
 	private void createSubscriptions() {
 		subscriptions = new ArrayList<Subscription>();
-		createSubscription(1, 3123, 1, new LocalDate(2004,6,10), null, "Stadtarchiv", "Frau Hempel", ShipType.DELIVERY, 0L );
-		createSubscription(2, 3123, 3, new LocalDate(2005,7,13), null, "Kämmerer",    "Fritz Blaurock", ShipType.DELIVERY, 0L );
-		createSubscription(3, 3123, 3, new LocalDate(2006,3,20), null, "Hauptamt",    null, ShipType.DELIVERY, 0L );
-		createSubscription(4, 3123, 1, new LocalDate(2004,2,22), null, "Ordnungsamt", null, ShipType.DELIVERY, 0L );
-		createSubscription(5, 3123, 2, new LocalDate(2005,8,17), null, "Bauamt",      "Baby Hermann", ShipType.DELIVERY, 0L );
+		createSubscription(1, 3123, 1, new LocalDate(2004,6,10), null, "Stadtarchiv", "Frau Hempel", ShipType.DELIVERY, 0L, PayIntervalType.MONTHLY, LocalDate.now().plusDays(4) );
+		createSubscription(2, 3123, 3, new LocalDate(2005,7,13), null, "Kämmerer",    "Fritz Blaurock", ShipType.DELIVERY, 0L, PayIntervalType.MONTHLY, LocalDate.now().plusDays(4) );
+		createSubscription(3, 3123, 3, new LocalDate(2006,3,20), null, "Hauptamt",    null, ShipType.DELIVERY, 0L, PayIntervalType.MONTHLY, LocalDate.now().plusDays(4) );
+		createSubscription(4, 3123, 1, new LocalDate(2004,2,22), null, "Ordnungsamt", null, ShipType.DELIVERY, 0L, PayIntervalType.MONTHLY, LocalDate.now().plusDays(4) );
+		createSubscription(5, 3123, 2, new LocalDate(2005,8,17), null, "Bauamt",      "Baby Hermann", ShipType.DELIVERY, 0L, PayIntervalType.MONTHLY, LocalDate.now().plusDays(4) );
 
-		createSubscription(1, 4123, 1, new LocalDate(2005,8,17), null, null,      null, ShipType.PICKUP, 0L );
-		createSubscription(4, 4123, 1, new LocalDate(2005,8,17), null, null,      null, ShipType.PICKUP, 0L );
+		createSubscription(1, 4123, 1, new LocalDate(2005,8,17), null, null,      null, ShipType.PICKUP, 0L, PayIntervalType.EACHDELIVERY, null );
+		createSubscription(4, 4123, 1, new LocalDate(2005,8,17), null, null,      null, ShipType.PICKUP, 0L, PayIntervalType.EACHDELIVERY, null );
 
 		
-		createSubscription(2, 3523, 1, new LocalDate(2005,8,17), null, null,      null, ShipType.DELIVERY, 0L );
-		createSubscription(3, 3523, 1, new LocalDate(2005,8,17), null, null,      null, ShipType.DELIVERY, 0L );
-		createSubscription(4, 3523, 1, new LocalDate(2005,8,17), null, null,      null, ShipType.DELIVERY, 0L );
+		createSubscription(2, 3523, 1, new LocalDate(2005,8,17), null, null,      null, ShipType.DELIVERY, 0L, PayIntervalType.EACHDELIVERY, null );
+		createSubscription(3, 3523, 1, new LocalDate(2005,8,17), null, null,      null, ShipType.DELIVERY, 0L, PayIntervalType.EACHDELIVERY, null );
+		createSubscription(4, 3523, 1, new LocalDate(2005,8,17), null, null,      null, ShipType.DELIVERY, 0L, PayIntervalType.EACHDELIVERY, null );
 
-		createSubscription(2, 3173, 1, new LocalDate(2005,8,17), null, null,      null, ShipType.MAIL, 0L );
-		createSubscription(3, 3173, 2, new LocalDate(2005,8,17), null, null,      null, ShipType.MAIL, 0L );
+		createSubscription(2, 3173, 1, new LocalDate(2005,8,17), null, null,      null, ShipType.MAIL, 0L, PayIntervalType.HALFYEARLY, LocalDate.now().minusMonths(1) );
+		createSubscription(3, 3173, 2, new LocalDate(2005,8,17), null, null,      null, ShipType.MAIL, 0L, PayIntervalType.HALFYEARLY, LocalDate.now().minusMonths(3) );
 
-		createSubscription(6, 5163, 1, new LocalDate(2013,1,20), null, null,      null, ShipType.PUBLISHER, 500L );
+		createSubscription(6, 5163, 1, new LocalDate(2013,1,20), null, null,      null, ShipType.PUBLISHER, 500L, PayIntervalType.YEARLY, LocalDate.now().minusMonths(1) );
 
-		createSubscription(7, 112, 1, new LocalDate(2013,1,20), null, null,      null, ShipType.PUBLISHER, 550L ); 
+		createSubscription(7, 112, 1, new LocalDate(2013,1,20), null, null,      null, ShipType.PUBLISHER, 550L, PayIntervalType.YEARLY, LocalDate.now().plusDays(4) ); 
 
-		createSubscription(8, 3128, 1, new LocalDate(2013,1,20), null, null,      null, ShipType.PUBLISHER, 1000L );
+		createSubscription(8, 3128, 1, new LocalDate(2013,1,20), null, null,      null, ShipType.PUBLISHER, 1000L, PayIntervalType.YEARLY, new LocalDate(2016,9,20) );
 
 		Address a = createAddress("Renz zuhause",null, null, "Holzweg 12", "78727", "Oberndorf");
-		createSubscription(9, 22123, 1, new LocalDate(2013,1,20), a, null,      null, ShipType.MAIL, 1500L );
+		createSubscription(9, 22123, 1, new LocalDate(2013,1,20), a, null,      null, ShipType.MAIL, 1500L, PayIntervalType.YEARLY, new LocalDate(2016,2,20) );
 	}
 
 
@@ -330,7 +341,7 @@ public class SubscrTestDataDAO implements SubscrDAO {
 	}
 	
 	
-	private void createSubscription(int productId, int subscriberId, int quantity, LocalDate startDate, Address deliveryAddress, String deliveryInfo1, String deliveryInfo2, ShipType shipType, long shipCost) {
+	private void createSubscription(int productId, int subscriberId, int quantity, LocalDate startDate, Address deliveryAddress, String deliveryInfo1, String deliveryInfo2, ShipType shipType, long shipCost, PayIntervalType paymentType, LocalDate payedUntil) {
 		Subscription s = new Subscription();
 		s.setId(idcounter++);
 		s.setPointid(3);
@@ -343,6 +354,9 @@ public class SubscrTestDataDAO implements SubscrDAO {
 		s.setDeliveryInfo2(deliveryInfo2);
 		s.setShipmentType(shipType);
 		s.setShipmentCost(shipCost);
+		s.setPaymentType(paymentType);
+		s.setPayedUntil(payedUntil);
+		s.setLastInvoiceDate(null);
 		subscriptions.add(s);
 	}
 	

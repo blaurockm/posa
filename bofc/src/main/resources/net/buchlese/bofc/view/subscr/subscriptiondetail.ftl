@@ -18,7 +18,7 @@
 </div>
 <div class="row">
   <div class="col-md-2">Letzte Rechnung</div>
-</div>
+<div class="col-md-4">am ${(sub.lastInvoiceDate.toString("dd.MM.yyyy"))!}</div></div>
 
 <div id="accordion" role="tablist" aria-multiselectable="true">
   <div class="panel panel-default">
@@ -129,6 +129,8 @@
     	<li class="list-group-item">Ende <a href="#" class="editable" data-type="date" data-format="dd.mm.yyyy" data-mode="popup" data-name="subscription.endDate">${(sub.endDate.toString("dd.MM.YYYY"))!}</a></li>
     	<li class="list-group-item">Menge <a href="#" class="editable" data-type="text" data-name="subscription.quantity">${sub.quantity}</a></li>
     	<li class="list-group-item">Versandkosten <a href="#" class="editablemoney" data-type="text" data-name="subscription.shipmentcost">${sub.shipmentCost}</a></li>
+    	<li class="list-group-item">Zahlungsintervall <a href="#" id="paytype"></a></li>
+    	<li class="list-group-item">Bezahlt bis <a href="#" class="editable" data-type="date" data-format="mm/yyyy" data-mode="popup" data-name="subscription.payedUntil">${sub.payedUntil!}</a></li>
     </ul>
 </div>
 </div>
@@ -180,9 +182,18 @@
 	    url: '/subscr/update', pk:'${sub.id?c}',
 		type : "select",
 		value : "${sub.shipmentType}",
-		name : "subscriber.pointid",
+		name : "subscriber.shipmentType",
 		showbuttons:false,
 		source : shiptypesList
+	});
+
+	$('#paytype').editable({
+	    url: '/subscr/update', pk:'${sub.id?c}',
+		type : "select",
+		value : "${sub.paymentType}",
+		name : "subscriber.paymentType",
+		showbuttons:false,
+		source : paytypesList
 	});
 
 </script>

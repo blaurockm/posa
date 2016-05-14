@@ -35,8 +35,15 @@ public class Subscription {
 	@JsonProperty
 	private long shipmentCost;
 
+	@JsonProperty
+	private PayIntervalType paymentType;
 
-	
+	@JsonProperty
+	private LocalDate payedUntil;
+
+	@JsonProperty
+	private LocalDate lastInvoiceDate;
+
 	public long getId() {
 		return id;
 	}
@@ -108,6 +115,24 @@ public class Subscription {
 	}
 	public void setShipmentCost(long shipmentCost) {
 		this.shipmentCost = shipmentCost;
+	}
+	public PayIntervalType getPaymentType() {
+		return paymentType;
+	}
+	public void setPaymentType(PayIntervalType paymentType) {
+		this.paymentType = paymentType;
+	}
+	public LocalDate getPayedUntil() {
+		return payedUntil;
+	}
+	public void setPayedUntil(LocalDate payedUntil) {
+		this.payedUntil = payedUntil;
+	}
+	public LocalDate getLastInvoiceDate() {
+		return lastInvoiceDate;
+	}
+	public void setLastInvoiceDate(LocalDate lastInvoiceDate) {
+		this.lastInvoiceDate = lastInvoiceDate;
 	}
 	
 }
