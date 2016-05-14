@@ -1,24 +1,77 @@
+<div class="container">
 
-<h1>Lieferungsdetails</h1>
+<div class="row">
+<div class="col-md-2">
+Artikel
+</div>
+<div class="col-md-5">
+${d.articleName!}
+</div>
+</div>
 
-<p>Artikel ${d.articleName!}
-<p>am ${d.deliveryDate.toString("dd.MM.yyyy")}
-<p>an ${kunde(d)}
+<div class="row">
+<div class="col-md-2">
+am 
+</div>
+<div class="col-md-5">
+${d.deliveryDate.toString("dd.MM.yyyy")}
+</div>
+</div>
 
-<p>Menge ${d.quantity}
+<div class="row">
+<div class="col-md-2">
+an
+</div>
+<div class="col-md-5">
+${kunde(d)}
+</div>
+</div>
 
-<p>Gesamtpreis brutto ${money(d.total)}
+<div class="row">
+<div class="col-md-2">
+Menge
+</div>
+<div class="col-md-2">
+${d.quantity}
+</div>
+</div>
 
-<p>7% brutto ${money(d.totalHalf)}
+<div class="row">
+<div class="col-md-2">
+Gesamtpreis brutto
+</div>
+<div class="col-md-2">
+${money(d.total)}
+</div>
+</div>
 
-<p>19% brutto ${money(d.totalFull)}
+<div class="row">
+<div class="col-md-2">
+7% brutto
+</div>
+<div class="col-md-2">
+${money(d.totalHalf)}
+</div>
+</div>
 
+<div class="row">
+<div class="col-md-2">
+19% brutto
+</div>
+<div class="col-md-2">
+${money(d.totalFull)}
+</div>
+</div>
 
+<div class="row">
+<div class="col-md-5">
 <#if d.payed >
-  <p>auf Rechnung ${d.invoiceNumber!}
+  auf Rechnung ${d.invoiceNumber!}
 <#else>
-  <p>noch nicht berechnet.
+  noch nicht berechnet.
 </#if>
+</div>
+</div>
 
-
+</div>
 

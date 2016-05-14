@@ -37,7 +37,11 @@
 </div>
 </div>
 
-<h3>Abos</h3>
+
+<div class="row">
+<div class="col-md-3"><h3>Abos</h3></div>
+<div class="col-md-offset-6 col-md-2"><a href="#subscrSubscrAdd/${sub.id?c}" class="btn btn-primary">Neues Abo</a></div>
+</div>
 <div id="accordion" role="tablist" aria-multiselectable="true">
 <#list subscriptions as s>
   <div class="panel panel-default">

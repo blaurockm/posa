@@ -27,6 +27,7 @@ import net.buchlese.bofc.api.bofc.PosInvoice;
 import net.buchlese.bofc.api.subscr.Address;
 import net.buchlese.bofc.api.subscr.SubscrArticle;
 import net.buchlese.bofc.api.subscr.SubscrDelivery;
+import net.buchlese.bofc.api.subscr.SubscrProduct;
 import net.buchlese.bofc.api.subscr.Subscriber;
 import net.buchlese.bofc.api.subscr.Subscription;
 import net.buchlese.bofc.core.SubscriptionInvoiceCreator;
@@ -35,12 +36,14 @@ import net.buchlese.bofc.jdbi.bofc.SubscrDAO;
 import net.buchlese.bofc.resources.helper.SubscrArticleUpdateHelper;
 import net.buchlese.bofc.resources.helper.UpdateResult;
 import net.buchlese.bofc.view.subscr.CustomerAddView;
+import net.buchlese.bofc.view.subscr.ProductAddView;
 import net.buchlese.bofc.view.subscr.SubscrCustomerView;
 import net.buchlese.bofc.view.subscr.SubscrDashboardView;
 import net.buchlese.bofc.view.subscr.SubscrDeliveryView;
 import net.buchlese.bofc.view.subscr.SubscrDispoView;
 import net.buchlese.bofc.view.subscr.SubscrProductDetailView;
 import net.buchlese.bofc.view.subscr.SubscriberDetailView;
+import net.buchlese.bofc.view.subscr.SubscriptionAddView;
 import net.buchlese.bofc.view.subscr.SubscriptionDetailView;
 
 import org.joda.time.LocalDate;
@@ -141,29 +144,31 @@ public class SubscrResource {
 	@GET
 	@Path("/subscriptionCreateForm")
 	@Produces({"text/html"})
-	public View showSubscriptionAddForm() {
-		return new CustomerAddView(dao);
+	public View showSubscriptionAddForm(@QueryParam("sub") Optional<String> subIdP, @QueryParam("prod") Optional<String> prodIdP) {
+		Subscriber s =  subIdP.transform(x -> dao.getSubscriber(Long.parseLong(x))).orNull();
+		SubscrProduct  p =  prodIdP.transform(x -> dao.getSubscrProduct(Long.parseLong(x))).orNull();
+		return new SubscriptionAddView(dao,s,p);
 	}
 
 	@POST
 	@Path("/subscriptionCreate")
 	@Consumes("application/x-www-form-urlencoded")
 	public View addSubscription(MultivaluedMap<String, String> formParams) {
-		return new SubscrCustomerView(dao);
+		return new SubscriberDetailView(dao, dao.getSubscriber(Long.parseLong(formParams.getFirst("subscriberId"))));
 	}
 
 	@GET
 	@Path("/productCreateForm")
 	@Produces({"text/html"})
 	public View showProductAddForm() {
-		return new CustomerAddView(dao);
+		return new ProductAddView(dao);
 	}
 
 	@POST
 	@Path("/productCreate")
 	@Consumes("application/x-www-form-urlencoded")
 	public View addSubscrProduct(MultivaluedMap<String, String> formParams) {
-		return new SubscrCustomerView(dao);
+		return new SubscrDashboardView(dao, dao.getSubscrProducts(), dao.getDeliveries(LocalDate.now()));
 	}
 
 	@GET

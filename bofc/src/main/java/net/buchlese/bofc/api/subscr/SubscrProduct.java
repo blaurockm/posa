@@ -40,7 +40,7 @@ public class SubscrProduct {
 	private int count;
 
 	@JsonProperty
-	private boolean payedInAdvance; // vorausbezahlt: bei Abos, Fortsetzungen bei jeder jeder Lieferung
+	private boolean payedInAdvance; // vorausbezahlt: bei Abos, Fortsetzungen bezahlt pro Lieferung
 
 	@JsonProperty
 	private int issuePayInterval = 1; // mit einer Zahlen werden x deliveries auf einmal bezahlt

@@ -62,9 +62,9 @@ Path.map("#subscrCustAdd").to(function(){
     $("#entryModal").modal('show');
 }).enter(setPageBackground);
 
-Path.map("#subscrSubscrAdd").to(function(){
+Path.map("#subscrSubscrAdd/:id").to(function(){
 	// this is a modal window content
-    $("#entrymodal-output .content").load("/subscr/subscriptionCreateForm");
+    $("#entrymodal-output .content").load("/subscr/subscriptionCreateForm?sub=" + this.params['id']);
     $("#entrymodal-title").text("Neues Abo anlegen");
     $("#entryModal").modal('show');
 }).enter(setPageBackground);
@@ -72,7 +72,7 @@ Path.map("#subscrSubscrAdd").to(function(){
 Path.map("#subscrProductAdd").to(function(){
 	// this is a modal window content
     $("#entrymodal-output .content").load("/subscr/productCreateForm");
-    $("#entrymodal-title").text("Neues Periodika anlegen");
+    $("#entrymodal-title").text("Neues Periodikum anlegen");
     $("#entryModal").modal('show');
 }).enter(setPageBackground);
 
