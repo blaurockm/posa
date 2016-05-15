@@ -41,7 +41,13 @@
    	       <fo:block></fo:block>
    	     </fo:table-cell>
    	     <fo:table-cell>
-	        <fo:block><xsl:value-of select="text"/></fo:block>   	       
+	        <fo:block font-size="10pt" margin-left="-1mm" font-weight="bold">
+	        <xsl:if test="preceding-sibling::details[1][textonly='false']">
+	         <xsl:attribute name="margin-top">
+               <xsl:value-of select="'2mm'"/>
+             </xsl:attribute>
+             </xsl:if>
+	        <xsl:value-of select="text"/></fo:block>   	       
    	     </fo:table-cell>
    	  </fo:table-row>
    </xsl:template>
@@ -52,16 +58,19 @@
    	       <fo:block></fo:block>
    	     </fo:table-cell>
    	     <fo:table-cell>
-	        <fo:block><xsl:value-of select="text"/></fo:block>   	       
+	        <fo:block font-size="10pt"><xsl:value-of select="text"/></fo:block>   	       
    	     </fo:table-cell>
    	     <fo:table-cell>
-	        <fo:block><xsl:value-of select="format-number(singlePrice div 100, '###.###,00 €', 'euro')"/></fo:block>   	       
+	        <fo:block font-size="10pt" text-align="center"><xsl:value-of select="quantity"/></fo:block>   	       
    	     </fo:table-cell>
    	     <fo:table-cell>
-	        <fo:block><xsl:value-of select="quantity"/> 7% </fo:block>   	       
+	        <fo:block font-size="10pt" text-align="right"><xsl:value-of select="format-number(singlePrice div 100, '###.###,00', 'euro')"/></fo:block>   	       
    	     </fo:table-cell>
    	     <fo:table-cell>
-	        <fo:block><xsl:value-of select="format-number(amountHalf div 100, '###.###,00 €', 'euro')"/></fo:block>   	       
+	        <fo:block font-size="10pt" text-align="right">7%</fo:block>   	       
+   	     </fo:table-cell>
+   	     <fo:table-cell>
+	        <fo:block font-size="10pt" text-align="right"><xsl:value-of select="format-number(amountHalf div 100, '###.###,00 €', 'euro')"/></fo:block>   	       
    	     </fo:table-cell>
    	  </fo:table-row>
    	  <xsl:if test="amountFull > 0">
@@ -76,22 +85,60 @@
    	       <fo:block></fo:block>
    	     </fo:table-cell>
    	     <fo:table-cell>
-	        <fo:block> 19% </fo:block>   	       
+   	       <fo:block></fo:block>
    	     </fo:table-cell>
    	     <fo:table-cell>
-	        <fo:block><xsl:value-of select="format-number(amountFull div 100, '###.###,00 €', 'euro')"/></fo:block>   	       
+	        <fo:block font-size="10pt" text-align="right">19%</fo:block>   	       
+   	     </fo:table-cell>
+   	     <fo:table-cell>
+	        <fo:block font-size="10pt" text-align="right"><xsl:value-of select="format-number(amountFull div 100, '###.###,00 €', 'euro')"/></fo:block>   	       
    	     </fo:table-cell>
    	  </fo:table-row>
    	  </xsl:if>
    </xsl:template>
 
    <xsl:template name="rechnungspositionen">
-      <fo:table margin-top="1mm" margin-left="3mm" table-layout="fixed" width="11cm">
+      <fo:block-container width="152mm" margin-top="5mm">
+       <fo:block>Anbei erhalten Sie die Rechnung für die von Ihnen bestellten Periodika.</fo:block>
+      </fo:block-container>
+      <fo:table margin-top="5mm" table-layout="fixed" width="160mm">
          <fo:table-column column-width="1cm" />
-         <fo:table-column column-width="7cm" />
-         <fo:table-column column-width="3cm" />
-         <fo:table-column column-width="1cm" />
-         <fo:table-column column-width="3cm" />
+         <fo:table-column column-width="8cm" />
+         <fo:table-column column-width="12mm" />
+         <fo:table-column column-width="16mm" />
+         <fo:table-column column-width="20mm" />
+         <fo:table-column column-width="24mm" />
+       <fo:table-header>
+	  	  <fo:table-row border-top-style="solid" border-bottom-style="solid" border-top-width="0.2mm" border-bottom-width="0.2mm" 
+	  	      space-after="3mm">
+	  	     <fo:table-cell>
+	  	       <fo:block font-size="10pt" margin-top="2mm" margin-bottom="2mm">Pos</fo:block>
+	  	     </fo:table-cell>
+	  	     <fo:table-cell>
+	  	       <fo:block font-size="10pt" margin-top="2mm" margin-bottom="2mm">Bezeichnung</fo:block>
+	  	     </fo:table-cell>
+	  	     <fo:table-cell>
+	           <fo:block font-size="10pt" margin-top="2mm" margin-bottom="2mm" text-align="center">Menge</fo:block>   	       
+	  	     </fo:table-cell>
+	  	     <fo:table-cell>
+	           <fo:block font-size="10pt" margin-top="2mm" margin-bottom="2mm" text-align="right">EP €</fo:block>   	       
+	  	     </fo:table-cell>
+	  	     <fo:table-cell>
+	  	       <fo:block font-size="10pt" margin-top="2mm" margin-bottom="2mm" text-align="right">MwSt</fo:block>
+	  	     </fo:table-cell>
+	  	     <fo:table-cell>
+	           <fo:block font-size="10pt" margin-top="2mm" margin-bottom="2mm" text-align="right">GP</fo:block>   	       
+	  	     </fo:table-cell>
+	  	  </fo:table-row>
+	  	  <fo:table-row> 
+	  	     <fo:table-cell>
+	           <fo:block  margin-bottom="2mm"></fo:block>   	       
+	  	     </fo:table-cell>
+	  	     <fo:table-cell>
+	           <fo:block ></fo:block>   	       
+	  	     </fo:table-cell>
+	  	  </fo:table-row>
+       </fo:table-header>  
        <fo:table-body>
          <xsl:apply-templates select="details"/>
        </fo:table-body>
@@ -99,21 +146,162 @@
    </xsl:template>
 
    <xsl:template name="endbetrag">
+      <fo:table margin-top="10mm" table-layout="fixed" width="160mm">
+         <fo:table-column column-width="9cm" />
+         <fo:table-column column-width="28mm" />
+         <fo:table-column column-width="44mm" />
+       <fo:table-header>
+	  	  <fo:table-row>
+	  	     <fo:table-cell>
+	  	       <fo:block></fo:block>
+	  	     </fo:table-cell>
+	  	     <fo:table-cell>
+	  	       <fo:block></fo:block>
+	  	     </fo:table-cell>
+	  	     <fo:table-cell>
+	  	       <fo:block border-bottom-style="solid" border-bottom-width="0.1mm"></fo:block>
+	  	     </fo:table-cell>
+	  	  </fo:table-row>
+       </fo:table-header>  
+       <fo:table-body>
+	  	  <fo:table-row >
+	  	     <fo:table-cell>
+	  	     <fo:block>
+          <fo:table table-layout="fixed" width="9cm" font-size="8pt" text-align="right" margin-top="1mm">
+              <fo:table-column column-width="1cm" />
+              <fo:table-column column-width="2cm" />
+              <fo:table-column column-width="2cm" />
+              <fo:table-column column-width="16mm" />
+             <fo:table-body> 
+	  	  <fo:table-row>
+	  	     <fo:table-cell>
+	  	       <fo:block>Satz</fo:block>
+	  	     </fo:table-cell>
+	  	     <fo:table-cell>
+	  	       <fo:block>Brutto</fo:block>
+	  	     </fo:table-cell>
+	  	     <fo:table-cell>
+	  	       <fo:block>Netto</fo:block>
+	  	     </fo:table-cell>
+	  	     <fo:table-cell>
+	  	       <fo:block>Steuer</fo:block>
+	  	     </fo:table-cell>
+	  	  </fo:table-row>
+	  	  <fo:table-row>
+	  	     <fo:table-cell>
+	  	       <fo:block>7%</fo:block>
+	  	     </fo:table-cell>
+	  	     <fo:table-cell>
+	  	       <fo:block><xsl:value-of select="format-number(amountHalf div 100, '###.###,00 €', 'euro')"/></fo:block>
+	  	     </fo:table-cell>
+	  	     <fo:table-cell>
+	  	       <fo:block><xsl:value-of select="format-number(nettoHalf div 100, '###.###,00 €', 'euro')"/></fo:block>
+	  	     </fo:table-cell>
+	  	     <fo:table-cell>
+	  	       <fo:block><xsl:value-of select="format-number(taxHalf div 100, '###.###,00 €', 'euro')"/></fo:block>
+	  	     </fo:table-cell>
+	  	  </fo:table-row>
+	  	  <xsl:if test="amountFull > 0">
+	  	  <fo:table-row>
+	  	     <fo:table-cell>
+	  	       <fo:block>19%</fo:block>
+	  	     </fo:table-cell>
+	  	     <fo:table-cell>
+	  	       <fo:block><xsl:value-of select="format-number(amountFull div 100, '###.###,00 €', 'euro')"/></fo:block>
+	  	     </fo:table-cell>
+	  	     <fo:table-cell>
+	  	       <fo:block><xsl:value-of select="format-number(nettoFull div 100, '###.###,00 €', 'euro')"/></fo:block>
+	  	     </fo:table-cell>
+	  	     <fo:table-cell>
+	  	       <fo:block><xsl:value-of select="format-number(taxFull div 100, '###.###,00 €', 'euro')"/></fo:block>
+	  	     </fo:table-cell>
+	  	  </fo:table-row>
+	  	  <fo:table-row>
+	  	     <fo:table-cell>
+	  	       <fo:block></fo:block>
+	  	     </fo:table-cell>
+	  	     <fo:table-cell>
+	  	       <fo:block></fo:block>
+	  	     </fo:table-cell>
+	  	     <fo:table-cell>
+	  	       <fo:block></fo:block>
+	  	     </fo:table-cell>
+	  	     <fo:table-cell>
+	  	       <fo:block border-top-style="solid" border-top-width="0.1mm"><xsl:value-of select="format-number(tax div 100, '###.###,00 €', 'euro')"/></fo:block>
+	  	     </fo:table-cell>
+	  	  </fo:table-row>
+	  	  </xsl:if>
+	  	  </fo:table-body>
+         </fo:table>
+         </fo:block>
+	  	     </fo:table-cell>
+	  	     <fo:table-cell>
+	  	       <fo:block margin-top="4mm" margin-bottom="4mm">Rechnungsbetrag</fo:block>
+	  	     </fo:table-cell>
+	  	     <fo:table-cell>
+	  	       <fo:block text-align="right" margin-top="4mm" margin-bottom="4mm">
+	  	       <xsl:value-of select="format-number(amount div 100, '###.###,00 €', 'euro')"/></fo:block>
+	  	       <fo:block border-bottom-style="double" border-bottom-width="0.8mm" text-align="right" margin-top="4mm" margin-bottom="4mm">
+	  	       </fo:block>
+	  	     </fo:table-cell>
+	  	  </fo:table-row>
+       </fo:table-body>
+      </fo:table>
+      <fo:block-container width="152mm" margin-top="5mm">
+      <fo:block>Vielen Dank für Ihren Auftrag. Soweit nicht anders angegeben enspricht das Lieferdatum 
+      dem Rechnungsdatum. Die Rechnung ist ohne Abzüge sofort fällig.</fo:block>
+      </fo:block-container>
    </xsl:template>
 
    <xsl:template name="rechnungsinfozeile">
-     <fo:block-container height="25mm" width="152mm" top="106mm" left="20mm">
-        <fo:block>Rechnung <xsl:value-of select="number"/></fo:block>
+     <fo:block-container>
+        <fo:block font-size="16pt" font-weight="bold">Rechnung <xsl:value-of select="number"/></fo:block>
+        <fo:table margin-top="5mm" table-layout="fixed" width="11cm">
+           <fo:table-column column-width="3cm" />
+           <fo:table-column column-width="3cm" />
+           <fo:table-column column-width="3cm" />
+           <fo:table-column column-width="3cm" />
+        <fo:table-body>
+   	    <fo:table-row>
+   	     <fo:table-cell>
+   	       <fo:block>Ref</fo:block>
+   	     </fo:table-cell>
+   	     <fo:table-cell>
+   	       <fo:block>Debitor</fo:block>
+   	     </fo:table-cell>
+   	     <fo:table-cell>
+   	       <fo:block>Erfassung</fo:block>
+   	     </fo:table-cell>
+   	     <fo:table-cell>
+	        <fo:block>Rechnungsdatum</fo:block>   	       
+   	     </fo:table-cell>
+   	     </fo:table-row>
+   	    <fo:table-row>
+   	     <fo:table-cell>
+   	       <fo:block><xsl:value-of select="customerId"/></fo:block>
+   	     </fo:table-cell>
+   	     <fo:table-cell>
+   	       <fo:block><xsl:value-of select="debitorId"/></fo:block>
+   	     </fo:table-cell>
+   	     <fo:table-cell>
+   	       <fo:block><xsl:value-of select="date:format-date(creationTime, 'dd.MM.yyyy')" /></fo:block>
+   	     </fo:table-cell>
+   	     <fo:table-cell>
+	        <fo:block><xsl:value-of select="date:format-date(date, 'dd.MM.yyyy')" /></fo:block>   	       
+   	     </fo:table-cell>
+   	     </fo:table-row>
+        </fo:table-body>
+        </fo:table>
      </fo:block-container>
    </xsl:template>
 
    <xsl:template name="adressat">
      <xsl:param name="vermerk"></xsl:param>
-     <xsl:param name="fontsize" select='"9pt"'/>
+     <xsl:param name="fontsize" select='"11pt"'/>
    
 	 <!--   laut DIN 5008 muss er 20mm vom link rand und 46 mm vom oberen Rand sein und maximal 85mm breit sein -->
      <fo:block-container height="5mm" width="82mm" top="46mm" left="20mm" position="fixed">
-        <fo:block font-size="7pt">Buchlese, Hauptstr. 12, 78713 Schramberg</fo:block>
+        <fo:block font-size="9pt" text-decoration="underline">Buchlese, Hauptstr. 12, 78713 Schramberg</fo:block>
      </fo:block-container>
 		<!--   laut DIN 5008 muss er 20mm vom link rand und 51 mm vom oberen Rand sein und maximal 85mm breit sein -->
 		<!--   laut deutscher Post muss ein padding von mindestens 3mm eingehalten werden. -->

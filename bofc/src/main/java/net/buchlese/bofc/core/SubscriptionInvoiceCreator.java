@@ -51,6 +51,15 @@ public class SubscriptionInvoiceCreator {
 			}
 			sub.setLastInvoiceDate(inv.getDate());
 		}
+		inv.setNettoHalf((long) (inv.getAmountHalf() / 1.07));
+		inv.setTaxHalf(inv.getAmountHalf() - inv.getNettoHalf());
+		inv.setTax(inv.getTaxHalf());
+		if (inv.getAmountFull() != null) {
+			inv.setNettoFull((long) (inv.getAmountFull() / 1.19));
+			inv.setTaxFull(inv.getAmountFull() - inv.getNettoFull());
+			inv.setTax(inv.getTax() + inv.getTaxFull());
+		}
+		
 		return inv;
 	}
 

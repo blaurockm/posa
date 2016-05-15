@@ -488,7 +488,25 @@ public class SubscrResource {
 		return inv;
 	}
 
-	
+
+	@Produces({"application/pdf"})
+	@GET
+	@Path("/pdfcreateCollInvoice/{sub}")
+	public StreamingOutput createPdfCollInvoice(@PathParam("sub") String subIdP)  {
+		long subId = Long.parseLong(subIdP);
+		return new StreamingOutput() {
+			public void write(OutputStream output) throws IOException, WebApplicationException {
+				try {
+					PDFInvoice generator = new PDFInvoice(SubscriptionInvoiceCreator.createCollectiveSubscription(dao, dao.getSubscriber(subId)));
+					generator.generatePDF(output);
+				} catch (Exception e) {
+					throw new WebApplicationException(e);
+				}
+				output.flush();
+			}
+		};	
+	}
+
 	@GET
 	@Path("/deliverynote/{id}")
 	@Produces({"text/html"})

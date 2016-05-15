@@ -44,7 +44,20 @@ public class PosInvoice {
 	@JsonProperty
 	private Long amountNone;     // Rechnungsbetrag ohne MwSt
 
-	
+	@JsonProperty
+	private Long tax;     // Steuerbetrag
+	@JsonProperty
+	private Long taxHalf;     // Steuerbetrag halben MwSt-Satz
+	@JsonProperty
+	private Long taxFull;     // Steuerbetrag vollem MwSt-Satz
+
+	@JsonProperty
+	private Long netto;     // Nettobetrag
+	@JsonProperty
+	private Long nettoHalf;     // Nettobetrag halben MwSt-Satz
+	@JsonProperty
+	private Long nettoFull;     // Nettobetrag vollem MwSt-Satz
+
 	@JsonProperty
 	private int actionum;
 	@JsonProperty
@@ -218,5 +231,53 @@ public class PosInvoice {
 	}
 	public void setDetails(List<PosInvoiceDetail> details) {
 		this.details = details;
+	}
+
+	public Long getTax() {
+		return tax;
+	}
+
+	public void setTax(Long tax) {
+		this.tax = tax;
+	}
+
+	public Long getTaxHalf() {
+		return taxHalf;
+	}
+
+	public void setTaxHalf(Long taxHalf) {
+		this.taxHalf = taxHalf;
+	}
+
+	public Long getTaxFull() {
+		return taxFull;
+	}
+
+	public void setTaxFull(Long taxFull) {
+		this.taxFull = taxFull;
+	}
+
+	public Long getNetto() {
+		return netto;
+	}
+
+	public void setNetto(Long netto) {
+		this.netto = netto;
+	}
+
+	public Long getNettoHalf() {
+		return nettoHalf;
+	}
+
+	public void setNettoHalf(Long nettoHalf) {
+		this.nettoHalf = nettoHalf;
+	}
+
+	public Long getNettoFull() {
+		return nettoFull;
+	}
+
+	public void setNettoFull(Long nettoFull) {
+		this.nettoFull = nettoFull;
 	}
 }

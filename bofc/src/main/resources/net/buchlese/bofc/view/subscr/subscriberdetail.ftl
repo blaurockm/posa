@@ -11,7 +11,7 @@
 <div class="col-md-2"><a href="#" id="laeden"></a></div>
 <div class="col-md-5"></div>
 <#if sub.collectiveInvoice! >
-<div class="col-md-2"><a href="/subscr/createCollInvoice/${sub.id?c}" class="btn btn-primary" target="_blank">Sammelrechnung erstellen</a></div>
+<div class="col-md-2"><a href="/subscr/pdfcreateCollInvoice/${sub.id?c}" class="btn btn-primary" target="_blank">Sammelrechnung erstellen</a></div>
 </#if>
 </div>
 <div class="row">
