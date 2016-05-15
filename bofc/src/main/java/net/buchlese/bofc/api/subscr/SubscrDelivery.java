@@ -4,6 +4,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class SubscrDelivery implements Comparable<SubscrDelivery> {
@@ -16,7 +17,7 @@ public class SubscrDelivery implements Comparable<SubscrDelivery> {
 	@JsonProperty
 	private int quantity;
 	@JsonProperty
-	private long subcriptionId;
+	private long subscriptionId;
 	@JsonProperty
 	private long subscriberId;
 	@JsonProperty
@@ -35,6 +36,27 @@ public class SubscrDelivery implements Comparable<SubscrDelivery> {
 	private String invoiceNumber;
 	@JsonProperty
 	private DateTime creationDate;
+	@JsonProperty
+	private long shipmentCost;
+
+	@JsonIgnore
+	public void updateBrutto(long br, double halfPercentage) {
+		total =  br;
+		totalHalf = (long) (total * halfPercentage);
+		totalFull = total - totalHalf;
+	}
+
+	@JsonIgnore
+	public void updateBruttoHalf(long br) {
+		totalHalf =  br;
+		totalFull = total - totalHalf;
+	}
+
+	@JsonIgnore
+	public void updateBruttoFull(long br) {
+		totalFull =  br;
+		totalHalf = total - totalFull;
+	}
 
 	public long getId() {
 		return id;
@@ -78,8 +100,8 @@ public class SubscrDelivery implements Comparable<SubscrDelivery> {
 	public void setCreationDate(DateTime creationDate) {
 		this.creationDate = creationDate;
 	}
-	public void setSubcriptionId(long subcriptionId) {
-		this.subcriptionId = subcriptionId;
+	public void setSubscriptionId(long subcriptionId) {
+		this.subscriptionId = subcriptionId;
 	}
 	public long getSubscriberId() {
 		return subscriberId;
@@ -93,8 +115,8 @@ public class SubscrDelivery implements Comparable<SubscrDelivery> {
 	public void setArticleId(long articleId) {
 		this.articleId = articleId;
 	}
-	public long getSubcriptionId() {
-		return subcriptionId;
+	public long getSubscriptionId() {
+		return subscriptionId;
 	}
 	public void setSubscriberId(long subscriberId) {
 		this.subscriberId = subscriberId;
@@ -120,6 +142,14 @@ public class SubscrDelivery implements Comparable<SubscrDelivery> {
 	@Override
 	public int compareTo(SubscrDelivery o) {
 		return getDeliveryDate().compareTo(o.getDeliveryDate());
+	}
+
+	public long getShipmentCost() {
+		return shipmentCost;
+	}
+
+	public void setShipmentCost(long shipmentCost) {
+		this.shipmentCost = shipmentCost;
 	}
 	
 }

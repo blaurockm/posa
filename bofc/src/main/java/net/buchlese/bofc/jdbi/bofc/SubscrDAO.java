@@ -68,6 +68,22 @@ public interface SubscrDAO {
 
 	List<SubscrDelivery> getDeliveriesForSubscription(long id, LocalDate from,	LocalDate till);
 
+	List<SubscrProduct> getProductsForTheNextWeek(LocalDate d);
+
+	List<Subscription> getSubscriptionsForThisMonth(LocalDate d);
+
+	void deleteDelivery(long delId);
+
+	void updateSubscrProduct(SubscrProduct p);
+
+	void updateDelivery(SubscrDelivery art);
+
+	void updateArticle(SubscrArticle art);
+
+	void updateSubscriber(Subscriber art);
+
+	void updateSubscription(Subscription art);
+
 
 
 }

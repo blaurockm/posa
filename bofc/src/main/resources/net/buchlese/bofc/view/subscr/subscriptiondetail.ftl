@@ -8,17 +8,26 @@
 <h1>Abonnement ${sub.id}</h1>
 
   <h4>Periodikum ${p.name}</h4>
-  <h4>Abonnent <a href="#" class="editable" data-type="text" data-name="subscriber.name">${kunde()}</a></h4>
+  <h4>Abonnent ${kunde().name}   <a href="#subscriber/${sub.subscriberId?c}" class="btn btn-default"><span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span></a> </h4>
 <div class="row">
   <div class="col-md-2">Letzte Lieferung</div>
-  <div class="col-md-4">${(lastDelivery.articleName)!} am ${(lastDelivery.deliveryDate.toString("dd.MM.yyyy"))!}</div>
-  <div class="col-md-2  col-md-offset-4">
+  <div class="col-md-3">${(lastDelivery.articleName)!} am ${(lastDelivery.deliveryDate.toString("dd.MM.yyyy"))!}</div>
+  <div class="col-md-1  col-md-offset-2">
+      <a href="#subscrDispo/${sub.productId?c}" class="btn btn-primary">Dispo</a>
+  </div>
+  <div class="col-md-2" >
+  <#if !p.payPerDelivery>
+    Bruttoeinzelpreis ${money(newestArticle.brutto!)}
+  </#if>
+  </div>
+  <div class="col-md-2" >
       <a href="/subscr/createInvoice/${sub.id?c}" class="btn btn-primary" target="_blank">Rechnung erstellen</a>
   </div>
 </div>
 <div class="row">
   <div class="col-md-2">Letzte Rechnung</div>
-<div class="col-md-4">am ${(sub.lastInvoiceDate.toString("dd.MM.yyyy"))!}</div></div>
+<div class="col-md-4">am ${(sub.lastInvoiceDate.toString("dd.MM.yyyy"))!}</div>
+</div>
 
 <div id="accordion" role="tablist" aria-multiselectable="true">
   <div class="panel panel-default">
@@ -125,10 +134,10 @@
 <div class="card card-block">
  	<h3 class="card-title">Berechnung</h3>
     <ul class="list-group list-group-flush">
-    	<li class="list-group-item">Start <a href="#" class="editable" data-type="date" data-format="dd.mm.yyyy" data-mode="popup" data-name="subscription.startdDate">${(sub.startDate.toString("dd.MM.YYYY"))!}</a></li>
+    	<li class="list-group-item">Start <a href="#" class="editable" data-type="date" data-format="dd.mm.yyyy" data-mode="popup" data-name="subscription.startDate">${(sub.startDate.toString("dd.MM.YYYY"))!}</a></li>
     	<li class="list-group-item">Ende <a href="#" class="editable" data-type="date" data-format="dd.mm.yyyy" data-mode="popup" data-name="subscription.endDate">${(sub.endDate.toString("dd.MM.YYYY"))!}</a></li>
     	<li class="list-group-item">Menge <a href="#" class="editable" data-type="text" data-name="subscription.quantity">${sub.quantity}</a></li>
-    	<li class="list-group-item">Versandkosten <a href="#" class="editablemoney" data-type="text" data-name="subscription.shipmentcost">${sub.shipmentCost}</a></li>
+    	<li class="list-group-item">ArtikelBrutto <a href="#" class="editablemoney" data-type="text" data-name="article.brutto">${newestArticle.brutto?c}</a></li>
     	<li class="list-group-item">Zahlungsintervall <a href="#" id="paytype"></a></li>
     	<li class="list-group-item">Bezahlt bis <a href="#" class="editable" data-type="date" data-format="mm/yyyy" data-mode="popup" data-name="subscription.payedUntil">${sub.payedUntil!}</a></li>
     </ul>
@@ -141,13 +150,23 @@
     	<li class="list-group-item">Versandart <a href="#" id="shiptype"></a></li>
     	<li class="list-group-item">Lieferhinweis1 <a href="#" class="editable" data-type="text" data-name="subscription.deliveryInfo1">${sub.deliveryInfo1!}</a></li>
     	<li class="list-group-item">Lieferhinweis2 <a href="#" class="editable" data-type="text" data-name="subscription.deliveryInfo2">${sub.deliveryInfo2!}</a></li>
-    	<li class="list-group-item">Lieferaddresse <br>
+    <!--  <li class="list-group-item">Lieferaddresse <br>
 <a href="#" class="editable" data-type="text" data-name="subscription.name1">${(sub.deliveryAddress.name1)!}</a> <br>
 <a href="#" class="editable" data-type="text" data-name="subscription.name2">${(sub.deliveryAddress.name2)!}</a> <br>
 <a href="#" class="editable" data-type="text" data-name="subscription.name3">${(sub.deliveryAddress.name3)!}</a> <br>
 <a href="#" class="editable" data-type="text" data-name="subscription.street">${(sub.deliveryAddress.street)!}</a> <br>
 <a href="#" class="editable" data-type="text" data-name="subscription.postalcode">${(sub.deliveryAddress.postalcode)!}</a> <a href="#" class="editable" data-type="text" data-name="subscription.city">${(sub.deliveryAddress.city)!}</a> 
-    	</li> 
+    	</li> --> 
+    </ul>
+</div>
+</div>
+
+<div class="col-md-4">
+<div class="card card-block">
+ 	<h3 class="card-title">Kontaktdaten</h3>
+    <ul class="list-group list-group-flush">
+    	<li class="list-group-item">Telefon <a href="#" class="editableSub" data-type="text" data-name="subscriber.telephone">${(kunde().telephone)!}</a></li>
+    	<li class="list-group-item">Email <a href="#" class="editableSub" data-type="email" data-name="subscriber.email">${(kunde().email)!}</a></li>
     </ul>
 </div>
 </div>
@@ -160,15 +179,22 @@
 </div>
 
 <script>
-	 $('.editable').editable({
-	    url: '/subscr/update', pk:'${sub.id?c}',
+	 $('.editableSub').editable({
+	    url: '/subscr/update', pk:'${sub.subscriberId?c}',
 	    success: function(res, newValue) {
 	        if(!res.success) return res.msg;
 	    }
 	});
-	 
+
+	 $('.editable').editable({
+		    url: '/subscr/update', pk:'${sub.id?c}',
+		    success: function(res, newValue) {
+		        if(!res.success) return res.msg;
+		    }
+		});
+
 	$('.editablemoney').editable({
-	    url: '/subscr/update', pk:'${sub.id?c}',
+	    url: '/subscr/update', pk:'${newestArticle.id?c}',
 	    mode : "popup",
 	    display : function(value, jsonresponse) {
 	    	$(this).text(formatMoney(value));
@@ -182,7 +208,7 @@
 	    url: '/subscr/update', pk:'${sub.id?c}',
 		type : "select",
 		value : "${sub.shipmentType}",
-		name : "subscriber.shipmentType",
+		name : "subscription.shipmentType",
 		showbuttons:false,
 		source : shiptypesList
 	});
@@ -191,7 +217,7 @@
 	    url: '/subscr/update', pk:'${sub.id?c}',
 		type : "select",
 		value : "${sub.paymentType}",
-		name : "subscriber.paymentType",
+		name : "subscription.paymentType",
 		showbuttons:false,
 		source : paytypesList
 	});

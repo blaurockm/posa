@@ -50,10 +50,6 @@ public class SubscriptionInvoiceCreator {
 			case HALFYEARLY  :  
 			case YEARLY : addIntervalPayment(dao, sub, inv);
 			}
-			// Versandkosten
-			if (sub.getShipmentCost() > 0) {
-				addShipmentCostDetail(inv, sub.getShipmentCost());
-			}
 			sub.setLastInvoiceDate(inv.getDate());
 		}
 		return inv;
@@ -95,6 +91,10 @@ public class SubscriptionInvoiceCreator {
 		// details per Delivery;
 		for (SubscrDelivery deliv : deliveries) {
 			inv.addInvoiceDetail(createInvoiceDetailForDelivery(deliv,dao.getSubscrArticle(deliv.getArticleId())));
+			// Versandkosten
+			if (deliv.getShipmentCost() > 0) {
+				addShipmentCostDetail(inv, deliv.getShipmentCost());
+			}
 		}
 		dao.recordDetailsOnvInvoice(deliveries, inv.getNumber());
 	}

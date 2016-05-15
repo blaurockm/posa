@@ -19,7 +19,7 @@ public class SubscrArticleUpdateHelper {
 	
 	
 	
-	public UpdateResult updateArticle(String pk, String fieldname, String value) {
+	public UpdateResult update(String pk, String fieldname, String value) {
 		UpdateResult res = new UpdateResult();
 		String field = fieldname;
 		if (fieldname.contains(".")) {
@@ -59,14 +59,17 @@ public class SubscrArticleUpdateHelper {
 			res.success = true;
 		}
 		if ("issueNo".equals(field)) {
-			art.setIssueNo(Integer.parseInt(value));
+			int count = Integer.parseInt(value);
+			art.setIssueNo(count);
 			SubscrProduct p = dao.getSubscrProduct(art.getProductId());
+			p.setCount(count);
 			art.setName(art.initializeName(p.getNamePattern()));
+			dao.updateSubscrProduct(p);
 			res.name = art.getName();
 			res.success = true;
 		}
 		if (res.success) {
-//			dao.updateArticle(id, art);
+			dao.updateArticle(art);
 		}
 		return res;
 	}

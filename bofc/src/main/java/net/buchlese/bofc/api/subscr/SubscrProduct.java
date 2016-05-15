@@ -28,6 +28,8 @@ public class SubscrProduct {
 	@JsonProperty
 	private LocalDate startDate;
 	@JsonProperty
+	private LocalDate endDate;
+	@JsonProperty
 	private int quantity;
 	@JsonProperty
 	private String namePattern;
@@ -40,10 +42,8 @@ public class SubscrProduct {
 	private int count;
 
 	@JsonProperty
-	private boolean payedInAdvance; // vorausbezahlt: bei Abos, Fortsetzungen bezahlt pro Lieferung
+	private boolean payPerDelivery; // vorausbezahlt: bei Abos, Fortsetzungen bezahlt pro Lieferung
 
-	@JsonProperty
-	private int issuePayInterval = 1; // mit einer Zahlen werden x deliveries auf einmal bezahlt
 	
 	@JsonIgnore
 	public SubscrArticle createNextArticle(LocalDate erschTag) {
@@ -147,24 +147,21 @@ public class SubscrProduct {
 		this.baseBrutto = baseBrutto;
 	}
 
-
-	public boolean isPayedInAdvance() {
-		return payedInAdvance;
+	public LocalDate getEndDate() {
+		return endDate;
 	}
 
-
-	public void setPayedInAdvance(boolean payedInAdvance) {
-		this.payedInAdvance = payedInAdvance;
+	public void setEndDate(LocalDate endDate) {
+		this.endDate = endDate;
 	}
 
-
-	public int getIssuePayInterval() {
-		return issuePayInterval;
+	public boolean isPayPerDelivery() {
+		return payPerDelivery;
 	}
 
-
-	public void setIssuePayInterval(int issuePayInterval) {
-		this.issuePayInterval = issuePayInterval;
+	public void setPayPerDelivery(boolean payPerDelivery) {
+		this.payPerDelivery = payPerDelivery;
 	}
+
 
 }

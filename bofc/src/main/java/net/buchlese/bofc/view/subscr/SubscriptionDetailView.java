@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.List;
 
 import net.buchlese.bofc.api.bofc.PosInvoice;
+import net.buchlese.bofc.api.subscr.SubscrArticle;
 import net.buchlese.bofc.api.subscr.SubscrDelivery;
 import net.buchlese.bofc.api.subscr.SubscrProduct;
 import net.buchlese.bofc.api.subscr.Subscriber;
@@ -19,6 +20,7 @@ public class SubscriptionDetailView extends AbstractBofcView{
 	private final SubscrDAO dao;
 	private final PosInvoiceDAO invDao;
 	private final SubscrDelivery lastDeliv;
+	private final SubscrArticle newestArticle;
 	
 	public SubscriptionDetailView(SubscrDAO dao, PosInvoiceDAO invd, Subscription s ) {
 		super("subscriptiondetail.ftl");
@@ -26,6 +28,7 @@ public class SubscriptionDetailView extends AbstractBofcView{
 		this.invDao = invd;
 		this.sub = s;
 		this.lastDeliv = dao.getLastDeliveryForSubscription(s.getId());
+		this.newestArticle = dao.getNewestArticleOfProduct(s.getProductId());
 	}
 
 
@@ -39,6 +42,10 @@ public class SubscriptionDetailView extends AbstractBofcView{
 
 	public SubscrDelivery getLastDelivery() {
 		return lastDeliv;
+	}
+
+	public SubscrArticle getNewestArticle() {
+		return newestArticle;
 	}
 
 	public PosInvoice getLastInvoice() {
@@ -63,15 +70,12 @@ public class SubscriptionDetailView extends AbstractBofcView{
 
 	}
 
-	public String kunde() {
+	public Subscriber kunde() {
 		if (sub.getSubscriberId() > 0) {
 			Subscriber x = dao.getSubscriber(sub.getSubscriberId());
-			if (x != null) {
-				return x.getName();
-			}
-			return "not found " + sub.getSubscriberId();
+			return x;
 		}
-		return "keine subId";
+		return null;
 	}
 
 

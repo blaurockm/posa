@@ -2,6 +2,7 @@ package net.buchlese.bofc.view.subscr;
 
 import net.buchlese.bofc.api.subscr.SubscrDelivery;
 import net.buchlese.bofc.api.subscr.Subscriber;
+import net.buchlese.bofc.api.subscr.Subscription;
 import net.buchlese.bofc.jdbi.bofc.SubscrDAO;
 import net.buchlese.bofc.view.AbstractBofcView;
 
@@ -30,6 +31,17 @@ public class SubscrDeliveryView extends AbstractBofcView{
 			return "not found " + s.getSubscriberId();
 		}
 		return "keine subId";
+	}
+	
+	public Subscription abo(SubscrDelivery d) {
+		if (d.getSubscriptionId() > 0) {
+			Subscription x = dao.getSubscription(d.getSubscriptionId());
+			if (x != null) {
+				return x;
+			}
+			return null;
+		}
+		return null;
 	}
 
 }

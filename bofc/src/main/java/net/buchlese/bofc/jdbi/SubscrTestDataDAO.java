@@ -85,7 +85,7 @@ public class SubscrTestDataDAO implements SubscrDAO {
 	}
 
 	public SubscrDelivery getLastDeliveryForSubscription(final long subid) {
-		return deliveries.stream().filter(x -> x.getSubcriptionId() == subid).max(Comparator.naturalOrder()).orElse(null);
+		return deliveries.stream().filter(x -> x.getSubscriptionId() == subid).max(Comparator.naturalOrder()).orElse(null);
 	}
 
 	public List<SubscrArticle> getArticlesOfProduct(final long prodid) {
@@ -101,15 +101,15 @@ public class SubscrTestDataDAO implements SubscrDAO {
 	}
 
 	public List<SubscrDelivery> getDeliveriesForSubscriptionUnrecorded(long subid) {
-		return deliveries.stream().filter(x -> x.getSubcriptionId() == subid && x.isPayed() == false).collect(Collectors.toList());
+		return deliveries.stream().filter(x -> x.getSubscriptionId() == subid && x.isPayed() == false).collect(Collectors.toList());
 	}
 
 	public List<SubscrDelivery> getDeliveriesForSubscriptionRecorded(long subid) {
-		return deliveries.stream().filter(x -> x.getSubcriptionId() == subid && x.isPayed() ).collect(Collectors.toList());
+		return deliveries.stream().filter(x -> x.getSubscriptionId() == subid && x.isPayed() ).collect(Collectors.toList());
 	}
 
 	public List<SubscrDelivery> getDeliveriesForSubscription(long subid) {
-		return deliveries.stream().filter(x -> x.getSubcriptionId() == subid).collect(Collectors.toList());
+		return deliveries.stream().filter(x -> x.getSubscriptionId() == subid).collect(Collectors.toList());
 	}
 
 	public Collection<String> getInvoiceNumsForSubscription(long subid) {
@@ -159,7 +159,7 @@ public class SubscrTestDataDAO implements SubscrDAO {
 		d.setId(idcounter++); 
 		d.setArticleName(article.getName());
 		d.setDeliveryDate(deliveryDate);
-		d.setSubcriptionId(subscription.getId());
+		d.setSubscriptionId(subscription.getId());
 		d.setSubscriberId(subscription.getSubscriberId());
 		d.setArticleId(article.getId());
 		d.setQuantity(subscription.getQuantity());
@@ -193,7 +193,52 @@ public class SubscrTestDataDAO implements SubscrDAO {
 
 	@Override
 	public List<SubscrDelivery> getDeliveriesForSubscription(long subid, LocalDate from, LocalDate till) {
-		return deliveries.stream().filter(x -> x.getSubcriptionId() == subid && x.getDeliveryDate().compareTo(from) >= 0 && x.getDeliveryDate().compareTo(till) <= 0).collect(Collectors.toList());
+		return deliveries.stream().filter(x -> x.getSubscriptionId() == subid && x.getDeliveryDate().compareTo(from) >= 0 && x.getDeliveryDate().compareTo(till) <= 0).collect(Collectors.toList());
+	}
+
+	@Override
+	public List<SubscrProduct> getProductsForTheNextWeek(LocalDate d) {
+		return products.stream().filter(x -> x.getLastDelivery() == null || x.getLastDelivery().isBefore(d)).collect(Collectors.toList());
+	}
+
+	@Override
+	public List<Subscription> getSubscriptionsForThisMonth(LocalDate d) {
+		return subscriptions.stream().filter(x -> x.getPayedUntil() == null || x.getPayedUntil().isBefore(d)).collect(Collectors.toList());
+	}
+
+	@Override
+	public void updateSubscrProduct(SubscrProduct p) {
+		products = products.stream().filter(x -> x.getId() != p.getId()).collect(Collectors.toList());
+		products.add(p);
+	}
+	
+	@Override
+	public void updateDelivery(SubscrDelivery art) {
+		deliveries = deliveries.stream().filter(x -> x.getId() != art.getId()).collect(Collectors.toList());
+		deliveries.add(art);
+	}
+
+	@Override
+	public void updateArticle(SubscrArticle art) {
+		articles = articles.stream().filter(x -> x.getId() != art.getId()).collect(Collectors.toList());
+		articles.add(art);
+	}
+
+	@Override
+	public void updateSubscriber(Subscriber art) {
+		subscribers = subscribers.stream().filter(x -> x.getId() != art.getId()).collect(Collectors.toList());
+		subscribers.add(art);
+	}
+
+	@Override
+	public void updateSubscription(Subscription art) {
+		subscriptions = subscriptions.stream().filter(x -> x.getId() != art.getId()).collect(Collectors.toList());
+		subscriptions.add(art);
+	}
+
+	@Override
+	public void deleteDelivery(long delId) {
+		deliveries = deliveries.stream().filter(x -> x.getId() != delId).collect(Collectors.toList());
 	}
 
 	//==============================================================================================
@@ -353,7 +398,6 @@ public class SubscrTestDataDAO implements SubscrDAO {
 		s.setDeliveryInfo1(deliveryInfo1);
 		s.setDeliveryInfo2(deliveryInfo2);
 		s.setShipmentType(shipType);
-		s.setShipmentCost(shipCost);
 		s.setPaymentType(paymentType);
 		s.setPayedUntil(payedUntil);
 		s.setLastInvoiceDate(null);
@@ -393,7 +437,7 @@ public class SubscrTestDataDAO implements SubscrDAO {
 		p.setAbbrev(abbrev);
 		p.setName(name);
 		p.setPublisher(publisher);
-		p.setPayedInAdvance(payAdv);
+		p.setPayPerDelivery(payAdv);
 		p.setQuantity(quantity);
 		p.setStartDate(startDate);
 		p.setLastDelivery(lastDelivery);

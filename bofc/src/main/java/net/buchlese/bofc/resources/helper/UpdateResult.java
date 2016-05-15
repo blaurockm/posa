@@ -1,6 +1,7 @@
 package net.buchlese.bofc.resources.helper;
 
 import net.buchlese.bofc.api.subscr.SubscrArticle;
+import net.buchlese.bofc.api.subscr.SubscrDelivery;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -27,5 +28,11 @@ public class UpdateResult {
 		bruttoHalf = art.getBrutto_half();
 		bruttoFull = art.getBrutto_full();
 		halfPercentage = art.getHalfPercentage();
+	}
+	@JsonIgnore
+	public void initializeMoneyFieldsFromArticle(SubscrDelivery art) {
+		brutto = art.getTotal();
+		bruttoHalf = art.getTotalHalf();
+		bruttoFull = art.getTotalFull();
 	}
 }

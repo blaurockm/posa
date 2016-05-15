@@ -10,7 +10,9 @@
 <div class="col-md-2">Ladengeschäft</div>
 <div class="col-md-2"><a href="#" id="laeden"></a></div>
 <div class="col-md-5"></div>
+<#if sub.collectiveInvoice! >
 <div class="col-md-2"><a href="/subscr/createCollInvoice/${sub.id?c}" class="btn btn-primary" target="_blank">Sammelrechnung erstellen</a></div>
+</#if>
 </div>
 <div class="row">
 <div class="col-md-2">Debitorenkonto</div>
@@ -18,15 +20,23 @@
 </div>
 <div class="row">
 <div class="col-md-2">Sammelrechnung</div>
-<div class="col-md-2"><input type="checkbox" ${sub.collectiveInvoice?string('checked','')} onChange="switchCheckbox('subscriber.collectiveInvoice', this.value)"></div>
+<div class="col-md-2"><input type="checkbox" ${sub.collectiveInvoice?string('checked','')} onChange="switchCheckbox('subscriber.collectiveInvoice', this.checked)"></div>
 </div>
 <div class="row">
 <div class="col-md-2">Lieferschein nötig</div>
-<div class="col-md-2"><input type="checkbox" ${sub.needsDeliveryNote?string('checked','')} onChange="switchCheckbox('subscriber.needsDeliveryNote', this.value)"></div>
+<div class="col-md-2"><input type="checkbox" ${sub.needsDeliveryNote?string('checked','')} onChange="switchCheckbox('subscriber.needsDeliveryNote', this.checked)"></div>
 </div>
 <div class="row">
 <div class="col-md-2">Standard-Versandart</div>
 <div class="col-md-2"><a href="#" id="shiptype"></a></div>
+</div>
+<div class="row">
+<div class="col-md-2">Telefon</div>
+<div class="col-md-2"><a href="#" class="editable" data-type="text" data-name="subscriber.telephone">${sub.telephone!}</a></div>
+</div>
+<div class="row">
+<div class="col-md-2">Email</div>
+<div class="col-md-2"><a href="#" class="editable" data-type="email" data-name="subscriber.email">${sub.email!}</a></div>
 </div>
 <div class="row">
 <div class="col-md-2">Rechnungsadresse</div>
@@ -50,8 +60,10 @@
     <div class="panel-heading" role="tab" id="heading${s.id}">
       <h4 class="panel-title">
         <a data-toggle="collapse" data-parent="#accordion" href="#delivs${s.id}" aria-expanded="false" aria-controls="delivs${s.id}">
-          Abo Nr ${s.id}, ${product(s)}, ${s.deliveryInfo1!""}, ${s.deliveryInfo2!""} 
-          <span class="label label-pill label-default">${s.quantity}</span> 
+          Abo Nr ${s.id}, ${product(s)}, ${s.deliveryInfo1!""}, ${s.deliveryInfo2!""}
+          <#if willBeSettled(s)>
+            <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>  
+          </#if>
           <a href="#subscription/${s.id?c}" class="btn btn-info">Abodetails</a>
         </a>
       </h4>

@@ -18,6 +18,10 @@ public class Subscriber {
 	@JsonProperty
 	private String name;
 	@JsonProperty
+	private String telephone;
+	@JsonProperty
+	private String email;
+	@JsonProperty
 	private Address invoiceAddress;
 	@JsonProperty
 	private boolean collectiveInvoice;
@@ -79,6 +83,18 @@ public class Subscriber {
 	}
 	public void setShipmentType(ShipType shipmentType) {
 		this.shipmentType = shipmentType;
+	}
+	public String getTelephone() {
+		return telephone;
+	}
+	public void setTelephone(String telephone) {
+		this.telephone = telephone;
+	}
+	public String getEmail() {
+		return email;
+	}
+	public void setEmail(String email) {
+		this.email = email;
 	}
 
 }

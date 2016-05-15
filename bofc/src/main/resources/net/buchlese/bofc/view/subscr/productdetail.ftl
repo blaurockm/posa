@@ -1,5 +1,5 @@
 <ol class="breadcrumb">
-  <li><a href="#subscr">Dashboard</a></li>
+  <li><a href="#subscrProd">Periodika</a></li>
   <li class="active">Periodikum</li>
 </ol>
 
@@ -13,41 +13,48 @@
 </div>
 <div class="row">
 <div class="col-md-2">Ausgabenzähler</div>
-<div class="col-md-2"><a href="#" class="editable" data-type="text" data-name="product.publisher">${p.count!"1"}</a></div>
+<div class="col-md-2"><a href="#" class="editable" data-type="text" data-name="product.count">${p.count!"1"}</a></div>
 </div>
 <div class="row">
 <div class="col-md-2">Bestellte Menge</div>
-<div class="col-md-2"><a href="#" class="editable" data-type="text" data-name="product.publisher">${p.quantity!"1"}</a></div>
+<div class="col-md-2"><a href="#" class="editable" data-type="text" data-name="product.quantity">${p.quantity!"1"}</a></div>
 </div>
 <div class="row">
 <div class="col-md-2">Periodizität</div>
-<div class="col-md-2"><a href="#" class="editable" data-type="text" data-name="product.publisher">${p.period}</a></div>
+<div class="col-md-2"><a href="#" class="editable" data-type="text" data-name="product.period">${p.period}</a></div>
 </div>
 <div class="row">
 <div class="col-md-2">Artikel-Namensmuster</div>
-<div class="col-md-6"><a href="#" class="editable" data-type="text" data-name="product.publisher">${p.namePattern}</a></div>
-</div>
-<div class="row">
-<div class="col-md-2">Artikel-Basispreis</div>
-<div class="col-md-2"><a href="#" class="editable" data-type="text" data-name="product.publisher">${p.baseBrutto!"0"}</a></div>
+<div class="col-md-6"><a href="#" class="editable" data-type="text" data-name="product.namePattern">${p.namePattern}</a></div>
 </div>
 <div class="row">
 <div class="col-md-2">Proz Print-Anteil</div>
-<div class="col-md-2"><a href="#" class="editable" data-type="text" data-name="product.publisher">${p.halfPercentage!"1"}</a></div>
+<div class="col-md-2"><a href="#" class="editable" data-type="text" data-name="product.halfPercent">${p.halfPercentage!"1"}</a></div>
+</div>
+<div class="row">
+<div class="col-md-2">Zahlung pro Lieferung</div>
+<div class="col-md-2"><input type="checkbox" ${p.payPerDelivery?string('checked','')} onChange="switchCheckbox('product.payPerDelivery', this.checked)"></div>
+</div>
+
+<div class="row">
+<div class="col-md-2">Bezug seit</div>
+<div class="col-md-2"><a href="#" class="editable" data-type="date" data-format="dd.mm.yyyy" data-mode="popup" data-name="product.startDate">${(p.startDate.toString("dd.MM.YYYY"))!}</a></div>
+</div>
+<div class="row">
+<div class="col-md-2">Bezug bis</div>
+<div class="col-md-2"><a href="#" class="editable" data-type="date" data-format="dd.mm.yyyy" data-mode="popup" data-name="product.endDate">${(p.endDate.toString("dd.MM.YYYY"))!}</a></div>
 </div>
 <div class="row">
 <div class="col-md-2">Letzte Lieferung</div>
 <div class="col-md-2">${(p.lastDelivery.toString("dd.MM.yy"))!}</div>
 </div>
-<div class="row">
-<div class="col-md-2">Bezug seit</div>
-<div class="col-md-2">${(p.startDate.toString("dd.MM.yy"))!}</div>
-</div>
+
 
 <div class="row">
 <div class="col-md-3"><h3>Abos</h3></div>
-<div class="col-md-offset-4 col-md-2"><a href="#subscrDispo/${p.id?c}" class="btn btn-primary">Dispo</a></div>
-<div class="col-md-2"><a href="#subscrSubscrAdd/0/${p.id?c}" class="btn btn-primary">Neues Abo</a></div>
+<div class="col-md-offset-2 col-md-2"><a href="#subscrDispo/${p.id?c}" class="btn btn-primary">Dispo</a></div>
+<div class="col-md-offset-1 col-md-2"><a href="#subscrCustAdd" class="btn btn-default">Neuer Abonnent</a></div>
+<div class="col-md-1"><a href="#subscrSubscrAdd/0/${p.id?c}" class="btn btn-default">Neues Abo</a></div>
 </div>
 <div id="accordion" role="tablist" aria-multiselectable="true">
 <#list subscriptions as sub>
@@ -92,5 +99,9 @@
 	$('.editable').editable({
 	    url: '/subscr/update', pk:'${p.id?c}'
 	});
+    var switchCheckbox = function(fieldname, val) {
+   	 $.post("/subscr/update", { pk: '${p.id?c}', name: fieldname, value : val});
+    }
+
 </script>
 

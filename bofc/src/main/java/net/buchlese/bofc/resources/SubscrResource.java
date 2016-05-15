@@ -33,11 +33,16 @@ import net.buchlese.bofc.api.subscr.SubscrDelivery;
 import net.buchlese.bofc.api.subscr.SubscrProduct;
 import net.buchlese.bofc.api.subscr.Subscriber;
 import net.buchlese.bofc.api.subscr.Subscription;
+import net.buchlese.bofc.core.NumberGenerator;
 import net.buchlese.bofc.core.SubscriptionInvoiceCreator;
 import net.buchlese.bofc.jdbi.SubscrTestDataDAO;
 import net.buchlese.bofc.jdbi.bofc.PosInvoiceDAO;
 import net.buchlese.bofc.jdbi.bofc.SubscrDAO;
 import net.buchlese.bofc.resources.helper.SubscrArticleUpdateHelper;
+import net.buchlese.bofc.resources.helper.SubscrDeliveryUpdateHelper;
+import net.buchlese.bofc.resources.helper.SubscrProductUpdateHelper;
+import net.buchlese.bofc.resources.helper.SubscriberUpdateHelper;
+import net.buchlese.bofc.resources.helper.SubscriptionUpdateHelper;
 import net.buchlese.bofc.resources.helper.UpdateResult;
 import net.buchlese.bofc.view.subscr.CustomerAddView;
 import net.buchlese.bofc.view.subscr.ProductAddView;
@@ -46,6 +51,7 @@ import net.buchlese.bofc.view.subscr.SubscrDashboardView;
 import net.buchlese.bofc.view.subscr.SubscrDeliveryView;
 import net.buchlese.bofc.view.subscr.SubscrDispoView;
 import net.buchlese.bofc.view.subscr.SubscrProductDetailView;
+import net.buchlese.bofc.view.subscr.SubscrProductsView;
 import net.buchlese.bofc.view.subscr.SubscriberDetailView;
 import net.buchlese.bofc.view.subscr.SubscriptionAddView;
 import net.buchlese.bofc.view.subscr.SubscriptionDetailView;
@@ -53,7 +59,6 @@ import net.buchlese.bofc.view.subscr.SubscriptionDetailView;
 import org.joda.time.LocalDate;
 import org.joda.time.Period;
 import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 
 import com.google.common.base.Optional;
 import com.google.inject.Inject;
@@ -76,7 +81,19 @@ public class SubscrResource {
 	public UpdateResult updateMaping( @FormParam("pk") String pk, @FormParam("name") String fieldname, @FormParam("value") String value) {
 		UpdateResult res = null;
 		if (fieldname.startsWith("article")) {
-			res = new SubscrArticleUpdateHelper(dao).updateArticle(pk, fieldname, value);
+			res = new SubscrArticleUpdateHelper(dao).update(pk, fieldname, value);
+		}
+		if (fieldname.startsWith("subscriber")) {
+			res = new SubscriberUpdateHelper(dao).update(pk, fieldname, value);
+		}
+		if (fieldname.startsWith("subscription")) {
+			res = new SubscriptionUpdateHelper(dao).update(pk, fieldname, value);
+		}
+		if (fieldname.startsWith("product")) {
+			res = new SubscrProductUpdateHelper(dao).update(pk, fieldname, value);
+		}
+		if (fieldname.startsWith("delivery")) {
+			res = new SubscrDeliveryUpdateHelper(dao).update(pk, fieldname, value);
 		}
 		if (res == null) {
 			res = new UpdateResult();
@@ -96,7 +113,7 @@ public class SubscrResource {
 		}
 		long prodId = Long.parseLong(prodIdP);
 		List<SubscrArticle> arts = dao.getArticlesOfProduct(prodId);
-		long[] artIds = arts.stream().mapToLong(SubscrArticle::getId).toArray();
+		long[] artIds = arts.stream().mapToLong(SubscrArticle::getId).sorted().toArray();
 		int idx = Arrays.binarySearch(artIds, artId);
 		if (dir.equals("prev") && idx > 0) {
 			return dao.getSubscrArticle(artIds[idx-1]);
@@ -139,7 +156,7 @@ public class SubscrResource {
 	@Path("/dashboard")
 	@Produces({"text/html"})
 	public View showDashboard() {
-		return new SubscrDashboardView(dao, dao.getSubscrProducts(), dao.getDeliveries(LocalDate.now()));
+		return new SubscrDashboardView(dao, LocalDate.now());
 	}
 
 	@GET
@@ -147,6 +164,13 @@ public class SubscrResource {
 	@Produces({"text/html"})
 	public View showCustomers() {
 		return new SubscrCustomerView(dao);
+	}
+
+	@GET
+	@Path("/products")
+	@Produces({"text/html"})
+	public View showProducts() {
+		return new SubscrProductsView(dao, dao.getSubscrProducts());
 	}
 
 	@GET
@@ -164,9 +188,13 @@ public class SubscrResource {
 		s.setName(par.getFirst("name"));
 		s.setPointid(Integer.parseInt(par.getFirst("pointId")));
 		if (par.containsKey("customerId") && par.getFirst("customerId").isEmpty() == false) {
-			s.setCustomerId(Integer.parseInt(par.getFirst("customerId")));
-		} else {
-			throw new WebApplicationException("ohne Kundennummer geht nix");
+			try {
+				s.setCustomerId(Integer.parseInt(par.getFirst("customerId")));
+			} catch (Exception e) {
+			}
+		}
+		if (s.getCustomerId() == 0) {
+			s.setCustomerId(Integer.parseInt(NumberGenerator.createNumber(s.getPointid())));
 		}
 		if (par.containsKey("collectiveInvoice")) {
 			s.setCollectiveInvoice(true);
@@ -180,13 +208,15 @@ public class SubscrResource {
 			s.setShipmentType(ShipType.DELIVERY);
 		}
 		Address a = new Address();
-		a.setName1(par.getFirst("invoiceAddress.line1"));
-		a.setName2(par.getFirst("invoiceAddress.line2"));
-		a.setName3(par.getFirst("invoiceAddress.line3"));
-		a.setStreet(par.getFirst("invoiceAddress.street"));
-		a.setPostalcode(par.getFirst("invoiceAddress.postalcode"));
-		a.setCity(par.getFirst("invoiceAddress.city"));
-		s.setInvoiceAddress(a);
+		if (par.containsKey("invoiceAddress.line1") && par.get("invoiceAddress.line1").isEmpty() == false) {
+			a.setName1(par.getFirst("invoiceAddress.line1"));
+			a.setName2(par.getFirst("invoiceAddress.line2"));
+			a.setName3(par.getFirst("invoiceAddress.line3"));
+			a.setStreet(par.getFirst("invoiceAddress.street"));
+			a.setPostalcode(par.getFirst("invoiceAddress.postalcode"));
+			a.setCity(par.getFirst("invoiceAddress.city"));
+			s.setInvoiceAddress(a);
+		}
 		dao.insertSubscriber(s);
 		return new SubscrCustomerView(dao);
 	}
@@ -216,7 +246,7 @@ public class SubscrResource {
 			throw new WebApplicationException("ohne Periodikumnummer geht nix");
 		}
 		s.setDeliveryInfo1(par.getFirst("deliveryInfo1"));
-		s.setDeliveryInfo1(par.getFirst("deliveryInfo2"));
+		s.setDeliveryInfo2(par.getFirst("deliveryInfo2"));
 		if (par.containsKey("shipmentType")) {
 			s.setShipmentType(ShipType.valueOf(par.getFirst("shipmentType")));
 		} else {
@@ -238,7 +268,7 @@ public class SubscrResource {
 		} else {
 			s.setPayedUntil(null);
 		}
-		if (par.containsKey("deliveryAddress.line1")) {
+		if (par.containsKey("deliveryAddress.line1") && par.get("deliveryAddress.line1").isEmpty() == false) {
 			Address a = new Address();
 			a.setName1(par.getFirst("deliveryAddress.line1"));
 			a.setName2(par.getFirst("deliveryAddress.line2"));
@@ -275,6 +305,11 @@ public class SubscrResource {
 			p.setQuantity(Integer.parseInt(par.getFirst("quantity")));
 		} else {
 			p.setQuantity(1);
+		}
+		if (par.containsKey("count") && par.getFirst("count").isEmpty() == false) {
+			p.setCount(Integer.parseInt(par.getFirst("count")));
+		} else {
+			p.setCount(1);
 		}
 		if (par.containsKey("halfPercentage") && par.getFirst("halfPercentage").isEmpty() == false) {
 			p.setHalfPercentage(Double.parseDouble(par.getFirst("halfPercentage")));
@@ -318,7 +353,7 @@ public class SubscrResource {
 			public void write(OutputStream os) throws IOException,  WebApplicationException {
 				Writer writer = new BufferedWriter(new OutputStreamWriter(os, "iso-8859-1"));
 				for (SubscrDelivery del : deliveries) {
-					Subscription sub = dao.getSubscription(del.getSubcriptionId());
+					Subscription sub = dao.getSubscription(del.getSubscriptionId());
 					if (sub.getDeliveryAddress() != null) {
 						writeAddress(writer, sub.getDeliveryAddress(), sub.getDeliveryInfo1(), sub.getDeliveryInfo2());
 					} else {
@@ -358,7 +393,34 @@ public class SubscrResource {
 		long subId = Long.parseLong(subIdP);
 		long artId = Long.parseLong(artIdP);
 		LocalDate d = new DateParam(dateP).getDate();
-		return dao.createDelivery( dao.getSubscription(subId), dao.getSubscrArticle(artId), d);
+		Subscription s = dao.getSubscription(subId);
+		SubscrDelivery del =  dao.createDelivery( s, dao.getSubscrArticle(artId), d);
+		SubscrProduct p = dao.getSubscrProduct(s.getProductId());
+		p.setLastDelivery(d);
+		if (p.getPeriod() != null) {
+			p.setNextDelivery(d.plus(p.getPeriod()));
+		}
+		dao.updateSubscrProduct(p);
+		return del;
+	}
+
+	@GET
+	@Path("/deliverydelete/{id}")
+	@Produces({"text/html"})
+	public View createDelivery(@PathParam("id") String deliIdP) {
+		long delId = Long.parseLong(deliIdP);
+		SubscrDelivery del = dao.getSubscrDelivery(delId);
+		Subscription s = dao.getSubscription(del.getSubscriptionId());
+		SubscrProduct p = dao.getSubscrProduct(s.getProductId());
+		if (p.getPeriod() != null) {
+			p.setLastDelivery(p.getLastDelivery() != null ? p.getLastDelivery().minus(p.getPeriod()) : null);
+			p.setNextDelivery(p.getNextDelivery() != null ? p.getNextDelivery().minus(p.getPeriod()) : null);
+		} else {
+			p.setLastDelivery(null);
+		}
+		dao.updateSubscrProduct(p);
+		dao.deleteDelivery(delId);
+		return new SubscrDashboardView(dao, LocalDate.now());
 	}
 
 	@GET

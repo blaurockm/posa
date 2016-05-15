@@ -95,15 +95,18 @@
 	var article = null;
 	
 	var loadPrevArticle = function() {
-	 	 $.getJSON("/subscr/subscrarticle/prev/${art.productId?c}/" + article.id, displayArticle);
+		var x = getArticlePk();
+	 	 $.getJSON("/subscr/subscrarticle/prev/${art.productId?c}/" + x, displayArticle);
 	} 
 
 	var loadNextArticle = function() {
-	 	 $.getJSON("/subscr/subscrarticle/next/${art.productId?c}/" + article.id, displayArticle);
+		var x = getArticlePk();
+	 	 $.getJSON("/subscr/subscrarticle/next/${art.productId?c}/" + x, displayArticle);
 	} 
 
 	var displayArticle = function(res) {
 		article = res;
+
         $("#artname").editable('setValue',res.name, false);
         $("#brutto").editable('setValue',res.brutto, true);
         $("#brutto_half").editable('setValue',res.brutto_half, true);
@@ -111,14 +114,23 @@
         $("#half_percent").editable('setValue',res.halfPercentage, false);
         $("#artid").text(res.id);
         $("#artcount").editable('setValue',res.issueNo, true);
+
+//        $('.editable').editable({ pk:res.id});
+//	    $('.namechangerfield').editable({ pk:res.id});
+//	    $('.percentagefield').editable({ pk:res.id});
+//	    $('.editablemoney').editable({ pk : res.id});
+//	    alert(" pk = " + res.id);
 	} 
 
-
+	var getArticlePk = function() {
+		return article.id;
+	}
+    
     $('.editable').editable({
-	    url: '/subscr/update', pk:'${art.id?c}',
+	    url: '/subscr/update', pk : getArticlePk
 	});
 	$('.namechangerfield').editable({
-	    url: '/subscr/update', pk:'${art.id?c}',
+	    url: '/subscr/update', pk : getArticlePk,
 	    mode : "popup",
 		success:function(res, newValue) {
 	        if(!res.success) return res.msg;
@@ -126,7 +138,7 @@
 	    }
     });
 	$('.percentagefield').editable({
-	    url: '/subscr/update', pk:'${art.id?c}',
+	    url: '/subscr/update', pk : getArticlePk,
 	    mode : "popup",
 	    display : function(value, jsonresponse) {
 	    	$(this).text(value * 100 + " %");
@@ -138,7 +150,7 @@
 	    }
     });
 	$('.editablemoney').editable({
-	    url: '/subscr/update', pk:'${art.id?c}',
+	    url: '/subscr/update', pk : getArticlePk,
 	    mode : "popup",
 	    display : function(value, jsonresponse) {
 	    	$(this).text(formatMoney(value));
@@ -156,13 +168,14 @@
 	        }
 	    }
 	});
+	
     $( '#artikelpluseins' ).click(function() {
 	 	 $.getJSON("/subscr/subscrarticlecreate/${art.productId?c}", displayArticle)
 	 	 $( "#artikelpluseins" ).hide();
 	});
     
-    $.getJSON("/subscr/subscrarticle/ex/${art.productId?c}/${art.id?c}", displayArticle);
     
+    $.getJSON("/subscr/subscrarticle/ex/${art.productId?c}/${art.id?c}", displayArticle);
     
     
 </script>

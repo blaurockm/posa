@@ -39,7 +39,8 @@ public class SubscrArticle implements Comparable<SubscrArticle> {
 	
 	@JsonIgnore
 	public String initializeName(String namePattern) {
-		String name = namePattern.replace("{number}", String.valueOf(issueNo));
+		String name = namePattern.replace("#", String.valueOf(issueNo));
+		name = name.replace("{number}", String.valueOf(issueNo));
 		String dp = "\\{date:(.+)\\}";
 		Pattern p = Pattern.compile(dp);
 		Matcher m = p.matcher(name);

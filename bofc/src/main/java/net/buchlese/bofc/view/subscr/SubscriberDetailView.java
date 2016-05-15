@@ -2,6 +2,8 @@ package net.buchlese.bofc.view.subscr;
 
 import java.util.List;
 
+import org.joda.time.LocalDate;
+
 import net.buchlese.bofc.api.subscr.SubscrDelivery;
 import net.buchlese.bofc.api.subscr.SubscrProduct;
 import net.buchlese.bofc.api.subscr.Subscriber;
@@ -41,6 +43,17 @@ public class SubscriberDetailView extends AbstractBofcView{
 		return dao.getDeliveriesForSubscriptionRecorded(s.getId());
 	}
 
+	public boolean willBeSettled(Subscription s) {
+		switch (s.getPaymentType()) {
+		case EACHDELIVERY : return hasUnpayedDeliveries(s);
+			default : return s.getPayedUntil().isBefore(LocalDate.now());
+		}
+	}
+
+	private boolean hasUnpayedDeliveries(Subscription s) {
+		return dao.getDeliveriesForSubscriptionUnrecorded(s.getId()).isEmpty() == false;
+	}
+	
 	public String kunde(Subscription s) {
 		if (s.getSubscriberId() > 0) {
 			Subscriber x = dao.getSubscriber(s.getSubscriberId());

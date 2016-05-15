@@ -32,8 +32,6 @@ public class Subscription {
 	@JsonProperty
 	private ShipType shipmentType;
 
-	@JsonProperty
-	private long shipmentCost;
 
 	@JsonProperty
 	private PayIntervalType paymentType;
@@ -109,12 +107,6 @@ public class Subscription {
 	}
 	public void setShipmentType(ShipType shipmentType) {
 		this.shipmentType = shipmentType;
-	}
-	public long getShipmentCost() {
-		return shipmentCost;
-	}
-	public void setShipmentCost(long shipmentCost) {
-		this.shipmentCost = shipmentCost;
 	}
 	public PayIntervalType getPaymentType() {
 		return paymentType;

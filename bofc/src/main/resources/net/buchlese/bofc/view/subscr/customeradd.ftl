@@ -3,7 +3,7 @@
   <div class="form-group">
     <label for="pointid" class="col-sm-3 control-label">Ladengeschäft</label>
     <div class="col-sm-8">
-       <select id="pointid" class="form-control">
+       <select name="pointId" class="form-control">
        <option value="1">Dornhan</option>
        <option value="2">Sulz</option>
        <option value="3" selected>Schramberg</option>
@@ -43,6 +43,20 @@
     </div>
   </div>  
   
+  <div class="form-group">
+    <label for="telefon" class="col-sm-3 control-label">Telefon</label>
+    <div class="col-sm-8">
+	    <input type="text" class="form-control" name="telefon" placeholder="">
+	</div>    
+  </div>
+
+  <div class="form-group">
+    <label for="email" class="col-sm-3 control-label">Email</label>
+    <div class="col-sm-8">
+	    <input type="text" class="form-control" name="email" placeholder="">
+	</div>    
+  </div>
+
   <div class="form-group">
     <label for="invoiceAddress.line1" class="col-sm-3 control-label">Rechnungsadresse Zeile 1</label>
     <div class="col-sm-8">

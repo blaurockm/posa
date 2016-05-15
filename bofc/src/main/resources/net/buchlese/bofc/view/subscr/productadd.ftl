@@ -38,7 +38,14 @@
   <div class="form-group">
     <label for="namePattern" class="col-sm-3 control-label">Namensmuster</label>
     <div class="col-sm-8">
-	    <input type="text" class="form-control" name="namePattern" placeholder="Der Archivar {number} und {date:yyyy/MM}">
+	    <input type="text" class="form-control" name="namePattern" placeholder="Steuergesetze, #. Ergänzungslieferung">
+	</div>    
+  </div>
+
+  <div class="form-group">
+    <label for="count" class="col-sm-3 control-label">Ausgabennummer</label>
+    <div class="col-sm-8">
+	    <input type="text" class="form-control" name="count" placeholder="1">
 	</div>    
   </div>
 

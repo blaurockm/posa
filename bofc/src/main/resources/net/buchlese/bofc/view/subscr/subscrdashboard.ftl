@@ -29,11 +29,13 @@
 			<td>${kunde(d)}</td>
 			<td>${d.articleName}</td>
 			<td>${d.quantity}</td>
-			<td></td>
+			<td>${abo(d).shipmentType.text}</td>
 			<td align="right">${money(d.total)}</td>
-			<td>${d.payed?c}</td>
+			<td>${d.payed?string("ja","")}</td>
 			<td><a href="#subscrDelivery/${d.id?c}" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span></a>
-			<a href="/subscr/delivnote/${d.id?c}" class="btn btn-default btn-sm" target="_blank"><span class="glyphicon glyphicon-folder-open" aria-hidden="true" alt="Lieferschein"></span></a></td>
+            <a href="#subscription/${d.subscriptionId?c}" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
+			<a href="/subscr/delivnote/${d.id?c}" class="btn btn-default btn-sm" target="_blank"><span class="glyphicon glyphicon-folder-open" aria-hidden="true" alt="Lieferschein"></span></a>
+			<a href="#deliverydelete/${d.id?c}" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></td>
 		</tr>
 		</#list>
 	</tbody>
@@ -41,7 +43,7 @@
 
 <div class="row">
 <div class="col-md-6">
-<h1>Periodika</h1>
+<h3>Periodika mit zu erwartenden Lieferungen</h3>
 </div>
 </div>
 <table class="table table-striped">
@@ -65,17 +67,48 @@
 			<td></td>
 			<td><#if p.lastDelivery??>${p.lastDelivery.toString("dd.MM.yy")}</#if></td>
 			<td><#if p.nextDelivery??>${p.nextDelivery.toString("dd.MM.yy")}</#if></td>
-			<td><a href="#subscrDispo/${p.id?c}" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-blackboard" aria-hidden="true"></span></a>
+			<td><a href="#subscrDispo/${p.id?c}" class="btn btn-default btn-sm">Dispo</a>
 			 <a href="#subscrProduct/${p.id?c}" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span></a> </td>
 		</tr>
 		</#list>
 	</tbody>
 </table>
 
+
 <div class="row">
-<div class="col-md-offset-8 col-md-2">
- <a href="#subscrProductAdd" class="btn btn-primary">Neues Periodikum anlegen</a>
- </div>
+<div class="col-md-6">
+<h3>abzurechnende Abos</h3>
 </div>
+</div>
+<table class="table table-striped">
+	<thead>
+		<tr>
+			<th>Abonr</th>
+			<th>Periodikum</th>
+			<th>Abonnent</th>
+			<th>Lieferhinweis</th>
+			<th>Zahlweise</th>
+			<th>Versandart</th>
+			<th>Bezahlt bis</th>
+			<th>Letzte Rechnung am</th>
+			<th></th>
+		</tr>
+	</thead>
+	<tbody>
+		<#list subscriptions as s>
+		<tr>
+			<td>${s.id}</td>
+			<td>${product(s)}</td>
+			<td>${kunde(s)}</td>
+			<td>${s.deliveryInfo1!} ${s.deliveryInfo2!}</td>
+			<td>${s.paymentType.text}</td>
+			<td>${s.shipmentType.text}</td>
+			<td>${(s.payedUntil.toString("dd.MM.yy"))!}</td>
+			<td>${(s.lastInvoidDate.toString("dd.MM.yy"))!}</td>
+			<td><a href="#subscription/${s.id?c}" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span></a> </td>
+		</tr>
+		</#list>
+	</tbody>
+</table>
 
 </div>		

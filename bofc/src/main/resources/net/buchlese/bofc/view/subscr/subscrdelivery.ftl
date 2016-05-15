@@ -29,6 +29,15 @@ ${kunde(d)}
 
 <div class="row">
 <div class="col-md-2">
+wie
+</div>
+<div class="col-md-5">
+${abo(d).shipmentType.text}
+</div>
+</div>
+
+<div class="row">
+<div class="col-md-2">
 Menge
 </div>
 <div class="col-md-2">
@@ -50,10 +59,15 @@ ${d.quantity}
    <h3 class="card-title">Preis</h3>
 	<div class="col-md-5">
     <ul class="list-group list-group-flush">
-      <li class="list-group-item">Gesamt Brutto <a href="#" id="total" class="editablemoney" data-type="text"  data-name="article.brutto"  data-title="Gesamtbetrag">${d.total?c}</a></li>
-      <li class="list-group-item">7% Brutto <a href="#" id="totalHalf" class="editablemoney" data-type="text"  data-name="article.brutto_half"  data-title="Betrag Print-Anteil" >${d.totalHalf?c}</a></li>
-      <li class="list-group-item">19% Brutto <a href="#" id="totalFull" class="editablemoney" data-type="text"  data-name="article.brutto_full"  data-title="Betrag Online-Anteil"  >${d.totalFull?c}</a> </li>
+      <li class="list-group-item">Gesamt Brutto <a href="#" id="total" class="editablemoney" data-type="text"  data-name="delivery.total"  data-title="Gesamtbetrag">${d.total?c}</a></li>
+      <li class="list-group-item">7% Brutto <a href="#" id="totalHalf" class="editablemoney" data-type="text"  data-name="delivery.totalHalf"  data-title="Betrag Print-Anteil" >${d.totalHalf?c}</a></li>
+      <li class="list-group-item">19% Brutto <a href="#" id="totalFull" class="editablemoney" data-type="text"  data-name="delivery.totalFull"  data-title="Betrag Online-Anteil"  >${d.totalFull?c}</a> </li>
 	</ul>
+   </div>
+</div>
+<div class="row">
+   <div class="col-md-5">
+     Versandkosten <a href="#" class="editablemoney" data-type="text"  data-name="delivery.shipmentCost"  data-title="Gesamtbetrag">${d.shipmentCost?c}</a>
    </div>
 </div>
 

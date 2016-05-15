@@ -37,14 +37,14 @@
   </div>
 
   <div class="form-group">
-    <label for="deliveryInfo1" class="col-sm-3 control-label">Lieferhinweis</label>
+    <label for="deliveryInfo1" class="col-sm-3 control-label">Rechnungs / Lieferhinweis 1</label>
     <div class="col-sm-8">
 	    <input type="text" class="form-control" name="deliveryInfo1" placeholder="">
 	</div>    
   </div>
 
   <div class="form-group">
-    <label for="deliveryInfo2" class="col-sm-3 control-label">Lieferhinweis 2</label>
+    <label for="deliveryInfo2" class="col-sm-3 control-label">Rechnungs / Lieferhinweis 2</label>
     <div class="col-sm-8">
 	    <input type="text" class="form-control" name="deliveryInfo2" placeholder="">
 	</div>    
@@ -81,14 +81,14 @@
     </div>
   </div>
 
-  <div class="form-group">
+<!--  <div class="form-group">
     <label for="shipmentCost" class="col-sm-3 control-label">Versandkosten</label>
     <div class="col-sm-8">
 	    <input type="text" class="form-control" name="shipmentCost" placeholder="">
 	</div>    
   </div>
 
-  <div class="form-group">
+   <div class="form-group">
     <label for="deliveryAddress.line1" class="col-sm-3 control-label">Lieferadresse Zeile 1</label>
     <div class="col-sm-8">
 	    <input type="text" class="form-control" name="deliveryAddress.line1" placeholder="zeile1">
@@ -127,7 +127,7 @@
       <input type="text" class="form-control" name="deliveryAddress.city" placeholder="Ort">
     </div>  
   </div>
-
+ -->
 </form>
 
 <script>
