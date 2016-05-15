@@ -77,6 +77,17 @@ public class InvoiceResource {
 	}
 
 	@GET
+	@Produces(MediaType.TEXT_XML)
+	@Path("/xml/{nr}")
+	public List<PosInvoice> fetchXml(@PathParam("nr") String num)  {
+//		JAXBContext jc = JAXBContext.newInstance(new Class[] {PosCashBalance.class});
+//		Marshaller m = jc.createMarshaller();
+//		m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+		return dao.fetch(num);
+	}
+
+
+	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<PosInvoice> fetchAll(@QueryParam("nr") Optional<String> num)  {
 		if (num.isPresent()) {

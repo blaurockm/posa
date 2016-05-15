@@ -21,12 +21,12 @@
   </#if>
   </div>
   <div class="col-md-2" >
-      <a href="/subscr/createInvoice/${sub.id?c}" class="btn btn-primary" target="_blank">Rechnung erstellen</a>
+      <a href="/subscr/pdfcreateInvoice/${sub.id?c}" class="btn btn-primary" target="_blank">Rechnung erstellen</a>
   </div>
 </div>
 <div class="row">
-  <div class="col-md-2">Letzte Rechnung</div>
-<div class="col-md-4">am ${(sub.lastInvoiceDate.toString("dd.MM.yyyy"))!}</div>
+  <div class="col-md-2">Letzte Rechnung am</div>
+<div class="col-md-4">${(sub.lastInvoiceDate.toString("dd.MM.yyyy"))!}</div>
 </div>
 
 <div id="accordion" role="tablist" aria-multiselectable="true">

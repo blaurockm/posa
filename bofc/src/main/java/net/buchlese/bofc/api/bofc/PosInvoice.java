@@ -3,6 +3,8 @@ package net.buchlese.bofc.api.bofc;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -10,6 +12,7 @@ import org.joda.time.LocalDate;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+@XmlRootElement(name = "invoice")
 public class PosInvoice {
 	@NotEmpty
 	@JsonProperty

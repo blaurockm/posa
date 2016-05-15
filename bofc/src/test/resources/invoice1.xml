@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<invoice>
+	<actionum>0</actionum>
+	<amount>199128</amount>
+	<amountFull>0</amountFull>
+	<amountHalf>199128</amountHalf>
+	<amountNone>0</amountNone>
+	<cancelled>false</cancelled>
+	<city>78713 Schramberg</city>
+	<creationTime>2016-05-15T04:10:56</creationTime>
+	<customerId>3123</customerId>
+	<date>2016-05-15</date>
+	<debitorId>10108</debitorId>
+	<details>
+		<inclTax>true</inclTax>
+		<quantity>0</quantity>
+		<rebate>0</rebate>
+		<rebatePrice>0</rebatePrice>
+		<singlePrice>0</singlePrice>
+		<text>Hauptamt</text>
+		<textonly>true</textonly>
+	</details>
+	<details>
+		<amount>199128</amount>
+		<amountFull>0</amountFull>
+		<amountHalf>199128</amountHalf>
+		<amountNone>0</amountNone>
+		<inclTax>true</inclTax>
+		<quantity>3</quantity>
+		<rebate>0</rebate>
+		<rebatePrice>0</rebatePrice>
+		<singlePrice>66376</singlePrice>
+		<text>BGB-Ergänzung 155, 12 S. Zeitraum 06/2016</text>
+		<textonly>false</textonly>
+	</details>
+	<id>0</id>
+	<name1>Stadt Schramberg</name1>
+	<number>3169000</number>
+	<payed>false</payed>
+	<pointid>3</pointid>
+	<street>Rathaus</street>
+</invoice>

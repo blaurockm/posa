@@ -11,8 +11,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
-import org.joda.time.LocalDate;
-
 import net.buchlese.bofc.BackOfcConfiguration;
 import net.buchlese.bofc.api.bofc.Mapping;
 import net.buchlese.bofc.jdbi.bofc.MappingDAO;
@@ -22,10 +20,10 @@ import net.buchlese.bofc.view.pages.CommandsView;
 import net.buchlese.bofc.view.pages.ExportView;
 import net.buchlese.bofc.view.pages.ExportsView;
 import net.buchlese.bofc.view.pages.MappingView;
+import net.buchlese.bofc.view.pages.NavigationView;
 import net.buchlese.bofc.view.pages.RechnungenView;
 import net.buchlese.bofc.view.pages.StateView;
 import net.buchlese.bofc.view.pages.TechnicsView;
-import net.buchlese.bofc.view.subscr.SubscrDashboardView;
 
 import com.google.inject.Inject;
 
@@ -76,7 +74,7 @@ public class PageResource {
 	}
 
 	@GET
-	@Path("/index")
+	@Path("/dashboard")
 	public View getStartView() {
 		return new StateView(cfg);
 	}
@@ -99,5 +97,10 @@ public class PageResource {
 		return new RechnungenView(cfg, daoInv);
 	}
 
+	@GET
+	@Path("/navigation")
+	public View getMappings() {
+		return new NavigationView();
+	}
 
 }

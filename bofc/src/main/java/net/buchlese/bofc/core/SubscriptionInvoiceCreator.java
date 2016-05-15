@@ -7,7 +7,6 @@ import net.buchlese.bofc.api.bofc.PosInvoice;
 import net.buchlese.bofc.api.bofc.PosInvoiceDetail;
 import net.buchlese.bofc.api.subscr.SubscrArticle;
 import net.buchlese.bofc.api.subscr.SubscrDelivery;
-import net.buchlese.bofc.api.subscr.SubscrProduct;
 import net.buchlese.bofc.api.subscr.Subscriber;
 import net.buchlese.bofc.api.subscr.Subscription;
 import net.buchlese.bofc.jdbi.bofc.SubscrDAO;
@@ -60,22 +59,22 @@ public class SubscriptionInvoiceCreator {
 		addTextDetail(inv, sub.getDeliveryInfo2());
 		LocalDate from = sub.getPayedUntil().plusMonths(1).dayOfMonth().withMinimumValue(); // immer der erste des nächsten monats
 		LocalDate till = from.plus(sub.getPaymentType().getPeriod()).minusMonths(1); // und period -1 monat drauf
-		inv.addInvoiceDetail(createInvoiceDetailForInterval(sub,dao.getSubscrProduct(sub.getProductId()), new YearMonth(from), new YearMonth(till)));
+		inv.addInvoiceDetail(createInvoiceDetailForInterval(sub,dao.getNewestArticleOfProduct(sub.getProductId()), new YearMonth(from), new YearMonth(till)));
 		sub.setPayedUntil(till.dayOfMonth().withMaximumValue()); // immer der letzte des Monats
 		dao.recordDetailsOnvInvoice(dao.getDeliveriesForSubscription(sub.getId(), from, till), inv.getNumber());
 	}
 	
-	private static PosInvoiceDetail createInvoiceDetailForInterval(Subscription sub, SubscrProduct prod, YearMonth from, YearMonth till) {
+	private static PosInvoiceDetail createInvoiceDetailForInterval(Subscription sub, SubscrArticle art, YearMonth from, YearMonth till) {
 		PosInvoiceDetail detail = new PosInvoiceDetail();
 		detail.setQuantity(sub.getQuantity());
 		if (from.equals(till)) {
-			detail.setText(prod.getName() + "  Zeitraum " + from.toString("MM/yyyy"));
+			detail.setText(art.getName() + "  Zeitraum " + from.toString("MM/yyyy"));
 		} else {
-			detail.setText(prod.getName() + "  Zeitraum von " + from.toString("MM/yyyy") + " bis " + till.toString("MM/yyyy"));
+			detail.setText(art.getName() + "  Zeitraum von " + from.toString("MM/yyyy") + " bis " + till.toString("MM/yyyy"));
 		}
-		detail.setSinglePrice(prod.getBaseBrutto());
-		detail.setAmount(prod.getBaseBrutto() * sub.getQuantity());
-		detail.setAmountHalf((long) (prod.getBaseBrutto() * sub.getQuantity() * prod.getHalfPercentage()));
+		detail.setSinglePrice(art.getBrutto());
+		detail.setAmount(art.getBrutto() * sub.getQuantity());
+		detail.setAmountHalf(art.getBrutto_half() * sub.getQuantity());
 		detail.setAmountFull(detail.getAmount() - detail.getAmountHalf());
 		detail.setAmountNone(0L); // Abos ohne MwSt können wir noch nicht.
 		return detail;

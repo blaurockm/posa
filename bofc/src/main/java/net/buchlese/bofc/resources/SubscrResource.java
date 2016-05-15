@@ -20,6 +20,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
@@ -34,6 +35,7 @@ import net.buchlese.bofc.api.subscr.SubscrProduct;
 import net.buchlese.bofc.api.subscr.Subscriber;
 import net.buchlese.bofc.api.subscr.Subscription;
 import net.buchlese.bofc.core.NumberGenerator;
+import net.buchlese.bofc.core.PDFInvoice;
 import net.buchlese.bofc.core.SubscriptionInvoiceCreator;
 import net.buchlese.bofc.jdbi.SubscrTestDataDAO;
 import net.buchlese.bofc.jdbi.bofc.PosInvoiceDAO;
@@ -45,6 +47,7 @@ import net.buchlese.bofc.resources.helper.SubscriberUpdateHelper;
 import net.buchlese.bofc.resources.helper.SubscriptionUpdateHelper;
 import net.buchlese.bofc.resources.helper.UpdateResult;
 import net.buchlese.bofc.view.subscr.CustomerAddView;
+import net.buchlese.bofc.view.subscr.NavigationView;
 import net.buchlese.bofc.view.subscr.ProductAddView;
 import net.buchlese.bofc.view.subscr.SubscrCustomerView;
 import net.buchlese.bofc.view.subscr.SubscrDashboardView;
@@ -449,12 +452,30 @@ public class SubscrResource {
 
 	@GET
 	@Path("/createInvoice/{sub}")
-	@Produces({"application/json"})
+	@Produces(MediaType.TEXT_XML)
 	public PosInvoice createInvoice(@PathParam("sub") String subIdP) {
 		long subId = Long.parseLong(subIdP);
 		PosInvoice inv =  SubscriptionInvoiceCreator.createSubscription(dao, dao.getSubscription(subId));
 		invDao.insert(inv);
 		return inv;
+	}
+	
+	@Produces({"application/pdf"})
+	@GET
+	@Path("/pdfcreateInvoice/{sub}")
+	public StreamingOutput fetchPdfForDate(@PathParam("sub") String subIdP)  {
+		long subId = Long.parseLong(subIdP);
+		return new StreamingOutput() {
+			public void write(OutputStream output) throws IOException, WebApplicationException {
+				try {
+					PDFInvoice generator = new PDFInvoice(SubscriptionInvoiceCreator.createSubscription(dao, dao.getSubscription(subId)));
+					generator.generatePDF(output);
+				} catch (Exception e) {
+					throw new WebApplicationException(e);
+				}
+				output.flush();
+			}
+		};	
 	}
 
 	@GET
@@ -475,6 +496,11 @@ public class SubscrResource {
 		return null;
 	}
 	
+	@GET
+	@Path("/navigation")
+	public View getMappings() {
+		return new NavigationView();
+	}
 	
 	
 	private static class DateParam {

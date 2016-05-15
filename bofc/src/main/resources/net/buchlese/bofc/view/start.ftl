@@ -37,33 +37,13 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#index">Buchlese</a>
+          <a class="navbar-brand" href="#index" id="homeButton">Buchlese</a>
         </div>
-        <div id="navbar" class="navbar-collapse collapse">
-           <ul class="nav navbar-nav">
-             <li><a href="#subscr" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Periodika <span class="caret"></span></a>
-          <ul class="dropdown-menu">
-            <li><a href="#subscr">Dashboard</a></li>
-            <li role="separator" class="divider"></li>
-            <li><a href="#subscrCust">Kunden</a></li>
-            <li><a href="#subscrProd">Periodika</a></li>
-          </ul>             
-
-             <li><a href="#export">Kassenberichte</a></li>
-             <li><a href="#rechnungen">Ausgangsrechnungen</a></li>
-             <li><a href="#exports">Exporte</a></li>
-             <li><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Mappings <span class="caret"></span></a>
-          <ul class="dropdown-menu">
-            <li><a href="#mappings/1">Dornhan</a></li>
-            <li><a href="#mappings/2">Sulz</a></li>
-            <li><a href="#mappings/3">Schramberg</a></li>
-            <li role="separator" class="divider"></li>
-            <li><a href="#mappings">Alle</a></li>
-          </ul>             
-             <li><a href="#commands">Kommandos</a></li>
-             <li><a href="#technics">Interna</a></li>
-           </ul>
-        </div><!--/.navbar-collapse -->
+        <div id="navbar" class="navbar-collapse collapse navbar-nav navbar-left">
+        </div>
+      	<ul class="nav navbar-nav navbar-right">
+      	   <li><a href="#index"><span class="glyphicon glyphicon-log-out" aria-hidden="true"></span></a></li>
+        </ul>
       </div>
     </nav>
     

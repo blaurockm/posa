@@ -1,74 +1,131 @@
-        // This example makes use of the jQuery library.
-       
-        // You can use any methods as actions in PathJS.  You can define them as I do below,
-        // assign them to variables, or use anonymous functions.  The choice is yours.
-        function notFound(){
-            $("#output .content").html("404 Not Found, diese seite gibt es nicht!");
-            $("#output .content").addClass("alert alert-danger");
-        }
+// This example makes use of the jQuery library.
+   
+// You can use any methods as actions in PathJS.  You can define them as I do below,
+// assign them to variables, or use anonymous functions.  The choice is yours.
+function notFound(){
+    $("#output .content").html("404 Not Found, diese seite gibt es nicht!");
+}
 
-        function setPageBackground(){
-            $("#output .content").removeClass("alert alert-danger");
-        }        
+function setMenu() {
+	if ($("#homebutton").attr("myModule") != "menu") {
+		$("#navbar").load("/menu/navigation");
+		$("#homebutton").attr("myModule", "menu");
+	}
+}        
 
+function setSubscrModule() {
+	if ($("#homebutton").attr("myModule") != "subscr") {
+		$("#navbar").load("/subscr/navigation");
+		$("#homebutton").attr("myModule", "subscr");
+	}
+}
+
+function setAccountingModule() {
+	if ($("#homebutton").attr("myModule") != "accounting") {
+		$("#navbar").load("/pages/navigation");
+		$("#homebutton").attr("myModule", "accounting");
+	}
+}
+        
 // Here we define our routes.  You'll notice that I only define three routes, even
 // though there are four links.  Each route has an action assigned to it (via the 
 // `to` method, as well as an `enter` method.  The `enter` method is called before
 // the route is performed, which allows you to do any setup you need (changes classes,
 // performing AJAX calls, adding animations, etc.
+
+///////////////////////////////////////
+///////////////////////////////////////
+///////////////////////////////////////
+///////////////////////////////////////
 Path.map("#index").to(function(){
-    $("#output .content").load("/pages/index");
-}).enter(setPageBackground);
+    $("#output .content").load("/menu/index");
+}).enter(setMenu);
+
+///////////////////////////////////////
+///////////////////////////////////////
+///////////////////////////////////////
+///////////////////////////////////////
+Path.map("#fibu").to(function(){
+    $("#output .content").load("/pages/dashboard");
+}).enter(setAccountingModule);
 
 Path.map("#export").to(function(){
     $("#output .content").load("/pages/export");
-}).enter(setPageBackground);
+}).enter(setAccountingModule);
 
+Path.map("#exports").to(function(){
+    $("#output .content").load("/pages/exports");
+}).enter(setAccountingModule);
+
+Path.map("#rechnungen").to(function(){
+    $("#output .content").load("/pages/rechnungen");
+}).enter(setAccountingModule);
+
+Path.map("#commands").to(function(){
+	$("#output .content").load("/pages/commands");
+}).enter(setAccountingModule);
+
+Path.map("#mappings/:pos").to(function(){
+	$("#output .content").load("/pages/mappings?point=" + this.params["pos"]);
+}).enter(setAccountingModule);
+
+Path.map("#mappings").to(function(){
+	$("#output .content").load("/pages/mappings");
+}).enter(setAccountingModule);
+
+Path.map("#technics").to(function(){
+	$("#output .content").load("/pages/technics");
+}).enter(setAccountingModule);
+
+///////////////////////////////////////
+///////////////////////////////////////
+///////////////////////////////////////
+///////////////////////////////////////
 Path.map("#subscr").to(function(){
     $("#output .content").load("/subscr/dashboard");
-}).enter(setPageBackground);
+}).enter(setSubscrModule);
 
 Path.map("#subscrCust").to(function(){
     $("#output .content").load("/subscr/customers");
-}).enter(setPageBackground);
+}).enter(setSubscrModule);
 
 Path.map("#subscrProd").to(function(){
     $("#output .content").load("/subscr/products");
-}).enter(setPageBackground);
+}).enter(setSubscrModule);
 
 Path.map("#subscrProduct/:id").to(function(){
     $("#output .content").load("/subscr/product/" + this.params["id"]);
-}).enter(setPageBackground);
+}).enter(setSubscrModule);
 
 Path.map("#deliverydelete/:id").to(function(){
     $("#output .content").load("/subscr/deliverydelete/" + this.params["id"]);
-}).enter(setPageBackground);
+}).enter(setSubscrModule);
 
 Path.map("#subscription/:id").to(function(){
     $("#output .content").load("/subscr/subscription/" + this.params["id"]);
-}).enter(setPageBackground);
+}).enter(setSubscrModule);
 
 Path.map("#subscriber/:id").to(function(){
     $("#output .content").load("/subscr/subscriber/" + this.params["id"]);
-}).enter(setPageBackground);
+}).enter(setSubscrModule);
 
 Path.map("#subscrDispo/:id").to(function(){
     $("#output .content").load("/subscr/dispo/" + this.params["id"]);
-}).enter(setPageBackground);
+}).enter(setSubscrModule);
 
 Path.map("#subscrDelivery/:id").to(function(){
 	// this is a modal window content
     $("#modal-output .content").load("/subscr/delivery/" + this.params["id"]);
     $("#modal-title").text("Auslieferungsdetails");
     $("#myModal").modal('show');
-}).enter(setPageBackground);
+}).enter(setSubscrModule);
 
 Path.map("#subscrCustAdd").to(function(){
 	// this is a modal window content
     $("#entrymodal-output .content").load("/subscr/customerCreateForm");
     $("#entrymodal-title").text("Neuen Abonnenten anlegen");
     $("#entryModal").modal('show');
-}).enter(setPageBackground);
+}).enter(setSubscrModule);
 
 Path.map("#subscrSubscrAdd/:id/:id2").to(function(){
 	// this is a modal window content
@@ -82,38 +139,15 @@ Path.map("#subscrSubscrAdd/:id/:id2").to(function(){
     $("#entrymodal-output .content").load(url);
     $("#entrymodal-title").text("Neues Abo anlegen");
     $("#entryModal").modal('show');
-}).enter(setPageBackground);
+}).enter(setSubscrModule);
 
 Path.map("#subscrProductAdd").to(function(){
 	// this is a modal window content
     $("#entrymodal-output .content").load("/subscr/productCreateForm");
     $("#entrymodal-title").text("Neues Periodikum anlegen");
     $("#entryModal").modal('show');
-}).enter(setPageBackground);
+}).enter(setSubscrModule);
 
-Path.map("#exports").to(function(){
-    $("#output .content").load("/pages/exports");
-}).enter(setPageBackground);
-
-Path.map("#rechnungen").to(function(){
-    $("#output .content").load("/pages/rechnungen");
-}).enter(setPageBackground);
-
-Path.map("#commands").to(function(){
-   $("#output .content").load("/pages/commands");
-}).enter(setPageBackground);
-
-Path.map("#mappings/:pos").to(function(){
-	   $("#output .content").load("/pages/mappings?point=" + this.params["pos"]);
-	}).enter(setPageBackground);
-
-Path.map("#mappings").to(function(){
-	   $("#output .content").load("/pages/mappings");
-	}).enter(setPageBackground);
-
-Path.map("#technics").to(function(){
-	   $("#output .content").load("/pages/technics");
-	}).enter(setPageBackground);
 
 
 // Here we set a "root route".  You may have noticed that when you landed on this
