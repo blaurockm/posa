@@ -447,7 +447,7 @@ public class SubscrResource {
 	@Produces({"text/html"})
 	public View showSubscriber(@PathParam("sub") String subdIdP) {
 		long subId = Long.parseLong(subdIdP);
-		return new SubscriberDetailView(dao, dao.getSubscriber(subId));
+		return new SubscriberDetailView(dao, invDao, dao.getSubscriber(subId));
 	}
 
 	@GET

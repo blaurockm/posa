@@ -8,12 +8,22 @@
    <xsl:template match="/invoice">
       <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
          <fo:layout-master-set>
-            <fo:simple-page-master master-name="DIN-A4" page-height="29.7cm" page-width="21cm" margin-left="2cm"
-               margin-right="2.5cm" margin-top="0.5cm" margin-bottom="1cm">
-               <fo:region-body margin-top="10.5cm" margin-bottom="1.8cm" column-count="2" />
+            <fo:simple-page-master master-name="DIN-A4-mAdr" page-height="29.7cm" page-width="21cm" margin-left="2cm" margin-right="2.5cm" margin-top="0.5cm" margin-bottom="1cm">
+               <fo:region-body margin-top="10.5cm" margin-bottom="1.8cm"/>
+               <fo:region-before region-name="header" extent="10.3cm" />
+               <fo:region-after region-name="footer" extent="1.5cm" />
+            </fo:simple-page-master>
+            <fo:simple-page-master master-name="DIN-A4-oAdr" page-height="29.7cm" page-width="21cm" margin-left="2cm" margin-right="2.5cm" margin-top="0.5cm" margin-bottom="1cm">
+               <fo:region-body margin-top="1.5cm" margin-bottom="1.8cm" />
                <fo:region-before region-name="header" extent="1.3cm" />
                <fo:region-after region-name="footer" extent="1.5cm" />
             </fo:simple-page-master>
+            <fo:page-sequence-master master-name="DIN-A4" page-height="29.7cm" page-width="21cm" margin-left="2cm" margin-right="2.5cm" margin-top="0.5cm" margin-bottom="1cm">
+               <fo:repeatable-page-master-alternatives>
+  		  	   	 <fo:conditional-page-master-reference master-reference="DIN-A4-mAdr" page-position="first"/>
+                 <fo:conditional-page-master-reference master-reference="DIN-A4-oAdr" page-position="rest"  />
+                </fo:repeatable-page-master-alternatives>
+            </fo:page-sequence-master>
          </fo:layout-master-set>
          <fo:page-sequence master-reference="DIN-A4">
             <!-- <fo:static-content flow-name="header"> </fo:static-content> -->
@@ -146,7 +156,7 @@
    </xsl:template>
 
    <xsl:template name="endbetrag">
-      <fo:table margin-top="10mm" table-layout="fixed" width="160mm">
+      <fo:table margin-top="10mm" table-layout="fixed" width="160mm" keep-together="always">
          <fo:table-column column-width="9cm" />
          <fo:table-column column-width="28mm" />
          <fo:table-column column-width="44mm" />
@@ -248,15 +258,15 @@
        </fo:table-body>
       </fo:table>
       <fo:block-container width="152mm" margin-top="5mm">
-      <fo:block>Vielen Dank für Ihren Auftrag. Soweit nicht anders angegeben enspricht das Lieferdatum 
-      dem Rechnungsdatum. Die Rechnung ist ohne Abzüge sofort fällig.</fo:block>
+      <fo:block id="end">Vielen Dank für Ihren Auftrag. Die Rechnung ist ohne Abzüge sofort fällig.</fo:block>
       </fo:block-container>
    </xsl:template>
 
    <xsl:template name="rechnungsinfozeile">
      <fo:block-container>
         <fo:block font-size="16pt" font-weight="bold">Rechnung <xsl:value-of select="number"/></fo:block>
-        <fo:table margin-top="5mm" table-layout="fixed" width="11cm">
+        <fo:table margin-top="5mm" table-layout="fixed" width="15cm">
+           <fo:table-column column-width="3cm" />
            <fo:table-column column-width="3cm" />
            <fo:table-column column-width="3cm" />
            <fo:table-column column-width="3cm" />
@@ -264,10 +274,13 @@
         <fo:table-body>
    	    <fo:table-row>
    	     <fo:table-cell>
-   	       <fo:block>Ref</fo:block>
+   	       <fo:block>Debitor</fo:block>
    	     </fo:table-cell>
    	     <fo:table-cell>
-   	       <fo:block>Debitor</fo:block>
+   	       <fo:block>Leistung von</fo:block>
+   	     </fo:table-cell>
+   	     <fo:table-cell>
+   	       <fo:block>Leistung bis</fo:block>
    	     </fo:table-cell>
    	     <fo:table-cell>
    	       <fo:block>Erfassung</fo:block>
@@ -278,10 +291,13 @@
    	     </fo:table-row>
    	    <fo:table-row>
    	     <fo:table-cell>
-   	       <fo:block><xsl:value-of select="customerId"/></fo:block>
+   	       <fo:block><xsl:value-of select="debitorId"/></fo:block>
    	     </fo:table-cell>
    	     <fo:table-cell>
-   	       <fo:block><xsl:value-of select="debitorId"/></fo:block>
+   	       <fo:block><xsl:value-of select="date:format-date(deliveryFrom, 'dd.MM.yyyy')" /></fo:block>
+   	     </fo:table-cell>
+   	     <fo:table-cell>
+   	       <fo:block><xsl:value-of select="date:format-date(deliveryTill, 'dd.MM.yyyy')" /></fo:block>
    	     </fo:table-cell>
    	     <fo:table-cell>
    	       <fo:block><xsl:value-of select="date:format-date(creationTime, 'dd.MM.yyyy')" /></fo:block>
@@ -336,9 +352,8 @@
    </xsl:template>
 
    <xsl:template name="brieffuss">
-      <fo:block font-size="8pt" text-align="center" border-top-style="solid" border-top-width="0.5mm" padding="3mm" span="all">
-         erzeugt am
-         <xsl:value-of select="date:format-date(creationTime, 'dd.MM.yyyy hh:mm')" />
+      <fo:block font-size="8pt" text-align="right">
+         Seite <fo:page-number/> von <fo:page-number-citation ref-id="end"/> 
       </fo:block>
       <fo:block font-size="14pt" text-align="center" border-top-style="solid" border-bottom-style="solid" border-top-width="0.5mm"
          border-bottom-width="0.5mm" padding="3mm" span="all">

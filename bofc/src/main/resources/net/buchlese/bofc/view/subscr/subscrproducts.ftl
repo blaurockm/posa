@@ -1,6 +1,3 @@
-<ol class="breadcrumb">
-  <li class="active">Periodika</li>
-</ol>
 <div class="container">
 
 

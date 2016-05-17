@@ -1,10 +1,5 @@
-<ol class="breadcrumb">
-  <li><a href="#subscr">Dashboard</a></li>
-  <li class="active">Dispo</li>
-</ol>
-
 <div class="container">
-<h1>Periodikadisposition ${p.name}</h1>
+<h1>Periodikadisposition ${p.name}  <a href="#subscrProduct/${p.id?c}" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span></a></h1>
 
 <div class="row">
 <div class="col-md-6">von ${p.publisher}</div>
@@ -65,8 +60,8 @@
 	<tbody>
 <#list subscriptions as sub>
 		<tr>
-			<td>${sub.id?c}</td>
-			<td>${kunde(sub)} ${sub.deliveryInfo1!""}, ${sub.deliveryInfo2!""}</td>
+			<td>${sub.id?c} <a href="#subscription/${sub.id?c}" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span></a></td>
+			<td>${kunde(sub)} ${sub.deliveryInfo1!""}, ${sub.deliveryInfo2!""} <a href="#subscriber/${sub.subscriberId?c}" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span></a></td>
 			<td>${sub.quantity}</td>
 			<td></td>
 			<td>${sub.shipmentType.text}</td>

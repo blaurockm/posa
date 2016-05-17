@@ -1,27 +1,17 @@
-<ol class="breadcrumb">
-  <li><a href="#subscr">Dashboard</a></li>
-  <li><a href="#subscrProduct/${p.id?c}">Periodikum</a></li>
-  <li class="active">Abonnement</li>
-</ol>
-
 <div class="container">
-<h1>Abonnement ${sub.id}</h1>
+<h1>Abonnement ${sub.id} <a href="#subscrDispo/${sub.productId?c}" class="btn btn-primary">Dispo</a>
+<#if needsInvoice() ><a href="/subscr/pdfcreateInvoice/${sub.id?c}" class="btn btn-primary" target="_blank">Rechnungsvorschau</a></#if>
+</h1>
 
-  <h4>Periodikum ${p.name}</h4>
-  <h4>Abonnent ${kunde().name}   <a href="#subscriber/${sub.subscriberId?c}" class="btn btn-default"><span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span></a> </h4>
+  <h4>Periodikum ${p.name}  <a href="#subscrProduct/${p.id?c}" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span></a></h4>
+  <h4>Abonnent ${kunde().name}   <a href="#subscriber/${sub.subscriberId?c}" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span></a> </h4>
 <div class="row">
   <div class="col-md-2">Letzte Lieferung</div>
-  <div class="col-md-3">${(lastDelivery.articleName)!} am ${(lastDelivery.deliveryDate.toString("dd.MM.yyyy"))!}</div>
-  <div class="col-md-1  col-md-offset-2">
-      <a href="#subscrDispo/${sub.productId?c}" class="btn btn-primary">Dispo</a>
-  </div>
-  <div class="col-md-2" >
+  <div class="col-md-4">${(lastDelivery.articleName)!} am ${(lastDelivery.deliveryDate.toString("dd.MM.yyyy"))!}</div>
+  <div class="col-md-3" >
   <#if !p.payPerDelivery>
     Bruttoeinzelpreis ${money(newestArticle.brutto!)}
   </#if>
-  </div>
-  <div class="col-md-2" >
-      <a href="/subscr/pdfcreateInvoice/${sub.id?c}" class="btn btn-primary" target="_blank">Rechnung erstellen</a>
   </div>
 </div>
 <div class="row">
@@ -29,106 +19,16 @@
 <div class="col-md-4">${(sub.lastInvoiceDate.toString("dd.MM.yyyy"))!}</div>
 </div>
 
-<div id="accordion" role="tablist" aria-multiselectable="true">
-  <div class="panel panel-default">
-    <div class="panel-heading" role="tab" id="headingDelivsWithout">
-      <h4 class="panel-title">
-        <a data-toggle="collapse" data-parent="#accordion" href="#delivsWithout" aria-expanded="false" aria-controls="delivsWithout">
-          Lieferungen unberechnet  
-        </a>
-      </h4>
-    </div>
-    <div id="delivsWithout" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingDelivsWithout">
-		<table class="table table-striped">
-			<thead>
-				<tr>
-					<th>Lieferdatum</th>
-					<th>Artikel</th>
-					<th>Rech</th>
-					<th></th>
-				</tr>
-			</thead>
-			<tbody>
-				<#list deliveriesWithout as d>
-					<tr>
-						<td>${d.deliveryDate.toString("dd.MM.yy")}</td>
-						<td>${d.articleName!}</td>
-						<td>${money(d.total)}</td>
-						<td>  <a href="#subscrDelivery/${d.id?c}">see</a> </td>
-					</tr>
-				</#list>
-			</tbody>
-		</table>
-    </div>
-  </div>
-  <div class="panel panel-default">
-    <div class="panel-heading" role="tab" id="headingDelivsWith">
-      <h4 class="panel-title">
-        <a data-toggle="collapse" data-parent="#accordion" href="#delivsWith" aria-expanded="false" aria-controls="delivsWith">
-          Lieferungen berechnet 
-        </a>
-      </h4>
-    </div>
-    <div id="delivsWith" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingDelivsWith">
-		<table class="table table-striped">
-			<thead>
-				<tr>
-					<th>Lieferdatum</th>
-					<th>Artikel</th>
-					<th>Rech</th>
-					<th></th>
-				</tr>
-			</thead>
-			<tbody>
-				<#list deliveriesWith as d>
-					<tr>
-						<td>${d.deliveryDate.toString("dd.MM.yy")}</td>
-						<td>${d.articleName!}</td>
-						<td>${money(d.total)}</td>
-						<td>  <a href="#subscrDelivery/${d.id?c}">see</a> </td>
-					</tr>
-				</#list>
-			</tbody>
-		</table>
-    </div>
-  </div>
-  <div class="panel panel-default">
-    <div class="panel-heading" role="tab" id="headingInv">
-      <h4 class="panel-title">
-        <a data-toggle="collapse" data-parent="#accordion" href="#invoices" aria-expanded="false" aria-controls="invoices">
-          Rechnungen 
-        </a>
-      </h4>
-    </div>
-    <div id="invoices" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingInv">
-		<table class="table table-striped">
-			<thead>
-				<tr>
-					<th>Rechnungsnummer</th>
-					<th>Datum</th>
-					<th>Betrag</th>
-					<th>bezahlt</th>
-					<th></th>
-				</tr>
-			</thead>
-			<tbody>
-				<#list invoices as inv>
-					<tr>
-						<td>${inv.number}</td>
-						<td><#if inv.date??>${inv.date.toString("dd.MM.yyyy")}<#else>kein Datum!</#if></td>
-						<td align="right">${money(inv.amount)}</td>
-						<td align="right">${money(inv.payed)}</td>
-						<td>  <a href="/invoice/${inv.number}" target="_blank">view</a> </td>
-					</tr>
-				</#list>
-			</tbody>
-		</table>
-    </div>
-  </div>
-</div>
 
+<ul class="nav nav-tabs">
+  <li class="active"><a data-toggle="tab" href="#details">Abodaten</a></li>
+  <li><a data-toggle="tab" href="#lieferungenub">unberechnete Lieferungen</a></li>
+  <li><a data-toggle="tab" href="#lieferungenb">berechnete Lieferungen</a></li>
+  <li><a data-toggle="tab" href="#rechnungen">Rechnungen</a></li>
+</ul>
 
-
+<div class="tab-content">
+  <div id="details" class="tab-pane fade in active">
 <div cass="row">
 <div class="col-md-4">
 <div class="card card-block">
@@ -170,10 +70,77 @@
     </ul>
 </div>
 </div>
-
 </div>
-
-
+  </div>
+  <div id="lieferungenub" class="tab-pane fade">
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th>Lieferdatum</th>
+					<th>Artikel</th>
+					<th>Rech</th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+				<#list deliveriesWithout as d>
+					<tr>
+						<td>${d.deliveryDate.toString("dd.MM.yy")}</td>
+						<td>${d.articleName!}</td>
+						<td>${money(d.total)}</td>
+						<td>  <a href="#subscrDelivery/${d.id?c}">see</a> </td>
+					</tr>
+				</#list>
+			</tbody>
+		</table>
+  </div>
+  <div id="lieferungenb" class="tab-pane fade">
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th>Lieferdatum</th>
+					<th>Artikel</th>
+					<th>Rech</th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+				<#list deliveriesWith as d>
+					<tr>
+						<td>${d.deliveryDate.toString("dd.MM.yy")}</td>
+						<td>${d.articleName!}</td>
+						<td>${money(d.total)}</td>
+						<td>  <a href="#subscrDelivery/${d.id?c}">see</a> </td>
+					</tr>
+				</#list>
+			</tbody>
+		</table>
+  </div>
+  <div id="rechnungen" class="tab-pane fade">
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th>Rechnungsnummer</th>
+					<th>Datum</th>
+					<th>Betrag</th>
+					<th>bezahlt</th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+				<#list invoices as inv>
+					<tr>
+						<td>${inv.number}</td>
+						<td><#if inv.date??>${inv.date.toString("dd.MM.yyyy")}<#else>kein Datum!</#if></td>
+						<td align="right">${money(inv.amount)}</td>
+						<td align="right">${money(inv.payed)}</td>
+						<td>  <a href="/invoice/${inv.number}" target="_blank">view</a> </td>
+					</tr>
+				</#list>
+			</tbody>
+		</table>
+  </div>
+</div>
 
 
 </div>

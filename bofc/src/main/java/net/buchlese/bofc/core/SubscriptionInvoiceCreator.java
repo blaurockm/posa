@@ -2,7 +2,9 @@ package net.buchlese.bofc.core;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import net.buchlese.bofc.api.bofc.InvoiceAgrDetail;
 import net.buchlese.bofc.api.bofc.PosInvoice;
 import net.buchlese.bofc.api.bofc.PosInvoiceDetail;
 import net.buchlese.bofc.api.subscr.SubscrArticle;
@@ -37,19 +39,31 @@ public class SubscriptionInvoiceCreator {
 		return createSubscription(dao, dao.getSubscriber(sub.getSubscriberId()), Arrays.asList(sub));
 	}
 
+	public static void recordInvoiceOnAgreements(SubscrDAO dao, PosInvoice inv) {
+		for (InvoiceAgrDetail iad : inv.getAgreementDetails()) {
+			Subscription sub = dao.getSubscription(iad.getAgreementId());
+			sub.setPayedUntil(iad.getDeliveryTill());
+			dao.recordDetailsOnvInvoice(iad.getDeliveryIds(), inv.getNumber());
+		}
+	}
+	
+	
 	public static PosInvoice createSubscription(SubscrDAO dao, Subscriber subscriber, List<Subscription> subs) {
 		PosInvoice inv = createInvoice(subscriber.getPointid(), subscriber);
 		
 		// details
 		for(Subscription sub : subs) {
+			InvoiceAgrDetail iad = null;
 			switch(sub.getPaymentType()) {
-			case EACHDELIVERY : addDeliveriesToInvoice(dao, sub, inv, dao.getDeliveriesForSubscriptionUnrecorded(sub.getId()));
+			case EACHDELIVERY : iad = addDeliveriesToInvoice(dao, sub, inv, dao.getDeliveriesForSubscriptionUnrecorded(sub.getId()));
 			break;
 			case MONTHLY  :  
 			case HALFYEARLY  :  
-			case YEARLY : addIntervalPayment(dao, sub, inv);
+			case YEARLY : iad = addIntervalPayment(dao, sub, inv);
 			}
-			sub.setLastInvoiceDate(inv.getDate());
+			if (iad != null) {
+				inv.addAgreementDetail(iad);
+			}
 		}
 		inv.setNettoHalf((long) (inv.getAmountHalf() / 1.07));
 		inv.setTaxHalf(inv.getAmountHalf() - inv.getNettoHalf());
@@ -63,14 +77,19 @@ public class SubscriptionInvoiceCreator {
 		return inv;
 	}
 
-	private static void addIntervalPayment(SubscrDAO dao, Subscription sub, PosInvoice inv) {
-		addTextDetail(inv, sub.getDeliveryInfo1());
-		addTextDetail(inv, sub.getDeliveryInfo2());
+	private static InvoiceAgrDetail addIntervalPayment(SubscrDAO dao, Subscription sub, PosInvoice inv) {
+		InvoiceAgrDetail iad = new InvoiceAgrDetail();
 		LocalDate from = sub.getPayedUntil().plusMonths(1).dayOfMonth().withMinimumValue(); // immer der erste des nächsten monats
 		LocalDate till = from.plus(sub.getPaymentType().getPeriod()).minusMonths(1); // und period -1 monat drauf
+		addTextDetail(inv, sub.getDeliveryInfo1());
+		addTextDetail(inv, sub.getDeliveryInfo2());
 		inv.addInvoiceDetail(createInvoiceDetailForInterval(sub,dao.getNewestArticleOfProduct(sub.getProductId()), new YearMonth(from), new YearMonth(till)));
-		sub.setPayedUntil(till.dayOfMonth().withMaximumValue()); // immer der letzte des Monats
-		dao.recordDetailsOnvInvoice(dao.getDeliveriesForSubscription(sub.getId(), from, till), inv.getNumber());
+
+		iad.setAgreementId(sub.getId());
+		iad.setDeliveryFrom(from);
+		iad.setDeliveryTill(till.dayOfMonth().withMaximumValue());  // immer der letzte des Monats
+		iad.setDeliveryIds(dao.getDeliveriesForSubscription(sub.getId(), from, till).stream().mapToLong(SubscrDelivery::getId).boxed().collect(Collectors.toList()));
+		return iad;
 	}
 	
 	private static PosInvoiceDetail createInvoiceDetailForInterval(Subscription sub, SubscrArticle art, YearMonth from, YearMonth till) {
@@ -89,13 +108,16 @@ public class SubscriptionInvoiceCreator {
 		return detail;
 	}
 
-	private static void addDeliveriesToInvoice(SubscrDAO dao, Subscription sub, PosInvoice inv, List<SubscrDelivery> deliveries) {
+	private static InvoiceAgrDetail addDeliveriesToInvoice(SubscrDAO dao, Subscription sub, PosInvoice inv, List<SubscrDelivery> deliveries) {
 		if (deliveries.isEmpty()) {
 			// es gibt nix zu adden - back
-			return;
+			return null;
 		}
+		InvoiceAgrDetail iad = new InvoiceAgrDetail();
 		addTextDetail(inv, sub.getDeliveryInfo1());
 		addTextDetail(inv, sub.getDeliveryInfo2());
+		LocalDate from = null;
+		LocalDate till = null;
 		// details per Delivery;
 		for (SubscrDelivery deliv : deliveries) {
 			inv.addInvoiceDetail(createInvoiceDetailForDelivery(deliv,dao.getSubscrArticle(deliv.getArticleId())));
@@ -103,8 +125,18 @@ public class SubscriptionInvoiceCreator {
 			if (deliv.getShipmentCost() > 0) {
 				addShipmentCostDetail(inv, deliv.getShipmentCost());
 			}
+			if (from == null || deliv.getDeliveryDate().isBefore(from)) {
+				from = deliv.getDeliveryDate();
+			}
+			if (till == null || deliv.getDeliveryDate().isAfter(till)) {
+				till = deliv.getDeliveryDate();
+			}
 		}
-		dao.recordDetailsOnvInvoice(deliveries, inv.getNumber());
+		iad.setAgreementId(sub.getId());
+		iad.setDeliveryFrom(from);
+		iad.setDeliveryTill(till.dayOfMonth().withMaximumValue());  // immer der letzte des Monats
+		iad.setDeliveryIds(deliveries.stream().mapToLong(SubscrDelivery::getId).boxed().collect(Collectors.toList()));
+		return iad;
 	}
 	
 	

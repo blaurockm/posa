@@ -1,13 +1,17 @@
 package net.buchlese.bofc.view.subscr;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.joda.time.LocalDate;
 
+import net.buchlese.bofc.api.bofc.PosInvoice;
 import net.buchlese.bofc.api.subscr.SubscrDelivery;
 import net.buchlese.bofc.api.subscr.SubscrProduct;
 import net.buchlese.bofc.api.subscr.Subscriber;
 import net.buchlese.bofc.api.subscr.Subscription;
+import net.buchlese.bofc.jdbi.bofc.PosInvoiceDAO;
 import net.buchlese.bofc.jdbi.bofc.SubscrDAO;
 import net.buchlese.bofc.view.AbstractBofcView;
 
@@ -15,11 +19,13 @@ public class SubscriberDetailView extends AbstractBofcView{
 
 	private final Subscriber sub;
 	private final SubscrDAO dao;
-	
-	public SubscriberDetailView(SubscrDAO dao, Subscriber s ) {
+	private final PosInvoiceDAO invDao;
+
+	public SubscriberDetailView(SubscrDAO dao, PosInvoiceDAO invd, Subscriber s ) {
 		super("subscriberdetail.ftl");
 		this.dao = dao;
 		this.sub = s;
+		this.invDao = invd;
 	}
 
 
@@ -48,6 +54,15 @@ public class SubscriberDetailView extends AbstractBofcView{
 		case EACHDELIVERY : return hasUnpayedDeliveries(s);
 			default : return s.getPayedUntil().isBefore(LocalDate.now());
 		}
+	}
+	
+	public List<PosInvoice> getInvoices() {
+		Collection<String> invNums = dao.getInvoiceNumsForSubscription(sub.getId());
+		List<PosInvoice> invs = new ArrayList<PosInvoice>();
+		for (String num : invNums) {
+			invs.addAll(invDao.fetch(num));
+		}
+		return invs;
 	}
 
 	private boolean hasUnpayedDeliveries(Subscription s) {

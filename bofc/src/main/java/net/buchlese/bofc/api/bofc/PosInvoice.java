@@ -73,7 +73,15 @@ public class PosInvoice {
 	
 	@JsonProperty
 	private List<PosInvoiceDetail> details;
-	
+
+	@JsonProperty
+	private List<InvoiceAgrDetail> agreementDetails;
+
+	@JsonProperty
+	private LocalDate deliveryFrom;
+	@JsonProperty
+	private LocalDate deliveryTill;
+
 	@JsonIgnore
 	public PosInvoiceDetail addInvoiceDetail(PosInvoiceDetail detail) {
 		if (detail == null) {
@@ -88,7 +96,25 @@ public class PosInvoice {
 		setAmountHalf(safeAdd(getAmountHalf(), detail.getAmountHalf()));
 		return detail;
 	}
-	
+
+	@JsonIgnore
+	public InvoiceAgrDetail addAgreementDetail(InvoiceAgrDetail detail) {
+		if (detail == null) {
+			return null;
+		}
+		if (getAgreementDetails() == null) {
+			setAgreementDetails(new ArrayList<InvoiceAgrDetail>());
+		}
+		getAgreementDetails().add(detail);
+		if (deliveryFrom == null || deliveryFrom.isAfter(detail.getDeliveryFrom())) {
+			setDeliveryFrom(detail.getDeliveryFrom());
+		}
+		if (deliveryTill == null || deliveryTill.isBefore(detail.getDeliveryTill())) {
+			setDeliveryTill(detail.getDeliveryTill());
+		}
+		return detail;
+	}
+
 	private Long safeAdd(Long a, Long b) {
 		if (a == null && b == null) {
 			return null;
@@ -280,4 +306,29 @@ public class PosInvoice {
 	public void setNettoFull(Long nettoFull) {
 		this.nettoFull = nettoFull;
 	}
+
+	public List<InvoiceAgrDetail> getAgreementDetails() {
+		return agreementDetails;
+	}
+
+	public void setAgreementDetails(List<InvoiceAgrDetail> agreementDetails) {
+		this.agreementDetails = agreementDetails;
+	}
+
+	public LocalDate getDeliveryFrom() {
+		return deliveryFrom;
+	}
+
+	public void setDeliveryFrom(LocalDate deliveryFrom) {
+		this.deliveryFrom = deliveryFrom;
+	}
+
+	public LocalDate getDeliveryTill() {
+		return deliveryTill;
+	}
+
+	public void setDeliveryTill(LocalDate deliveryTill) {
+		this.deliveryTill = deliveryTill;
+	}
+
 }

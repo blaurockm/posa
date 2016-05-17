@@ -1,18 +1,14 @@
-<ol class="breadcrumb">
-  <li><a href="#subscrCust">Kundenstamm</a></li>
-  <li class="active">Abonnent</li>
-</ol>
-
 <div class="container">
-<h1>Abonnent ${sub.customerId?c}  <a href="#" class="editable" data-type="text" data-name="subscriber.name">${sub.name}</a></h1>
+<h1>Abonnent ${sub.customerId?c}  <a href="#" class="editable" data-type="text" data-name="subscriber.name">${sub.name}</a>
+<a href="#subscrSubscrAdd/${sub.id?c}/0" class="btn btn-primary">Neues Abo</a>
+<#if sub.collectiveInvoice! >
+<a href="/subscr/pdfcreateCollInvoice/${sub.id?c}" class="btn btn-primary" target="_blank">Sammelrechnung erstellen</a>
+</#if>
+</h1>
 
 <div class="row">
 <div class="col-md-2">Ladengeschäft</div>
 <div class="col-md-2"><a href="#" id="laeden"></a></div>
-<div class="col-md-5"></div>
-<#if sub.collectiveInvoice! >
-<div class="col-md-2"><a href="/subscr/pdfcreateCollInvoice/${sub.id?c}" class="btn btn-primary" target="_blank">Sammelrechnung erstellen</a></div>
-</#if>
 </div>
 <div class="row">
 <div class="col-md-2">Debitorenkonto</div>
@@ -49,50 +45,64 @@
 </div>
 </div>
 
+<ul class="nav nav-tabs">
+  <li class="active"><a data-toggle="tab" href="#abos">Abonnements</a></li>
+  <li><a data-toggle="tab" href="#rechnungen">Rechnungen</a></li>
+</ul>
 
-<div class="row">
-<div class="col-md-3"><h3>Abos</h3></div>
-<div class="col-md-offset-6 col-md-2"><a href="#subscrSubscrAdd/${sub.id?c}/0" class="btn btn-primary">Neues Abo</a></div>
-</div>
-<div id="accordion" role="tablist" aria-multiselectable="true">
-<#list subscriptions as s>
-  <div class="panel panel-default">
-    <div class="panel-heading" role="tab" id="heading${s.id}">
-      <h4 class="panel-title">
-        <a data-toggle="collapse" data-parent="#accordion" href="#delivs${s.id}" aria-expanded="false" aria-controls="delivs${s.id}">
-          Abo Nr ${s.id}, ${product(s)}, ${s.deliveryInfo1!""}, ${s.deliveryInfo2!""}
-          <#if willBeSettled(s)>
-            <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>  
-          </#if>
-          <a href="#subscription/${s.id?c}" class="btn btn-info">Abodetails</a>
-        </a>
-      </h4>
-    </div>
-    <div id="delivs${s.id}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading${s.id}">
+<div class="tab-content">
+  <div id="abos" class="tab-pane fade in active">
 		<table class="table table-striped">
 			<thead>
 				<tr>
-					<th>Lieferdatum</th>
-					<th>Artikel</th>
-					<th>Rech</th>
+					<th>Abonummer</th>
+					<th>Periodikum</th>
+					<th>Seit</th>
+					<th>Versandart</th>
+					<th>Zahlungweise</th>
+					<th>abrechenbar</th>
 					<th></th>
 				</tr>
 			</thead>
 			<tbody>
-				<#list deliveriesWithout(s) as d>
+				<#list subscriptions as s>
 					<tr>
-						<td>${d.deliveryDate.toString("dd.MM.yy")}</td>
-						<td>${d.articleName!}</td>
-						<td>${money(d.total)}</td>
-						<td>  <a href="#subscrDelivery/${d.id?c}">see</a> </td>
+						<td>${s.id} <a href="#subscription/${s.id?c}" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span></a></td>
+						<td>${product(s)}  <a href="#subscrProduct/${s.productId?c}" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span></a></td>
+						<td>${(s.startDate.toString("dd.MM.yyyy"))!}</td>
+					    <td>${s.shipmentType.text}</td>
+					    <td>${s.paymentType.text}</td>
+					    <td>${willBeSettled(s)?string("ja","")}</td>					
 					</tr>
 				</#list>
 			</tbody>
 		</table>
-    </div>
   </div>
-</#list>
-</div>  
+  <div id="rechnungen" class="tab-pane fade">
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th>Rechnungsnummer</th>
+					<th>Datum</th>
+					<th>Betrag</th>
+					<th>bezahlt</th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+				<#list invoices as inv>
+					<tr>
+						<td>${inv.number}</td>
+						<td><#if inv.date??>${inv.date.toString("dd.MM.yyyy")}<#else>kein Datum!</#if></td>
+						<td align="right">${money(inv.amount)}</td>
+						<td align="right">${money(inv.payed)}</td>
+						<td>  <a href="/invoice/${inv.number}" target="_blank">view</a> </td>
+					</tr>
+				</#list>
+			</tbody>
+		</table>
+  </div>
+</div>
 
 
 </div>

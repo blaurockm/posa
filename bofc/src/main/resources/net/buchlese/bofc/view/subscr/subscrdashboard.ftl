@@ -1,6 +1,3 @@
-<ol class="breadcrumb">
-  <li class="active">Dashboard</li>
-</ol>
 <div class="container">
 
 <div class="row">
@@ -26,7 +23,7 @@
 	<tbody>
 		<#list deliveries as d>
 		<tr>
-			<td>${kunde(d)}</td>
+			<td>${kunde(d)} ${abo(d).deliveryInfo1!} ${abo(d).deliveryInfo2!}</td>
 			<td>${d.articleName}</td>
 			<td>${d.quantity}</td>
 			<td>${abo(d).shipmentType.text}</td>

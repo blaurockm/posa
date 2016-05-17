@@ -46,7 +46,7 @@ public interface SubscrDAO {
 
 	SubscrDelivery createDelivery(Subscription subscription, SubscrArticle subscrArticle, LocalDate d);
 
-	void recordDetailsOnvInvoice(List<SubscrDelivery> deliveries, String invNumber);
+	void recordDetailsOnvInvoice(List<Long> deliveryIds, String invNumber);
 
 	List<Subscriber> getSubscribers();
 

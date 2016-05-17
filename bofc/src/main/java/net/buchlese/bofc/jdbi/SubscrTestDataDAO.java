@@ -124,8 +124,8 @@ public class SubscrTestDataDAO implements SubscrDAO {
 	}
 	
 	@Override
-	public void recordDetailsOnvInvoice(List<SubscrDelivery> deliveries, String invNumber) {
-		deliveries.stream().forEach(x -> { x.setPayed(true); x.setInvoiceNumber(invNumber); } );
+	public void recordDetailsOnvInvoice(List<Long> deliveryId, String invNumber) {
+		deliveryId.stream().forEach(i -> { SubscrDelivery x= getSubscrDelivery(i); x.setPayed(true); x.setInvoiceNumber(invNumber); } );
 	}
 	
 
