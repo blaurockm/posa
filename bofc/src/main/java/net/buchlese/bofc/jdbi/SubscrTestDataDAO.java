@@ -50,7 +50,7 @@ public class SubscrTestDataDAO implements SubscrDAO {
 
 	@Override 
 	public void deleteTempInvoice(String invNumber) {
-		tempInvoices = tempInvoices.stream().filter(x -> x.getNumber() != invNumber).collect(Collectors.toList());
+		tempInvoices = tempInvoices.stream().filter(x -> x.getNumber().equals(invNumber) == false).collect(Collectors.toList());
 	}
 
 	@Override 
@@ -65,7 +65,7 @@ public class SubscrTestDataDAO implements SubscrDAO {
 
 	@Override
 	public PosInvoice getTempInvoices(String invNum) {
-		return tempInvoices.stream().filter(x -> x.getNumber() == invNum).findFirst().orElse(null);
+		return tempInvoices.stream().filter(x -> x.getNumber().equals(invNum)).findFirst().orElse(null);
 	}
 
 	@Override

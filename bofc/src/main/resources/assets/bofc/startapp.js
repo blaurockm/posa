@@ -93,6 +93,10 @@ Path.map("#subscrProd").to(function(){
     $("#output .content").load("/subscr/products");
 }).enter(setSubscrModule);
 
+Path.map("#subscrInvoices").to(function(){
+    $("#output .content").load("/subscr/invoices");
+}).enter(setSubscrModule);
+
 Path.map("#subscrProduct/:id").to(function(){
     $("#output .content").load("/subscr/product/" + this.params["id"]);
 }).enter(setSubscrModule);

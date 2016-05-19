@@ -14,7 +14,6 @@ import com.google.inject.Inject;
 
 @Path("/menu")
 @Produces(MediaType.TEXT_HTML)
-@SuppressWarnings("unused")
 public class MenuResource {
 
 

@@ -2,6 +2,7 @@ package net.buchlese.bofc.view.subscr;
 
 import java.util.List;
 
+import net.buchlese.bofc.api.bofc.PosInvoice;
 import net.buchlese.bofc.api.subscr.SubscrDelivery;
 import net.buchlese.bofc.api.subscr.SubscrProduct;
 import net.buchlese.bofc.api.subscr.Subscriber;
@@ -16,6 +17,7 @@ public class SubscrDashboardView extends AbstractBofcView {
 	private final List<SubscrProduct> products;
 	private final List<SubscrDelivery> deliveries;
 	private final List<Subscription> subscriptions;
+	private final List<PosInvoice> tempInvoices;
 	private final SubscrDAO dao;
 	
 	public SubscrDashboardView(SubscrDAO dao, LocalDate d) {
@@ -24,6 +26,7 @@ public class SubscrDashboardView extends AbstractBofcView {
 		this.products = dao.getProductsForTheNextWeek(d);
 		this.deliveries = dao.getDeliveries(d);
 		this.subscriptions = dao.getSubscriptionsForThisMonth(d);
+		this.tempInvoices = dao.getTempInvoices();
 	}
 
 
@@ -43,6 +46,10 @@ public class SubscrDashboardView extends AbstractBofcView {
 		return deliveries;
 	}
 
+	public List<PosInvoice> getInvoices() {
+		return tempInvoices;
+	}
+	
 	public String kunde(SubscrDelivery d) {
 		if (d.getSubscriberId() > 0) {
 			Subscriber x = dao.getSubscriber(d.getSubscriberId());

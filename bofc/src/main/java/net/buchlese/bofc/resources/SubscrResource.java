@@ -47,6 +47,7 @@ import net.buchlese.bofc.resources.helper.SubscriberUpdateHelper;
 import net.buchlese.bofc.resources.helper.SubscriptionUpdateHelper;
 import net.buchlese.bofc.resources.helper.UpdateResult;
 import net.buchlese.bofc.view.subscr.CustomerAddView;
+import net.buchlese.bofc.view.subscr.InvoicesView;
 import net.buchlese.bofc.view.subscr.NavigationView;
 import net.buchlese.bofc.view.subscr.ProductAddView;
 import net.buchlese.bofc.view.subscr.SubscrCustomerView;
@@ -329,6 +330,22 @@ public class SubscrResource {
 	}
 
 	@GET
+	@Path("/invoiceView/{inv}")
+	@Produces({"application/json"})
+	public PosInvoice viewInvoice(@PathParam("inv") String invNum) {
+		PosInvoice inv = dao.getTempInvoices(invNum);
+		if (inv != null) {
+			// es ist noch eine temporäre, einfach löschen
+			return inv;
+		}
+		List<PosInvoice> invs = invDao.fetch(invNum);
+		if (invs.size()>1 || invs.isEmpty()) {
+			throw new WebApplicationException("unable to cancel, more than one or no invoice with this number " + invNum, 500);
+		}
+		return invs.get(0);
+	}
+
+	@GET
 	@Path("/invoiceCancel/{inv}")
 	@Produces({"application/json"})
 	public void cancelInvoice(@PathParam("inv") String invNum) {
@@ -339,8 +356,8 @@ public class SubscrResource {
 			return;
 		}
 		List<PosInvoice> invs = invDao.fetch(invNum);
-		if (invs.size()>1) {
-			throw new WebApplicationException("unable to cancel, more than one invoice with this number", 500);
+		if (invs.size()>1 || invs.isEmpty()) {
+			throw new WebApplicationException("unable to cancel, more than one or no invoice with this number " + invNum, 500);
 		}
 		SubscriptionInvoiceCreator.undoRecordInvoiceOnAgreements(dao, invDao, inv);
 	}
@@ -395,6 +412,13 @@ public class SubscrResource {
 	@Produces({"text/html"})
 	public View showCustomers() {
 		return new SubscrCustomerView(dao);
+	}
+
+	@GET
+	@Path("/invoices")
+	@Produces({"text/html"})
+	public View showInvoices() {
+		return new InvoicesView(dao, invDao);
 	}
 
 	@GET
