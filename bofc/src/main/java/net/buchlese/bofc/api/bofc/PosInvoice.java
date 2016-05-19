@@ -70,6 +70,17 @@ public class PosInvoice {
 	private LocalDate date;
 	@JsonProperty
 	private DateTime printTime;
+
+	@JsonProperty
+	private boolean printed;
+	
+	@JsonProperty
+	private boolean collective;
+	@JsonProperty
+	private boolean temporary;
+	
+	@JsonProperty
+	private String type;
 	
 	@JsonProperty
 	private List<PosInvoiceDetail> details;
@@ -329,6 +340,38 @@ public class PosInvoice {
 
 	public void setDeliveryTill(LocalDate deliveryTill) {
 		this.deliveryTill = deliveryTill;
+	}
+
+	public boolean isPrinted() {
+		return printed;
+	}
+
+	public void setPrinted(boolean printed) {
+		this.printed = printed;
+	}
+
+	public boolean isCollective() {
+		return collective;
+	}
+
+	public void setCollective(boolean collective) {
+		this.collective = collective;
+	}
+
+	public boolean isTemporary() {
+		return temporary;
+	}
+
+	public void setTemporary(boolean temporary) {
+		this.temporary = temporary;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
 	}
 
 }

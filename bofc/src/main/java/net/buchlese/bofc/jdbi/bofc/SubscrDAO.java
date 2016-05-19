@@ -3,6 +3,7 @@ package net.buchlese.bofc.jdbi.bofc;
 import java.util.Collection;
 import java.util.List;
 
+import net.buchlese.bofc.api.bofc.PosInvoice;
 import net.buchlese.bofc.api.subscr.SubscrArticle;
 import net.buchlese.bofc.api.subscr.SubscrDelivery;
 import net.buchlese.bofc.api.subscr.SubscrProduct;
@@ -46,7 +47,9 @@ public interface SubscrDAO {
 
 	SubscrDelivery createDelivery(Subscription subscription, SubscrArticle subscrArticle, LocalDate d);
 
-	void recordDetailsOnvInvoice(List<Long> deliveryIds, String invNumber);
+	void recordDetailsOnInvoice(List<Long> deliveryIds, String invNumber);
+
+	void resetDetailsOfInvoice(List<Long> deliveryIds);
 
 	List<Subscriber> getSubscribers();
 
@@ -71,7 +74,7 @@ public interface SubscrDAO {
 	List<SubscrProduct> getProductsForTheNextWeek(LocalDate d);
 
 	List<Subscription> getSubscriptionsForThisMonth(LocalDate d);
-
+	
 	void deleteDelivery(long delId);
 
 	void updateSubscrProduct(SubscrProduct p);
@@ -83,6 +86,14 @@ public interface SubscrDAO {
 	void updateSubscriber(Subscriber art);
 
 	void updateSubscription(Subscription art);
+
+	void insertTempInvoice(PosInvoice ti); // should be moved to PosInvoiceDAO
+
+	void deleteTempInvoice(String invNumber);
+
+	List<PosInvoice> getTempInvoices();
+
+	PosInvoice getTempInvoices(String invNUm);
 
 
 

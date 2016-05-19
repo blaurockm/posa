@@ -69,118 +69,27 @@ import com.google.inject.Inject;
 @Path("/subscr")
 public class SubscrResource {
 
+	private static class DateParam {
+		private LocalDate date;
+		public DateParam(String dateStr) {
+			if (dateStr != null) { 
+				date = DateTimeFormat.forPattern("yyyy-MM-dd").parseLocalDate(dateStr);
+			} else {
+				date = LocalDate.now();
+			}
+		}
+		public LocalDate getDate() {
+			return date;
+		}
+	}
 	private static SubscrDAO dao = new SubscrTestDataDAO();
-	private final PosInvoiceDAO invDao;
 	
+	private final PosInvoiceDAO invDao;
+
 	@Inject
 	public SubscrResource(PosInvoiceDAO invd) {
 		super();
 		this.invDao = invd;
-	}
-
-	@POST
-	@Path("/update")
-	@Produces({"application/json"})
-	public UpdateResult updateMaping( @FormParam("pk") String pk, @FormParam("name") String fieldname, @FormParam("value") String value) {
-		UpdateResult res = null;
-		if (fieldname.startsWith("article")) {
-			res = new SubscrArticleUpdateHelper(dao).update(pk, fieldname, value);
-		}
-		if (fieldname.startsWith("subscriber")) {
-			res = new SubscriberUpdateHelper(dao).update(pk, fieldname, value);
-		}
-		if (fieldname.startsWith("subscription")) {
-			res = new SubscriptionUpdateHelper(dao).update(pk, fieldname, value);
-		}
-		if (fieldname.startsWith("product")) {
-			res = new SubscrProductUpdateHelper(dao).update(pk, fieldname, value);
-		}
-		if (fieldname.startsWith("delivery")) {
-			res = new SubscrDeliveryUpdateHelper(dao).update(pk, fieldname, value);
-		}
-		if (res == null) {
-			res = new UpdateResult();
-			res.success = false;
-			res.msg =" not implemented yet";
-		}
-		return res;
-	}
-
-	@GET
-	@Path("/subscrarticle/{dir}/{prod}/{art}")
-	@Produces({"application/json"})
-	public SubscrArticle getSubscrArticle(@PathParam("dir") String dir, @PathParam("prod") String prodIdP, @PathParam("art") String artIdP) {
-		long artId = Long.parseLong(artIdP);
-		if (dir.equals("ex")) {
-			return dao.getSubscrArticle(artId);
-		}
-		long prodId = Long.parseLong(prodIdP);
-		List<SubscrArticle> arts = dao.getArticlesOfProduct(prodId);
-		long[] artIds = arts.stream().mapToLong(SubscrArticle::getId).sorted().toArray();
-		int idx = Arrays.binarySearch(artIds, artId);
-		if (dir.equals("prev") && idx > 0) {
-			return dao.getSubscrArticle(artIds[idx-1]);
-		}
-		if (dir.equals("next") && idx >= 0 && idx < artIds.length-1) {
-			return dao.getSubscrArticle(artIds[idx+1]);
-		}
-		if (dir.equals("next") && idx == artIds.length-1) {
-			return dao.getSubscrArticle(artIds[idx]);
-		}
-		throw new WebApplicationException(404);
-	}
-
-	@GET
-	@Path("/subscrarticlecreate/{prod}")
-	@Produces({"application/json"})
-	public SubscrArticle createSubscrArticle(@PathParam("prod") String prodIdP) {
-		long prodId = Long.parseLong(prodIdP);
-		SubscrArticle art = dao.getSubscrProduct(prodId).createNextArticle(LocalDate.now());
-		dao.insertArticle(art);
-		return art;
-	}
-
-
-	@GET
-	@Path("/queryproduct")
-	@Produces({"application/json"})
-	public List<SubscrProduct> getSubscrProducts(@QueryParam("q") Optional<String> query) {
-		return dao.querySubscrProducts(query);
-	}
-
-	@GET
-	@Path("/querycustomers")
-	@Produces({"application/json"})
-	public List<Subscriber> getSubscribers(@QueryParam("q") Optional<String> query) {
-		return dao.querySubscribers(query);
-	}
-
-	@GET
-	@Path("/dashboard")
-	@Produces({"text/html"})
-	public View showDashboard() {
-		return new SubscrDashboardView(dao, LocalDate.now());
-	}
-
-	@GET
-	@Path("/customers")
-	@Produces({"text/html"})
-	public View showCustomers() {
-		return new SubscrCustomerView(dao);
-	}
-
-	@GET
-	@Path("/products")
-	@Produces({"text/html"})
-	public View showProducts() {
-		return new SubscrProductsView(dao, dao.getSubscrProducts());
-	}
-
-	@GET
-	@Path("/customerCreateForm")
-	@Produces({"text/html"})
-	public View showCustomerAddForm() {
-		return new CustomerAddView(dao);
 	}
 
 	@POST
@@ -222,15 +131,6 @@ public class SubscrResource {
 		}
 		dao.insertSubscriber(s);
 		return new SubscrCustomerView(dao);
-	}
-
-	@GET
-	@Path("/subscriptionCreateForm")
-	@Produces({"text/html"})
-	public View showSubscriptionAddForm(@QueryParam("sub") Optional<String> subIdP, @QueryParam("prod") Optional<String> prodIdP) {
-		Subscriber s =  subIdP.transform(x -> dao.getSubscriber(Long.parseLong(x))).orNull();
-		SubscrProduct  p =  prodIdP.transform(x -> dao.getSubscrProduct(Long.parseLong(x))).orNull();
-		return new SubscriptionAddView(dao,s,p);
 	}
 
 	@POST
@@ -283,12 +183,6 @@ public class SubscrResource {
 		dao.insertSubscription(s);
 	}
 
-	@GET
-	@Path("/productCreateForm")
-	@Produces({"text/html"})
-	public View showProductAddForm() {
-		return new ProductAddView(dao);
-	}
 
 	@POST
 	@Path("/productCreate")
@@ -326,16 +220,188 @@ public class SubscrResource {
 	}
 
 	@GET
-	@Path("/dispo/{prod}")
-	@Produces({"text/html"})
-	public View showDispo(@PathParam("prod") String product, @QueryParam("date") Optional<String> dateP, @QueryParam("artid") Optional<String> artIdP) {
-		long productId = Long.parseLong(product);
-		LocalDate from = new DateParam(dateP.orNull()).getDate();
-		SubscrArticle art = null;
-		if (artIdP.isPresent()) {
-			art = dao.getSubscrArticle(Long.parseLong(artIdP.get()));
+	@Path("/createCollInvoice/{sub}")
+	@Produces({"application/json"})
+	public PosInvoice createCollInvoice(@PathParam("sub") String subIdP) {
+		long subId = Long.parseLong(subIdP);
+		PosInvoice inv = SubscriptionInvoiceCreator.createCollectiveSubscription(dao, dao.getSubscriber(subId));
+		return inv;
+	}
+
+	@Produces({"application/pdf"})
+	@GET
+	@Path("/pdfcreateCollInvoice/{sub}")
+	public StreamingOutput createCollPdfInvoice(@PathParam("sub") String subIdP)  {
+		long subId = Long.parseLong(subIdP);
+		return new StreamingOutput() {
+			public void write(OutputStream output) throws IOException, WebApplicationException {
+				try {
+					PDFInvoice generator = new PDFInvoice(SubscriptionInvoiceCreator.createCollectiveSubscription(dao, dao.getSubscriber(subId)));
+					generator.generatePDF(output);
+				} catch (Exception e) {
+					throw new WebApplicationException(e);
+				}
+				output.flush();
+			}
+		};	
+	}
+
+	@GET
+	@Path("/deliverycreate/{sub}/{art}/{date}")
+	@Produces({"application/json"})
+	public SubscrDelivery createDelivery(@PathParam("sub") String subIdP,@PathParam("art") String artIdP,@PathParam("date") String dateP ) {
+		long subId = Long.parseLong(subIdP);
+		long artId = Long.parseLong(artIdP);
+		LocalDate d = new DateParam(dateP).getDate();
+		Subscription s = dao.getSubscription(subId);
+		SubscrDelivery del =  dao.createDelivery( s, dao.getSubscrArticle(artId), d);
+		SubscrProduct p = dao.getSubscrProduct(s.getProductId());
+		p.setLastDelivery(d);
+		if (p.getPeriod() != null) {
+			p.setNextDelivery(d.plus(p.getPeriod()));
 		}
-		return new SubscrDispoView(dao, dao.getSubscrProduct(productId ), dao.getSubscriptionsForProduct(productId), art, from);
+		dao.updateSubscrProduct(p);
+		return del;
+	}
+
+	@GET
+	@Path("/createInvoice/{sub}")
+	@Produces(MediaType.TEXT_XML)
+	public PosInvoice createInvoice(@PathParam("sub") String subIdP) {
+		long subId = Long.parseLong(subIdP);
+		PosInvoice inv =  SubscriptionInvoiceCreator.createSubscription(dao, dao.getSubscription(subId));
+		return inv;
+	}
+
+	@Produces({"application/pdf"})
+	@GET
+	@Path("/pdfcreateInvoice/{sub}")
+	public StreamingOutput createPdfInvoice(@PathParam("sub") String subIdP)  {
+		long subId = Long.parseLong(subIdP);
+		return new StreamingOutput() {
+			public void write(OutputStream output) throws IOException, WebApplicationException {
+				try {
+					PDFInvoice generator = new PDFInvoice(SubscriptionInvoiceCreator.createSubscription(dao, dao.getSubscription(subId)));
+					generator.generatePDF(output);
+				} catch (Exception e) {
+					throw new WebApplicationException(e);
+				}
+				output.flush();
+			}
+		};	
+	}
+
+	@GET
+	@Path("/subscrarticlecreate/{prod}")
+	@Produces({"application/json"})
+	public SubscrArticle createSubscrArticle(@PathParam("prod") String prodIdP) {
+		long prodId = Long.parseLong(prodIdP);
+		SubscrArticle art = dao.getSubscrProduct(prodId).createNextArticle(LocalDate.now());
+		dao.insertArticle(art);
+		return art;
+	}
+
+	@GET
+	@Path("/deliverydelete/{id}")
+	@Produces({"text/html"})
+	public View deleteDelivery(@PathParam("id") String deliIdP) {
+		long delId = Long.parseLong(deliIdP);
+		SubscrDelivery del = dao.getSubscrDelivery(delId);
+		Subscription s = dao.getSubscription(del.getSubscriptionId());
+		SubscrProduct p = dao.getSubscrProduct(s.getProductId());
+		if (p.getPeriod() != null) {
+			p.setLastDelivery(p.getLastDelivery() != null ? p.getLastDelivery().minus(p.getPeriod()) : null);
+			p.setNextDelivery(p.getNextDelivery() != null ? p.getNextDelivery().minus(p.getPeriod()) : null);
+		} else {
+			p.setLastDelivery(null);
+		}
+		dao.updateSubscrProduct(p);
+		dao.deleteDelivery(delId);
+		return new SubscrDashboardView(dao, LocalDate.now());
+	}
+
+	@GET
+	@Path("/invoiceRecord/{inv}")
+	@Produces({"application/json"})
+	public void fakturiereInvoice(@PathParam("inv") String invNum) {
+		PosInvoice inv = dao.getTempInvoices(invNum);
+		SubscriptionInvoiceCreator.recordInvoiceOnAgreements(dao, invDao, inv);
+	}
+
+	@GET
+	@Path("/invoiceCancel/{inv}")
+	@Produces({"application/json"})
+	public void cancelInvoice(@PathParam("inv") String invNum) {
+		PosInvoice inv = dao.getTempInvoices(invNum);
+		if (inv != null) {
+			// es ist noch eine temporäre, einfach löschen
+			dao.deleteTempInvoice(invNum);
+			return;
+		}
+		List<PosInvoice> invs = invDao.fetch(invNum);
+		if (invs.size()>1) {
+			throw new WebApplicationException("unable to cancel, more than one invoice with this number", 500);
+		}
+		SubscriptionInvoiceCreator.undoRecordInvoiceOnAgreements(dao, invDao, inv);
+	}
+
+	@GET
+	@Path("/querycustomers")
+	@Produces({"application/json"})
+	public List<Subscriber> querySubscribers(@QueryParam("q") Optional<String> query) {
+		return dao.querySubscribers(query);
+	}
+
+	@GET
+	@Path("/queryproduct")
+	@Produces({"application/json"})
+	public List<SubscrProduct> querySubscrProducts(@QueryParam("q") Optional<String> query) {
+		return dao.querySubscrProducts(query);
+	}
+
+	@GET
+	@Path("/subscrarticle/{dir}/{prod}/{art}")
+	@Produces({"application/json"})
+	public SubscrArticle retrieveSubscrArticle(@PathParam("dir") String dir, @PathParam("prod") String prodIdP, @PathParam("art") String artIdP) {
+		long artId = Long.parseLong(artIdP);
+		if (dir.equals("ex")) {
+			return dao.getSubscrArticle(artId);
+		}
+		long prodId = Long.parseLong(prodIdP);
+		List<SubscrArticle> arts = dao.getArticlesOfProduct(prodId);
+		long[] artIds = arts.stream().mapToLong(SubscrArticle::getId).sorted().toArray();
+		int idx = Arrays.binarySearch(artIds, artId);
+		if (dir.equals("prev") && idx > 0) {
+			return dao.getSubscrArticle(artIds[idx-1]);
+		}
+		if (dir.equals("next") && idx >= 0 && idx < artIds.length-1) {
+			return dao.getSubscrArticle(artIds[idx+1]);
+		}
+		if (dir.equals("next") && idx == artIds.length-1) {
+			return dao.getSubscrArticle(artIds[idx]);
+		}
+		throw new WebApplicationException(404);
+	}
+
+	@GET
+	@Path("/customerCreateForm")
+	@Produces({"text/html"})
+	public View showCustomerAddForm() {
+		return new CustomerAddView(dao);
+	}
+
+	@GET
+	@Path("/customers")
+	@Produces({"text/html"})
+	public View showCustomers() {
+		return new SubscrCustomerView(dao);
+	}
+
+	@GET
+	@Path("/dashboard")
+	@Produces({"text/html"})
+	public View showDashboard() {
+		return new SubscrDashboardView(dao, LocalDate.now());
 	}
 
 	@GET
@@ -390,40 +456,29 @@ public class SubscrResource {
 	}
 
 	@GET
-	@Path("/deliverycreate/{sub}/{art}/{date}")
-	@Produces({"application/json"})
-	public SubscrDelivery createDelivery(@PathParam("sub") String subIdP,@PathParam("art") String artIdP,@PathParam("date") String dateP ) {
-		long subId = Long.parseLong(subIdP);
-		long artId = Long.parseLong(artIdP);
-		LocalDate d = new DateParam(dateP).getDate();
-		Subscription s = dao.getSubscription(subId);
-		SubscrDelivery del =  dao.createDelivery( s, dao.getSubscrArticle(artId), d);
-		SubscrProduct p = dao.getSubscrProduct(s.getProductId());
-		p.setLastDelivery(d);
-		if (p.getPeriod() != null) {
-			p.setNextDelivery(d.plus(p.getPeriod()));
-		}
-		dao.updateSubscrProduct(p);
-		return del;
+	@Path("/deliverynote/{id}")
+	@Produces({"text/html"})
+	public View showDeliveryNote(@PathParam("id") String noteId) {
+		return null;
 	}
 
 	@GET
-	@Path("/deliverydelete/{id}")
+	@Path("/dispo/{prod}")
 	@Produces({"text/html"})
-	public View createDelivery(@PathParam("id") String deliIdP) {
-		long delId = Long.parseLong(deliIdP);
-		SubscrDelivery del = dao.getSubscrDelivery(delId);
-		Subscription s = dao.getSubscription(del.getSubscriptionId());
-		SubscrProduct p = dao.getSubscrProduct(s.getProductId());
-		if (p.getPeriod() != null) {
-			p.setLastDelivery(p.getLastDelivery() != null ? p.getLastDelivery().minus(p.getPeriod()) : null);
-			p.setNextDelivery(p.getNextDelivery() != null ? p.getNextDelivery().minus(p.getPeriod()) : null);
-		} else {
-			p.setLastDelivery(null);
+	public View showDispo(@PathParam("prod") String product, @QueryParam("date") Optional<String> dateP, @QueryParam("artid") Optional<String> artIdP) {
+		long productId = Long.parseLong(product);
+		LocalDate from = new DateParam(dateP.orNull()).getDate();
+		SubscrArticle art = null;
+		if (artIdP.isPresent()) {
+			art = dao.getSubscrArticle(Long.parseLong(artIdP.get()));
 		}
-		dao.updateSubscrProduct(p);
-		dao.deleteDelivery(delId);
-		return new SubscrDashboardView(dao, LocalDate.now());
+		return new SubscrDispoView(dao, dao.getSubscrProduct(productId ), dao.getSubscriptionsForProduct(productId), art, from);
+	}
+
+	@GET
+	@Path("/navigation")
+	public View showNavigation() {
+		return new NavigationView();
 	}
 
 	@GET
@@ -433,14 +488,21 @@ public class SubscrResource {
 		long productId = Long.parseLong(product);
 		return new SubscrProductDetailView(dao, dao.getSubscrProduct(productId ), dao.getSubscriptionsForProduct(productId));
 	}
+	
+	@GET
+	@Path("/productCreateForm")
+	@Produces({"text/html"})
+	public View showProductAddForm() {
+		return new ProductAddView(dao);
+	}
 
 	@GET
-	@Path("/subscription/{sub}")
+	@Path("/products")
 	@Produces({"text/html"})
-	public View showSubscription(@PathParam("sub") String subdIdP) {
-		long subId = Long.parseLong(subdIdP);
-		return new SubscriptionDetailView(dao, invDao, dao.getSubscription(subId));
+	public View showProducts() {
+		return new SubscrProductsView(dao, dao.getSubscrProducts());
 	}
+
 
 	@GET
 	@Path("/subscriber/{sub}")
@@ -451,88 +513,49 @@ public class SubscrResource {
 	}
 
 	@GET
-	@Path("/createInvoice/{sub}")
-	@Produces(MediaType.TEXT_XML)
-	public PosInvoice createInvoice(@PathParam("sub") String subIdP) {
-		long subId = Long.parseLong(subIdP);
-		PosInvoice inv =  SubscriptionInvoiceCreator.createSubscription(dao, dao.getSubscription(subId));
-		invDao.insert(inv);
-		return inv;
-	}
-	
-	@Produces({"application/pdf"})
-	@GET
-	@Path("/pdfcreateInvoice/{sub}")
-	public StreamingOutput fetchPdfForDate(@PathParam("sub") String subIdP)  {
-		long subId = Long.parseLong(subIdP);
-		return new StreamingOutput() {
-			public void write(OutputStream output) throws IOException, WebApplicationException {
-				try {
-					PDFInvoice generator = new PDFInvoice(SubscriptionInvoiceCreator.createSubscription(dao, dao.getSubscription(subId)));
-					generator.generatePDF(output);
-				} catch (Exception e) {
-					throw new WebApplicationException(e);
-				}
-				output.flush();
-			}
-		};	
-	}
-
-	@GET
-	@Path("/createCollInvoice/{sub}")
-	@Produces({"application/json"})
-	public PosInvoice createCollInvoice(@PathParam("sub") String subIdP) {
-		long subId = Long.parseLong(subIdP);
-		PosInvoice inv = SubscriptionInvoiceCreator.createCollectiveSubscription(dao, dao.getSubscriber(subId));
-		invDao.insert(inv);
-		return inv;
-	}
-
-
-	@Produces({"application/pdf"})
-	@GET
-	@Path("/pdfcreateCollInvoice/{sub}")
-	public StreamingOutput createPdfCollInvoice(@PathParam("sub") String subIdP)  {
-		long subId = Long.parseLong(subIdP);
-		return new StreamingOutput() {
-			public void write(OutputStream output) throws IOException, WebApplicationException {
-				try {
-					PDFInvoice generator = new PDFInvoice(SubscriptionInvoiceCreator.createCollectiveSubscription(dao, dao.getSubscriber(subId)));
-					generator.generatePDF(output);
-				} catch (Exception e) {
-					throw new WebApplicationException(e);
-				}
-				output.flush();
-			}
-		};	
-	}
-
-	@GET
-	@Path("/deliverynote/{id}")
+	@Path("/subscription/{sub}")
 	@Produces({"text/html"})
-	public View showDeliveryNote(@PathParam("id") String noteId) {
-		return null;
+	public View showSubscription(@PathParam("sub") String subdIdP) {
+		long subId = Long.parseLong(subdIdP);
+		return new SubscriptionDetailView(dao, invDao, dao.getSubscription(subId));
 	}
 	
 	@GET
-	@Path("/navigation")
-	public View getMappings() {
-		return new NavigationView();
+	@Path("/subscriptionCreateForm")
+	@Produces({"text/html"})
+	public View showSubscriptionAddForm(@QueryParam("sub") Optional<String> subIdP, @QueryParam("prod") Optional<String> prodIdP) {
+		Subscriber s =  subIdP.transform(x -> dao.getSubscriber(Long.parseLong(x))).orNull();
+		SubscrProduct  p =  prodIdP.transform(x -> dao.getSubscrProduct(Long.parseLong(x))).orNull();
+		return new SubscriptionAddView(dao,s,p);
 	}
 	
 	
-	private static class DateParam {
-		private LocalDate date;
-		public DateParam(String dateStr) {
-			if (dateStr != null) { 
-				date = DateTimeFormat.forPattern("yyyy-MM-dd").parseLocalDate(dateStr);
-			} else {
-				date = LocalDate.now();
-			}
+	@POST
+	@Path("/update")
+	@Produces({"application/json"})
+	public UpdateResult updateMaping( @FormParam("pk") String pk, @FormParam("name") String fieldname, @FormParam("value") String value) {
+		UpdateResult res = null;
+		if (fieldname.startsWith("article")) {
+			res = new SubscrArticleUpdateHelper(dao).update(pk, fieldname, value);
 		}
-		public LocalDate getDate() {
-			return date;
+		if (fieldname.startsWith("subscriber")) {
+			res = new SubscriberUpdateHelper(dao).update(pk, fieldname, value);
 		}
+		if (fieldname.startsWith("subscription")) {
+			res = new SubscriptionUpdateHelper(dao).update(pk, fieldname, value);
+		}
+		if (fieldname.startsWith("product")) {
+			res = new SubscrProductUpdateHelper(dao).update(pk, fieldname, value);
+		}
+		if (fieldname.startsWith("delivery")) {
+			res = new SubscrDeliveryUpdateHelper(dao).update(pk, fieldname, value);
+		}
+		if (res == null) {
+			res = new UpdateResult();
+			res.success = false;
+			res.msg =" not implemented yet";
+		}
+		return res;
 	}
 	
 }

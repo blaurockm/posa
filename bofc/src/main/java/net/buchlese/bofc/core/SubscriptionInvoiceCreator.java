@@ -11,6 +11,7 @@ import net.buchlese.bofc.api.subscr.SubscrArticle;
 import net.buchlese.bofc.api.subscr.SubscrDelivery;
 import net.buchlese.bofc.api.subscr.Subscriber;
 import net.buchlese.bofc.api.subscr.Subscription;
+import net.buchlese.bofc.jdbi.bofc.PosInvoiceDAO;
 import net.buchlese.bofc.jdbi.bofc.SubscrDAO;
 
 import org.joda.time.DateTime;
@@ -26,7 +27,9 @@ public class SubscriptionInvoiceCreator {
 	 * @return
 	 */
 	public static PosInvoice createCollectiveSubscription(SubscrDAO dao, Subscriber subscriber) {
-		return createSubscription(dao, subscriber, dao.getSubscriptionsForSubscriber(subscriber.getId()));
+		PosInvoice inv = createSubscription(dao, subscriber, dao.getSubscriptionsForSubscriber(subscriber.getId()));
+		inv.setCollective(true);
+		return inv;
 	}
 
 	/**
@@ -39,18 +42,49 @@ public class SubscriptionInvoiceCreator {
 		return createSubscription(dao, dao.getSubscriber(sub.getSubscriberId()), Arrays.asList(sub));
 	}
 
-	public static void recordInvoiceOnAgreements(SubscrDAO dao, PosInvoice inv) {
+	/**
+	 * festschreiben einer Rechnung
+	 * @param dao
+	 * @param invDao
+	 * @param inv
+	 */
+	public static void recordInvoiceOnAgreements(SubscrDAO dao, PosInvoiceDAO invDao, PosInvoice inv) {
 		for (InvoiceAgrDetail iad : inv.getAgreementDetails()) {
 			Subscription sub = dao.getSubscription(iad.getAgreementId());
 			sub.setPayedUntil(iad.getDeliveryTill());
-			dao.recordDetailsOnvInvoice(iad.getDeliveryIds(), inv.getNumber());
+			dao.recordDetailsOnInvoice(iad.getDeliveryIds(), inv.getNumber());
+			dao.updateSubscription(sub);
 		}
+		inv.setTemporary(false);
+		invDao.insert(inv);
+		dao.deleteTempInvoice(inv.getNumber());
+	}
+
+	/**
+	 * festschreiben einer Rechnung wieder rückgängig machen
+	 * @param dao
+	 * @param invDao
+	 * @param inv
+	 */
+	public static void undoRecordInvoiceOnAgreements(SubscrDAO dao, PosInvoiceDAO invDao, PosInvoice inv) {
+		for (InvoiceAgrDetail iad : inv.getAgreementDetails()) {
+			Subscription sub = dao.getSubscription(iad.getAgreementId());
+			sub.setPayedUntil(iad.getDeliveryFrom().minusDays(1));
+			dao.recordDetailsOnInvoice(iad.getDeliveryIds(), inv.getNumber());
+			dao.resetDetailsOfInvoice(iad.getDeliveryIds());
+			dao.updateSubscription(sub);
+		}
+		inv.setTemporary(false);
+		inv.setCancelled(true);
+	//	invDao.updateInv(inv);
 	}
 	
+
 	
 	public static PosInvoice createSubscription(SubscrDAO dao, Subscriber subscriber, List<Subscription> subs) {
 		PosInvoice inv = createInvoice(subscriber.getPointid(), subscriber);
-		
+		inv.setTemporary(true);
+		dao.insertTempInvoice(inv);
 		// details
 		for(Subscription sub : subs) {
 			InvoiceAgrDetail iad = null;
@@ -157,6 +191,10 @@ public class SubscriptionInvoiceCreator {
 		inv.setAmountFull(0L);
 		inv.setAmountHalf(0L);
 		inv.setAmountNone(0L);
+		inv.setPrinted(false);
+		inv.setCollective(false);
+		inv.setType("subscr");
+		inv.setTemporary(false);
 		
 		// Rechnungsadresse
 		inv.setName1(subscri.getInvoiceAddress().getName1());

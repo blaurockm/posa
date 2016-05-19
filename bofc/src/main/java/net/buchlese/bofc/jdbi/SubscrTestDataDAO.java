@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import net.buchlese.bofc.api.bofc.PosInvoice;
 import net.buchlese.bofc.api.subscr.Address;
 import net.buchlese.bofc.api.subscr.PayIntervalType;
 import net.buchlese.bofc.api.subscr.ShipType;
@@ -31,6 +32,7 @@ public class SubscrTestDataDAO implements SubscrDAO {
 	private List<Subscription> subscriptions;
 	private List<SubscrArticle> articles;
 	private List<SubscrDelivery> deliveries;
+	private List<PosInvoice> tempInvoices;
 	
 	private static long idcounter = 10;
 	
@@ -42,7 +44,35 @@ public class SubscrTestDataDAO implements SubscrDAO {
 		createDeliveries();
 		
 		createDeliveriesForToday();
+		
+		tempInvoices = new ArrayList<PosInvoice>();
 	}
+
+	@Override 
+	public void deleteTempInvoice(String invNumber) {
+		tempInvoices = tempInvoices.stream().filter(x -> x.getNumber() != invNumber).collect(Collectors.toList());
+	}
+
+	@Override 
+	public List<PosInvoice> getTempInvoices() {
+		return tempInvoices;
+	}
+	
+	@Override
+	public void insertTempInvoice(PosInvoice ti) {
+		tempInvoices.add(ti);
+	}
+
+	@Override
+	public PosInvoice getTempInvoices(String invNum) {
+		return tempInvoices.stream().filter(x -> x.getNumber() == invNum).findFirst().orElse(null);
+	}
+
+	@Override
+	public void resetDetailsOfInvoice(List<Long> deliveryId) {
+		deliveryId.stream().forEach(i -> { SubscrDelivery x= getSubscrDelivery(i); x.setPayed(false); x.setInvoiceNumber(null); } );
+	}
+
 
 	public Subscriber getSubscriber(final long id) {
 		return subscribers.stream().filter(x -> x.getId() == id).findFirst().orElse(null);
@@ -124,7 +154,7 @@ public class SubscrTestDataDAO implements SubscrDAO {
 	}
 	
 	@Override
-	public void recordDetailsOnvInvoice(List<Long> deliveryId, String invNumber) {
+	public void recordDetailsOnInvoice(List<Long> deliveryId, String invNumber) {
 		deliveryId.stream().forEach(i -> { SubscrDelivery x= getSubscrDelivery(i); x.setPayed(true); x.setInvoiceNumber(invNumber); } );
 	}
 	
@@ -447,7 +477,5 @@ public class SubscrTestDataDAO implements SubscrDAO {
 		p.setHalfPercentage(halfPercentage);
 		products.add(p);
 	}
-
-
 
 }
