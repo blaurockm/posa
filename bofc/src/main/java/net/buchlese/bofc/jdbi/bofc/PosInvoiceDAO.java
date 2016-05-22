@@ -53,4 +53,8 @@ public interface PosInvoiceDAO {
 	@SqlQuery("select max(debitor) from posinvoice where pointid = :pointid and customer = :customerid ")
 	Integer mapDebitor(@Bind("pointid") Integer pointid, @Bind("customerid") Integer customerId);
 
+	@SqlUpdate("update posinvoice set (complJson, printed, temporary, exported, exportDate, printdate, payed, cancelled) " +
+	" = (:complJson, :printed, :temporary, :exported, :exportDate, :printTime, :payed, :cancelled) where id = :id")
+	void updateInvoice(@Valid @BindBean PosInvoice inv);
+
 }

@@ -9,6 +9,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import net.buchlese.bofc.api.bofc.PosInvoice;
+import net.buchlese.bofc.api.bofc.UserChange;
 import net.buchlese.bofc.api.subscr.Address;
 import net.buchlese.bofc.api.subscr.PayIntervalType;
 import net.buchlese.bofc.api.subscr.ShipType;
@@ -32,6 +33,8 @@ public class SubscrTestDataDAO implements SubscrDAO {
 	private List<SubscrDelivery> deliveries;
 	private List<PosInvoice> tempInvoices;
 	
+	private List<UserChange> changes;
+	
 	private static long idcounter = 10;
 	
 	public SubscrTestDataDAO() {
@@ -44,6 +47,7 @@ public class SubscrTestDataDAO implements SubscrDAO {
 		createDeliveriesForToday();
 		
 		tempInvoices = new ArrayList<PosInvoice>();
+		changes = new ArrayList<UserChange>();
 	}
 
 	@Override 
@@ -474,6 +478,11 @@ public class SubscrTestDataDAO implements SubscrDAO {
 		d.setCreationDate(DateTime.now());
 		insertDelivery(d);
 		return d;
+	}
+
+	@Override
+	public void insert(UserChange u) {
+		changes.add(u);
 	}
 
 }

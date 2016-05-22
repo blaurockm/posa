@@ -1,5 +1,8 @@
 package net.buchlese.bofc.jdbi.bofc;
 
+import io.dropwizard.jackson.Jackson;
+
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -10,31 +13,39 @@ import org.joda.time.LocalDate;
 import org.skife.jdbi.v2.StatementContext;
 import org.skife.jdbi.v2.tweak.ResultSetMapper;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 public class PosInvoiceMapper implements ResultSetMapper<PosInvoice> {
 
 	public PosInvoice map(int arg0, ResultSet rs, StatementContext ctx) throws SQLException {
-		PosInvoice tx = new PosInvoice();
-		tx.setId(rs.getLong("id"));
-		tx.setNumber(rs.getString("number"));
-		tx.setCustomerId(rs.getInt("customer"));
-		tx.setPointid(rs.getInt("pointid"));
-		tx.setDebitorId(rs.getInt("debitor"));
-		tx.setAmount(rs.getLong("amount"));
-		tx.setAmountFull(rs.getLong("amountFull"));
-		tx.setAmountHalf(rs.getLong("amountHalf"));
-		tx.setAmountNone(rs.getLong("amountNone"));
-		tx.setDate(new LocalDate(rs.getTimestamp("invDate")));
-		tx.setCreationTime(new DateTime(rs.getTimestamp("creationtime")));
-		tx.setPrintTime(new DateTime(rs.getTimestamp("printdate")));
-		tx.setName1(rs.getString("name1"));
-		tx.setName2(rs.getString("name2"));
-		tx.setName3(rs.getString("name3"));
-		tx.setStreet(rs.getString("street"));
-		tx.setCity(rs.getString("city"));
-		tx.setPayed(rs.getBoolean("payed"));
-		tx.setCancelled(rs.getBoolean("cancelled"));
-		tx.setActionum(rs.getInt("actionum"));
-		return tx;
+		PosInvoice inv = new PosInvoice();
+		ObjectMapper om = Jackson.newObjectMapper();
+		try {
+			inv = om.readValue(rs.getString("complJson"), PosInvoice.class);
+		} catch (IOException e) {
+			throw new SQLException(e);
+		}
+		inv.setId(rs.getLong("id"));
+		inv.setNumber(rs.getString("number"));
+		inv.setCustomerId(rs.getInt("customer"));
+		inv.setPointid(rs.getInt("pointid"));
+		inv.setDebitorId(rs.getInt("debitor"));
+		inv.setAmount(rs.getLong("amount"));
+		inv.setAmountFull(rs.getLong("amountFull"));
+		inv.setAmountHalf(rs.getLong("amountHalf"));
+		inv.setAmountNone(rs.getLong("amountNone"));
+		inv.setDate(new LocalDate(rs.getTimestamp("invDate")));
+		inv.setCreationTime(new DateTime(rs.getTimestamp("creationtime")));
+		inv.setPrintTime(new DateTime(rs.getTimestamp("printdate")));
+		inv.setName1(rs.getString("name1"));
+		inv.setName2(rs.getString("name2"));
+		inv.setName3(rs.getString("name3"));
+		inv.setStreet(rs.getString("street"));
+		inv.setCity(rs.getString("city"));
+		inv.setPayed(rs.getBoolean("payed"));
+		inv.setCancelled(rs.getBoolean("cancelled"));
+		inv.setActionum(rs.getInt("actionum"));
+		return inv;
 	}
 
 }

@@ -97,6 +97,16 @@ Path.map("#subscrInvoices").to(function(){
     $("#output .content").load("/subscr/invoices");
 }).enter(setSubscrModule);
 
+Path.map("#invoiceCancel/:id").to(function(){
+    $("#output .content").load("/subscr/invoiceCancel/" + this.params["id"]);
+    window.history.back();  // in der history einen schritt zurückgehen
+}).enter(setSubscrModule);
+
+Path.map("#invoiceRecord/:id").to(function(){
+    $("#output .content").load("/subscr/invoiceRecord/" + this.params["id"]);
+    window.history.back();  // in der history einen schritt zurückgehen
+}).enter(setSubscrModule);
+
 Path.map("#subscrProduct/:id").to(function(){
     $("#output .content").load("/subscr/product/" + this.params["id"]);
 }).enter(setSubscrModule);

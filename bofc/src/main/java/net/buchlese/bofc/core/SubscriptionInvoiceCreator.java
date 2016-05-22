@@ -26,8 +26,8 @@ public class SubscriptionInvoiceCreator {
 	 * @param subscriber
 	 * @return
 	 */
-	public static PosInvoice createCollectiveSubscription(SubscrDAO dao, Subscriber subscriber) {
-		PosInvoice inv = createSubscription(dao, subscriber, dao.getSubscriptionsForSubscriber(subscriber.getId()));
+	public static PosInvoice createCollectiveSubscription(SubscrDAO dao, Subscriber subscriber, NumberGenerator numgen) {
+		PosInvoice inv = createSubscription(dao, subscriber, dao.getSubscriptionsForSubscriber(subscriber.getId()), numgen);
 		inv.setCollective(true);
 		return inv;
 	}
@@ -38,8 +38,8 @@ public class SubscriptionInvoiceCreator {
 	 * @param sub
 	 * @return
 	 */
-	public static PosInvoice createSubscription(SubscrDAO dao, Subscription sub) {
-		return createSubscription(dao, dao.getSubscriber(sub.getSubscriberId()), Arrays.asList(sub));
+	public static PosInvoice createSubscription(SubscrDAO dao, Subscription sub, NumberGenerator numgen) {
+		return createSubscription(dao, dao.getSubscriber(sub.getSubscriberId()), Arrays.asList(sub), numgen);
 	}
 
 	/**
@@ -76,15 +76,15 @@ public class SubscriptionInvoiceCreator {
 		}
 		inv.setTemporary(false);
 		inv.setCancelled(true);
-	//	invDao.updateInv(inv);
+		invDao.updateInvoice(inv);
+		// TODO - stornorechnung erzeugen
 	}
 	
 
 	
-	public static PosInvoice createSubscription(SubscrDAO dao, Subscriber subscriber, List<Subscription> subs) {
-		PosInvoice inv = createInvoice(subscriber.getPointid(), subscriber);
+	public static PosInvoice createSubscription(SubscrDAO dao, Subscriber subscriber, List<Subscription> subs, NumberGenerator numgen) {
+		PosInvoice inv = createInvoice(subscriber.getPointid(), subscriber, numgen);
 		inv.setTemporary(true);
-		dao.insertTempInvoice(inv);
 		// details
 		for(Subscription sub : subs) {
 			InvoiceAgrDetail iad = null;
@@ -108,6 +108,7 @@ public class SubscriptionInvoiceCreator {
 			inv.setTax(inv.getTax() + inv.getTaxFull());
 		}
 		
+		dao.insertTempInvoice(inv);
 		return inv;
 	}
 
@@ -175,11 +176,11 @@ public class SubscriptionInvoiceCreator {
 	
 	
 	
-	private static PosInvoice createInvoice(int pointId, Subscriber subscri) {
+	private static PosInvoice createInvoice(int pointId, Subscriber subscri, NumberGenerator numgen) {
 		PosInvoice inv = new PosInvoice();
 		
 		// formalia
-		inv.setNumber(NumberGenerator.createNumber(pointId));
+		inv.setNumber(numgen.getNextInvoiceNumber(pointId));
 		inv.setDate(LocalDate.now());
 		inv.setCreationTime(DateTime.now());
 		inv.setCustomerId(subscri.getCustomerId());

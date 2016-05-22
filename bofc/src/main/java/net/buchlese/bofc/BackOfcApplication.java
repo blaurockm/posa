@@ -55,7 +55,6 @@ public class BackOfcApplication extends Application<BackOfcConfiguration> {
 		ShiftCalDAO shiftCalDao = guiceBundle.getInjector().getInstance(ShiftCalDAO.class);
 	    Employee.inject(shiftCalDao.fetchEmployees());
 	    Shop.inject(shiftCalDao.fetchShops());
-	    
 	}
 
 }

@@ -2,11 +2,8 @@ package net.buchlese.bofc.resources;
 
 import io.dropwizard.views.View;
 
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -26,6 +23,8 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 
 import net.buchlese.bofc.api.bofc.PosInvoice;
+import net.buchlese.bofc.api.bofc.ReportDeliveryProtocol;
+import net.buchlese.bofc.api.bofc.UserChange;
 import net.buchlese.bofc.api.subscr.Address;
 import net.buchlese.bofc.api.subscr.PayIntervalType;
 import net.buchlese.bofc.api.subscr.ShipType;
@@ -36,7 +35,9 @@ import net.buchlese.bofc.api.subscr.Subscriber;
 import net.buchlese.bofc.api.subscr.Subscription;
 import net.buchlese.bofc.core.NumberGenerator;
 import net.buchlese.bofc.core.PDFInvoice;
+import net.buchlese.bofc.core.PDFReport;
 import net.buchlese.bofc.core.SubscriptionInvoiceCreator;
+import net.buchlese.bofc.core.reports.ReportDeliveryProtocolCreator;
 import net.buchlese.bofc.jdbi.bofc.PosInvoiceDAO;
 import net.buchlese.bofc.jdbi.bofc.SubscrDAO;
 import net.buchlese.bofc.resources.helper.SubscrArticleUpdateHelper;
@@ -59,6 +60,7 @@ import net.buchlese.bofc.view.subscr.SubscriberDetailView;
 import net.buchlese.bofc.view.subscr.SubscriptionAddView;
 import net.buchlese.bofc.view.subscr.SubscriptionDetailView;
 
+import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.Period;
@@ -87,11 +89,25 @@ public class SubscrResource {
 	
 	private final PosInvoiceDAO invDao;
 
+	private final NumberGenerator numGen;
+	
+	private void recordUserChange(SubscrDAO dao, String login, long object, String fieldId, String newValue, String action) {
+		UserChange uc = new UserChange();
+		uc.setLogin(login);
+		uc.setObjectId(object);
+		uc.setFieldId(fieldId);
+		uc.setNewValue(newValue);
+		uc.setAction(StringUtils.left(action, 1));
+		uc.setModDate(DateTime.now());
+		dao.insert(uc);
+	}
+	
 	@Inject
-	public SubscrResource(PosInvoiceDAO invd, SubscrDAO sdao) {
+	public SubscrResource(PosInvoiceDAO invd, SubscrDAO sdao, NumberGenerator g) {
 		super();
 		this.invDao = invd;
 		this.dao = sdao;
+		this.numGen =g;
 	}
 
 	@POST
@@ -108,7 +124,7 @@ public class SubscrResource {
 			}
 		}
 		if (s.getCustomerId() == 0) {
-			s.setCustomerId(Integer.parseInt(NumberGenerator.createNumber(s.getPointid())));
+			s.setCustomerId(numGen.getNextCustomerNumber(s.getPointid()));
 		}
 		if (par.containsKey("collectiveInvoice")) {
 			s.setCollectiveInvoice(true);
@@ -132,6 +148,7 @@ public class SubscrResource {
 			s.setInvoiceAddress(a);
 		}
 		dao.insertSubscriber(s);
+		recordUserChange(dao, "master", s.getCustomerId(), "customer", null, "N");
 		return new SubscrCustomerView(dao);
 	}
 
@@ -183,6 +200,7 @@ public class SubscrResource {
 			a.setCity(par.getFirst("deliveryAddress.city"));
 		}
 		dao.insertSubscription(s);
+		recordUserChange(dao, "master", s.getId(), "subscription", null, "N");
 	}
 
 
@@ -216,8 +234,10 @@ public class SubscrResource {
 			p.setHalfPercentage(1d);
 		}
 		dao.insertSubscrProduct(p);
+		recordUserChange(dao, "master", p.getId(), "subscrProduct", null, "N");
 		SubscrArticle art = p.createNextArticle(LocalDate.now());
 		dao.insertArticle(art);
+		recordUserChange(dao, "master", art.getId(), "subscrArticle", null, "N");
 		return new SubscrProductDetailView(dao, p, Collections.emptyList());
 	}
 
@@ -226,7 +246,8 @@ public class SubscrResource {
 	@Produces({"application/json"})
 	public PosInvoice createCollInvoice(@PathParam("sub") String subIdP) {
 		long subId = Long.parseLong(subIdP);
-		PosInvoice inv = SubscriptionInvoiceCreator.createCollectiveSubscription(dao, dao.getSubscriber(subId));
+		PosInvoice inv = SubscriptionInvoiceCreator.createCollectiveSubscription(dao, dao.getSubscriber(subId), numGen);
+		recordUserChange(dao, "master", inv.getId(), "collInvoice " + inv.getNumber(), null, "N");
 		return inv;
 	}
 
@@ -238,7 +259,9 @@ public class SubscrResource {
 		return new StreamingOutput() {
 			public void write(OutputStream output) throws IOException, WebApplicationException {
 				try {
-					PDFInvoice generator = new PDFInvoice(SubscriptionInvoiceCreator.createCollectiveSubscription(dao, dao.getSubscriber(subId)));
+					PosInvoice inv = SubscriptionInvoiceCreator.createCollectiveSubscription(dao, dao.getSubscriber(subId), numGen);
+					PDFInvoice generator = new PDFInvoice(inv);
+					recordUserChange(dao, "master", inv.getId(), "collInvoice " + inv.getNumber(), null, "N");
 					generator.generatePDF(output);
 				} catch (Exception e) {
 					throw new WebApplicationException(e);
@@ -280,6 +303,7 @@ public class SubscrResource {
 		d.setCreationDate(DateTime.now());
 
 		dao.insertDelivery(d);
+		recordUserChange(dao, "master", d.getId(), "subscrDelivery", null, "N");
 		SubscrProduct p = dao.getSubscrProduct(subscription.getProductId());
 		p.setLastDelivery(deliveryDate);
 		if (p.getPeriod() != null) {
@@ -294,7 +318,8 @@ public class SubscrResource {
 	@Produces(MediaType.TEXT_XML)
 	public PosInvoice createInvoice(@PathParam("sub") String subIdP) {
 		long subId = Long.parseLong(subIdP);
-		PosInvoice inv =  SubscriptionInvoiceCreator.createSubscription(dao, dao.getSubscription(subId));
+		PosInvoice inv =  SubscriptionInvoiceCreator.createSubscription(dao, dao.getSubscription(subId), numGen);
+		recordUserChange(dao, "master", inv.getId(), "invoice " + inv.getNumber(), null, "N");
 		return inv;
 	}
 
@@ -306,7 +331,9 @@ public class SubscrResource {
 		return new StreamingOutput() {
 			public void write(OutputStream output) throws IOException, WebApplicationException {
 				try {
-					PDFInvoice generator = new PDFInvoice(SubscriptionInvoiceCreator.createSubscription(dao, dao.getSubscription(subId)));
+					PosInvoice inv = SubscriptionInvoiceCreator.createSubscription(dao, dao.getSubscription(subId), numGen);
+					recordUserChange(dao, "master", inv.getId(), "invoice " + inv.getNumber(), null, "N");
+					PDFInvoice generator = new PDFInvoice(inv);
 					generator.generatePDF(output);
 				} catch (Exception e) {
 					throw new WebApplicationException(e);
@@ -323,6 +350,7 @@ public class SubscrResource {
 		long prodId = Long.parseLong(prodIdP);
 		SubscrArticle art = dao.getSubscrProduct(prodId).createNextArticle(LocalDate.now());
 		dao.insertArticle(art);
+		recordUserChange(dao, "master", art.getId(), "subscrArticle", null, "N");
 		return art;
 	}
 
@@ -342,15 +370,18 @@ public class SubscrResource {
 		}
 		dao.updateSubscrProduct(p);
 		dao.deleteDelivery(delId);
+		recordUserChange(dao, "master", delId, "subscrArticle", null, "D");
 		return new SubscrDashboardView(dao, LocalDate.now());
 	}
 
 	@GET
 	@Path("/invoiceRecord/{inv}")
-	@Produces({"application/json"})
-	public void fakturiereInvoice(@PathParam("inv") String invNum) {
+	@Produces({"text/html"})
+	public View fakturiereInvoice(@PathParam("inv") String invNum) {
 		PosInvoice inv = dao.getTempInvoice(invNum);
 		SubscriptionInvoiceCreator.recordInvoiceOnAgreements(dao, invDao, inv);
+		recordUserChange(dao, "master", inv.getId(), "invoice", null, "F");
+		return new InvoicesView(dao, invDao);
 	}
 
 	@GET
@@ -371,19 +402,22 @@ public class SubscrResource {
 
 	@GET
 	@Path("/invoiceCancel/{inv}")
-	@Produces({"application/json"})
-	public void cancelInvoice(@PathParam("inv") String invNum) {
+	@Produces({"text/html"})
+	public View cancelInvoice(@PathParam("inv") String invNum) {
 		PosInvoice inv = dao.getTempInvoice(invNum);
 		if (inv != null) {
 			// es ist noch eine temporäre, einfach löschen
 			dao.deleteTempInvoice(invNum);
-			return;
+			recordUserChange(dao, "master", inv.getId(), "invoice", null, "C");
+			return new InvoicesView(dao, invDao);
 		}
 		List<PosInvoice> invs = invDao.fetch(invNum);
 		if (invs.size()>1 || invs.isEmpty()) {
 			throw new WebApplicationException("unable to cancel, more than one or no invoice with this number " + invNum, 500);
 		}
-		SubscriptionInvoiceCreator.undoRecordInvoiceOnAgreements(dao, invDao, inv);
+		SubscriptionInvoiceCreator.undoRecordInvoiceOnAgreements(dao, invDao, invs.get(0));
+		recordUserChange(dao, "master", invs.get(0).getId(), "invoice", null, "C");
+		return new InvoicesView(dao, invDao);
 	}
 
 	@GET
@@ -470,42 +504,20 @@ public class SubscrResource {
 	@Path("/deliveraddresslist")
 	@Produces({"text/plain"})
 	public Response showDeliveryAdresses(@QueryParam("date") Optional<String> dateP) {
-		final List<SubscrDelivery> deliveries = dao.getDeliveries(new DateParam(dateP.orNull()).getDate());
 		StreamingOutput stream = new StreamingOutput() {
 			@Override
 			public void write(OutputStream os) throws IOException,  WebApplicationException {
-				Writer writer = new BufferedWriter(new OutputStreamWriter(os, "iso-8859-1"));
-				for (SubscrDelivery del : deliveries) {
-					Subscription sub = dao.getSubscription(del.getSubscriptionId());
-					if (sub.getDeliveryAddress() != null) {
-						writeAddress(writer, sub.getDeliveryAddress(), sub.getDeliveryInfo1(), sub.getDeliveryInfo2());
-					} else {
-						Subscriber s = dao.getSubscriber(del.getSubscriberId());
-						writeAddress(writer, s.getInvoiceAddress(), sub.getDeliveryInfo1(), sub.getDeliveryInfo2());
-					}
-					writer.write("\n\n");
+				try {
+					LocalDate date = new DateParam(dateP.orNull()).getDate();
+					ReportDeliveryProtocol rep = ReportDeliveryProtocolCreator.create(dao, date);
+					PDFReport generator = new PDFReport(rep, "report/deliveryProtocol.xsl");
+					generator.generatePDF(os);
+				} catch (Exception e) {
+					throw new WebApplicationException(e);
 				}
-				writer.flush();
-			}
-			private void writeAddress(Writer w, Address a, String add1, String add2) throws IOException {
-				w.write(a.getName1() + "\n");
-				if (a.getName2() != null) {
-					w.write(a.getName2() + "\n");
-				}
-				if (a.getName3() != null) {
-					w.write(a.getName3() + "\n");
-				}
-				if (add1 != null) {
-					w.write(add1 + "\n");
-				}
-				if (add2 != null) {
-					w.write(add2 + "\n");
-				}
-				w.write(a.getStreet() + "\n");
-				w.write(a.getPostalcode() + " " + a.getCity() + "\n");
+				os.flush();
 			}
 		};
-//		return Response.ok(stream).header("Content-Disposition","attachment; filename=adressenliste.txt").build();
 		return Response.ok(stream).build();
 	}
 
@@ -608,8 +620,12 @@ public class SubscrResource {
 			res = new UpdateResult();
 			res.success = false;
 			res.msg =" not implemented yet";
+		} else {
+			recordUserChange(dao, "master", Long.parseLong(pk), fieldname, value, "U");
 		}
 		return res;
 	}
+
+	
 	
 }

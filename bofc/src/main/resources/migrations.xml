@@ -251,7 +251,22 @@
          <column name="num" type="bigint"/>
          <column name="complJson" type="clob"/>
      </createTable>
-     
    </changeSet>
+
+
+   <changeSet id="userChanges" author="mblaurock">
+     <createTable tableName="userchanges">
+         <column name="id" type="bigint" autoIncrement="true">
+            <constraints primaryKey="true" nullable="false" />
+         </column>
+         <column name="objectId" type="bigint"/>
+         <column name="login" type="varchar(10)"/>
+         <column name="fieldid" type="varchar(100)"/>
+         <column name="oldvalue" type="varchar(100)"/>
+         <column name="newvalue" type="varchar(100)"/>
+         <column name="action" type="varchar(1)"/>
+         <column name="modDate" type="DATETIME"/>
+     </createTable>
+   </changeSet>   
    
 </databaseChangeLog>

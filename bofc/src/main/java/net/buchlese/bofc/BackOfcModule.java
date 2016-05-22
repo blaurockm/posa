@@ -2,6 +2,7 @@ package net.buchlese.bofc;
 
 import io.dropwizard.jdbi.DBIFactory;
 import io.dropwizard.setup.Environment;
+import net.buchlese.bofc.core.NumberGenerator;
 import net.buchlese.bofc.jdbi.bofc.JodaLocalDateArgumentFactory;
 import net.buchlese.bofc.jdbi.bofc.JodaLocalDateMapper;
 import net.buchlese.bofc.jdbi.bofc.MappingDAO;
@@ -30,6 +31,7 @@ public class BackOfcModule extends AbstractModule {
 
 	}
 	private DBI bofcDBI;
+	private NumberGenerator numService;
 	
 	@Provides
 	@Named("bofcdb")
@@ -46,6 +48,16 @@ public class BackOfcModule extends AbstractModule {
 		return bofcDBI;
 	}
 
+	@Provides
+	@Inject
+	public NumberGenerator provideNumberService(@Named("bofcdb")DBI posDBI) {
+		if (numService == null) {
+			numService = new NumberGenerator(posDBI);
+		}
+		return numService;
+	}
+
+	
 	@Provides @Inject
 	public PosTxDAO providePosTxDao(@Named("bofcdb")DBI posDBI) {
 		return posDBI.onDemand(PosTxDAO.class);
