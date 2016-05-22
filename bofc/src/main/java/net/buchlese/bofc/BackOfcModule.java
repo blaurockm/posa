@@ -11,6 +11,7 @@ import net.buchlese.bofc.jdbi.bofc.PosInvoiceDAO;
 import net.buchlese.bofc.jdbi.bofc.PosTicketDAO;
 import net.buchlese.bofc.jdbi.bofc.PosTxDAO;
 import net.buchlese.bofc.jdbi.bofc.ShiftCalDAO;
+import net.buchlese.bofc.jdbi.bofc.SubscrDAO;
 import net.buchlese.bofc.jdbi.bofc.TaxArgumentFactory;
 import net.buchlese.bofc.jdbi.bofc.TxTypeArgumentFactory;
 
@@ -69,6 +70,10 @@ public class BackOfcModule extends AbstractModule {
 	@Provides @Inject
 	public ShiftCalDAO provideShiftCalDAO(@Named("bofcdb")DBI posDBI) {
 		return posDBI.onDemand(ShiftCalDAO.class);
+	}
+	@Provides @Inject
+	public SubscrDAO provideSubscrDAO(@Named("bofcdb")DBI posDBI) {
+		return posDBI.onDemand(SubscrDAO.class);
 	}
 
 }

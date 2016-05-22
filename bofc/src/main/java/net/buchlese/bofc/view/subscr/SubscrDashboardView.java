@@ -23,9 +23,9 @@ public class SubscrDashboardView extends AbstractBofcView {
 	public SubscrDashboardView(SubscrDAO dao, LocalDate d) {
 		super("subscrdashboard.ftl");
 		this.dao = dao;
-		this.products = dao.getProductsForTheNextWeek(d);
+		this.products = dao.getProductsForTimespan(d, d.plusWeeks(1));
 		this.deliveries = dao.getDeliveries(d);
-		this.subscriptions = dao.getSubscriptionsForThisMonth(d);
+		this.subscriptions = dao.getSubscriptionsForTimespan(d, d.plusMonths(1));
 		this.tempInvoices = dao.getTempInvoices();
 	}
 

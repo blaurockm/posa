@@ -185,5 +185,73 @@
          <column name="cancelled" type="boolean"/>
      </addColumn>
    </changeSet>
+
+   <changeSet id="subscrI" author="mblaurock">
+     <addColumn tableName="posInvoice">
+         <column name="complJson" type="clob"/>
+         <column name="agrType" type="varchar(10)"/>
+         <column name="printed" type="boolean"/>
+         <column name="temporary" type="boolean"/>
+         <column name="exported" type="boolean"/>
+         <column name="exportDate" type="DATETIME"/>
+     </addColumn>
+     <createTable tableName="subscription">
+         <column name="id" type="bigint" autoIncrement="true">
+            <constraints primaryKey="true" nullable="false" />
+         </column>
+         <column name="subscriberId" type="bigint"/>
+         <column name="productId" type="bigint"/>
+         <column name="complJson" type="clob"/>
+         <column name="startDate" type="DATE"/>
+         <column name="endDate" type="DATE"/>
+         <column name="payedUntil" type="DATE"/>
+         <column name="pointId" type="int"/>
+     </createTable>
+     <createTable tableName="subscriber">
+         <column name="id" type="bigint" autoIncrement="true">
+            <constraints primaryKey="true" nullable="false" />
+         </column>
+         <column name="pointId" type="int"/>
+         <column name="name1" type="varchar(100)"/>
+         <column name="name2" type="varchar(100)"/>
+         <column name="customerId" type="bigint"/>
+         <column name="complJson" type="clob"/>
+     </createTable>
+     <createTable tableName="subscrProduct">
+         <column name="id" type="bigint" autoIncrement="true">
+            <constraints primaryKey="true" nullable="false" />
+         </column>
+         <column name="complJson" type="clob"/>
+         <column name="startDate" type="DATE"/>
+         <column name="endDate" type="DATE"/>
+         <column name="nextDelivery" type="DATE"/>
+     </createTable>
+     <createTable tableName="subscrArticle">
+         <column name="id" type="bigint" autoIncrement="true">
+            <constraints primaryKey="true" nullable="false" />
+         </column>
+         <column name="productId" type="bigint"/>
+         <column name="complJson" type="clob"/>
+         <column name="erschTag" type="DATE"/>
+     </createTable>
+     <createTable tableName="subscrDelivery">
+         <column name="id" type="bigint" autoIncrement="true">
+            <constraints primaryKey="true" nullable="false" />
+         </column>
+         <column name="subscriptionId" type="bigint"/>
+         <column name="articleId" type="bigint"/>
+         <column name="subscriberId" type="bigint"/>
+         <column name="deliveryDate" type="DATE"/>
+         <column name="payed" type="boolean"/>
+         <column name="invoiceNumber" type="varchar(10)"/>
+         <column name="complJson" type="clob"/>
+     </createTable>
+     
+     <createTable tableName="tempinvoices">
+         <column name="num" type="bigint"/>
+         <column name="complJson" type="clob"/>
+     </createTable>
+     
+   </changeSet>
    
 </databaseChangeLog>

@@ -1,5 +1,7 @@
 package net.buchlese.bofc.api.subscr;
 
+import io.dropwizard.jackson.Jackson;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -8,6 +10,8 @@ import org.joda.time.LocalDate;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class SubscrArticle implements Comparable<SubscrArticle> {
 	@NotEmpty
@@ -36,7 +40,14 @@ public class SubscrArticle implements Comparable<SubscrArticle> {
 	
 	@JsonProperty
 	private int issueNo;
-	
+
+	// sich selber als json-object ausgeben
+	@JsonIgnore
+	public String getComplJson() throws JsonProcessingException {
+		ObjectMapper om = Jackson.newObjectMapper();
+		return om.writeValueAsString(this);
+	}
+
 	@JsonIgnore
 	public String initializeName(String namePattern) {
 		String name = namePattern.replace("#", String.valueOf(issueNo));

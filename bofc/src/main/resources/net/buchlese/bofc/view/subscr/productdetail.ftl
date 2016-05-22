@@ -3,6 +3,9 @@
 <a href="#subscrDispo/${p.id?c}" class="btn btn-primary">Dispo</a>
 <a href="#subscrCustAdd" class="btn btn-default">Neuer Abonnent</a>
 <a href="#subscrSubscrAdd/0/${p.id?c}" class="btn btn-default">Neues Abo</a>
+<#if articles?size == 0>
+<a href="/subscr/subscrarticlecreate/${p.id?c}" class="btn btn-default">Initial-Artikel</a>
+</#if>
 </h1>
 
 <h3>von <a href="#" class="editable" data-type="text" data-name="product.publisher">${p.publisher}</a> </h3>
@@ -51,6 +54,7 @@
 
 <ul class="nav nav-tabs">
   <li class="active"><a data-toggle="tab" href="#abos">Abonnements</a></li>
+  <li><a data-toggle="tab" href="#artikel">Artikel</a></li>
   <li><a data-toggle="tab" href="#rechnungen">Rechnungen</a></li>
 </ul>
 
@@ -78,6 +82,26 @@
 					    <td>${s.paymentType.text}</td>
 					    <td>${willBeSettled(s)?string("ja","")}</td>					
 					</tr>
+				</#list>
+			</tbody>
+		</table>
+  </div>
+  <div id="artikel" class="tab-pane fade">
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th>Artikelnummer</th>
+					<th>Name</th>
+					<th>Erscheinungstag</th>
+				</tr>
+			</thead>
+			<tbody>
+				<#list articles as a>
+					<tr>
+						<td>${a.id}</td>
+						<td>${a.name}</td>
+						<td>${(a.erschTag.toString("dd.MM.yyyy"))!}</td>
+					</tr>	
 				</#list>
 			</tbody>
 		</table>

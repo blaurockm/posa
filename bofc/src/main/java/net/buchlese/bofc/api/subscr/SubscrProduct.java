@@ -1,12 +1,16 @@
 package net.buchlese.bofc.api.subscr;
 
 
+import io.dropwizard.jackson.Jackson;
+
 import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.LocalDate;
 import org.joda.time.Period;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class SubscrProduct {
 	@NotEmpty
@@ -57,6 +61,12 @@ public class SubscrProduct {
 		return na;
 	}
 	
+	// sich selber als json-object ausgeben
+	@JsonIgnore
+	public String getComplJson() throws JsonProcessingException {
+		ObjectMapper om = Jackson.newObjectMapper();
+		return om.writeValueAsString(this);
+	}
 
 	public long getId() {
 		return id;

@@ -1,9 +1,14 @@
 package net.buchlese.bofc.api.subscr;
 
+import io.dropwizard.jackson.Jackson;
+
 import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class Subscription {
 	@NotEmpty
@@ -41,6 +46,12 @@ public class Subscription {
 
 	@JsonProperty
 	private LocalDate lastInvoiceDate;
+	// sich selber als json-object ausgeben
+	@JsonIgnore
+	public String getComplJson() throws JsonProcessingException {
+		ObjectMapper om = Jackson.newObjectMapper();
+		return om.writeValueAsString(this);
+	}
 
 	public long getId() {
 		return id;

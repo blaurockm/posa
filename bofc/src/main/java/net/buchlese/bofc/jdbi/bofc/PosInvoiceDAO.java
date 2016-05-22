@@ -33,13 +33,21 @@ public interface PosInvoiceDAO {
 	@SqlQuery("select max(creationtime) from posinvoice")
 	DateTime getLastErfasst();
 
-	@SqlBatch("insert into posinvoice (number, customer, pointid, debitor, amount, amountFull, amountHalf, amountNone, invDate, creationtime, printdate, name1, name2, name3,  street, city, payed, cancelled, actionum) " +
-	" values (:number, :customerId, :pointid, :debitorId, :amount, :amountFull, :amountHalf, :amountNone, :date,:creationTime, :printTime, :name1, :name2, :name3, :street, :city, :payed, :cancelled, :actionum)")
+	@SqlBatch("insert into posinvoice (number, customer, pointid, debitor, amount, amountFull, amountHalf, amountNone, invDate, creationtime, " +
+	" complJson, agrType, printed, temporary, exported, exportDate, " +
+	" printdate, name1, name2, name3,  street, city, payed, cancelled, actionum) " +
+	" values (:number, :customerId, :pointid, :debitorId, :amount, :amountFull, :amountHalf, :amountNone, :date,:creationTime, " + 
+	" :complJson, :type, :printed, :temporary, :exported, :exportDate, " +
+	" :printTime, :name1, :name2, :name3, :street, :city, :payed, :cancelled, :actionum)")
 	@BatchChunkSize(500)
 	void insertAll(@Valid @BindBean Iterator<PosInvoice> transactions);
 
-	@SqlUpdate("insert into posinvoice (number, customer, pointid, debitor, amount, amountFull, amountHalf, amountNone, invDate, creationtime, printdate, name1, name2, name3,  street, city, payed, cancelled, actionum) " +
-	" values (:number, :customerId, :pointid, :debitorId, :amount, :amountFull, :amountHalf, :amountNone, :date,:creationTime, :printTime, :name1, :name2, :name3, :street, :city, :payed, :cancelled, :actionum)")
+	@SqlUpdate("insert into posinvoice (number, customer, pointid, debitor, amount, amountFull, amountHalf, amountNone, invDate, creationtime, " +
+	" complJson, agrType, printed, temporary, exported, exportDate, " +
+	" printdate, name1, name2, name3,  street, city, payed, cancelled, actionum) " +
+	" values (:number, :customerId, :pointid, :debitorId, :amount, :amountFull, :amountHalf, :amountNone, :date,:creationTime," +
+	" :complJson, :type, :printed, :temporary, :exported, :exportDate, " +
+	" :printTime, :name1, :name2, :name3, :street, :city, :payed, :cancelled, :actionum)")
 	void insert(@Valid @BindBean PosInvoice inv);
 
 	@SqlQuery("select max(debitor) from posinvoice where pointid = :pointid and customer = :customerid ")

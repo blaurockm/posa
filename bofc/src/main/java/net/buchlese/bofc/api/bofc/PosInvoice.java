@@ -1,5 +1,7 @@
 package net.buchlese.bofc.api.bofc;
 
+import io.dropwizard.jackson.Jackson;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,6 +13,8 @@ import org.joda.time.LocalDate;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @XmlRootElement(name = "invoice")
 public class PosInvoice {
@@ -93,6 +97,12 @@ public class PosInvoice {
 	@JsonProperty
 	private LocalDate deliveryTill;
 
+	@JsonProperty
+	private DateTime exportDate;
+
+	@JsonProperty
+	private boolean exported;
+
 	@JsonIgnore
 	public PosInvoiceDetail addInvoiceDetail(PosInvoiceDetail detail) {
 		if (detail == null) {
@@ -126,6 +136,14 @@ public class PosInvoice {
 		return detail;
 	}
 
+	// sich selber als json-object ausgeben
+	@JsonIgnore
+	public String getComplJson() throws JsonProcessingException {
+		ObjectMapper om = Jackson.newObjectMapper();
+		return om.writeValueAsString(this);
+	}
+
+	@JsonIgnore
 	private Long safeAdd(Long a, Long b) {
 		if (a == null && b == null) {
 			return null;
@@ -372,6 +390,22 @@ public class PosInvoice {
 
 	public void setType(String type) {
 		this.type = type;
+	}
+
+	public DateTime getExportDate() {
+		return exportDate;
+	}
+
+	public void setExportDate(DateTime exportDate) {
+		this.exportDate = exportDate;
+	}
+
+	public boolean isExported() {
+		return exported;
+	}
+
+	public void setExported(boolean exported) {
+		this.exported = exported;
 	}
 
 }

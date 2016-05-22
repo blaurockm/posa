@@ -23,8 +23,6 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.Period;
 
-import com.google.common.base.Optional;
-
 public class SubscrTestDataDAO implements SubscrDAO {
 
 	private List<Subscriber> subscribers;
@@ -64,7 +62,7 @@ public class SubscrTestDataDAO implements SubscrDAO {
 	}
 
 	@Override
-	public PosInvoice getTempInvoices(String invNum) {
+	public PosInvoice getTempInvoice(String invNum) {
 		return tempInvoices.stream().filter(x -> x.getNumber().equals(invNum)).findFirst().orElse(null);
 	}
 
@@ -182,43 +180,20 @@ public class SubscrTestDataDAO implements SubscrDAO {
 		p.setId(idcounter++);
 		articles.add(p);
 	}
-	
+
 	@Override
-	public SubscrDelivery createDelivery(Subscription subscription,	SubscrArticle article, LocalDate deliveryDate) {
-		SubscrDelivery d = new SubscrDelivery();
-		d.setId(idcounter++); 
-		d.setArticleName(article.getName());
-		d.setDeliveryDate(deliveryDate);
-		d.setSubscriptionId(subscription.getId());
-		d.setSubscriberId(subscription.getSubscriberId());
-		d.setArticleId(article.getId());
-		d.setQuantity(subscription.getQuantity());
-		d.setTotal(subscription.getQuantity() * article.getBrutto());
-		if (article.getHalfPercentage() >0.5) {
-			d.setTotalHalf(subscription.getQuantity() * article.getBrutto_half());
-			d.setTotalFull(d.getTotal() - d.getTotalHalf());
-		} else {
-			d.setTotalFull(subscription.getQuantity() * article.getBrutto_full());
-			d.setTotalHalf(d.getTotal() - d.getTotalFull());
-		}
-		if (subscription.getPayedUntil() != null && deliveryDate.isBefore(subscription.getPayedUntil())) {
-			d.setPayed(true);
-		} else {
-			d.setPayed(false);
-		}
-		d.setCreationDate(DateTime.now());
+	public void insertDelivery(SubscrDelivery d) {
 		deliveries.add(d);
-		return d;
 	}
 
 	@Override
-	public List<SubscrProduct> querySubscrProducts(Optional<String> query) {
-		return products.stream().filter(x -> query.isPresent() == false || x.getName().contains(query.get())).collect(Collectors.toList());
+	public List<SubscrProduct> querySubscrProducts(String query) {
+		return products.stream().filter(x -> x.getName().contains(query)).collect(Collectors.toList());
 	}
 
 	@Override
-	public List<Subscriber> querySubscribers(Optional<String> query) {
-		return subscribers.stream().filter(x -> query.isPresent() == false || x.getName().contains(query.get()) || String.valueOf(x.getCustomerId()).contains(query.get())).collect(Collectors.toList());
+	public List<Subscriber> querySubscribers(String query) {
+		return subscribers.stream().filter(x -> x.getName().contains(query) || String.valueOf(x.getCustomerId()).contains(query)).collect(Collectors.toList());
 	}
 
 	@Override
@@ -227,12 +202,12 @@ public class SubscrTestDataDAO implements SubscrDAO {
 	}
 
 	@Override
-	public List<SubscrProduct> getProductsForTheNextWeek(LocalDate d) {
+	public List<SubscrProduct> getProductsForTimespan(LocalDate d, LocalDate till) {
 		return products.stream().filter(x -> x.getLastDelivery() == null || x.getLastDelivery().isBefore(d)).collect(Collectors.toList());
 	}
 
 	@Override
-	public List<Subscription> getSubscriptionsForThisMonth(LocalDate d) {
+	public List<Subscription> getSubscriptionsForTimespan(LocalDate d, LocalDate till) {
 		return subscriptions.stream().filter(x -> x.getPayedUntil() == null || x.getPayedUntil().isBefore(d)).collect(Collectors.toList());
 	}
 
@@ -397,28 +372,25 @@ public class SubscrTestDataDAO implements SubscrDAO {
 
 	private SubscrArticle createArticle(int productId, int issue, long brutto, double halfPercentage, LocalDate erschTag) {
 		SubscrArticle a = new SubscrArticle();
-		a.setId(idcounter++);
 		a.setProductId(productId);
 		a.setHalfPercentage(halfPercentage);
 		a.setErschTag(erschTag);
 		a.setIssueNo(issue);
 		a.updateBrutto(brutto);
-		articles.add(a);
+		insertArticle(a);
 		return a;
 	}
 	
 	private SubscrArticle createNextArticle(SubscrArticle olda, SubscrProduct p) {
 		SubscrArticle a = p.createNextArticle(olda.getErschTag().plus(p.getPeriod()));
-		a.setId(idcounter++);
 		a.updateBrutto((long) (olda.getBrutto() *  (1d + Math.random() * 0.05d)));
-		articles.add(a);
+		insertArticle(a);
 		return a;
 	}
 	
 	
 	private void createSubscription(int productId, int subscriberId, int quantity, LocalDate startDate, Address deliveryAddress, String deliveryInfo1, String deliveryInfo2, ShipType shipType, long shipCost, PayIntervalType paymentType, LocalDate payedUntil) {
 		Subscription s = new Subscription();
-		s.setId(idcounter++);
 		s.setPointid(3);
 		s.setProductId(productId);
 		s.setSubscriberId(subscriberId);
@@ -431,7 +403,7 @@ public class SubscrTestDataDAO implements SubscrDAO {
 		s.setPaymentType(paymentType);
 		s.setPayedUntil(payedUntil);
 		s.setLastInvoiceDate(null);
-		subscriptions.add(s);
+		insertSubscription(s);
 	}
 	
 	private void createSubscriber(int customerId, int debitorId, String name1, String name2, String name3, String strasse, String plz, String ort, boolean collectiveInvoice, boolean needsDeliveryNote, ShipType shipType) {
@@ -445,7 +417,7 @@ public class SubscrTestDataDAO implements SubscrDAO {
 		s.setCollectiveInvoice(collectiveInvoice);
 		s.setNeedsDeliveryNote(needsDeliveryNote);
 		s.setShipmentType(shipType);
-		subscribers.add(s);
+		insertSubscriber(s);
 	}
 	
 	
@@ -475,7 +447,33 @@ public class SubscrTestDataDAO implements SubscrDAO {
 		p.setNamePattern(namePattern);
 		p.setCount(count);
 		p.setHalfPercentage(halfPercentage);
-		products.add(p);
+		insertSubscrProduct(p);
+	}
+
+	public SubscrDelivery createDelivery(Subscription subscription,	SubscrArticle article, LocalDate deliveryDate) {
+		SubscrDelivery d = new SubscrDelivery();
+		d.setArticleName(article.getName());
+		d.setDeliveryDate(deliveryDate);
+		d.setSubscriptionId(subscription.getId());
+		d.setSubscriberId(subscription.getSubscriberId());
+		d.setArticleId(article.getId());
+		d.setQuantity(subscription.getQuantity());
+		d.setTotal(subscription.getQuantity() * article.getBrutto());
+		if (article.getHalfPercentage() >0.5) {
+			d.setTotalHalf(subscription.getQuantity() * article.getBrutto_half());
+			d.setTotalFull(d.getTotal() - d.getTotalHalf());
+		} else {
+			d.setTotalFull(subscription.getQuantity() * article.getBrutto_full());
+			d.setTotalHalf(d.getTotal() - d.getTotalFull());
+		}
+		if (subscription.getPayedUntil() != null && deliveryDate.isBefore(subscription.getPayedUntil())) {
+			d.setPayed(true);
+		} else {
+			d.setPayed(false);
+		}
+		d.setCreationDate(DateTime.now());
+		insertDelivery(d);
+		return d;
 	}
 
 }

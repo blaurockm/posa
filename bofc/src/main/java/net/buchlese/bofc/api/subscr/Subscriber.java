@@ -1,8 +1,13 @@
 package net.buchlese.bofc.api.subscr;
 
+import io.dropwizard.jackson.Jackson;
+
 import org.hibernate.validator.constraints.NotEmpty;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class Subscriber {
 	@NotEmpty
@@ -29,6 +34,28 @@ public class Subscriber {
 	private boolean needsDeliveryNote;
 	@JsonProperty
 	private ShipType shipmentType;
+	// sich selber als json-object ausgeben
+	@JsonIgnore
+	public String getComplJson() throws JsonProcessingException {
+		ObjectMapper om = Jackson.newObjectMapper();
+		return om.writeValueAsString(this);
+	}
+
+	@JsonIgnore
+	public String getName1() {
+		if (getInvoiceAddress() != null) {
+			return getInvoiceAddress().getName1();
+		}
+		return null;
+	}
+
+	@JsonIgnore
+	public String getName2() {
+		if (getInvoiceAddress() != null) {
+			return getInvoiceAddress().getName2();
+		}
+		return null;
+	}
 
 	public long getId() {
 		return id;

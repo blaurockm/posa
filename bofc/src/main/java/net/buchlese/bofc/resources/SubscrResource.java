@@ -37,7 +37,6 @@ import net.buchlese.bofc.api.subscr.Subscription;
 import net.buchlese.bofc.core.NumberGenerator;
 import net.buchlese.bofc.core.PDFInvoice;
 import net.buchlese.bofc.core.SubscriptionInvoiceCreator;
-import net.buchlese.bofc.jdbi.SubscrTestDataDAO;
 import net.buchlese.bofc.jdbi.bofc.PosInvoiceDAO;
 import net.buchlese.bofc.jdbi.bofc.SubscrDAO;
 import net.buchlese.bofc.resources.helper.SubscrArticleUpdateHelper;
@@ -60,6 +59,7 @@ import net.buchlese.bofc.view.subscr.SubscriberDetailView;
 import net.buchlese.bofc.view.subscr.SubscriptionAddView;
 import net.buchlese.bofc.view.subscr.SubscriptionDetailView;
 
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.Period;
 import org.joda.time.format.DateTimeFormat;
@@ -83,14 +83,15 @@ public class SubscrResource {
 			return date;
 		}
 	}
-	private static SubscrDAO dao = new SubscrTestDataDAO();
+	private final SubscrDAO dao;
 	
 	private final PosInvoiceDAO invDao;
 
 	@Inject
-	public SubscrResource(PosInvoiceDAO invd) {
+	public SubscrResource(PosInvoiceDAO invd, SubscrDAO sdao) {
 		super();
 		this.invDao = invd;
+		this.dao = sdao;
 	}
 
 	@POST
@@ -168,7 +169,7 @@ public class SubscrResource {
 		}
 		s.setStartDate(LocalDate.now());
 		if (par.containsKey("payedUntil") && par.getFirst("payedUntil").isEmpty() == false) {
-			s.setPayedUntil(org.joda.time.YearMonth.parse(par.getFirst("payedUntil"), DateTimeFormat.forPattern("MM/yy")).toLocalDate(1));
+			s.setPayedUntil(org.joda.time.YearMonth.parse(par.getFirst("payedUntil"), DateTimeFormat.forPattern("MM/yy")).toLocalDate(28));
 		} else {
 			s.setPayedUntil(null);
 		}
@@ -253,16 +254,39 @@ public class SubscrResource {
 	public SubscrDelivery createDelivery(@PathParam("sub") String subIdP,@PathParam("art") String artIdP,@PathParam("date") String dateP ) {
 		long subId = Long.parseLong(subIdP);
 		long artId = Long.parseLong(artIdP);
-		LocalDate d = new DateParam(dateP).getDate();
-		Subscription s = dao.getSubscription(subId);
-		SubscrDelivery del =  dao.createDelivery( s, dao.getSubscrArticle(artId), d);
-		SubscrProduct p = dao.getSubscrProduct(s.getProductId());
-		p.setLastDelivery(d);
+		LocalDate deliveryDate = new DateParam(dateP).getDate();
+		Subscription subscription = dao.getSubscription(subId);
+		SubscrArticle article = dao.getSubscrArticle(artId);
+		SubscrDelivery d = new SubscrDelivery();
+		d.setArticleName(article.getName());
+		d.setDeliveryDate(deliveryDate);
+		d.setSubscriptionId(subscription.getId());
+		d.setSubscriberId(subscription.getSubscriberId());
+		d.setArticleId(article.getId());
+		d.setQuantity(subscription.getQuantity());
+		d.setTotal(subscription.getQuantity() * article.getBrutto());
+		if (article.getHalfPercentage() >0.5) {
+			d.setTotalHalf(subscription.getQuantity() * article.getBrutto_half());
+			d.setTotalFull(d.getTotal() - d.getTotalHalf());
+		} else {
+			d.setTotalFull(subscription.getQuantity() * article.getBrutto_full());
+			d.setTotalHalf(d.getTotal() - d.getTotalFull());
+		}
+		if (subscription.getPayedUntil() != null && deliveryDate.isBefore(subscription.getPayedUntil())) {
+			d.setPayed(true);
+		} else {
+			d.setPayed(false);
+		}
+		d.setCreationDate(DateTime.now());
+
+		dao.insertDelivery(d);
+		SubscrProduct p = dao.getSubscrProduct(subscription.getProductId());
+		p.setLastDelivery(deliveryDate);
 		if (p.getPeriod() != null) {
-			p.setNextDelivery(d.plus(p.getPeriod()));
+			p.setNextDelivery(deliveryDate.plus(p.getPeriod()));
 		}
 		dao.updateSubscrProduct(p);
-		return del;
+		return d;
 	}
 
 	@GET
@@ -325,7 +349,7 @@ public class SubscrResource {
 	@Path("/invoiceRecord/{inv}")
 	@Produces({"application/json"})
 	public void fakturiereInvoice(@PathParam("inv") String invNum) {
-		PosInvoice inv = dao.getTempInvoices(invNum);
+		PosInvoice inv = dao.getTempInvoice(invNum);
 		SubscriptionInvoiceCreator.recordInvoiceOnAgreements(dao, invDao, inv);
 	}
 
@@ -333,7 +357,7 @@ public class SubscrResource {
 	@Path("/invoiceView/{inv}")
 	@Produces({"application/json"})
 	public PosInvoice viewInvoice(@PathParam("inv") String invNum) {
-		PosInvoice inv = dao.getTempInvoices(invNum);
+		PosInvoice inv = dao.getTempInvoice(invNum);
 		if (inv != null) {
 			// es ist noch eine temporäre, einfach löschen
 			return inv;
@@ -349,7 +373,7 @@ public class SubscrResource {
 	@Path("/invoiceCancel/{inv}")
 	@Produces({"application/json"})
 	public void cancelInvoice(@PathParam("inv") String invNum) {
-		PosInvoice inv = dao.getTempInvoices(invNum);
+		PosInvoice inv = dao.getTempInvoice(invNum);
 		if (inv != null) {
 			// es ist noch eine temporäre, einfach löschen
 			dao.deleteTempInvoice(invNum);
@@ -366,14 +390,20 @@ public class SubscrResource {
 	@Path("/querycustomers")
 	@Produces({"application/json"})
 	public List<Subscriber> querySubscribers(@QueryParam("q") Optional<String> query) {
-		return dao.querySubscribers(query);
+		if (query.isPresent() && query.get().isEmpty() == false) {
+			return dao.querySubscribers("%" + query.get() + "%");
+		}
+		return dao.getSubscribers();
 	}
 
 	@GET
 	@Path("/queryproduct")
 	@Produces({"application/json"})
 	public List<SubscrProduct> querySubscrProducts(@QueryParam("q") Optional<String> query) {
-		return dao.querySubscrProducts(query);
+		if (query.isPresent() && query.get().isEmpty() == false) {
+			return dao.querySubscrProducts("%" + query.get() + "%");
+		}
+		return dao.getSubscrProducts();
 	}
 
 	@GET

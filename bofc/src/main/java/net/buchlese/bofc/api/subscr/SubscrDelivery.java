@@ -1,11 +1,15 @@
 package net.buchlese.bofc.api.subscr;
 
+import io.dropwizard.jackson.Jackson;
+
 import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class SubscrDelivery implements Comparable<SubscrDelivery> {
 	@NotEmpty
@@ -38,6 +42,13 @@ public class SubscrDelivery implements Comparable<SubscrDelivery> {
 	private DateTime creationDate;
 	@JsonProperty
 	private long shipmentCost;
+
+	// sich selber als json-object ausgeben
+	@JsonIgnore
+	public String getComplJson() throws JsonProcessingException {
+		ObjectMapper om = Jackson.newObjectMapper();
+		return om.writeValueAsString(this);
+	}
 
 	@JsonIgnore
 	public void updateBrutto(long br, double halfPercentage) {
@@ -105,9 +116,6 @@ public class SubscrDelivery implements Comparable<SubscrDelivery> {
 	}
 	public long getSubscriberId() {
 		return subscriberId;
-	}
-	public void setSubscriberId(int subscriberId) {
-		this.subscriberId = subscriberId;
 	}
 	public long getArticleId() {
 		return articleId;
