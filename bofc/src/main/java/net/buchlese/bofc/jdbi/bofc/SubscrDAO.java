@@ -16,6 +16,7 @@ import net.buchlese.bofc.api.subscr.Subscription;
 import org.joda.time.LocalDate;
 import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.BindBean;
+import org.skife.jdbi.v2.sqlobject.GetGeneratedKeys;
 import org.skife.jdbi.v2.sqlobject.SqlBatch;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
 import org.skife.jdbi.v2.sqlobject.SqlUpdate;
@@ -120,9 +121,10 @@ public interface SubscrDAO {
 	@SqlQuery("select * from tempInvoices where num = :invNum ")
 	PosInvoice getTempInvoice(@Bind("invNum") String invNUm);
 
+	@GetGeneratedKeys
 	@SqlUpdate("insert into subscrArticle (complJson, productId, erschTag) " +
 		    " values (:complJson, :productId, :erschTag)")
-	void insertArticle(@BindBean SubscrArticle art);
+	long insertArticle(@BindBean SubscrArticle art);
 
 	@SqlUpdate("insert into subscrDelivery (complJson, subscriptionId, articleId, subscriberId, deliveryDate, payed, invoiceNumber) " +
 		    " values (:complJson, :subscriptionId, :articleId, :subscriberId, :deliveryDate, :payed, :invoiceNumber)")
@@ -136,9 +138,10 @@ public interface SubscrDAO {
 		    " values (:complJson, :subscriberId, :productId, :startDate, :endDate, :payedUntil, :pointid)")
 	void insertSubscription(@BindBean Subscription p);
 
+	@GetGeneratedKeys
 	@SqlUpdate("insert into subscrProduct (complJson, startDate, endDate, nextDelivery) " +
 		    " values (:complJson, :startDate, :endDate, :nextDelivery)")
-	void insertSubscrProduct(@BindBean SubscrProduct p);
+	long insertSubscrProduct(@BindBean SubscrProduct p);
 	
 	@SqlUpdate("insert into tempInvoices (complJson, num) " +
 		    " values (:complJson, :number)")

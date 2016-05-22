@@ -19,12 +19,13 @@ public class SubscrDispoView extends AbstractBofcView{
 	private final SubscrDAO dao;
 	private final SubscrArticle article;
 	private final LocalDate dispoDate;
-	
-	public SubscrDispoView(SubscrDAO dao, SubscrProduct p, List<Subscription> subs, SubscrArticle art, LocalDate dispoDate) {
+
+
+	public SubscrDispoView(SubscrDAO dao, SubscrProduct p, SubscrArticle art, LocalDate dispoDate) {
 		super("subscrdispo.ftl");
 		this.dao = dao;
-		this.subscriptions = subs;
 		this.p = p;
+		this.subscriptions = dao.getSubscriptionsForProduct(p.getId());
 		if (art == null) {
 			this.article = dao.getNewestArticleOfProduct(p.getId());
 		} else {
@@ -68,4 +69,7 @@ public class SubscrDispoView extends AbstractBofcView{
 		return "keine subId";
 	}
 
+	public boolean isShowArticlePlusEins() {
+		return article.getErschTag().equals(dispoDate) == false;
+	}
 }

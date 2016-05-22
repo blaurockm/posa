@@ -162,9 +162,10 @@ public class SubscrTestDataDAO implements SubscrDAO {
 	
 
 	@Override
-	public void insertSubscrProduct(SubscrProduct p) {
+	public long insertSubscrProduct(SubscrProduct p) {
 		p.setId(idcounter++);
 		products.add(p);
+		return p.getId();
 	}
 
 	@Override
@@ -180,9 +181,10 @@ public class SubscrTestDataDAO implements SubscrDAO {
 	}
 	
 	@Override
-	public void insertArticle(SubscrArticle p) {
+	public long insertArticle(SubscrArticle p) {
 		p.setId(idcounter++);
 		articles.add(p);
+		return p.getId();
 	}
 
 	@Override

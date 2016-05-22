@@ -30,9 +30,9 @@
 			<td>${inv.printed?string("gedruckt","")}</td>
 			<td>${inv.collective?string("sammel","")}</td>
 			<td>${inv.payed?string("bezahlt","")}</td>
-			<td><a href="/subscr/invoiceView/${inv.number}" class="btn btn-default btn-sm" target="_blank"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span></a>
+			<td><a href="/subscr/invoiceView/${inv.number}"  data-toggle="tooltip" title="PDF" class="btn btn-default btn-sm" target="_blank"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span></a>
                 <#if inv.cancelled == false>			
-                <a href="#invoiceCancel/${inv.number}" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a>
+                <a href="#invoiceCancel/${inv.number}" data-toggle="tooltip" title="Stornieren"  class="btn btn-default btn-sm"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a>
                 </#if>
 			 </td>
 		</tr>
@@ -63,9 +63,9 @@
 			<td>${(inv.deliveryFrom.toString("dd.MM.yy"))!}</td>
 			<td>${(inv.deliveryTill.toString("dd.MM.yy"))!}</td>
 			<td>${money(inv.amount)}</td>
-			<td><a href="#invoiceRecord/${inv.number}" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span></a>
-                <a href="/subscr/invoiceView/${inv.number}" class="btn btn-default btn-sm" target="_blank"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span></a>
-                <a href="#invoiceCancel/${inv.number}" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a>
+			<td><a href="#invoiceRecord/${inv.number}"  data-toggle="tooltip" title="Fakturieren" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span></a>
+                <a href="/subscr/invoiceView/${inv.number}"  data-toggle="tooltip" title="PDF" class="btn btn-default btn-sm" target="_blank"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span></a>
+                <a href="#invoiceCancel/${inv.number}"  data-toggle="tooltip" title="löschen" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a>
 			 </td>
 		</tr>
 		</#list>
@@ -73,4 +73,13 @@
 </table>
 
 
-</div>		
+</div>	
+
+<script>
+$(document).ready(function(){
+    $('[data-toggle="tooltip"]').tooltip(); 
+});
+
+</script>
+
+	

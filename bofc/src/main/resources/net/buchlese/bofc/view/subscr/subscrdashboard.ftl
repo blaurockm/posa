@@ -29,10 +29,10 @@
 			<td>${abo(d).shipmentType.text}</td>
 			<td align="right">${money(d.total)}</td>
 			<td>${d.payed?string("ja","")}</td>
-			<td><a href="#subscrDelivery/${d.id?c}" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span></a>
-            <a href="#subscription/${d.subscriptionId?c}" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
-			<a href="/subscr/deliverynote/${d.id?c}" class="btn btn-default btn-sm" target="_blank"><span class="glyphicon glyphicon-folder-open" aria-hidden="true" alt="Lieferschein"></span></a>
-			<a href="#deliverydelete/${d.id?c}" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></td>
+			<td><a href="#subscrDelivery/${d.id?c}" data-toggle="tooltip" title="Details" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span></a>
+            <a href="#subscription/${d.subscriptionId?c}" data-toggle="tooltip" title="Abo" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
+			<a href="/subscr/deliverynote/${d.id?c}" data-toggle="tooltip" title="Lieferschein" class="btn btn-default btn-sm" target="_blank"><span class="glyphicon glyphicon-folder-open" aria-hidden="true" alt="Lieferschein"></span></a>
+			<a href="#deliverydelete/${d.id?c}" data-toggle="tooltip" title="Löschen" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></td>
 		</tr>
 		</#list>
 	</tbody>
@@ -64,8 +64,8 @@
 			<td></td>
 			<td><#if p.lastDelivery??>${p.lastDelivery.toString("dd.MM.yy")}</#if></td>
 			<td><#if p.nextDelivery??>${p.nextDelivery.toString("dd.MM.yy")}</#if></td>
-			<td><a href="#subscrDispo/${p.id?c}" class="btn btn-default btn-sm">Dispo</a>
-			 <a href="#subscrProduct/${p.id?c}" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span></a> </td>
+			<td><a href="#subscrDispo/${p.id?c}"  data-toggle="tooltip" title="Lieferungen anlegen" class="btn btn-default btn-sm">Dispo</a>
+			 <a href="#subscrProduct/${p.id?c}"  data-toggle="tooltip" title="Details" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span></a> </td>
 		</tr>
 		</#list>
 	</tbody>
@@ -102,7 +102,7 @@
 			<td>${s.shipmentType.text}</td>
 			<td>${(s.payedUntil.toString("dd.MM.yy"))!}</td>
 			<td>${(s.lastInvoidDate.toString("dd.MM.yy"))!}</td>
-			<td><a href="#subscription/${s.id?c}" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span></a> </td>
+			<td><a href="#subscription/${s.id?c}" data-toggle="tooltip" title="Details" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span></a> </td>
 		</tr>
 		</#list>
 	</tbody>
@@ -134,9 +134,9 @@
 			<td>${(inv.deliveryFrom.toString("dd.MM.yy"))!}</td>
 			<td>${(inv.deliveryTill.toString("dd.MM.yy"))!}</td>
 			<td>${money(inv.amount)}</td>
-			<td><a href="#invoiceRecord/${inv.number}" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span></a>
-                <a href="/subscr/invoiceView/${inv.number}" class="btn btn-default btn-sm" target="_blank"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span></a>
-                <a href="#invoiceCancel/${inv.number}" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a>
+			<td><a href="#invoiceRecord/${inv.number}" data-toggle="tooltip" title="Fakturieren" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span></a>
+                <a href="/subscr/invoiceView/${inv.number}" data-toggle="tooltip" title="Anschauen" class="btn btn-default btn-sm" target="_blank"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span></a>
+                <a href="#invoiceCancel/${inv.number}" data-toggle="tooltip" title="löschen" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a>
 			 </td>
 		</tr>
 		</#list>
@@ -144,3 +144,11 @@
 </table>
 
 </div>		
+
+<script>
+$(document).ready(function(){
+    $('[data-toggle="tooltip"]').tooltip(); 
+});
+
+</script>
+

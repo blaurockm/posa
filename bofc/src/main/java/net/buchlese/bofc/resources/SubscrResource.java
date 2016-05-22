@@ -182,13 +182,25 @@ public class SubscrResource {
 			s.setPaymentType(PayIntervalType.EACHDELIVERY);
 		}
 		if (par.containsKey("quantity") && par.getFirst("quantity").isEmpty() == false) {
-			s.setQuantity(Integer.parseInt(par.getFirst("quantity")));
+			try {
+				s.setQuantity(Integer.parseInt(par.getFirst("quantity")));
+			} catch (NumberFormatException e) {
+				s.setQuantity(1);
+			}
 		} else {
 			s.setQuantity(1);
 		}
 		s.setStartDate(LocalDate.now());
 		if (par.containsKey("payedUntil") && par.getFirst("payedUntil").isEmpty() == false) {
-			s.setPayedUntil(org.joda.time.YearMonth.parse(par.getFirst("payedUntil"), DateTimeFormat.forPattern("MM/yy")).toLocalDate(28));
+			try {
+				s.setPayedUntil(org.joda.time.YearMonth.parse(par.getFirst("payedUntil"), DateTimeFormat.forPattern("MM/yy")).toLocalDate(28));
+			} catch (Exception e) {
+				try {
+					s.setPayedUntil(org.joda.time.YearMonth.parse(par.getFirst("payedUntil"), DateTimeFormat.forPattern("MM/yyyy")).toLocalDate(28));
+				} catch (Exception e1) {
+					s.setPayedUntil(null);
+				}
+			}
 		} else {
 			s.setPayedUntil(null);
 		}
@@ -216,30 +228,47 @@ public class SubscrResource {
 		p.setPublisher(par.getFirst("publisher"));
 		p.setNamePattern(par.getFirst("namePattern"));
 		if (par.containsKey("period") && par.getFirst("period").isEmpty() == false) {
-			p.setPeriod(Period.months(Integer.parseInt(par.getFirst("period"))));
+			try {
+				p.setPeriod(Period.months(Integer.parseInt(par.getFirst("period"))));
+			} catch (NumberFormatException e) {
+				p.setPeriod(Period.months(1));
+			}
 		} else {
 			p.setPeriod(Period.months(1));
 		}
 		if (par.containsKey("quantity") && par.getFirst("quantity").isEmpty() == false) {
-			p.setQuantity(Integer.parseInt(par.getFirst("quantity")));
+			try {
+				p.setQuantity(Integer.parseInt(par.getFirst("quantity")));
+			} catch (NumberFormatException e) {
+				p.setQuantity(1);
+			}
 		} else {
 			p.setQuantity(1);
 		}
 		if (par.containsKey("count") && par.getFirst("count").isEmpty() == false) {
-			p.setCount(Integer.parseInt(par.getFirst("count")));
+			try {
+				p.setCount(Integer.parseInt(par.getFirst("count")));
+			} catch (NumberFormatException e) {
+				p.setCount(1);
+			}
 		} else {
 			p.setCount(1);
 		}
 		if (par.containsKey("halfPercentage") && par.getFirst("halfPercentage").isEmpty() == false) {
-			p.setHalfPercentage(Double.parseDouble(par.getFirst("halfPercentage")));
+			try {
+				p.setHalfPercentage(Double.parseDouble(par.getFirst("halfPercentage")));
+			} catch (NumberFormatException e) {
+				p.setHalfPercentage(1d);
+			}
 		} else {
 			p.setHalfPercentage(1d);
 		}
-		dao.insertSubscrProduct(p);
-		recordUserChange(dao, "master", p.getId(), "subscrProduct", null, "N");
+		long pid = dao.insertSubscrProduct(p);
+		recordUserChange(dao, "master", pid, "subscrProduct", null, "N");
 		SubscrArticle art = p.createNextArticle(LocalDate.now());
-		dao.insertArticle(art);
-		recordUserChange(dao, "master", art.getId(), "subscrArticle", null, "N");
+		art.setProductId(pid);
+		long aid = dao.insertArticle(art);
+		recordUserChange(dao, "master", aid, "subscrArticle", null, "N");
 		return new SubscrProductDetailView(dao, p, Collections.emptyList());
 	}
 
@@ -348,12 +377,14 @@ public class SubscrResource {
 	@GET
 	@Path("/subscrarticlecreate/{prod}")
 	@Produces({"application/json"})
-	public SubscrArticle createSubscrArticle(@PathParam("prod") String prodIdP) {
+	public View createSubscrArticle(@PathParam("prod") String prodIdP) {
 		long prodId = Long.parseLong(prodIdP);
-		SubscrArticle art = dao.getSubscrProduct(prodId).createNextArticle(LocalDate.now());
+		SubscrProduct product = dao.getSubscrProduct(prodId);
+		SubscrArticle art = product.createNextArticle(LocalDate.now());
 		dao.insertArticle(art);
+		dao.updateSubscrProduct(product);
 		recordUserChange(dao, "master", art.getId(), "subscrArticle", null, "N");
-		return art;
+		return new SubscrDispoView(dao, product, art, LocalDate.now());
 	}
 
 	@GET
@@ -571,7 +602,7 @@ public class SubscrResource {
 		if (artIdP.isPresent()) {
 			art = dao.getSubscrArticle(Long.parseLong(artIdP.get()));
 		}
-		return new SubscrDispoView(dao, dao.getSubscrProduct(productId ), dao.getSubscriptionsForProduct(productId), art, from);
+		return new SubscrDispoView(dao, dao.getSubscrProduct(productId ), art, from);
 	}
 
 	@GET

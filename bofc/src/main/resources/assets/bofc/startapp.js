@@ -107,6 +107,11 @@ Path.map("#invoiceRecord/:id").to(function(){
     window.history.back();  // in der history einen schritt zurückgehen
 }).enter(setSubscrModule);
 
+Path.map("#subscrarticlecreate/:id").to(function(){
+    $("#output .content").load("/subscr/subscrarticlecreate/" + this.params["id"]);
+    window.history.back();  // in der history einen schritt zurückgehen
+}).enter(setSubscrModule);
+
 Path.map("#subscrProduct/:id").to(function(){
     $("#output .content").load("/subscr/product/" + this.params["id"]);
 }).enter(setSubscrModule);
@@ -190,6 +195,7 @@ $(document).ready(function(){
     // call inside some sort of "document ready" listener, in case the default route
     // relies on DOM elements that may not yet be ready.
     Path.listen();
+    $('[data-toggle="tooltip"]').tooltip(); 
 });
 
 var shiptypesList = [{value:"MAIL", text:"Per Post"},{value:"PICKUP",text:"Abholung"}, {value:"PUBLISHER", text:"über Verlag"}, {value:"DELIVERY", text:"Lieferung d. Buchlese"}];

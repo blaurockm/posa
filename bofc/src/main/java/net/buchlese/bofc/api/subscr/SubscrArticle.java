@@ -33,13 +33,13 @@ public class SubscrArticle implements Comparable<SubscrArticle> {
 	@JsonProperty
 	private long brutto_full;
 	@JsonProperty
-	private double halfPercentage; // prozentuale Anteil am Gesamtpreis , halber Steuersatz, 0 < x < 1
+	private double halfPercentage =1d; // prozentuale Anteil am Gesamtpreis , halber Steuersatz, 0 < x < 1
 	
 	@JsonProperty
 	private LocalDate erschTag;
 	
 	@JsonProperty
-	private int issueNo;
+	private int issueNo =1;
 
 	// sich selber als json-object ausgeben
 	@JsonIgnore

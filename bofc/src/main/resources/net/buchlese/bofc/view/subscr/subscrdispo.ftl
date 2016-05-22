@@ -38,7 +38,9 @@
    </div>
 </div>
 <div class="col-md-1">
-  <button id="artikelpluseins" class="btn btn-primary">Artikel +1</button>
+    <#if showArticlePlusEins>
+    <a id="articlepluseins" class="btn btn-primary" href="#subscrarticlecreate/${art.productId?c}">Artikel +1</a>
+    </#if>
 </div>
 </div>
 
@@ -101,14 +103,13 @@
 
 	var displayArticle = function(res) {
 		article = res;
-
         $("#artname").editable('setValue',res.name, false);
         $("#brutto").editable('setValue',res.brutto, true);
         $("#brutto_half").editable('setValue',res.brutto_half, true);
         $("#brutto_full").editable('setValue',res.brutto_full, true);
         $("#half_percent").editable('setValue',res.halfPercentage, false);
-        $("#artid").text(res.id);
         $("#artcount").editable('setValue',res.issueNo, true);
+        $("#artid").text(res.id);
 
 //        $('.editable').editable({ pk:res.id});
 //	    $('.namechangerfield').editable({ pk:res.id});
@@ -163,14 +164,7 @@
 	        }
 	    }
 	});
-	
-    $( '#artikelpluseins' ).click(function() {
-	 	 $.getJSON("/subscr/subscrarticlecreate/${art.productId?c}", displayArticle)
-	 	 $( "#artikelpluseins" ).hide();
-	});
-    
     
     $.getJSON("/subscr/subscrarticle/ex/${art.productId?c}/${art.id?c}", displayArticle);
-    
     
 </script>
