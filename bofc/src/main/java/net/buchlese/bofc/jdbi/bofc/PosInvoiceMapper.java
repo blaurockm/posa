@@ -21,7 +21,10 @@ public class PosInvoiceMapper implements ResultSetMapper<PosInvoice> {
 		PosInvoice inv = new PosInvoice();
 		ObjectMapper om = Jackson.newObjectMapper();
 		try {
-			inv = om.readValue(rs.getString("complJson"), PosInvoice.class);
+			String x = rs.getString("complJson");
+			if (x != null && x.isEmpty() == false) {
+				inv = om.readValue(rs.getString("complJson"), PosInvoice.class);
+			}
 		} catch (IOException e) {
 			throw new SQLException(e);
 		}
