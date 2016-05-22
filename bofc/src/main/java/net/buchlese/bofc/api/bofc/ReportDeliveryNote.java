@@ -26,12 +26,20 @@ public class ReportDeliveryNote {
 	public long customerId;
 
 	@JsonProperty
-	public List<ReportDeliveryNoteDetail> deliveryItems;
-	
+	public List<ReportDeliveryNoteDetail> details;
+
+	@JsonProperty
+	public LocalDate creationTime;
+
+	@JsonProperty
+	public int pointId;
 	
 	public static class ReportDeliveryNoteDetail {
 		@JsonProperty
-		public String name;
+		public boolean textonly;
+
+		@JsonProperty
+		public String text;
 		
 		@JsonProperty
 		public int quantity;

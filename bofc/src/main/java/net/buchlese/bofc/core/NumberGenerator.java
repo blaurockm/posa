@@ -19,6 +19,7 @@ public class NumberGenerator {
 		Handle h = database.open();
 		h.execute("create sequence if not exists CUSTOMERNO start with 100");
 		h.execute("create sequence if not exists INVOICENO start with 0");
+		h.execute("create sequence if not exists INDEPENDENTNO start with 555");
 		h.close();
 	}
 
@@ -43,6 +44,15 @@ public class NumberGenerator {
 		h.close();
 		String prefix = String.valueOf(pointid) + LocalDate.now().toString("yy") + "9";
 		return prefix + StringUtils.leftPad(String.valueOf(num), 4, '0');
+	}
+
+	public long getNextNumber() {
+		Handle h = database.open();
+		Query<Map<String, Object>> q = h.createQuery("call nextval('INDEPENDENTNO')");
+		Query<Long> q2 = q.map(LongMapper.FIRST);
+		long num = q2.first();
+		h.close();
+		return num;
 	}
 
 }

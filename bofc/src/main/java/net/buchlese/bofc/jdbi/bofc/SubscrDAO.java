@@ -179,7 +179,7 @@ public interface SubscrDAO {
 	void updateSubscrProduct(@BindBean SubscrProduct p);
 	
 	// sollte in jedes DAO
-	@SqlUpdate("insert into userchange (objectid, login, fieldId, oldValue, newValue, action, modDate) "
+	@SqlUpdate("insert into userChanges (objectid, login, fieldId, oldValue, newValue, action, modDate) "
 			+ " values (:objectId, :login, :fieldId, :oldValue, :newValue, :action, :modDate) ")
 	void insert(@Valid @BindBean UserChange u);
 

@@ -345,19 +345,21 @@
 
 
    <xsl:template name="briefkopf">
-      <fo:block font-size="14pt" text-align="center" border-top-style="solid" border-bottom-style="solid" border-top-width="0.5mm"
-         border-bottom-width="0.5mm" padding="3mm" span="all">
-         Bild vom Briefkopf 
-      </fo:block>
+     <fo:block>
+        <fo:external-graphic content-width="170mm">
+          <xsl:attribute name="src">
+           <xsl:value-of select="concat('/xsl/images/header', pointid, '.jpg')" />
+          </xsl:attribute>
+        </fo:external-graphic>
+     </fo:block>
    </xsl:template>
 
    <xsl:template name="brieffuss">
       <fo:block font-size="8pt" text-align="right">
          Seite <fo:page-number/> von <fo:page-number-citation ref-id="end"/> 
       </fo:block>
-      <fo:block font-size="14pt" text-align="center" border-top-style="solid" border-bottom-style="solid" border-top-width="0.5mm"
-         border-bottom-width="0.5mm" padding="3mm" span="all">
-         Bild vom Brieffuss 
+      <fo:block>
+        <fo:external-graphic src="url(/xsl/images/footer.jpg)"  content-width="170mm"/>
       </fo:block>
    </xsl:template>
 

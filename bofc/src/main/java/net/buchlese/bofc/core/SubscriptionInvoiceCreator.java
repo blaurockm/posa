@@ -63,10 +63,9 @@ public class SubscriptionInvoiceCreator {
 	/**
 	 * festschreiben einer Rechnung wieder rückgängig machen
 	 * @param dao
-	 * @param invDao
 	 * @param inv
 	 */
-	public static void undoRecordInvoiceOnAgreements(SubscrDAO dao, PosInvoiceDAO invDao, PosInvoice inv) {
+	public static void undoRecordInvoiceOnAgreements(SubscrDAO dao, PosInvoice inv) {
 		for (InvoiceAgrDetail iad : inv.getAgreementDetails()) {
 			Subscription sub = dao.getSubscription(iad.getAgreementId());
 			sub.setPayedUntil(iad.getDeliveryFrom().minusDays(1));
@@ -75,9 +74,6 @@ public class SubscriptionInvoiceCreator {
 			dao.updateSubscription(sub);
 		}
 		inv.setTemporary(false);
-		inv.setCancelled(true);
-		invDao.updateInvoice(inv);
-		// TODO - stornorechnung erzeugen
 	}
 	
 

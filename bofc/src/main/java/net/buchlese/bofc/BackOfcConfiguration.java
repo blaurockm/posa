@@ -4,11 +4,17 @@ import io.dropwizard.Configuration;
 import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.server.SimpleServerFactory;
 
+import java.io.InputStream;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import javax.xml.transform.Source;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.URIResolver;
+import javax.xml.transform.stream.StreamSource;
 
 import net.buchlese.bofc.api.bofc.ArticleGroup;
 
@@ -26,6 +32,7 @@ public class BackOfcConfiguration extends Configuration {
 			// Step 1: Construct a FopFactory by specifying a reference to the configuration file
 			// (reuse if you plan to render multiple documents!)
 			fopFactory = FopFactory.newInstance();
+			fopFactory.setURIResolver(new BackOfcContextURIResolver());
 		}
 		return fopFactory;
 	}
@@ -56,6 +63,28 @@ public class BackOfcConfiguration extends Configuration {
 
     public Map<String, ArticleGroup> getArticleGroupMappings() {
     	return articleGroupMappings;
+    }
+    
+    private static class BackOfcContextURIResolver implements URIResolver {
+		@Override
+		public Source resolve(String href, String base)	throws TransformerException {
+	        while (href.startsWith("//")) {
+	        	href = href.substring(1);
+	        }
+	            URL url = this.getClass().getResource(href);
+	            InputStream in = this.getClass().getResourceAsStream(href);
+	            if (in != null) {
+	                if (url != null) {
+	                    return new StreamSource(in, url.toExternalForm());
+	                } else {
+	                    return new StreamSource(in);
+	                }
+	            } else {
+	                throw new TransformerException("Resource does not exist. \"" + href
+	                        + "\" is not accessible through the servlet context.");
+	            }
+		}
+    	
     }
     
 }

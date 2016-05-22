@@ -23,6 +23,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 
 import net.buchlese.bofc.api.bofc.PosInvoice;
+import net.buchlese.bofc.api.bofc.ReportDeliveryNote;
 import net.buchlese.bofc.api.bofc.ReportDeliveryProtocol;
 import net.buchlese.bofc.api.bofc.UserChange;
 import net.buchlese.bofc.api.subscr.Address;
@@ -37,6 +38,7 @@ import net.buchlese.bofc.core.NumberGenerator;
 import net.buchlese.bofc.core.PDFInvoice;
 import net.buchlese.bofc.core.PDFReport;
 import net.buchlese.bofc.core.SubscriptionInvoiceCreator;
+import net.buchlese.bofc.core.reports.ReportDeliveryNoteCreator;
 import net.buchlese.bofc.core.reports.ReportDeliveryProtocolCreator;
 import net.buchlese.bofc.jdbi.bofc.PosInvoiceDAO;
 import net.buchlese.bofc.jdbi.bofc.SubscrDAO;
@@ -379,6 +381,9 @@ public class SubscrResource {
 	@Produces({"text/html"})
 	public View fakturiereInvoice(@PathParam("inv") String invNum) {
 		PosInvoice inv = dao.getTempInvoice(invNum);
+		if (inv == null) {
+			throw new WebApplicationException("unable to faktura, no temp invoice with this number " + invNum, 500);
+		}
 		SubscriptionInvoiceCreator.recordInvoiceOnAgreements(dao, invDao, inv);
 		recordUserChange(dao, "master", inv.getId(), "invoice", null, "F");
 		return new InvoicesView(dao, invDao);
@@ -386,18 +391,28 @@ public class SubscrResource {
 
 	@GET
 	@Path("/invoiceView/{inv}")
-	@Produces({"application/json"})
-	public PosInvoice viewInvoice(@PathParam("inv") String invNum) {
+	@Produces({"application/pdf"})
+	public StreamingOutput viewInvoice(@PathParam("inv") String invNum) {
 		PosInvoice inv = dao.getTempInvoice(invNum);
-		if (inv != null) {
-			// es ist noch eine temporäre, einfach löschen
-			return inv;
+		if (inv == null) {
+			List<PosInvoice> invs = invDao.fetch(invNum);
+			if (invs.size()>1 || invs.isEmpty()) {
+				throw new WebApplicationException("unable to cancel, more than one or no invoice with this number " + invNum, 500);
+			}
+			inv = invs.get(0);
 		}
-		List<PosInvoice> invs = invDao.fetch(invNum);
-		if (invs.size()>1 || invs.isEmpty()) {
-			throw new WebApplicationException("unable to cancel, more than one or no invoice with this number " + invNum, 500);
-		}
-		return invs.get(0);
+		final PosInvoice invs = inv;
+		return new StreamingOutput() {
+			public void write(OutputStream output) throws IOException, WebApplicationException {
+				try {
+					PDFInvoice generator = new PDFInvoice(invs);
+					generator.generatePDF(output);
+				} catch (Exception e) {
+					throw new WebApplicationException(e);
+				}
+				output.flush();
+			}
+		};	
 	}
 
 	@GET
@@ -408,15 +423,19 @@ public class SubscrResource {
 		if (inv != null) {
 			// es ist noch eine temporäre, einfach löschen
 			dao.deleteTempInvoice(invNum);
-			recordUserChange(dao, "master", inv.getId(), "invoice", null, "C");
-			return new InvoicesView(dao, invDao);
+		} else {
+			// es ist eine permanente, auf gecanncelled setzen
+			List<PosInvoice> invs = invDao.fetch(invNum);
+			if (invs.size()>1 || invs.isEmpty()) {
+				throw new WebApplicationException("unable to cancel, more than one or no invoice with this number " + invNum, 500);
+			}
+			inv = invs.get(0);
+			inv.setCancelled(true);
+			invDao.updateInvoice(inv);
 		}
-		List<PosInvoice> invs = invDao.fetch(invNum);
-		if (invs.size()>1 || invs.isEmpty()) {
-			throw new WebApplicationException("unable to cancel, more than one or no invoice with this number " + invNum, 500);
-		}
-		SubscriptionInvoiceCreator.undoRecordInvoiceOnAgreements(dao, invDao, invs.get(0));
-		recordUserChange(dao, "master", invs.get(0).getId(), "invoice", null, "C");
+		SubscriptionInvoiceCreator.undoRecordInvoiceOnAgreements(dao, inv);
+		// TODO - stornorechnung erzeugen
+		recordUserChange(dao, "master", inv.getId(), "invoice", null, "C");
 		return new InvoicesView(dao, invDao);
 	}
 
@@ -502,7 +521,7 @@ public class SubscrResource {
 
 	@GET
 	@Path("/deliveraddresslist")
-	@Produces({"text/plain"})
+	@Produces({"application/pdf"})
 	public Response showDeliveryAdresses(@QueryParam("date") Optional<String> dateP) {
 		StreamingOutput stream = new StreamingOutput() {
 			@Override
@@ -523,9 +542,23 @@ public class SubscrResource {
 
 	@GET
 	@Path("/deliverynote/{id}")
-	@Produces({"text/html"})
-	public View showDeliveryNote(@PathParam("id") String noteId) {
-		return null;
+	@Produces({"application/pdf"})
+	public Response showDeliveryNote(@PathParam("id") String deliveryId) {
+		StreamingOutput stream = new StreamingOutput() {
+			@Override
+			public void write(OutputStream os) throws IOException,  WebApplicationException {
+				try {
+					long artId = Long.parseLong(deliveryId);
+					ReportDeliveryNote rep = ReportDeliveryNoteCreator.create(dao, numGen,  artId);
+					PDFReport generator = new PDFReport(rep, "report/deliveryNote.xsl");
+					generator.generatePDF(os);
+				} catch (Exception e) {
+					throw new WebApplicationException(e);
+				}
+				os.flush();
+			}
+		};
+		return Response.ok(stream).build();
 	}
 
 	@GET

@@ -31,7 +31,7 @@
 			<td>${d.payed?string("ja","")}</td>
 			<td><a href="#subscrDelivery/${d.id?c}" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span></a>
             <a href="#subscription/${d.subscriptionId?c}" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
-			<a href="/subscr/delivnote/${d.id?c}" class="btn btn-default btn-sm" target="_blank"><span class="glyphicon glyphicon-folder-open" aria-hidden="true" alt="Lieferschein"></span></a>
+			<a href="/subscr/deliverynote/${d.id?c}" class="btn btn-default btn-sm" target="_blank"><span class="glyphicon glyphicon-folder-open" aria-hidden="true" alt="Lieferschein"></span></a>
 			<a href="#deliverydelete/${d.id?c}" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></td>
 		</tr>
 		</#list>
@@ -134,9 +134,9 @@
 			<td>${(inv.deliveryFrom.toString("dd.MM.yy"))!}</td>
 			<td>${(inv.deliveryTill.toString("dd.MM.yy"))!}</td>
 			<td>${money(inv.amount)}</td>
-			<td><a href="/subscr/invoiceRecord/${inv.number}" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span></a>
+			<td><a href="#invoiceRecord/${inv.number}" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span></a>
                 <a href="/subscr/invoiceView/${inv.number}" class="btn btn-default btn-sm" target="_blank"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span></a>
-                <a href="/subscr/invoiceCancel/${inv.number}" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a>
+                <a href="#invoiceCancel/${inv.number}" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a>
 			 </td>
 		</tr>
 		</#list>
