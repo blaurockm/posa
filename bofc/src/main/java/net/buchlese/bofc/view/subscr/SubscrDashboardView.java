@@ -1,5 +1,6 @@
 package net.buchlese.bofc.view.subscr;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,7 +26,10 @@ public class SubscrDashboardView extends AbstractBofcView {
 		super("subscrdashboard.ftl");
 		this.dao = dao;
 		this.products = dao.getProductsForTimespan(d, d.plusWeeks(1)).stream().filter(p -> p.getPeriod() != null).collect(Collectors.toList());
-		this.deliveries = dao.getDeliveries(d);
+		List<SubscrDelivery> tempdelivs = dao.getDeliveries(d);
+		tempdelivs.forEach(i -> i.subscriberName = kunde(i));
+		tempdelivs.sort(Comparator.comparing(SubscrDelivery::getSubscriberName));
+		this.deliveries = tempdelivs;
 		this.subscriptions = dao.getSubscriptionsForTimespan(d, d.plusMonths(1));
 		this.tempInvoices = dao.getTempInvoices();
 	}
@@ -33,10 +37,6 @@ public class SubscrDashboardView extends AbstractBofcView {
 
 	public List<SubscrProduct> getProducts() {
 		return products;
-	}
-
-	public List<Subscriber> getSubscribers() {
-		return dao.getSubscribers();
 	}
 
 	public List<Subscription> getSubscriptions() {

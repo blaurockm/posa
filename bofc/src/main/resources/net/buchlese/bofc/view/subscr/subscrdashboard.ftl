@@ -31,7 +31,7 @@
 	<tbody>
 		<#list deliveries as d>
 		<tr>
-			<td>${kunde(d)} ${abo(d).deliveryInfo1!} ${abo(d).deliveryInfo2!}</td>
+			<td>${d.subscriberName} ${abo(d).deliveryInfo1!} ${abo(d).deliveryInfo2!}</td>
 			<td>${d.articleName}</td>
 			<td>${d.quantity}</td>
 			<td>${abo(d).shipmentType.text}</td>

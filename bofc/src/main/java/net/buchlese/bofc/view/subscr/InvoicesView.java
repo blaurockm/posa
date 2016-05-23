@@ -1,6 +1,7 @@
 package net.buchlese.bofc.view.subscr;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import net.buchlese.bofc.api.bofc.PosInvoice;
 import net.buchlese.bofc.jdbi.bofc.PosInvoiceDAO;
@@ -12,6 +13,7 @@ import org.joda.time.LocalDate;
 public class InvoicesView extends AbstractBofcView {
 
 	private final SubscrDAO dao;
+	@SuppressWarnings("unused")
 	private final PosInvoiceDAO invDao;
 	private final List<PosInvoice> invoices;
 	
@@ -19,7 +21,7 @@ public class InvoicesView extends AbstractBofcView {
 		super("invoices.ftl");
 		this.dao = dao;
 		this.invDao = invDAO;
-		this.invoices = invDao.fetchAllAfter(LocalDate.now().minusWeeks(8).toDate());
+		this.invoices = dao.getSubscrInvoices(3, LocalDate.now().minusWeeks(8)).stream().filter(i -> "subscr".equals(i.getType())).collect(Collectors.toList());
 	}
 
 

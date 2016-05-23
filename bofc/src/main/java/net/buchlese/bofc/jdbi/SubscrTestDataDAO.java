@@ -488,7 +488,7 @@ public class SubscrTestDataDAO implements SubscrDAO {
 	}
 
 	@Override
-	public List<PosInvoice> getSubscrInvoices(int id) {
+	public List<PosInvoice> getSubscrInvoices(int id, LocalDate d) {
 		return tempInvoices;
 	}
 

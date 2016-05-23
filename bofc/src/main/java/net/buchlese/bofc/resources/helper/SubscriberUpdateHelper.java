@@ -56,7 +56,7 @@ public class SubscriberUpdateHelper {
 		}
 
 		if (field.contains(".") && field.startsWith("invoiceAddress")) {
-			field = fieldname.substring(fieldname.indexOf(".")+1);
+			field = field.substring(field.indexOf(".")+1);
 			Address a = art.getInvoiceAddress();
 			if (a == null) {
 				a = new Address();

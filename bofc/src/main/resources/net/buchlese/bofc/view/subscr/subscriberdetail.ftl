@@ -37,11 +37,11 @@
 <div class="row">
 <div class="col-md-2">Rechnungsadresse</div>
 <div class="col-md-4">
-<a href="#" class="editable" data-type="text" data-name="subscriber.name1">${(sub.invoiceAddress.name1)!}</a> <br>
-<a href="#" class="editable" data-type="text" data-name="subscriber.name2">${(sub.invoiceAddress.name2)!}</a> <br>
-<a href="#" class="editable" data-type="text" data-name="subscriber.name3">${(sub.invoiceAddress.name3)!}</a> <br>
-<a href="#" class="editable" data-type="text" data-name="subscriber.street">${(sub.invoiceAddress.street)!}</a> <br>
-<a href="#" class="editable" data-type="text" data-name="subscriber.postalcode">${(sub.invoiceAddress.postalcode)!}</a> <a href="#" class="editable" data-type="text" data-name="subscriber.city">${(sub.invoiceAddress.city)!}</a> 
+<a href="#" class="editable" data-type="text" data-name="subscriber.invoiceAddress.name1">${(sub.invoiceAddress.name1)!}</a> <br>
+<a href="#" class="editable" data-type="text" data-name="subscriber.invoiceAddress.name2">${(sub.invoiceAddress.name2)!}</a> <br>
+<a href="#" class="editable" data-type="text" data-name="subscriber.invoiceAddress.name3">${(sub.invoiceAddress.name3)!}</a> <br>
+<a href="#" class="editable" data-type="text" data-name="subscriber.invoiceAddress.street">${(sub.invoiceAddress.street)!}</a> <br>
+<a href="#" class="editable" data-type="text" data-name="subscriber.invoiceAddress.postalcode">${(sub.invoiceAddress.postalcode)!}</a> <a href="#" class="editable" data-type="text" data-name="subscriber.invoiceAddress.city">${(sub.invoiceAddress.city)!}</a> 
 </div>
 </div>
 

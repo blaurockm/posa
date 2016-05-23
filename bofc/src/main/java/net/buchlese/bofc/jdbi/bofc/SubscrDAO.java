@@ -58,8 +58,8 @@ public interface SubscrDAO {
 	Collection<String> getInvoiceNumsForSubscription(@Bind("subid") long id);
 
 	@Mapper(PosInvoiceMapper.class)
-	@SqlQuery("select * from posInvoice where type = 'subscr' and pointid = :pointid ")
-	List<PosInvoice> getSubscrInvoices(@Bind("pointid") int id);
+	@SqlQuery("select * from posInvoice where pointid = :pointid and invDate > :date order by number asc")
+	List<PosInvoice> getSubscrInvoices(@Bind("pointid") int id, @Bind("date") LocalDate  num);
 
 	@Mapper(SubscrDeliveryMapper.class)
 	@SqlQuery("select * from subscrDelivery where deliveryDate = (select max(deliveryDate) from subscrDelivery where subscriptionId = :subid)")
@@ -152,11 +152,11 @@ public interface SubscrDAO {
 	void insertTempInvoice(@BindBean PosInvoice ti); // should be moved to PosInvoiceDAO
 
 	@Mapper(SubscriberMapper.class)
-	@SqlQuery("select * from subscriber where name1 like :q or name2 like :q or to_char(customerId) like :q ")
+	@SqlQuery("select * from subscriber where name1 like :q or name2 like :q or to_char(customerId) like :q order by name1")
 	List<Subscriber> querySubscribers(@Bind("q") String query);
 
 	@Mapper(SubscrProductMapper.class)
-	@SqlQuery("select * from subscrProduct where name like :q or to_char(id) like :q ")
+	@SqlQuery("select * from subscrProduct where name like :q or to_char(id) like :q order by name")
 	List<SubscrProduct> querySubscrProducts(@Bind("q") String query);
 
 	@SqlBatch("update subscrDelivery set invoiceNumber = :invNum, payed = true where id = :id")

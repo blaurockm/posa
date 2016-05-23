@@ -45,16 +45,24 @@ public class SubscriptionInvoiceCreator {
 	/**
 	 * festschreiben einer Rechnung
 	 * @param dao
-	 * @param invDao
 	 * @param inv
 	 */
-	public static void recordInvoiceOnAgreements(SubscrDAO dao, PosInvoiceDAO invDao, PosInvoice inv) {
+	private static void recordInvoiceOnAgreements(SubscrDAO dao, PosInvoice inv) {
 		for (InvoiceAgrDetail iad : inv.getAgreementDetails()) {
 			Subscription sub = dao.getSubscription(iad.getAgreementId());
 			sub.setPayedUntil(iad.getDeliveryTill());
 			dao.recordDetailsOnInvoice(iad.getDeliveryIds(), inv.getNumber());
 			dao.updateSubscription(sub);
 		}
+	}
+
+	/**
+	 * festschreiben einer Rechnung
+	 * @param dao
+	 * @param invDao
+	 * @param inv
+	 */
+	public static void fakturiereInvoice(SubscrDAO dao, PosInvoiceDAO invDao, PosInvoice inv) {
 		inv.setTemporary(false);
 		invDao.insert(inv);
 		dao.deleteTempInvoice(inv.getNumber());
@@ -65,7 +73,7 @@ public class SubscriptionInvoiceCreator {
 	 * @param dao
 	 * @param inv
 	 */
-	public static void undoRecordInvoiceOnAgreements(SubscrDAO dao, PosInvoice inv) {
+	public static void cancelInvoice(SubscrDAO dao, PosInvoice inv) {
 		for (InvoiceAgrDetail iad : inv.getAgreementDetails()) {
 			Subscription sub = dao.getSubscription(iad.getAgreementId());
 			sub.setPayedUntil(iad.getDeliveryFrom().minusDays(1));
@@ -105,6 +113,7 @@ public class SubscriptionInvoiceCreator {
 		}
 		
 		dao.insertTempInvoice(inv);
+		recordInvoiceOnAgreements(dao, inv);
 		return inv;
 	}
 

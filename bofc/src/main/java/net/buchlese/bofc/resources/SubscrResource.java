@@ -415,7 +415,7 @@ public class SubscrResource {
 		if (inv == null) {
 			throw new WebApplicationException("unable to faktura, no temp invoice with this number " + invNum, 500);
 		}
-		SubscriptionInvoiceCreator.recordInvoiceOnAgreements(dao, invDao, inv);
+		SubscriptionInvoiceCreator.fakturiereInvoice(dao, invDao, inv);
 		recordUserChange(dao, "master", inv.getId(), "invoice", null, "F");
 		return new InvoicesView(dao, invDao);
 	}
@@ -464,7 +464,7 @@ public class SubscrResource {
 			inv.setCancelled(true);
 			invDao.updateInvoice(inv);
 		}
-		SubscriptionInvoiceCreator.undoRecordInvoiceOnAgreements(dao, inv);
+		SubscriptionInvoiceCreator.cancelInvoice(dao, inv);
 		// TODO - stornorechnung erzeugen
 		recordUserChange(dao, "master", inv.getId(), "invoice", null, "C");
 		return new InvoicesView(dao, invDao);

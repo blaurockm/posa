@@ -25,6 +25,7 @@ public class SubscrDeliveryMapper implements ResultSetMapper<SubscrDelivery> {
 		}
 		// just to be shure
 		cb.setId(rs.getLong("id"));
+		cb.setPayed(rs.getBoolean("payed"));
 		return cb;
 	}
 

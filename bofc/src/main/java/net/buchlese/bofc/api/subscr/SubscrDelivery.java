@@ -43,6 +43,14 @@ public class SubscrDelivery implements Comparable<SubscrDelivery> {
 	@JsonProperty
 	private long shipmentCost;
 
+	@JsonIgnore
+	public String subscriberName;
+
+	@JsonIgnore
+	public String getSubscriberName() {
+		return subscriberName;
+	}
+	
 	// sich selber als json-object ausgeben
 	@JsonIgnore
 	public String getComplJson() throws JsonProcessingException {
