@@ -52,11 +52,11 @@
     	<li class="list-group-item">Lieferhinweis1 <a href="#" class="editable" data-type="text" data-name="subscription.deliveryInfo1">${sub.deliveryInfo1!}</a></li>
     	<li class="list-group-item">Lieferhinweis2 <a href="#" class="editable" data-type="text" data-name="subscription.deliveryInfo2">${sub.deliveryInfo2!}</a></li>
       <li class="list-group-item">Lieferaddresse <br>
-<a href="#" class="editable" data-type="text" data-name="subscription.name1">${(sub.deliveryAddress.name1)!}</a> <br>
-<a href="#" class="editable" data-type="text" data-name="subscription.name2">${(sub.deliveryAddress.name2)!}</a> <br>
-<a href="#" class="editable" data-type="text" data-name="subscription.name3">${(sub.deliveryAddress.name3)!}</a> <br>
-<a href="#" class="editable" data-type="text" data-name="subscription.street">${(sub.deliveryAddress.street)!}</a> <br>
-<a href="#" class="editable" data-type="text" data-name="subscription.postalcode">${(sub.deliveryAddress.postalcode)!}</a> <a href="#" class="editable" data-type="text" data-name="subscription.city">${(sub.deliveryAddress.city)!}</a> 
+<a href="#" class="editable" data-type="text" data-name="subscription.deliveryAddress.name1">${(sub.deliveryAddress.name1)!}</a> <br>
+<a href="#" class="editable" data-type="text" data-name="subscription.deliveryAddress.name2">${(sub.deliveryAddress.name2)!}</a> <br>
+<a href="#" class="editable" data-type="text" data-name="subscription.deliveryAddress.name3">${(sub.deliveryAddress.name3)!}</a> <br>
+<a href="#" class="editable" data-type="text" data-name="subscription.deliveryAddress.street">${(sub.deliveryAddress.street)!}</a> <br>
+<a href="#" class="editable" data-type="text" data-name="subscription.deliveryAddress.postalcode">${(sub.deliveryAddress.postalcode)!}</a> <a href="#" class="editable" data-type="text" data-name="subscription.deliveryAddress.city">${(sub.deliveryAddress.city)!}</a> 
     	</li> 
     </ul>
 </div>

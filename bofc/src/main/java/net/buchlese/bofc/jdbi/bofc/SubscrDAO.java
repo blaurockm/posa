@@ -57,6 +57,10 @@ public interface SubscrDAO {
 	@SqlQuery("select invoiceNumber from subscrDelivery where subscriptionId = :subid and invoiceNumber is not null")
 	Collection<String> getInvoiceNumsForSubscription(@Bind("subid") long id);
 
+	@Mapper(PosInvoiceMapper.class)
+	@SqlQuery("select * from posInvoice where type = 'subscr' and pointid = :pointid ")
+	List<PosInvoice> getSubscrInvoices(@Bind("pointid") int id);
+
 	@Mapper(SubscrDeliveryMapper.class)
 	@SqlQuery("select * from subscrDelivery where deliveryDate = (select max(deliveryDate) from subscrDelivery where subscriptionId = :subid)")
 	SubscrDelivery getLastDeliveryForSubscription(@Bind("subid") long id);
@@ -66,7 +70,7 @@ public interface SubscrDAO {
 	SubscrArticle getNewestArticleOfProduct(@Bind("subid") long prodid);
 	
 	@Mapper(SubscrProductMapper.class)
-	@SqlQuery("select * from subscrProduct where nextDelivery is null or nextDelivery between :from and :till ")
+	@SqlQuery("select * from subscrProduct where nextDelivery is null or nextDelivery between :from and :till order by name")
 	List<SubscrProduct> getProductsForTimespan(@Bind("from") LocalDate from,	@Bind("till")LocalDate till);
 
 	@Mapper(SubscrArticleMapper.class)
@@ -82,7 +86,7 @@ public interface SubscrDAO {
 	Subscriber getSubscriber(@Bind("id") long id);
 
 	@Mapper(SubscriberMapper.class)
-	@SqlQuery("select * from subscriber")
+	@SqlQuery("select * from subscriber order by name1")
 	List<Subscriber> getSubscribers();
 
 	@Mapper(SubscriptionMapper.class)
@@ -110,7 +114,7 @@ public interface SubscrDAO {
 	SubscrProduct getSubscrProduct(@Bind("id") long id);
 
 	@Mapper(SubscrProductMapper.class)
-	@SqlQuery("select * from subscrProduct")
+	@SqlQuery("select * from subscrProduct order by name")
 	List<SubscrProduct> getSubscrProducts();
 
 	@Mapper(TempInvoiceMapper.class)
@@ -177,8 +181,8 @@ public interface SubscrDAO {
 		    " = (:complJson, :subscriberId, :productId, :startDate, :endDate, :payedUntil, :pointid) where id = :id")
 	void updateSubscription(@BindBean Subscription art);
 
-	@SqlUpdate("update subscrProduct set (complJson, startDate, endDate, nextDelivery) " +
-		    " = (:complJson, :startDate, :endDate, :nextDelivery) where id = :id")
+	@SqlUpdate("update subscrProduct set (complJson, startDate, endDate, nextDelivery, name) " +
+		    " = (:complJson, :startDate, :endDate, :nextDelivery, :name) where id = :id")
 	void updateSubscrProduct(@BindBean SubscrProduct p);
 	
 	// sollte in jedes DAO

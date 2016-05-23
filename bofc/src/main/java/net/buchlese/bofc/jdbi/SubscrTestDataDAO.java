@@ -487,4 +487,9 @@ public class SubscrTestDataDAO implements SubscrDAO {
 		changes.add(u);
 	}
 
+	@Override
+	public List<PosInvoice> getSubscrInvoices(int id) {
+		return tempInvoices;
+	}
+
 }

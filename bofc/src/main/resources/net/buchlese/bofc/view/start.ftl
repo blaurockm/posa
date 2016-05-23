@@ -27,8 +27,8 @@
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.2/css/select2.min.css" rel="stylesheet" />
 	<link rel="stylesheet" href="/assets/bofc/select2-bootstrap.min.css">
   </head>
-  <body>
-    <nav class="navbar navbar-default navbar-static-top">
+  <body style="padding-top:70px">
+    <nav class="navbar navbar-default navbar-fixed-top">
       <div class="container">
         <div class="navbar-header">
           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">

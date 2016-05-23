@@ -12,8 +12,8 @@
 <table class="table table-striped">
 	<thead>
 		<tr>
-			<th>Verlag</th>
 			<th>Publikation</th>
+			<th>Verlag</th>
 			<th>Abkü</th>
 			<th># Abos</th>
 			<th>Periodizität</th>
@@ -25,8 +25,8 @@
 	<tbody>
 		<#list products as p>
 		<tr>
-			<td>${p.publisher}</td>
 			<td>${p.name}</td>
+			<td>${p.publisher}</td>
 			<td>${p.abbrev}</td>
 			<td></td>
 			<td>${p.period!}</td>

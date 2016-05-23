@@ -1,13 +1,21 @@
-<div class="container">
 
 <div class="row">
 <div class="col-md-6">
-<h1>heutige Lieferungen</h1>
+<h1>Dashboard</h1>
 </div>
 <div class="col-md-offset-4 col-md-2">
  <a href="/subscr/deliveraddresslist/" class="btn btn-primary" target="_blank">Adressprotokoll</a>
  </div>
 </div>
+<ul class="nav nav-tabs">
+  <li class="active"><a data-toggle="tab" href="#heutigeliefer">heutige Lieferungen <span class="label label-pill label-default">${deliveries?size}</span></a></li>
+  <li><a data-toggle="tab" href="#periodika">Periodika mit zu erwartenden Lieferungen</a></li>
+  <li><a data-toggle="tab" href="#abos">abzurechnende Abos</a></li>
+  <li><a data-toggle="tab" href="#rechnungen">unbestätigte Rechnungen <span class="label label-pill label-default">${invoices?size}</span></a></li>
+</ul>
+
+<div class="tab-content">
+  <div id="heutigeliefer" class="tab-pane fade in active">
 <table class="table table-striped">
 	<thead>
 		<tr>
@@ -37,12 +45,8 @@
 		</#list>
 	</tbody>
 </table>
-
-<div class="row">
-<div class="col-md-6">
-<h3>Periodika mit zu erwartenden Lieferungen</h3>
-</div>
-</div>
+  </div>
+  <div id="periodika" class="tab-pane fade">
 <table class="table table-striped">
 	<thead>
 		<tr>
@@ -70,13 +74,8 @@
 		</#list>
 	</tbody>
 </table>
-
-
-<div class="row">
-<div class="col-md-6">
-<h3>abzurechnende Abos</h3>
-</div>
-</div>
+  </div>
+  <div id="abos" class="tab-pane fade">
 <table class="table table-striped">
 	<thead>
 		<tr>
@@ -107,12 +106,8 @@
 		</#list>
 	</tbody>
 </table>
-
-<div class="row">
-<div class="col-md-6">
-<h3>unbestätigte Rechnungen</h3>
-</div>
-</div>
+  </div>
+  <div id="rechnungen" class="tab-pane fade">
 <table class="table table-striped">
 	<thead>
 		<tr>
@@ -142,9 +137,8 @@
 		</#list>
 	</tbody>
 </table>
-
-</div>		
-
+  </div>
+</div>	<!-- end nav-content -->	
 <script>
 $(document).ready(function(){
     $('[data-toggle="tooltip"]').tooltip(); 

@@ -61,8 +61,8 @@ public class SubscriptionUpdateHelper {
 			art.setPayedUntil(LocalDate.parse(value, DateTimeFormat.forPattern("MM/yyyy") ));
 			res.success = true;
 		}
-		if (field.contains(".") && field.startsWith("deliveryeAddress")) {
-			field = fieldname.substring(fieldname.indexOf(".")+1);
+		if (field.contains(".") && field.startsWith("deliveryAddress")) {
+			field = field.substring(field.indexOf(".")+1);
 			Address a = art.getDeliveryAddress();
 			if (a == null) {
 				a = new Address();

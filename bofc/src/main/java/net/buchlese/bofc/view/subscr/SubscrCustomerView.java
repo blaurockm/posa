@@ -10,16 +10,18 @@ import net.buchlese.bofc.view.AbstractBofcView;
 public class SubscrCustomerView extends AbstractBofcView {
 
 	private final SubscrDAO dao;
+	private List<Subscriber> subscribers;
 	
 	public SubscrCustomerView(SubscrDAO dao) {
 		super("subscrcustomer.ftl");
 		this.dao = dao;
+		this.subscribers = dao.getSubscribers();
 	}
 
 
 
 	public List<Subscriber> getSubscribers() {
-		return dao.getSubscribers();
+		return subscribers;
 	}
 
 

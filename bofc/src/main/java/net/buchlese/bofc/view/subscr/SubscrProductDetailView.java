@@ -53,7 +53,7 @@ public class SubscrProductDetailView extends AbstractBofcView{
 	public boolean willBeSettled(Subscription s) {
 		switch (s.getPaymentType()) {
 		case EACHDELIVERY : return hasUnpayedDeliveries(s);
-			default : return s.getPayedUntil().isBefore(LocalDate.now());
+			default : return s.getPayedUntil() == null || s.getPayedUntil().isBefore(LocalDate.now());
 		}
 	}
 

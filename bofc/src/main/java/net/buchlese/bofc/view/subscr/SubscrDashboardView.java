@@ -1,6 +1,7 @@
 package net.buchlese.bofc.view.subscr;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import net.buchlese.bofc.api.bofc.PosInvoice;
 import net.buchlese.bofc.api.subscr.SubscrDelivery;
@@ -23,7 +24,7 @@ public class SubscrDashboardView extends AbstractBofcView {
 	public SubscrDashboardView(SubscrDAO dao, LocalDate d) {
 		super("subscrdashboard.ftl");
 		this.dao = dao;
-		this.products = dao.getProductsForTimespan(d, d.plusWeeks(1));
+		this.products = dao.getProductsForTimespan(d, d.plusWeeks(1)).stream().filter(p -> p.getPeriod() != null).collect(Collectors.toList());
 		this.deliveries = dao.getDeliveries(d);
 		this.subscriptions = dao.getSubscriptionsForTimespan(d, d.plusMonths(1));
 		this.tempInvoices = dao.getTempInvoices();
