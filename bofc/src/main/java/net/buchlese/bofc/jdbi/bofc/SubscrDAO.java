@@ -143,8 +143,8 @@ public interface SubscrDAO {
 	void insertSubscription(@BindBean Subscription p);
 
 	@GetGeneratedKeys
-	@SqlUpdate("insert into subscrProduct (complJson, startDate, endDate, nextDelivery) " +
-		    " values (:complJson, :startDate, :endDate, :nextDelivery)")
+	@SqlUpdate("insert into subscrProduct (complJson, startDate, endDate, nextDelivery, name) " +
+		    " values (:complJson, :startDate, :endDate, :nextDelivery, :name)")
 	long insertSubscrProduct(@BindBean SubscrProduct p);
 	
 	@SqlUpdate("insert into tempInvoices (complJson, num) " +

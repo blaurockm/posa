@@ -25,6 +25,9 @@ public class SubscrProductMapper implements ResultSetMapper<SubscrProduct> {
 		}
 		// just to be shure
 		cb.setId(rs.getLong("id"));
+		if (cb.getHalfPercentage() <= 0.0001d) { // TODO: solange wir keine 100%igen 19%er haben
+			cb.setHalfPercentage(1d);
+		}
 		return cb;
 	}
 

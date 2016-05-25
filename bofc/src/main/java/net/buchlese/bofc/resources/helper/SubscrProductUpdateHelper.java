@@ -68,6 +68,9 @@ public class SubscrProductUpdateHelper {
 			art.setBaseBrutto(Long.parseLong(value));
 			res.success = true;
 		}
+		if (art.getHalfPercentage() <= 0.0001d) {
+			art.setHalfPercentage(1d);  // TODO: solange wir keine 100%igen 19%er haben
+		}
 		if ("halfPercentage".equals(field)) {
 			art.setHalfPercentage(Double.parseDouble(value));
 			res.success = true;

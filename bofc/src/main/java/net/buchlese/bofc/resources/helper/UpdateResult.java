@@ -21,7 +21,11 @@ public class UpdateResult {
 	public double halfPercentage;
 	@JsonProperty
 	public String name;
-	
+	@JsonProperty
+	public String oldValue;
+	@JsonProperty
+	public String newValue;
+
 	@JsonIgnore
 	public void initializeMoneyFieldsFromArticle(SubscrArticle art) {
 		brutto = art.getBrutto();

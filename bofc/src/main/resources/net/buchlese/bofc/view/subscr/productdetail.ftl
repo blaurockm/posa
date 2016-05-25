@@ -1,5 +1,5 @@
 <div class="container">
-<h1>Periodikum <a href="#" class="editable" data-type="text" data-name="product.publisher">${p.name}</a>
+<h1>Periodikum <a href="#" class="editable" data-type="text" data-name="product.name">${p.name}</a>
 <a href="#subscrDispo/${p.id?c}" class="btn btn-primary">Dispo</a>
 <a href="#subscrCustAdd" class="btn btn-default">Neuer Abonnent</a>
 <a href="#subscrSubscrAdd/0/${p.id?c}" class="btn btn-default">Neues Abo</a>
@@ -11,7 +11,7 @@
 <h3>von <a href="#" class="editable" data-type="text" data-name="product.publisher">${p.publisher}</a> </h3>
 <div class="row">
 <div class="col-md-2">Abkürzung</div>
-<div class="col-md-2"><a href="#" class="editable" data-type="text" data-name="product.publisher">${p.abbrev}</a></div>
+<div class="col-md-2"><a href="#" class="editable" data-type="text" data-name="product.abbrev">${p.abbrev}</a></div>
 </div>
 <div class="row">
 <div class="col-md-2">Ausgabenzähler</div>

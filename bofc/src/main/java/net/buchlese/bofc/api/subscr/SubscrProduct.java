@@ -38,7 +38,7 @@ public class SubscrProduct {
 	@JsonProperty
 	private String namePattern;
 	@JsonProperty
-	private double halfPercentage; // prozentuale Anteil am Gesamtpreis , halber Steuersatz, 0 < x < 1
+	private double halfPercentage =1d; // prozentuale Anteil am Gesamtpreis , halber Steuersatz, 0 < x < 1
 	@JsonProperty
 	private long baseBrutto;
 
@@ -53,10 +53,14 @@ public class SubscrProduct {
 	public SubscrArticle createNextArticle(LocalDate erschTag) {
 		SubscrArticle na = new SubscrArticle();
 		na.setProductId(getId());
-		na.setHalfPercentage(halfPercentage);
+		if (halfPercentage <= 0.0001d) {
+			na.setHalfPercentage(1d);
+		} else {
+			na.setHalfPercentage(halfPercentage);
+		}
 		na.updateBrutto(baseBrutto);
 		na.setErschTag(erschTag);
-		na.setIssueNo(count++);
+		na.setIssueNo(++count);
 		na.setName(na.initializeName(namePattern));
 		return na;
 	}
