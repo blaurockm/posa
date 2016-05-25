@@ -57,7 +57,7 @@ public class SubscriptionDetailView extends AbstractBofcView{
 	public boolean needsInvoice() {
 		switch (sub.getPaymentType()) {
 		case EACHDELIVERY : return hasUnpayedDeliveries(sub);
-		default : return sub.getPayedUntil().isBefore(LocalDate.now());
+		default : return sub.getPayedUntil() == null || sub.getPayedUntil().isBefore(LocalDate.now());
 		}
 	}
 
