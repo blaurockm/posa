@@ -46,6 +46,13 @@ public class Subscription {
 
 	@JsonProperty
 	private LocalDate lastInvoiceDate;
+	
+	@JsonProperty
+	private boolean needsAttention;
+	
+	@JsonProperty
+	private String memo;
+
 	// sich selber als json-object ausgeben
 	@JsonIgnore
 	public String getComplJson() throws JsonProcessingException {
@@ -136,6 +143,22 @@ public class Subscription {
 	}
 	public void setLastInvoiceDate(LocalDate lastInvoiceDate) {
 		this.lastInvoiceDate = lastInvoiceDate;
+	}
+
+	public boolean isNeedsAttention() {
+		return needsAttention;
+	}
+
+	public void setNeedsAttention(boolean needsAttention) {
+		this.needsAttention = needsAttention;
+	}
+
+	public String getMemo() {
+		return memo;
+	}
+
+	public void setMemo(String memo) {
+		this.memo = memo;
 	}
 	
 }

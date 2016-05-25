@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import net.buchlese.bofc.api.bofc.PosInvoice;
+import net.buchlese.bofc.api.subscr.PayIntervalType;
 import net.buchlese.bofc.api.subscr.SubscrDelivery;
 import net.buchlese.bofc.api.subscr.SubscrProduct;
 import net.buchlese.bofc.api.subscr.Subscriber;
@@ -16,31 +17,37 @@ import org.joda.time.LocalDate;
 
 public class SubscrDashboardView extends AbstractBofcView {
 
-	private final List<SubscrProduct> products;
+//	private final List<SubscrProduct> products;
 	private final List<SubscrDelivery> deliveries;
 	private final List<Subscription> subscriptions;
+	private final List<Subscription> subscriptionsWithMemo;
 	private final List<PosInvoice> tempInvoices;
 	private final SubscrDAO dao;
 	
 	public SubscrDashboardView(SubscrDAO dao, LocalDate d) {
 		super("subscrdashboard.ftl");
 		this.dao = dao;
-		this.products = dao.getProductsForTimespan(d, d.plusWeeks(1)).stream().filter(p -> p.getPeriod() != null).collect(Collectors.toList());
+//		this.products = dao.getProductsForTimespan(d, d.plusWeeks(4)).stream().filter(p -> p.getPeriod() != null).collect(Collectors.toList());
 		List<SubscrDelivery> tempdelivs = dao.getDeliveries(d);
 		tempdelivs.forEach(i -> i.subscriberName = kunde(i));
 		tempdelivs.sort(Comparator.comparing(SubscrDelivery::getSubscriberName));
 		this.deliveries = tempdelivs;
-		this.subscriptions = dao.getSubscriptionsForTimespan(d, d.plusMonths(1));
+		this.subscriptions = dao.getSubscriptionsForTimespan(d, d.plusMonths(1)).stream().filter(s -> s.getPaymentType().equals(PayIntervalType.EACHDELIVERY) == false).collect(Collectors.toList());
+		this.subscriptionsWithMemo = dao.getSubscriptionsWithMemo();
 		this.tempInvoices = dao.getTempInvoices();
 	}
 
 
-	public List<SubscrProduct> getProducts() {
-		return products;
-	}
+//	public List<SubscrProduct> getProducts() {
+//		return products;
+//	}
 
 	public List<Subscription> getSubscriptions() {
 		return subscriptions;
+	}
+
+	public List<Subscription> getSubscriptionsWithMemo() {
+		return subscriptionsWithMemo;
 	}
 
 	public List<SubscrDelivery> getDeliveries() {

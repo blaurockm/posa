@@ -68,6 +68,8 @@
     <ul class="list-group list-group-flush">
     	<li class="list-group-item">Telefon <a href="#" class="editableSub" data-type="text" data-name="subscriber.telephone">${(kunde().telephone)!}</a></li>
     	<li class="list-group-item">Email <a href="#" class="editableSub" data-type="email" data-name="subscriber.email">${(kunde().email)!}</a></li>
+    	<li class="list-group-item">Bookmark <input type="checkbox" ${sub.needsAttention?string('checked','')} onChange="switchCheckbox('subscription.needsAttention', this.checked)"></li>
+    	<li class="list-group-item">Memo <a href="#" class="editable" data-type="textarea" data-name="subscription.memo">${sub.memo!}</a></li>
     </ul>
 </div>
 </div>
@@ -147,6 +149,10 @@
 </div>
 
 <script>
+	var switchCheckbox = function(fieldname, val) {
+		 $.post("/subscr/update", { pk: '${sub.id?c}', name: fieldname, value : val});
+	}
+
 	 $('.editableSub').editable({
 	    url: '/subscr/update', pk:'${sub.subscriberId?c}',
 	    success: function(res, newValue) {

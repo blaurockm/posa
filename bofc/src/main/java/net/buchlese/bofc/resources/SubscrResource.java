@@ -93,11 +93,12 @@ public class SubscrResource {
 
 	private final NumberGenerator numGen;
 	
-	private void recordUserChange(SubscrDAO dao, String login, long object, String fieldId, String newValue, String action) {
+	private void recordUserChange(SubscrDAO dao, String login, long object, String fieldId, String oldValue, String newValue, String action) {
 		UserChange uc = new UserChange();
 		uc.setLogin(login);
 		uc.setObjectId(object);
 		uc.setFieldId(fieldId);
+		uc.setOldValue(oldValue);
 		uc.setNewValue(newValue);
 		uc.setAction(StringUtils.left(action, 1));
 		uc.setModDate(DateTime.now());
@@ -150,7 +151,7 @@ public class SubscrResource {
 			s.setInvoiceAddress(a);
 		}
 		dao.insertSubscriber(s);
-		recordUserChange(dao, "master", s.getCustomerId(), "customer", null, "N");
+		recordUserChange(dao, "master", s.getCustomerId(), "customer", null, null, "N");
 		return new SubscrCustomerView(dao);
 	}
 
@@ -214,7 +215,7 @@ public class SubscrResource {
 			a.setCity(par.getFirst("deliveryAddress.city"));
 		}
 		dao.insertSubscription(s);
-		recordUserChange(dao, "master", s.getId(), "subscription", null, "N");
+		recordUserChange(dao, "master", s.getId(), "subscription", null, null, "N");
 	}
 
 
@@ -264,11 +265,11 @@ public class SubscrResource {
 			p.setHalfPercentage(1d);
 		}
 		long pid = dao.insertSubscrProduct(p);
-		recordUserChange(dao, "master", pid, "subscrProduct", null, "N");
+		recordUserChange(dao, "master", pid, "subscrProduct", null, null, "N");
 		SubscrArticle art = p.createNextArticle(LocalDate.now());
 		art.setProductId(pid);
 		long aid = dao.insertArticle(art);
-		recordUserChange(dao, "master", aid, "subscrArticle", null, "N");
+		recordUserChange(dao, "master", aid, "subscrArticle", null, null, "N");
 		return new SubscrProductDetailView(dao, p, Collections.emptyList());
 	}
 
@@ -278,7 +279,7 @@ public class SubscrResource {
 	public PosInvoice createCollInvoice(@PathParam("sub") String subIdP) {
 		long subId = Long.parseLong(subIdP);
 		PosInvoice inv = SubscriptionInvoiceCreator.createCollectiveSubscription(dao, dao.getSubscriber(subId), numGen);
-		recordUserChange(dao, "master", inv.getId(), "collInvoice " + inv.getNumber(), null, "N");
+		recordUserChange(dao, "master", inv.getId(), "collInvoice " + inv.getNumber(), null, null, "N");
 		return inv;
 	}
 
@@ -292,7 +293,7 @@ public class SubscrResource {
 				try {
 					PosInvoice inv = SubscriptionInvoiceCreator.createCollectiveSubscription(dao, dao.getSubscriber(subId), numGen);
 					PDFInvoice generator = new PDFInvoice(inv);
-					recordUserChange(dao, "master", inv.getId(), "collInvoice " + inv.getNumber(), null, "N");
+					recordUserChange(dao, "master", inv.getId(), "collInvoice " + inv.getNumber(), null, null, "N");
 					generator.generatePDF(output);
 				} catch (Exception e) {
 					throw new WebApplicationException(e);
@@ -334,7 +335,7 @@ public class SubscrResource {
 		d.setCreationDate(DateTime.now());
 
 		dao.insertDelivery(d);
-		recordUserChange(dao, "master", d.getId(), "subscrDelivery", null, "N");
+		recordUserChange(dao, "master", d.getId(), "subscrDelivery", null, null, "N");
 		SubscrProduct p = dao.getSubscrProduct(subscription.getProductId());
 		p.setLastDelivery(deliveryDate);
 		if (p.getPeriod() != null) {
@@ -350,7 +351,7 @@ public class SubscrResource {
 	public PosInvoice createInvoice(@PathParam("sub") String subIdP) {
 		long subId = Long.parseLong(subIdP);
 		PosInvoice inv =  SubscriptionInvoiceCreator.createSubscription(dao, dao.getSubscription(subId), numGen);
-		recordUserChange(dao, "master", inv.getId(), "invoice " + inv.getNumber(), null, "N");
+		recordUserChange(dao, "master", inv.getId(), "invoice " + inv.getNumber(), null, null, "N");
 		return inv;
 	}
 
@@ -363,7 +364,7 @@ public class SubscrResource {
 			public void write(OutputStream output) throws IOException, WebApplicationException {
 				try {
 					PosInvoice inv = SubscriptionInvoiceCreator.createSubscription(dao, dao.getSubscription(subId), numGen);
-					recordUserChange(dao, "master", inv.getId(), "invoice " + inv.getNumber(), null, "N");
+					recordUserChange(dao, "master", inv.getId(), "invoice " + inv.getNumber(), null, null, "N");
 					PDFInvoice generator = new PDFInvoice(inv);
 					generator.generatePDF(output);
 				} catch (Exception e) {
@@ -383,7 +384,7 @@ public class SubscrResource {
 		SubscrArticle art = product.createNextArticle(LocalDate.now());
 		dao.insertArticle(art);
 		dao.updateSubscrProduct(product);
-		recordUserChange(dao, "master", art.getId(), "subscrArticle", null, "N");
+		recordUserChange(dao, "master", art.getId(), "subscrArticle", null, null, "N");
 		return new SubscrDispoView(dao, product, art, LocalDate.now());
 	}
 
@@ -403,7 +404,7 @@ public class SubscrResource {
 		}
 		dao.updateSubscrProduct(p);
 		dao.deleteDelivery(delId);
-		recordUserChange(dao, "master", delId, "subscrArticle", null, "D");
+		recordUserChange(dao, "master", delId, "subscrArticle", null, null, "D");
 		return new SubscrDashboardView(dao, LocalDate.now());
 	}
 
@@ -416,7 +417,7 @@ public class SubscrResource {
 			throw new WebApplicationException("unable to faktura, no temp invoice with this number " + invNum, 500);
 		}
 		SubscriptionInvoiceCreator.fakturiereInvoice(dao, invDao, inv);
-		recordUserChange(dao, "master", inv.getId(), "invoice", null, "F");
+		recordUserChange(dao, "master", inv.getId(), "invoice", null, null, "F");
 		return new InvoicesView(dao, invDao);
 	}
 
@@ -466,7 +467,7 @@ public class SubscrResource {
 		}
 		SubscriptionInvoiceCreator.cancelInvoice(dao, inv);
 		// TODO - stornorechnung erzeugen
-		recordUserChange(dao, "master", inv.getId(), "invoice", null, "C");
+		recordUserChange(dao, "master", inv.getId(), "invoice", null, null, "C");
 		return new InvoicesView(dao, invDao);
 	}
 
@@ -685,7 +686,7 @@ public class SubscrResource {
 			res.success = false;
 			res.msg =" not implemented yet";
 		} else {
-			recordUserChange(dao, "master", Long.parseLong(pk), fieldname, value, "U");
+			recordUserChange(dao, "master", Long.parseLong(pk), fieldname, res.oldValue, res.newValue, "U");
 		}
 		return res;
 	}

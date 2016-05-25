@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:fo="http://www.w3.org/1999/XSL/Format"
-          xmlns:date="http://exslt.org/dates-and-times"
+          xmlns:date="http://exslt.org/dates-and-times" xmlns:fox="http://xmlgraphics.apache.org/fop/extensions"
           extension-element-prefixes="date">
    <xsl:output method="xml" version="1.0" indent="yes" encoding="UTF-8" />
    <xsl:param name="name_of_kasse"/>
@@ -41,6 +41,7 @@
                <xsl:call-template name="rechnungspositionen" />
                <xsl:call-template name="endbetrag" />
             </fo:flow>
+                   
          </fo:page-sequence>
       </fo:root>
    </xsl:template>
@@ -361,6 +362,20 @@
       <fo:block>
         <fo:external-graphic src="url(/xsl/images/footer.jpg)"  content-width="170mm"/>
       </fo:block>
+      <xsl:if test="temporary = 'true'">
+      <fo:block-container  height="30mm" width="82mm" top="106mm" left="20mm" position="fixed" fox:transform="rotate(-45)">
+        <fo:block font-size="82pt" text-decoration="underline" color="rgb(255,200,200)">
+          Vorläufig
+        </fo:block>
+      </fo:block-container>
+      </xsl:if>
+      <xsl:if test="cancelled = 'true'">
+      <fo:block-container  height="30mm" width="82mm" top="106mm" left="20mm" position="fixed" fox:transform="rotate(-45)">
+        <fo:block font-size="82pt" text-decoration="underline" color="rgb(255,200,200)">
+          Storniert
+        </fo:block>
+      </fo:block-container>
+      </xsl:if>
    </xsl:template>
 
   <xsl:template name="renderLetterAddress">

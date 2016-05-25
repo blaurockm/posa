@@ -3,6 +3,7 @@ package net.buchlese.bofc;
 import io.dropwizard.jdbi.DBIFactory;
 import io.dropwizard.setup.Environment;
 import net.buchlese.bofc.core.NumberGenerator;
+import net.buchlese.bofc.jdbi.SubscrCachedDAO;
 import net.buchlese.bofc.jdbi.bofc.JodaLocalDateArgumentFactory;
 import net.buchlese.bofc.jdbi.bofc.JodaLocalDateMapper;
 import net.buchlese.bofc.jdbi.bofc.MappingDAO;
@@ -83,9 +84,15 @@ public class BackOfcModule extends AbstractModule {
 	public ShiftCalDAO provideShiftCalDAO(@Named("bofcdb")DBI posDBI) {
 		return posDBI.onDemand(ShiftCalDAO.class);
 	}
+	
+	private SubscrCachedDAO cache;
+	
 	@Provides @Inject
-	public SubscrDAO provideSubscrDAO(@Named("bofcdb")DBI posDBI) {
-		return posDBI.onDemand(SubscrDAO.class);
+	public synchronized SubscrDAO provideSubscrDAO(@Named("bofcdb")DBI posDBI) {
+		if (cache == null) {
+			cache = new SubscrCachedDAO(posDBI.onDemand(SubscrDAO.class));
+		}
+		return cache;
 	}
 
 }

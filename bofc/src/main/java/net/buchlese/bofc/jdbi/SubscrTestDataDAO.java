@@ -492,4 +492,9 @@ public class SubscrTestDataDAO implements SubscrDAO {
 		return tempInvoices;
 	}
 
+	@Override
+	public List<Subscription> getSubscriptionsWithMemo() {
+		return subscriptions.stream().filter(s -> s.getMemo() != null && s.getMemo().isEmpty() == false).collect(Collectors.toList());
+	}
+
 }

@@ -70,7 +70,7 @@ public interface SubscrDAO {
 	SubscrArticle getNewestArticleOfProduct(@Bind("subid") long prodid);
 	
 	@Mapper(SubscrProductMapper.class)
-	@SqlQuery("select * from subscrProduct where nextDelivery is null or nextDelivery between :from and :till order by name")
+	@SqlQuery("select * from subscrProduct where nextDelivery between :from and :till order by name")
 	List<SubscrProduct> getProductsForTimespan(@Bind("from") LocalDate from,	@Bind("till")LocalDate till);
 
 	@Mapper(SubscrArticleMapper.class)
@@ -96,6 +96,10 @@ public interface SubscrDAO {
 	@Mapper(SubscriptionMapper.class)
 	@SqlQuery("select * from subscription ")
 	List<Subscription> getSubscriptions();
+
+	@Mapper(SubscriptionMapper.class)
+	@SqlQuery("select * from subscription where complJson like '%memo%'")
+	List<Subscription> getSubscriptionsWithMemo();
 
 	@Mapper(SubscriptionMapper.class)
 	@SqlQuery("select * from subscription where productId = :id ")
