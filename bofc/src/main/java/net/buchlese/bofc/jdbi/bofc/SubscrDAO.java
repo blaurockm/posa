@@ -61,6 +61,10 @@ public interface SubscrDAO {
 	@SqlQuery("select * from posInvoice where pointid = :pointid and invDate > :date order by number asc")
 	List<PosInvoice> getSubscrInvoices(@Bind("pointid") int id, @Bind("date") LocalDate  num);
 
+	@Mapper(PosInvoiceMapper.class)
+	@SqlQuery("select * from posInvoice where debitor = :debitorId order by number asc")
+	List<PosInvoice> getSubscriberInvoices(@Bind("debitorId") int debId);
+
 	@Mapper(SubscrDeliveryMapper.class)
 	@SqlQuery("select * from subscrDelivery where deliveryDate = (select max(deliveryDate) from subscrDelivery where subscriptionId = :subid)")
 	SubscrDelivery getLastDeliveryForSubscription(@Bind("subid") long id);

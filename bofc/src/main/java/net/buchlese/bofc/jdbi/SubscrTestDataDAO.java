@@ -2,6 +2,7 @@ package net.buchlese.bofc.jdbi;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
@@ -495,6 +496,11 @@ public class SubscrTestDataDAO implements SubscrDAO {
 	@Override
 	public List<Subscription> getSubscriptionsWithMemo() {
 		return subscriptions.stream().filter(s -> s.getMemo() != null && s.getMemo().isEmpty() == false).collect(Collectors.toList());
+	}
+
+	@Override
+	public List<PosInvoice> getSubscriberInvoices(int debId) {
+		return Collections.emptyList();
 	}
 
 }

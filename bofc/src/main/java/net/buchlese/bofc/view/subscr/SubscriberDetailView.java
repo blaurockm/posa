@@ -62,6 +62,9 @@ public class SubscriberDetailView extends AbstractBofcView{
 		for (String num : invNums) {
 			invs.addAll(invDao.fetch(num));
 		}
+		if (sub.getDebitorId() > 0) {
+			invs.addAll(dao.getSubscriberInvoices(sub.getDebitorId()));
+		}
 		return invs;
 	}
 

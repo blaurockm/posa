@@ -69,9 +69,10 @@
 			<td>${sub.shipmentType.text}</td>
 			<td>${sub.paymentType.text}</td>
 			<td>
+			<#if sub.shipmentType != 'PUBLISHER' >
 			<#assign deli = delivery(sub, art)!"hh" >
 			<#if deli != "hh" >
-   	  	  	   <a href="#subscrDelivery/${deli.id?c}" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+   	  	  	   <a href="#subscrDelivery/${deli.id?c}" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span></a>
 			<#else>
 			   <button id="create${sub.id?c}" class="btn btn-default">anlegen</button>
 			 <script>
@@ -80,6 +81,7 @@
    	    		 $( "#create${sub.id?c}" ).hide();
 				});
 			 </script>
+			</#if>
 			</#if>
 			 </td>
 		</tr>

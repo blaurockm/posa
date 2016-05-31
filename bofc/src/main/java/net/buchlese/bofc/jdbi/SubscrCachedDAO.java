@@ -282,4 +282,9 @@ public class SubscrCachedDAO implements SubscrDAO {
 		dao.insert(u);	
 	}
 
+	@Override
+	public List<PosInvoice> getSubscriberInvoices(int debId) {
+		return dao.getSubscriberInvoices(debId);
+	}
+
 }
