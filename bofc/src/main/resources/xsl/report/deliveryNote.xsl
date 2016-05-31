@@ -10,13 +10,11 @@
          <fo:layout-master-set>
             <fo:simple-page-master master-name="DIN-A4-mAdr" page-height="29.7cm" page-width="21cm" margin-left="2cm" margin-right="2.5cm" margin-top="0.5cm" margin-bottom="1cm">
                <fo:region-body margin-top="10.5cm" margin-bottom="1.8cm"/>
-               <fo:region-before region-name="header" extent="10.3cm" />
-               <fo:region-after region-name="footer" extent="1.5cm" />
+               <fo:region-before region-name="header-DIN-A4-mAdr" extent="10.3cm" />
+               <fo:region-after region-name="footer-DIN-A4-mAdr" extent="1.5cm" />
             </fo:simple-page-master>
             <fo:simple-page-master master-name="DIN-A4-oAdr" page-height="29.7cm" page-width="21cm" margin-left="2cm" margin-right="2.5cm" margin-top="0.5cm" margin-bottom="1cm">
                <fo:region-body margin-top="1.5cm" margin-bottom="1.8cm" />
-               <fo:region-before region-name="header" extent="1.3cm" />
-               <fo:region-after region-name="footer" extent="1.5cm" />
             </fo:simple-page-master>
             <fo:page-sequence-master master-name="DIN-A4" page-height="29.7cm" page-width="21cm" margin-left="2cm" margin-right="2.5cm" margin-top="0.5cm" margin-bottom="1cm">
                <fo:repeatable-page-master-alternatives>
@@ -26,11 +24,10 @@
             </fo:page-sequence-master>
          </fo:layout-master-set>
          <fo:page-sequence master-reference="DIN-A4">
-            <!-- <fo:static-content flow-name="header"> </fo:static-content> -->
-            <fo:static-content flow-name="header">
+            <fo:static-content flow-name="header-DIN-A4-mAdr">
                <xsl:call-template name="briefkopf" />
             </fo:static-content>
-            <fo:static-content flow-name="footer">
+            <fo:static-content flow-name="footer-DIN-A4-mAdr">
                <xsl:call-template name="brieffuss" />
             </fo:static-content>
 
@@ -223,7 +220,7 @@
         <xsl:attribute name="font-size">
           <xsl:value-of select="$fontsize"/>
         </xsl:attribute>
-        <xsl:value-of select="nam2"/>
+        <xsl:value-of select="name2"/>
       </fo:block>
     </xsl:if>
     <xsl:if test="name3!=''">

@@ -1,5 +1,7 @@
 package net.buchlese.bofc.resources.helper;
 
+import org.apache.commons.lang3.StringUtils;
+
 import net.buchlese.bofc.api.subscr.Address;
 import net.buchlese.bofc.api.subscr.ShipType;
 import net.buchlese.bofc.api.subscr.Subscriber;
@@ -63,27 +65,27 @@ public class SubscriberUpdateHelper {
 				art.setInvoiceAddress(a);
 			}
 			if ("name1".equals(field)) {
-				a.setName1(value);
+				a.setName1(StringUtils.left(value,40));
 				res.success = true;
 			}
 			if ("name2".equals(field)) {
-				a.setName2(value);
+				a.setName2(StringUtils.left(value,40));
 				res.success = true;
 			}
 			if ("name3".equals(field)) {
-				a.setName3(value);
+				a.setName3(StringUtils.left(value,40));
 				res.success = true;
 			}
 			if ("street".equals(field)) {
-				a.setStreet(value);
+				a.setStreet(StringUtils.left(value,40));
 				res.success = true;
 			}
 			if ("postalcode".equals(field)) {
-				a.setPostalcode(value);
+				a.setPostalcode(StringUtils.left(value,5));
 				res.success = true;
 			}
 			if ("city".equals(field)) {
-				a.setCity(value);
+				a.setCity(StringUtils.left(value,50));
 				res.success = true;
 			}
 		}
