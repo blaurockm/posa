@@ -104,5 +104,11 @@
          <column name="cancelled" type="boolean"/>
      </addColumn>
    </changeSet>
+
+   <changeSet id="invoicesIII" author="mblaurock">
+     <addColumn tableName="posInvoice">
+         <column name="complJson" type="clob"/>
+     </addColumn>
+   </changeSet>
    
 </databaseChangeLog>

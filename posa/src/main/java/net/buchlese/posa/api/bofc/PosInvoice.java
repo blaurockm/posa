@@ -1,10 +1,18 @@
 package net.buchlese.posa.api.bofc;
 
+import io.dropwizard.jackson.Jackson;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class PosInvoice implements SendableObject {
 	@NotEmpty
@@ -37,6 +45,20 @@ public class PosInvoice implements SendableObject {
 	@JsonProperty
 	private Long amountNone;     // Rechnungsbetrag ohne MwSt
 
+	@JsonProperty
+	private Long tax;     // Steuerbetrag
+	@JsonProperty
+	private Long taxHalf;     // Steuerbetrag halben MwSt-Satz
+	@JsonProperty
+	private Long taxFull;     // Steuerbetrag vollem MwSt-Satz
+
+	@JsonProperty
+	private Long netto;     // Nettobetrag
+	@JsonProperty
+	private Long nettoHalf;     // Nettobetrag halben MwSt-Satz
+	@JsonProperty
+	private Long nettoFull;     // Nettobetrag vollem MwSt-Satz
+
 
 	@JsonProperty
 	private int actionum;
@@ -50,6 +72,24 @@ public class PosInvoice implements SendableObject {
 	private LocalDate date;
 	@JsonProperty
 	private DateTime printTime;
+	@JsonProperty
+	private boolean printed;
+	
+	@JsonProperty
+	private boolean collective;
+	
+	@JsonProperty
+	private String type;
+	
+	@JsonProperty
+	private List<PosInvoiceDetail> details;
+
+	@JsonProperty
+	private LocalDate deliveryFrom;
+	@JsonProperty
+	private LocalDate deliveryTill;
+
+	
 	public long getId() {
 		return id;
 	}
@@ -174,4 +214,111 @@ public class PosInvoice implements SendableObject {
 	public void setPayed(Boolean payed) {
 		this.payed = payed;
 	}
+	public Long getTax() {
+		return tax;
+	}
+	public void setTax(Long tax) {
+		this.tax = tax;
+	}
+	public Long getTaxHalf() {
+		return taxHalf;
+	}
+	public void setTaxHalf(Long taxHalf) {
+		this.taxHalf = taxHalf;
+	}
+	public Long getTaxFull() {
+		return taxFull;
+	}
+	public void setTaxFull(Long taxFull) {
+		this.taxFull = taxFull;
+	}
+	public Long getNetto() {
+		return netto;
+	}
+	public void setNetto(Long netto) {
+		this.netto = netto;
+	}
+	public Long getNettoHalf() {
+		return nettoHalf;
+	}
+	public void setNettoHalf(Long nettoHalf) {
+		this.nettoHalf = nettoHalf;
+	}
+	public Long getNettoFull() {
+		return nettoFull;
+	}
+	public void setNettoFull(Long nettoFull) {
+		this.nettoFull = nettoFull;
+	}
+	public boolean isPrinted() {
+		return printed;
+	}
+	public void setPrinted(boolean printed) {
+		this.printed = printed;
+	}
+	public boolean isCollective() {
+		return collective;
+	}
+	public void setCollective(boolean collective) {
+		this.collective = collective;
+	}
+	public String getType() {
+		return type;
+	}
+	public void setType(String type) {
+		this.type = type;
+	}
+	public List<PosInvoiceDetail> getDetails() {
+		return details;
+	}
+	public void setDetails(List<PosInvoiceDetail> details) {
+		this.details = details;
+	}
+	public LocalDate getDeliveryFrom() {
+		return deliveryFrom;
+	}
+	public void setDeliveryFrom(LocalDate deliveryFrom) {
+		this.deliveryFrom = deliveryFrom;
+	}
+	public LocalDate getDeliveryTill() {
+		return deliveryTill;
+	}
+	public void setDeliveryTill(LocalDate deliveryTill) {
+		this.deliveryTill = deliveryTill;
+	}
+	public PosInvoiceDetail addDetail(PosInvoiceDetail detail) {
+		if (detail == null) {
+			return null;
+		}
+		if (getDetails() == null) {
+			setDetails(new ArrayList<PosInvoiceDetail>());
+		}
+		getDetails().add(detail);
+		setAmount(safeAdd(getAmount(),detail.getAmount()));
+		setAmountFull(safeAdd(getAmountFull(), detail.getAmountFull()));
+		setAmountHalf(safeAdd(getAmountHalf(), detail.getAmountHalf()));
+		return detail;
+	}
+
+	// sich selber als json-object ausgeben
+	@JsonIgnore
+	public String getComplJson() throws JsonProcessingException {
+		ObjectMapper om = Jackson.newObjectMapper();
+		return om.writeValueAsString(this);
+	}
+
+	@JsonIgnore
+	private Long safeAdd(Long a, Long b) {
+		if (a == null && b == null) {
+			return null;
+		}
+		if (a != null && b == null) {
+			return a;
+		}
+		if (a == null && b != null) {
+			return b;
+		}
+		return Long.valueOf(a + b);
+	}
+
 }

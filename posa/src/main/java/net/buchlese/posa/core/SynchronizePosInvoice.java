@@ -1,10 +1,13 @@
 package net.buchlese.posa.core;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
 import net.buchlese.posa.PosAdapterApplication;
 import net.buchlese.posa.api.bofc.PosInvoice;
+import net.buchlese.posa.api.bofc.PosInvoiceDetail;
+import net.buchlese.posa.api.pos.KleinteilElement;
 import net.buchlese.posa.api.pos.KleinteilKopf;
 import net.buchlese.posa.jdbi.bofc.PosInvoiceDAO;
 import net.buchlese.posa.jdbi.pos.KleinteilDAO;
@@ -64,10 +67,6 @@ public class SynchronizePosInvoice extends AbstractSynchronizer {
 		inv.setCustomerId(rech.getKundenNummer());
 		updDate(inv::setCreationTime, inv.getCreationTime(), rech.getErfassungsDatum());
 		updDate(inv::setPrintTime, inv.getPrintTime(), rech.getDruckDatum());
-		updMoney(inv::setAmount, inv.getAmount(), rech.getBrutto());
-		updMoney(inv::setAmountHalf, inv.getAmountHalf(), rech.getBrutto7());
-		updMoney(inv::setAmountFull, inv.getAmountFull(), rech.getBrutto19());
-		updMoney(inv::setAmountNone, inv.getAmountNone(), rech.getBrutto0());
 
 		updStr(inv::setName1, inv.getName1(), rech.getName1());
 		updStr(inv::setName2, inv.getName2(), rech.getName2());
@@ -75,7 +74,61 @@ public class SynchronizePosInvoice extends AbstractSynchronizer {
 		updStr(inv::setStreet, inv.getStreet(), rech.getStrasse());
 		updStr(inv::setCity, inv.getCity(), rech.getOrt());
 		
+		List<KleinteilElement> elems = rechnungsDAO.fetchElemente(rech.getId());
+		for (KleinteilElement e : elems) {
+			inv.addDetail(createInvoiceDetail(e));
+		}
+		updMoney(inv::setAmount, inv.getAmount(), rech.getBrutto());
+		updMoney(inv::setAmountHalf, inv.getAmountHalf(), rech.getBrutto7());
+		updMoney(inv::setAmountFull, inv.getAmountFull(), rech.getBrutto19());
+		updMoney(inv::setAmountNone, inv.getAmountNone(), rech.getBrutto0());
+		
 		return inv;
 	}
+	
+	private PosInvoiceDetail createInvoiceDetail(KleinteilElement e) {
+		PosInvoiceDetail pd = new PosInvoiceDetail();
+		if (e.getMenge() == null) {
+			pd.setText(e.getBezeichnung());
+			pd.setTextonly(true);
+			return pd;
+		}
+		switch (e.getKennziffer()) {
+		case "AP" : if (e.getBezeichnung() != null) { 
+			pd.setText(e.getBezeichnung());   
+		} else {
+			pd.setText(e.getMatchCode());
+		} 
+		break;
+		case "TB" : pd.setText(rechnungsDAO.getTextbaustein(e.getTextbaustein())); pd.setTextonly(true); return pd; 
+		case "LZ" : pd.setText("    "); pd.setTextonly(true); return pd;
+		default: pd.setText("unbekannte Kennziffer " + e.getKennziffer());  pd.setTextonly(true); return pd;
+		}
+		pd.setQuantity(e.getMenge().intValue());
+		BigDecimal betrag = e.getBruttoEinzel();
+		if (betrag.intValue() == 0) {
+			betrag = e.getMenge(); // es handelt sich hierbei um eine freie preiseingabe
+		}
+		switch (e.getMwstkz()) {
+		case '2' : updMoney(pd::setAmountHalf, pd.getAmountHalf(), betrag); break;
+		case '1' : updMoney(pd::setAmountFull, pd.getAmountFull(), betrag); break;
+		case '3' : updMoney(pd::setAmountNone, pd.getAmountNone(), betrag); break; 
+		default : betrag = new BigDecimal(0); pd.setAmountNone(0L);
+		}
+		updMoney(pd::setSinglePrice, pd.getSinglePrice(), betrag);
+		if (pd.getQuantity() > 0) {
+			pd.setAmount(pd.getSinglePrice() * pd.getQuantity());
+		} else {
+			pd.setAmount(pd.getSinglePrice());
+		}
+		if (e.getRabattSatz() != null) {
+			updMoney(pd::setRebate, pd.getRebate(), e.getRabattSatz());
+		}
+		updMoney(pd::setRebatePrice, pd.getRebatePrice(), e.getRabattEinzel());
+		return pd;
+	}
+	
+	
+	
 	
 }

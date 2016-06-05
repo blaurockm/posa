@@ -10,7 +10,10 @@ import javax.ws.rs.core.MediaType;
 
 import net.buchlese.posa.PosAdapterApplication;
 import net.buchlese.posa.api.bofc.PosInvoice;
+import net.buchlese.posa.api.pos.KleinteilKopf;
+import net.buchlese.posa.core.SynchronizePosInvoice;
 import net.buchlese.posa.jdbi.bofc.PosInvoiceDAO;
+import net.buchlese.posa.jdbi.pos.KleinteilDAO;
 
 import com.google.inject.Inject;
 
@@ -19,11 +22,13 @@ import com.google.inject.Inject;
 public class PosInvoiceResource {
 
 	private final PosInvoiceDAO dao;
+	private final KleinteilDAO rechDao;
 
 	@Inject
-	public PosInvoiceResource(PosInvoiceDAO dao) {
+	public PosInvoiceResource(PosInvoiceDAO dao, KleinteilDAO rd) {
 		super();
 		this.dao = dao;
+		this.rechDao = rd;
 	}
 	
 	@GET
@@ -41,6 +46,14 @@ public class PosInvoiceResource {
 			return cb.get(0);
 		}
 		return null;
+	}
+
+	@GET
+	@Path("/resync/{nr}")
+	public List<PosInvoice> resyncInvoice(@PathParam("nr") String nr)  {
+		List<KleinteilKopf> kk = rechDao.fetch(nr);
+		SynchronizePosInvoice spi = new SynchronizePosInvoice(dao,  rechDao);
+		return spi.createNewInvoices(kk);
 	}
 
 }

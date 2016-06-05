@@ -22,16 +22,27 @@ public class KleinteilElement {
 	private String matchCode;
 
 	@JsonProperty
-	private BigDecimal menge;
-	@JsonProperty
-	private BigDecimal vK;
-	@JsonProperty
-	private BigDecimal rabatt;
-	@JsonProperty
-	private Character mWSt;
+	private String bezeichnung;
 
 	@JsonProperty
-	private DateTime letzeBearbeitung;
+	private String kennziffer;
+
+	@JsonProperty
+	private int textbaustein;
+
+	@JsonProperty
+	private BigDecimal menge;
+	@JsonProperty
+	private BigDecimal bruttoEinzel;
+	@JsonProperty
+	private BigDecimal rabattEinzel;
+	@JsonProperty
+	private BigDecimal rabattSatz;
+	@JsonProperty
+	private Character mwstkz;
+
+	@JsonProperty
+	private DateTime letzteBearbeitung;
 
 	public int getRechnungsNummer() {
 		return rechnungsNummer;
@@ -81,37 +92,72 @@ public class KleinteilElement {
 		this.menge = menge;
 	}
 
-	public BigDecimal getvK() {
-		return vK;
+
+	public String getBezeichnung() {
+		return bezeichnung;
 	}
 
-	public void setvK(BigDecimal vK) {
-		this.vK = vK;
+	public void setBezeichnung(String bezeichnung) {
+		this.bezeichnung = bezeichnung;
 	}
 
-	public BigDecimal getRabatt() {
-		return rabatt;
+	public String getKennziffer() {
+		return kennziffer;
 	}
 
-	public void setRabatt(BigDecimal rabatt) {
-		this.rabatt = rabatt;
+	public void setKennziffer(String kennziffer) {
+		this.kennziffer = kennziffer;
 	}
 
-	public Character getmWSt() {
-		return mWSt;
+	public int getTextbaustein() {
+		return textbaustein;
 	}
 
-	public void setmWSt(Character mWSt) {
-		this.mWSt = mWSt;
+	public void setTextbaustein(int textbaustein) {
+		this.textbaustein = textbaustein;
 	}
 
-	public DateTime getLetzeBearbeitung() {
-		return letzeBearbeitung;
+	public DateTime getLetzteBearbeitung() {
+		return letzteBearbeitung;
 	}
 
-	public void setLetzeBearbeitung(DateTime letzeBearbeitung) {
-		this.letzeBearbeitung = letzeBearbeitung;
+	public void setLetzteBearbeitung(DateTime letzteBearbeitung) {
+		this.letzteBearbeitung = letzteBearbeitung;
 	}
+
+
+	public Character getMwstkz() {
+		return mwstkz;
+	}
+
+	public void setMwstkz(Character mwstkz) {
+		this.mwstkz = mwstkz;
+	}
+
+	public BigDecimal getBruttoEinzel() {
+		return bruttoEinzel;
+	}
+
+	public void setBruttoEinzel(BigDecimal bruttoEinzel) {
+		this.bruttoEinzel = bruttoEinzel;
+	}
+
+	public BigDecimal getRabattEinzel() {
+		return rabattEinzel;
+	}
+
+	public void setRabattEinzel(BigDecimal rabattEinzel) {
+		this.rabattEinzel = rabattEinzel;
+	}
+
+	public BigDecimal getRabattSatz() {
+		return rabattSatz;
+	}
+
+	public void setRabattSatz(BigDecimal rabattSatz) {
+		this.rabattSatz = rabattSatz;
+	}
+
 
 
 }
