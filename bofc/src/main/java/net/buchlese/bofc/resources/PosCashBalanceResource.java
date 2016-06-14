@@ -107,7 +107,7 @@ public class PosCashBalanceResource {
 	@Path("/complete/{date}")
 	public PosCashBalance fetchCompleteForDate(@PathParam("date") String date)  {
 		PosCashBalance bal = fetchBalanceForId(date);
-		new CashBalance(ticketDao, txDao).amendTickets(bal);
+//		new CashBalance(ticketDao, txDao).amendTickets(bal);
 		return bal;
 	}
 

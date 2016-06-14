@@ -36,8 +36,18 @@ public class AccountingExportFactory {
 		res.setBalances(new ArrayList<PosCashBalance>());
 		res.setInvoices(new ArrayList<PosInvoice>());
 		res.setPointId(kasse);
-		res.setRefAccount(0);
-		res.setDescription("FiBuexport für Kasse " + kasse);
+		switch (kasse) {
+		case 1 : res.setRefAccount(1600);
+		res.setDescription("FiBuexport für Kasse Dornhan (" + kasse + ")");
+		break;
+		case 2 : res.setRefAccount(1610); 
+		res.setDescription("FiBuexport für Kasse Sulz(" + kasse + ")");
+		break;
+		case 3 : res.setRefAccount(1620); 
+		res.setDescription("FiBuexport für Kasse Schramberg (" + kasse + ")");
+		break;
+		default : res.setRefAccount(0);
+		}
 		String fromId = from.toString(PosCashBalanceDAO.IDFORMAT);
 		Optional<String> tillId = till.transform( d -> d.toString(PosCashBalanceDAO.IDFORMAT));
 		LocalDate ti = till.orNull();
@@ -73,8 +83,18 @@ public class AccountingExportFactory {
 		res.setInvoices(new ArrayList<PosInvoice>());
 		res.setBalances(new ArrayList<PosCashBalance>());
 		res.setPointId(kasse);
-		res.setRefAccount(0);
-		res.setDescription("FiBuexport für Kasse " + kasse);
+		switch (kasse) {
+		case 1 : res.setRefAccount(1600);
+		res.setDescription("FiBuexport für Kasse Dornhan (" + kasse + ")");
+		break;
+		case 2 : res.setRefAccount(1610); 
+		res.setDescription("FiBuexport für Kasse Sulz(" + kasse + ")");
+		break;
+		case 3 : res.setRefAccount(1620); 
+		res.setDescription("FiBuexport für Kasse Schramberg (" + kasse + ")");
+		break;
+		default : res.setRefAccount(0);
+		}
 		Optional<java.util.Date> tillD = till.transform( d -> d.toDate());
 		LocalDate ti = till.orNull();
 		for (PosInvoice inv :  dao.fetch(kasse,from.toDate(),  tillD)) {
@@ -109,8 +129,18 @@ public class AccountingExportFactory {
 		res.setBalances(new ArrayList<PosCashBalance>());
 		res.setInvoices(new ArrayList<PosInvoice>());
 		res.setPointId(kasse);
-		res.setRefAccount(0);
-		res.setDescription("FiBuexport für Kasse " + kasse);
+		switch (kasse) {
+		case 1 : res.setRefAccount(1600);
+		res.setDescription("FiBuexport für Kasse Dornhan (" + kasse + ")");
+		break;
+		case 2 : res.setRefAccount(1610); 
+		res.setDescription("FiBuexport für Kasse Sulz(" + kasse + ")");
+		break;
+		case 3 : res.setRefAccount(1620); 
+		res.setDescription("FiBuexport für Kasse Schramberg (" + kasse + ")");
+		break;
+		default : res.setRefAccount(0);
+		}
 		String fromId = from.toString(PosCashBalanceDAO.IDFORMAT);
 		Optional<String> tillId = till.transform( d -> d.toString(PosCashBalanceDAO.IDFORMAT));
 		Optional<java.util.Date> tillD = till.transform( d -> d.toDate());
