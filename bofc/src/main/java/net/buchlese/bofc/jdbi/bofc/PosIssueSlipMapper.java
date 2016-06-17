@@ -35,7 +35,6 @@ public class PosIssueSlipMapper implements ResultSetMapper<PosIssueSlip> {
 		inv.setDebitorId(rs.getInt("debitor"));
 		inv.setDate(new LocalDate(rs.getTimestamp("invDate")));
 		inv.setCreationTime(new DateTime(rs.getTimestamp("creationtime")));
-		inv.setPrintTime(new DateTime(rs.getTimestamp("printdate")));
 		inv.setName1(rs.getString("name1"));
 		inv.setName2(rs.getString("name2"));
 		inv.setName3(rs.getString("name3"));

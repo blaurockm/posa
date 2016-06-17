@@ -54,31 +54,26 @@ public interface PosInvoiceDAO {
 	" :printTime, :name1, :name2, :name3, :street, :city, :payed, :cancelled, :actionum)")
 	void insert(@Valid @BindBean PosInvoice inv);
 
-	@SqlUpdate("insert into posissueslip (number, customer, pointid, debitor, invDate, creationtime, " +
-	" complJson, printed, " +
-	" printdate, name1, name2, name3,  street, city, payed, actionum) " +
-	" values (:number, :customerId, :pointid, :debitorId, :date,:creationTime," +
-	" :complJson, :printed, " +
-	" :printTime, )")
-	void insertIssueSlip(@Valid @BindBean PosIssueSlip inv);
+	@SqlUpdate("update posinvoice set (customer, pointid, debitor, amount, amountFull, amountHalf, amountNone, invDate, creationtime, " +
+			" complJson, agrType, printed, temporary, exported, exportDate, " +
+			" printdate, name1, name2, name3,  street, city, payed, cancelled) " +
+			" = (:customerId, :pointid, :debitorId, :amount, :amountFull, :amountHalf, :amountNone, :date,:creationTime," +
+			" :complJson, :type, :printed, :temporary, :exported, :exportDate, " +
+			" :printTime, :name1, :name2, :name3, :street, :city, :payed, :cancelled)  where id = :id")
+	void updateInvoice(@Valid @BindBean PosInvoice inv);
 
 	@SqlQuery("select max(debitor) from posinvoice where pointid = :pointid and customer = :customerid ")
 	Integer mapDebitor(@Bind("pointid") Integer pointid, @Bind("customerid") Integer customerId);
 
-	@SqlUpdate("update posinvoice set (customer, pointid, debitor, amount, amountFull, amountHalf, amountNone, invDate, creationtime, " +
-	" complJson, agrType, printed, temporary, exported, exportDate, " +
-	" printdate, name1, name2, name3,  street, city, payed, cancelled) " +
-	" = (:customerId, :pointid, :debitorId, :amount, :amountFull, :amountHalf, :amountNone, :date,:creationTime," +
-	" :complJson, :type, :printed, :temporary, :exported, :exportDate, " +
-	" :printTime, :name1, :name2, :name3, :street, :city, :payed, :cancelled)  where id = :id")
-	void updateInvoice(@Valid @BindBean PosInvoice inv);
 
-	@SqlUpdate("update posissueslip set (customer, pointid, debitor, invDate, " +
-	" complJson, printed, " +
-	" printdate, name1, name2, name3,  street, city, payed) " +
-	" = (:customerId, :pointid, :debitorId, :date," +
-	" :complJson, :printed, " +
-	" :printTime, :name1, :name2, :name3, :street, :city, :payed )  where id = :id")
+	@SqlUpdate("insert into posissueslip (number, customer, pointid, debitor, invDate, creationtime, " +
+			" complJson,  name1, name2, name3,  street, city, payed, actionum) " +
+			" values (:number, :customerId, :pointid, :debitorId, :date,:creationTime," +
+			" :complJson, :name1, :name2, :name3, :street, :city, :payed, :actionnum  )")
+	void insertIssueSlip(@Valid @BindBean PosIssueSlip inv);
+
+	@SqlUpdate("update posissueslip set (customer, debitor, invDate, complJson, name1, name2, name3,  street, city, payed) " +
+	" = (:customerId, :debitorId, :date, :complJson,  :name1, :name2, :name3, :street, :city, :payed )  where id = :id")
 	void updateIssueSlip(@Valid @BindBean PosIssueSlip inv);
 
 }
