@@ -309,5 +309,11 @@
          <column name="value" type="DATETIME"/>
      </createTable>
    </changeSet>
+
+   <changeSet id="issueslipsII" author="mblaurock">
+     <addColumn tableName="posInvoice">
+         <column name="pointid" type="int"/>
+     </addColumn>
+   </changeSet>
    
 </databaseChangeLog>
