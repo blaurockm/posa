@@ -34,13 +34,13 @@ public class PosInvoiceResource {
 	@GET
 	@Path("/{nr}")
 	public List<PosInvoice> fetch(@PathParam("nr") String nr)  {
-		return dao.fetch(nr);
+		return dao.fetchInvoice(nr);
 	}
 
 	@GET
 	@Path("/sendbof/{nr}")
 	public PosInvoice sendAgainInvoice(@PathParam("nr") String nr)  {
-		List<PosInvoice> cb = dao.fetch(nr);
+		List<PosInvoice> cb = dao.fetchInvoice(nr);
 		if (cb.isEmpty() == false) {
 			PosAdapterApplication.homingQueue.offer(cb.get(0));
 			return cb.get(0);

@@ -10,7 +10,7 @@
 
   # the JDBC URL
 #  url: jdbc:h2:tcp://localhost:19092///var/lib/posa/backoffice;IFEXISTS=TRUE
-  url: jdbc:h2:~/backoffice
+  url: jdbc:h2:~/backposa
   
   
 posDb:

@@ -24,6 +24,7 @@ import javax.ws.rs.core.StreamingOutput;
 
 import net.buchlese.bofc.api.bofc.AccountingExport;
 import net.buchlese.bofc.api.bofc.PosInvoice;
+import net.buchlese.bofc.api.bofc.PosIssueSlip;
 import net.buchlese.bofc.core.AccountingExportFactory;
 import net.buchlese.bofc.core.AccountingExportFile;
 import net.buchlese.bofc.jdbi.bofc.PosInvoiceDAO;
@@ -53,17 +54,41 @@ public class InvoiceResource {
 	@POST
 	@Path("/acceptInvoice")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response acceptBalance(PosInvoice invoice)  {
+	public Response acceptInvoice(PosInvoice invoice)  {
 		try {
 			// mapping der Debitor-Nummer
 			Integer debNo = dao.mapDebitor(invoice.getPointid(), invoice.getCustomerId());
 			if (debNo != null) {
 				invoice.setDebitorId(debNo.intValue());
 			}
-			dao.insert(invoice);
+			List<PosInvoice> old = dao.fetch(invoice.getNumber());
+			if (old.isEmpty()) {
+				dao.insert(invoice);
+			} else {
+				invoice.setId(old.get(0).getId());
+				dao.updateInvoice(invoice);
+			}
 			return Response.ok().build();
 		} catch (Throwable t) {
-			log.error("problem creating cashBalance" + invoice, t);
+			log.error("problem creating invoice" + invoice, t);
+			return Response.serverError().entity(t.getMessage()).build();
+		}
+	}
+
+	@POST
+	@Path("/acceptIssueSlip")
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response acceptIssueSlip(PosIssueSlip invoice)  {
+		try {
+			// mapping der Debitor-Nummer
+			Integer debNo = dao.mapDebitor(invoice.getPointid(), invoice.getCustomerId());
+			if (debNo != null) {
+				invoice.setDebitorId(debNo.intValue());
+			}
+//			dao.insert(invoice);
+			return Response.ok().build();
+		} catch (Throwable t) {
+			log.error("problem creating issueSlip" + invoice, t);
 			return Response.serverError().entity(t.getMessage()).build();
 		}
 	}

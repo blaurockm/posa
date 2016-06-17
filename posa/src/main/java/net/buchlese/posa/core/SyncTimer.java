@@ -1,5 +1,8 @@
 package net.buchlese.posa.core;
 
+import io.dropwizard.jdbi.args.JodaDateTimeMapper;
+
+import java.util.List;
 import java.util.TimerTask;
 import java.util.concurrent.locks.Lock;
 
@@ -13,6 +16,7 @@ import net.buchlese.posa.jdbi.pos.KassenBelegDAO;
 import net.buchlese.posa.jdbi.pos.KassenVorgangDAO;
 import net.buchlese.posa.jdbi.pos.KleinteilDAO;
 
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
@@ -59,7 +63,6 @@ public class SyncTimer extends TimerTask {
 	private final DBI posDBI;
 	private final Logger logger;
 	private final Lock syncLock;
-	private final LocalDate syncStart;
 	private final PosStateGatherer psg;
 	private final ServerStateGatherer ssg;
 	
@@ -77,7 +80,6 @@ public class SyncTimer extends TimerTask {
 		this.psg = psg;
 		this.ssg = ssg;
 		logger = LoggerFactory.getLogger(SyncTimer.class);
-		this.syncStart = LocalDate.now();
 	}
 
 	public void setBulkLoad(BulkLoadDetails det) {
@@ -107,10 +109,20 @@ public class SyncTimer extends TimerTask {
     	    PosCashBalanceDAO posCashBalanceDao =  bofc.attach(PosCashBalanceDAO.class);
 
     	    PosInvoiceDAO posInvoiceDao =  bofc.attach(PosInvoiceDAO.class);
-
+    	    
+    	    DateTime lastSync = DateTime.now().minusMinutes(30); // Änderungen der letzten 30 minuten
+    	    List<DateTime> lastRuns = bofc.createQuery("select value from dynamicstate where key='lastsyncrun'").map(new JodaDateTimeMapper()).list();
+    	    
+    	    if (lastRuns.isEmpty()) {
+    	    	bofc.execute("insert into dynamicstate (key, value) values('lastsyncrun', ?)", lastSync);
+    	    } else {
+    	    	lastSync = lastRuns.get(0);
+    	    	bofc.execute("update dynamicstate set value = ? where key = 'lastsyncrun'", DateTime.now());
+    	    }
+    	    
 	    	SynchronizePosCashBalance syncBalance = new SynchronizePosCashBalance(posCashBalanceDao, posTicketDao, posTxDao, abschlussDao, belegDao, vorgangDao);
 	    	SynchronizePosInvoice syncInvoice = new SynchronizePosInvoice(posInvoiceDao, kleinteilDao);
-
+	    	
 	    	if (bulkLoad != null) {
 	    		// wir wollen einen Haufen Daten rumschaufeln
 	    		syncBalance.doBulkLoad(bulkLoad);
@@ -121,8 +133,8 @@ public class SyncTimer extends TimerTask {
 	    		ssg.delayedGatherData();
 	    		
 	    		// hole neue Abschlüsse
-	    		syncBalance.fetchNewBalances(syncStart);
-	    		syncInvoice.fetchNewInvoices(syncStart.toDateTimeAtStartOfDay().minusDays(2));
+	    		syncBalance.fetchNewBalances(lastSync);
+	    		syncInvoice.fetchNewAndChangedInvoices(lastSync);
 	    		
 	    		// sollen welche neu synchronisiertwerden? dann mach das jetzt
 	    		if (PosAdapterApplication.resyncQueue.isEmpty() == false) {

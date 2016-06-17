@@ -7,6 +7,7 @@ import java.util.List;
 import net.buchlese.posa.PosAdapterApplication;
 import net.buchlese.posa.api.bofc.PosInvoice;
 import net.buchlese.posa.api.bofc.PosInvoiceDetail;
+import net.buchlese.posa.api.bofc.PosIssueSlip;
 import net.buchlese.posa.api.pos.KleinteilElement;
 import net.buchlese.posa.api.pos.KleinteilKopf;
 import net.buchlese.posa.jdbi.bofc.PosInvoiceDAO;
@@ -26,7 +27,7 @@ public class SynchronizePosInvoice extends AbstractSynchronizer {
 		this.invDAO = cashBalanceDAO;
 		this.rechnungsDAO = ticketDAO;
 	}
-
+	
 	/**
 	 * erzeuge Invoices für die neu angelegten Rechnungen
 	 * 
@@ -34,19 +35,46 @@ public class SynchronizePosInvoice extends AbstractSynchronizer {
 	 * 
 	 * @param syncStart
 	 */
-	public void fetchNewInvoices(DateTime syncStart) {
+	public void fetchNewAndChangedInvoices(DateTime syncStart) {
 		Optional<Integer> maxId = Optional.fromNullable(invDAO.getLastErfasst());
 
-		List<KleinteilKopf> rechnungen = rechnungsDAO.fetchAllAfter(maxId.or(1160000));
+		createNewInvoices(rechnungsDAO.fetchAllAfter(maxId.or(1160000)));
+		updateInvoices(rechnungsDAO.fetchAllChangedRechnungenAfter(syncStart));
 
-		// für jeden nicht vorhandenen neuen Abschluss eine CashBalance anlegen.
-		List<PosInvoice> pcb = createNewInvoices(rechnungen);
-		invDAO.insertAll(pcb.iterator());
-		PosAdapterApplication.homingQueue.addAll(pcb); // sync the new ones back home
+		Optional<Integer> maxId2 = Optional.fromNullable(invDAO.getLastErfasstLieferschein());
+
+		createNewIssueSlips(rechnungsDAO.fetchAllLieferscheinAfter(maxId2.or(1160000)));
+		updateIssueSlips(rechnungsDAO.fetchAllChangedLieferscheineAfter(syncStart));
+	}
+	
+	public List<PosIssueSlip> createNewIssueSlips(List<KleinteilKopf> rechnungen) {
+		List<PosIssueSlip> slips = new ArrayList<>();
+		for (KleinteilKopf rechn : rechnungen) {
+			if (rechn.getRechnungsNummer() != null && rechn.getRechnungsDatum() != null &&  rechn.getBrutto() != null) {
+				slips.add(createIssueSlip(rechn));
+			}
+		}
+		invDAO.insertAllIssueSlip(slips.iterator());
+		PosAdapterApplication.homingQueue.addAll(slips); // sync the new ones back home
+		return slips;
 	}
 
-	
-	
+	public List<PosIssueSlip> updateIssueSlips(List<KleinteilKopf> rechnungen) {
+		List<PosIssueSlip> slips = new ArrayList<>();
+		for (KleinteilKopf rechn : rechnungen) {
+			if (rechn.getRechnungsNummer() != null && rechn.getRechnungsDatum() != null &&  rechn.getBrutto() != null) {
+				List<PosIssueSlip> slip = invDAO.fetchIssueSlip(rechn.getRechnungsNummer());
+				if (slip.isEmpty() == false) {
+					PosIssueSlip i = updateIssueSlip(slip.get(0), rechn);
+					slips.add(i);
+					invDAO.updateIssueSlip(i);
+				}
+			}
+		}
+		PosAdapterApplication.homingQueue.addAll(slips); // sync the new ones back home
+		return slips;
+	}
+
 	public List<PosInvoice> createNewInvoices(List<KleinteilKopf> rechnungen) {
 		List<PosInvoice> invs = new ArrayList<>();
 		for (KleinteilKopf rechn : rechnungen) {
@@ -54,18 +82,75 @@ public class SynchronizePosInvoice extends AbstractSynchronizer {
 				invs.add(createInvoice(rechn));
 			}
 		}
+		invDAO.insertAll(invs.iterator());
+		PosAdapterApplication.homingQueue.addAll(invs); // sync the new ones back home
 		return invs;
 	}
 
+	public List<PosInvoice> updateInvoices(List<KleinteilKopf> rechnungen) {
+		List<PosInvoice> invs = new ArrayList<>();
+		for (KleinteilKopf rechn : rechnungen) {
+			if (rechn.getRechnungsNummer() != null && rechn.getRechnungsDatum() != null &&  rechn.getBrutto() != null) {
+				List<PosInvoice> inv = invDAO.fetchInvoice(rechn.getRechnungsNummer());
+				if (inv.isEmpty() == false) {
+					PosInvoice i = updateInvoice(inv.get(0), rechn);
+					invs.add(i);
+					invDAO.updateInvoice(i);
+				}
+			}
+		}
+		PosAdapterApplication.homingQueue.addAll(invs); // sync the new ones back home
+		return invs;
+	}
+	
+	
 	
 	public PosInvoice createInvoice(KleinteilKopf rech) {
 		PosInvoice inv = new PosInvoice();
 		inv.setActionum(rech.getId());
-		inv.setPayed(rech.getBezahlt());
 		inv.setNumber(rech.getRechnungsNummer());
+		updDate(inv::setCreationTime, inv.getCreationTime(), rech.getErfassungsDatum());
+		return updateInvoice(inv, rech);
+	}
+	
+	
+	public PosInvoice updateInvoice(PosInvoice inv, KleinteilKopf rech) {
+		inv.setPayed(rech.getBezahlt());
 		inv.setDate(rech.getRechnungsDatum().toLocalDate());
 		inv.setCustomerId(rech.getKundenNummer());
+		updDate(inv::setPrintTime, inv.getPrintTime(), rech.getDruckDatum());
+
+		updStr(inv::setName1, inv.getName1(), rech.getName1());
+		updStr(inv::setName2, inv.getName2(), rech.getName2());
+		updStr(inv::setName3, inv.getName3(), rech.getName3());
+		updStr(inv::setStreet, inv.getStreet(), rech.getStrasse());
+		updStr(inv::setCity, inv.getCity(), rech.getOrt());
+		
+		List<KleinteilElement> elems = rechnungsDAO.fetchElemente(rech.getId());
+		for (KleinteilElement e : elems) {
+			inv.addDetail(createInvoiceDetail(e));
+		}
+		updMoney(inv::setAmount, inv.getAmount(), rech.getBrutto());
+		updMoney(inv::setAmountHalf, inv.getAmountHalf(), rech.getBrutto7());
+		updMoney(inv::setAmountFull, inv.getAmountFull(), rech.getBrutto19());
+		updMoney(inv::setAmountNone, inv.getAmountNone(), rech.getBrutto0());
+		
+		return inv;
+	}
+
+	public PosIssueSlip createIssueSlip(KleinteilKopf rech) {
+		PosIssueSlip inv = new PosIssueSlip();
+		inv.setActionum(rech.getId());
+		inv.setNumber(rech.getRechnungsNummer());
 		updDate(inv::setCreationTime, inv.getCreationTime(), rech.getErfassungsDatum());
+		return updateIssueSlip(inv, rech);
+	}
+	
+	
+	public PosIssueSlip updateIssueSlip(PosIssueSlip inv, KleinteilKopf rech) {
+		inv.setPayed(rech.getBezahlt());
+		inv.setDate(rech.getRechnungsDatum().toLocalDate());
+		inv.setCustomerId(rech.getKundenNummer());
 		updDate(inv::setPrintTime, inv.getPrintTime(), rech.getDruckDatum());
 
 		updStr(inv::setName1, inv.getName1(), rech.getName1());
@@ -127,8 +212,4 @@ public class SynchronizePosInvoice extends AbstractSynchronizer {
 		updMoney(pd::setRebatePrice, pd.getRebatePrice(), e.getRabattEinzel());
 		return pd;
 	}
-	
-	
-	
-	
 }

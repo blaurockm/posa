@@ -22,7 +22,7 @@ import net.buchlese.posa.jdbi.pos.KassenAbschlussDAO;
 import net.buchlese.posa.jdbi.pos.KassenBelegDAO;
 import net.buchlese.posa.jdbi.pos.KassenVorgangDAO;
 
-import org.joda.time.LocalDate;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,7 +58,7 @@ public class SynchronizePosCashBalance extends AbstractSynchronizer implements C
 	 * 
 	 * @param syncStart
 	 */
-	public void fetchNewBalances(LocalDate syncStart) {
+	public void fetchNewBalances(DateTime syncStart) {
 		Optional<String> maxId = Optional.fromNullable(cashBalanceDAO.getMaxAbschlussId());
 
 		List<KassenAbschluss> belege = abschlussDao.fetchAllAfter(maxId.or(syncStart.toString("yyyyMMdd")));

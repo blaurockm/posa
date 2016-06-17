@@ -51,6 +51,7 @@ public class SendTimer extends TimerTask {
 					sender = sender.addSender(new SendPosState(config, log, httpClient));
 					sender = sender.addSender(new SendServerState(config, log, httpClient));
 					sender = sender.addSender(new SendPosInvoice(config, invoiceDao, log, httpClient));
+					sender = sender.addSender(new SendPosIssueSlip(config, invoiceDao, log, httpClient));
 
 					toDo.forEach(sender);
 				} catch (JSchException e1) {
