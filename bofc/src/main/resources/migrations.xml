@@ -311,7 +311,7 @@
    </changeSet>
 
    <changeSet id="issueslipsII" author="mblaurock">
-     <addColumn tableName="posInvoice">
+     <addColumn tableName="posIssueSlip">
          <column name="pointid" type="int"/>
      </addColumn>
    </changeSet>
