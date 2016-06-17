@@ -141,8 +141,17 @@
      </createTable>
      
      <createTable tableName="dynamicstate">
+         <column name="key" type="varchar(10)"/>
+         <column name="value" type="DATETIME"/>
+     </createTable>
+   </changeSet>
+
+   <changeSet id="issueslipsII" author="mblaurock">
+     <dropTable tableName="dynamicstate"/>
+     <createTable tableName="dynamicstate">
          <column name="key" type="varchar(20)"/>
          <column name="value" type="DATETIME"/>
+         <column name="bigvalue" type="bigint"/>
      </createTable>
    </changeSet>
    

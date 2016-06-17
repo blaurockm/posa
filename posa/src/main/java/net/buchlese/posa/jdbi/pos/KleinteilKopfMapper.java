@@ -33,6 +33,7 @@ public class KleinteilKopfMapper implements ResultSetMapper<KleinteilKopf> {
 		vorg.setRechnungsDatum(new DateTime(rs.getTimestamp("RechungsDatum")));
 		vorg.setDruckDatum(new DateTime(rs.getTimestamp("Gedruckt_Am")));
 		vorg.setBezahlt(rs.getBoolean("bezahlt"));
+		vorg.setZeitmarke(rs.getBigDecimal("MyZeitmarke"));
 		return vorg;
 	}
 

@@ -2,6 +2,7 @@ package net.buchlese.posa.core;
 
 import io.dropwizard.jdbi.args.JodaDateTimeMapper;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.TimerTask;
 import java.util.concurrent.locks.Lock;
@@ -21,6 +22,7 @@ import org.joda.time.LocalDate;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.exceptions.UnableToObtainConnectionException;
+import org.skife.jdbi.v2.util.BigDecimalMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -109,7 +111,6 @@ public class SyncTimer extends TimerTask {
     	    PosCashBalanceDAO posCashBalanceDao =  bofc.attach(PosCashBalanceDAO.class);
 
     	    PosInvoiceDAO posInvoiceDao =  bofc.attach(PosInvoiceDAO.class);
-    	    
     	    DateTime lastSync = DateTime.now().minusMinutes(30); // Änderungen der letzten 30 minuten
     	    List<DateTime> lastRuns = bofc.createQuery("select value from dynamicstate where key='lastsyncrun'").map(new JodaDateTimeMapper()).list();
     	    
@@ -120,6 +121,24 @@ public class SyncTimer extends TimerTask {
     	    	bofc.execute("update dynamicstate set value = ? where key = 'lastsyncrun'", DateTime.now());
     	    }
     	    
+    	    BigDecimal invRowVer = null;
+    	    List<BigDecimal> invRowVers = bofc.createQuery("select bigvalue from dynamicstate where key='invRowver'").map(new BigDecimalMapper()).list();
+    	    
+    	    if (invRowVers.isEmpty()) {
+    	    	bofc.execute("insert into dynamicstate (key, bigvalue) values('invRowver', 0)");
+    	    } else {
+    	    	invRowVer = invRowVers.get(0);
+    	    }
+
+    	    BigDecimal issRowVer = null;
+    	    List<BigDecimal> issRowVers = bofc.createQuery("select bigvalue from dynamicstate where key='issRowver'").map(new BigDecimalMapper()).list();
+    	    
+    	    if (issRowVers.isEmpty()) {
+    	    	bofc.execute("insert into dynamicstate (key, bigvalue) values('issRowver', 0)");
+    	    } else {
+    	    	issRowVer = issRowVers.get(0);
+    	    }
+
 	    	SynchronizePosCashBalance syncBalance = new SynchronizePosCashBalance(posCashBalanceDao, posTicketDao, posTxDao, abschlussDao, belegDao, vorgangDao);
 	    	SynchronizePosInvoice syncInvoice = new SynchronizePosInvoice(posInvoiceDao, kleinteilDao);
 	    	
@@ -134,7 +153,11 @@ public class SyncTimer extends TimerTask {
 	    		
 	    		// hole neue Abschlüsse
 	    		syncBalance.fetchNewBalances(lastSync);
-	    		syncInvoice.fetchNewAndChangedInvoices(lastSync);
+	    		invRowVer = syncInvoice.fetchNewAndChangedInvoices(invRowVer);
+    	    	bofc.execute("update dynamicstate set bigvalue = ? where key = 'invRowver'", invRowVer);
+	    		
+	    		issRowVer = syncInvoice.fetchNewAndChangedIssueSlips(issRowVer);
+    	    	bofc.execute("update dynamicstate set bigvalue = ? where key = 'issRowver'", issRowVer);
 	    		
 	    		// sollen welche neu synchronisiertwerden? dann mach das jetzt
 	    		if (PosAdapterApplication.resyncQueue.isEmpty() == false) {

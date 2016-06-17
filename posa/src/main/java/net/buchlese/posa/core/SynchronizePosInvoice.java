@@ -13,8 +13,6 @@ import net.buchlese.posa.api.pos.KleinteilKopf;
 import net.buchlese.posa.jdbi.bofc.PosInvoiceDAO;
 import net.buchlese.posa.jdbi.pos.KleinteilDAO;
 
-import org.joda.time.DateTime;
-
 import com.google.common.base.Optional;
 
 public class SynchronizePosInvoice extends AbstractSynchronizer {
@@ -35,18 +33,62 @@ public class SynchronizePosInvoice extends AbstractSynchronizer {
 	 * 
 	 * @param syncStart
 	 */
-	public void fetchNewAndChangedInvoices(DateTime syncStart) {
+	public BigDecimal fetchNewAndChangedInvoices(BigDecimal rowver) {
+		BigDecimal res = rowver;
 		Optional<Integer> maxId = Optional.fromNullable(invDAO.getLastErfasst());
 
-		createNewInvoices(rechnungsDAO.fetchAllAfter(maxId.or(1160000)));
-		updateInvoices(rechnungsDAO.fetchAllChangedRechnungenAfter(syncStart));
-
-		Optional<Integer> maxId2 = Optional.fromNullable(invDAO.getLastErfasstLieferschein());
-
-		createNewIssueSlips(rechnungsDAO.fetchAllLieferscheinAfter(maxId2.or(1160000)));
-		updateIssueSlips(rechnungsDAO.fetchAllChangedLieferscheineAfter(syncStart));
+		List<KleinteilKopf> rechs = rechnungsDAO.fetchAllAfter(maxId.or(1160000));
+		createNewInvoices(rechs);
+		if (rechs.isEmpty() == false) {
+			res = rechs.get(rechs.size()-1).getZeitmarke();
+			if (rowver == null) {
+				rowver = res;
+			}
+		}
+		
+		List<KleinteilKopf> rechsChg = rechnungsDAO.fetchAllChangedRechnungenAfter(rowver);
+		if (rechsChg.isEmpty() == false) {
+			BigDecimal newRes = rechsChg.get(rechsChg.size()-1).getZeitmarke();
+			if (newRes.compareTo(res) > 0) {
+				res = newRes;
+			}
+		}
+		updateInvoices(rechsChg);
+		return res;
 	}
-	
+
+	/**
+	 * erzeuge Invoices für die neu angelegten Rechnungen
+	 * 
+	 * Wird vom Sync-Timer aufgerufen.
+	 * 
+	 * @param syncStart
+	 */
+	public BigDecimal fetchNewAndChangedIssueSlips(BigDecimal rowver) {
+		BigDecimal res = rowver;
+		Optional<Integer> maxId = Optional.fromNullable(invDAO.getLastErfasstLieferschein());
+
+		List<KleinteilKopf> isss = rechnungsDAO.fetchAllLieferscheinAfter(maxId.or(1160000));
+		createNewIssueSlips(isss);
+		if (isss.isEmpty() == false) {
+			res = isss.get(isss.size()-1).getZeitmarke();
+			if (rowver == null) {
+				rowver = res;
+			}
+		}
+		
+		List<KleinteilKopf> isssChg = rechnungsDAO.fetchAllChangedLieferscheineAfter(rowver);
+		if (isssChg.isEmpty() == false) {
+			BigDecimal newRes = isssChg.get(isssChg.size()-1).getZeitmarke();
+			if (newRes.compareTo(res) > 0) {
+				res = newRes;
+			}
+		}
+		updateIssueSlips(isssChg);
+		
+		return res;
+	}
+
 	public List<PosIssueSlip> createNewIssueSlips(List<KleinteilKopf> rechnungen) {
 		List<PosIssueSlip> slips = new ArrayList<>();
 		for (KleinteilKopf rechn : rechnungen) {

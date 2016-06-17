@@ -85,7 +85,13 @@ public class InvoiceResource {
 			if (debNo != null) {
 				invoice.setDebitorId(debNo.intValue());
 			}
-//			dao.insert(invoice);
+			List<PosInvoice> old = dao.fetch(invoice.getNumber());
+			if (old.isEmpty()) {
+				dao.insertIssueSlip(invoice);
+			} else {
+				invoice.setId(old.get(0).getId());
+				dao.updateIssueSlip(invoice);
+			}
 			return Response.ok().build();
 		} catch (Throwable t) {
 			log.error("problem creating issueSlip" + invoice, t);
