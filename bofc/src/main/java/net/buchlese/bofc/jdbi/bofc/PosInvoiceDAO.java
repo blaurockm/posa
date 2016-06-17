@@ -69,7 +69,7 @@ public interface PosInvoiceDAO {
 	@SqlUpdate("insert into posissueslip (number, customer, pointid, debitor, invDate, creationtime, " +
 			" complJson,  name1, name2, name3,  street, city, payed, actionum) " +
 			" values (:number, :customerId, :pointid, :debitorId, :date,:creationTime," +
-			" :complJson, :name1, :name2, :name3, :street, :city, :payed, :actionnum  )")
+			" :complJson, :name1, :name2, :name3, :street, :city, :payed, :actionum  )")
 	void insertIssueSlip(@Valid @BindBean PosIssueSlip inv);
 
 	@SqlUpdate("update posissueslip set (customer, debitor, invDate, complJson, name1, name2, name3,  street, city, payed) " +
