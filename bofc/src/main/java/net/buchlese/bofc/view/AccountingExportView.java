@@ -49,7 +49,7 @@ public class AccountingExportView extends AbstractBofcView {
 	}
 
 	public long getTelecashSum() {
-		return export.getBalances().stream().mapToLong(x -> x.getPaymentMethodBalance().get(PaymentMethod.TELE)).sum();
+		return export.getBalances().stream().mapToLong(x -> x.getPaymentMethodBalance().get(PaymentMethod.TELE) != null ? x.getPaymentMethodBalance().get(PaymentMethod.TELE).longValue() : 0L).sum();
 	}
 
 	public long getRevenueSum() {
@@ -82,7 +82,7 @@ public class AccountingExportView extends AbstractBofcView {
 
 	public long getTelecashForBalance(PosCashBalance bal) {
 		if (bal.getPaymentMethodBalance() != null && bal.getPaymentMethodBalance().get(PaymentMethod.TELE) != null) {
-			bal.getPaymentMethodBalance().get(PaymentMethod.TELE).longValue();
+			return bal.getPaymentMethodBalance().get(PaymentMethod.TELE).longValue();
 		}
 		return 0L;
 	}
