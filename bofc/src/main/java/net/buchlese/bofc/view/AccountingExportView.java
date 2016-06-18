@@ -81,7 +81,10 @@ public class AccountingExportView extends AbstractBofcView {
 	}
 
 	public long getTelecashForBalance(PosCashBalance bal) {
-		return bal.getPaymentMethodBalance().get(PaymentMethod.TELE);
+		if (bal.getPaymentMethodBalance() != null && bal.getPaymentMethodBalance().get(PaymentMethod.TELE) != null) {
+			bal.getPaymentMethodBalance().get(PaymentMethod.TELE).longValue();
+		}
+		return 0L;
 	}
 	
 	public List<String> getPayedInvoices() {
