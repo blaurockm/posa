@@ -48,6 +48,7 @@
 <ul class="nav nav-tabs">
   <li class="active"><a data-toggle="tab" href="#abos">Abonnements</a></li>
   <li><a data-toggle="tab" href="#rechnungen">Rechnungen</a></li>
+  <li><a data-toggle="tab" href="#lieferscheine">Lieferscheine</a></li>
 </ul>
 
 <div class="tab-content">
@@ -84,8 +85,9 @@
 				<tr>
 					<th>Rechnungsnummer</th>
 					<th>Datum</th>
-					<th>Betrag</th>
-					<th>bezahlt</th>
+					<th align="right">Betrag</th>
+					<th align="center">bezahlt</th>
+					<th align="center">storniert</th>
 					<th></th>
 				</tr>
 			</thead>
@@ -95,8 +97,31 @@
 						<td>${inv.number}</td>
 						<td><#if inv.date??>${inv.date.toString("dd.MM.yyyy")}<#else>kein Datum!</#if></td>
 						<td align="right">${money(inv.amount)}</td>
-						<td align="right">${money(inv.payed)}</td>
-						<td>  <a href="/invoice/${inv.number}" target="_blank">view</a> </td>
+						<td align="center">${inv.payed?string("bez.","")}</td>
+						<td align="center">${inv.cancelled?string("bez.","")}</td>
+						<td>  <a href="/subscr/invoiceView/${inv.number}" target="_blank">view</a> </td>
+					</tr>
+				</#list>
+			</tbody>
+		</table>
+  </div>
+  <div id="lieferscheine" class="tab-pane fade">
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th>Lieferscheinnummer</th>
+					<th>Datum</th>
+					<th align="right">Betrag</th>
+					<th align="center">bezahlt</th>
+				</tr>
+			</thead>
+			<tbody>
+				<#list issueSlips as inv>
+					<tr>
+						<td>${inv.number}</td>
+						<td><#if inv.date??>${inv.date.toString("dd.MM.yyyy")}<#else>kein Datum!</#if></td>
+						<td align="right">${money(inv.amount)}</td>
+						<td align="center">${inv.payed?string("bez","")}</td>
 					</tr>
 				</#list>
 			</tbody>

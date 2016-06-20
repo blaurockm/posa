@@ -15,6 +15,7 @@ import org.skife.jdbi.v2.sqlobject.SqlBatch;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
 import org.skife.jdbi.v2.sqlobject.SqlUpdate;
 import org.skife.jdbi.v2.sqlobject.customizers.BatchChunkSize;
+import org.skife.jdbi.v2.sqlobject.customizers.Mapper;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 
 import com.google.common.base.Optional;
@@ -33,6 +34,14 @@ public interface PosInvoiceDAO {
 
 	@SqlQuery("select * from posinvoice where invDate > :date order by number asc")
 	List<PosInvoice> fetchAllAfter(@Bind("date") java.util.Date num);
+
+	@Mapper(PosInvoiceMapper.class)
+	@SqlQuery("select * from posInvoice where debitor = :debitorId order by number desc")
+	List<PosInvoice> getSubscriberInvoices(@Bind("debitorId") int debId);
+
+	@Mapper(PosIssueSlipMapper.class)
+	@SqlQuery("select * from posIssueSlip where debitor = :debitorId order by number desc")
+	List<PosIssueSlip> getSubscriberIssueSlips(@Bind("debitorId") int debId);
 
 	@SqlQuery("select max(creationtime) from posinvoice")
 	DateTime getLastErfasst();

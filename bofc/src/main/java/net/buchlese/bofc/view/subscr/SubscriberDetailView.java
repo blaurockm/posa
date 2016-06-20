@@ -4,9 +4,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.joda.time.LocalDate;
-
 import net.buchlese.bofc.api.bofc.PosInvoice;
+import net.buchlese.bofc.api.bofc.PosIssueSlip;
 import net.buchlese.bofc.api.subscr.SubscrDelivery;
 import net.buchlese.bofc.api.subscr.SubscrProduct;
 import net.buchlese.bofc.api.subscr.Subscriber;
@@ -14,6 +13,8 @@ import net.buchlese.bofc.api.subscr.Subscription;
 import net.buchlese.bofc.jdbi.bofc.PosInvoiceDAO;
 import net.buchlese.bofc.jdbi.bofc.SubscrDAO;
 import net.buchlese.bofc.view.AbstractBofcView;
+
+import org.joda.time.LocalDate;
 
 public class SubscriberDetailView extends AbstractBofcView{
 
@@ -54,6 +55,14 @@ public class SubscriberDetailView extends AbstractBofcView{
 		case EACHDELIVERY : return hasUnpayedDeliveries(s);
 			default : return s.getPayedUntil() == null || s.getPayedUntil().isBefore(LocalDate.now());
 		}
+	}
+
+	public List<PosIssueSlip> getIssueSlips() {
+		List<PosIssueSlip> invs = new ArrayList<PosIssueSlip>();
+		if (sub.getDebitorId() > 0) {
+			invs.addAll(invDao.getSubscriberIssueSlips(sub.getDebitorId()));
+		}
+		return invs;
 	}
 	
 	public List<PosInvoice> getInvoices() {
