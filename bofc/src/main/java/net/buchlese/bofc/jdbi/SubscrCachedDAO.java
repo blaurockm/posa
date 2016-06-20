@@ -197,6 +197,7 @@ public class SubscrCachedDAO implements SubscrDAO {
 	@Override
 	public long insertArticle(SubscrArticle art) {
 		long x = dao.insertArticle(art);
+		art.setId(x);
 		articleCache.put(x, art);
 		return x;
 	}
@@ -207,18 +208,19 @@ public class SubscrCachedDAO implements SubscrDAO {
 	}
 
 	@Override
-	public void insertSubscriber(Subscriber p) {
-		dao.insertSubscriber(p);
+	public long insertSubscriber(Subscriber p) {
+		return dao.insertSubscriber(p);
 	}
 
 	@Override
-	public void insertSubscription(Subscription p) {
-		dao.insertSubscription(p);
+	public long insertSubscription(Subscription p) {
+		return dao.insertSubscription(p);
 	}
 
 	@Override
 	public long insertSubscrProduct(SubscrProduct p) {
 		long x = dao.insertSubscrProduct(p);
+		p.setId(x);
 		productCache.put(x, p);
 		return x;
 	}

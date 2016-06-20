@@ -142,13 +142,15 @@ public interface SubscrDAO {
 		    " values (:complJson, :subscriptionId, :articleId, :subscriberId, :deliveryDate, :payed, :invoiceNumber)")
 	void insertDelivery(@BindBean SubscrDelivery d);
 
+	@GetGeneratedKeys
 	@SqlUpdate("insert into subscriber (complJson, pointId, customerId, name1, name2) " +
 		    " values (:complJson, :pointid, :customerId, :name1, :name2)")
-	void insertSubscriber(@BindBean Subscriber p);
+	long insertSubscriber(@BindBean Subscriber p);
 
+	@GetGeneratedKeys
 	@SqlUpdate("insert into subscription (complJson, subscriberId, productId, startDate, endDate, payedUntil, pointId) " +
 		    " values (:complJson, :subscriberId, :productId, :startDate, :endDate, :payedUntil, :pointid)")
-	void insertSubscription(@BindBean Subscription p);
+	long insertSubscription(@BindBean Subscription p);
 
 	@GetGeneratedKeys
 	@SqlUpdate("insert into subscrProduct (complJson, startDate, endDate, nextDelivery, name) " +

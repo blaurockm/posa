@@ -170,15 +170,18 @@ public class SubscrTestDataDAO implements SubscrDAO {
 	}
 
 	@Override
-	public void insertSubscription(Subscription p) {
+	public long insertSubscription(Subscription p) {
 		p.setId(idcounter++);
 		subscriptions.add(p);
+		return p.getId();
+		
 	}
 
 	@Override
-	public void insertSubscriber(Subscriber p) {
+	public long insertSubscriber(Subscriber p) {
 		p.setId(idcounter++);
 		subscribers.add(p);
+		return p.getId();
 	}
 	
 	@Override
