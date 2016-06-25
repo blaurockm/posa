@@ -9,12 +9,12 @@
       <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
          <fo:layout-master-set>
             <fo:simple-page-master master-name="DIN-A4-mAdr" page-height="29.7cm" page-width="21cm" margin-left="2cm" margin-right="2.5cm" margin-top="0.5cm" margin-bottom="1cm">
-               <fo:region-body margin-top="10.5cm" margin-bottom="1.8cm"/>
+               <fo:region-body margin-top="10.5cm" margin-bottom="2.5cm"/>
                <fo:region-before region-name="header-DIN-A4-mAdr" extent="10.3cm" />
-               <fo:region-after region-name="footer-DIN-A4-mAdr" extent="1.5cm" />
+               <fo:region-after region-name="footer-DIN-A4-mAdr" extent="2.3cm" />
             </fo:simple-page-master>
             <fo:simple-page-master master-name="DIN-A4-oAdr" page-height="29.7cm" page-width="21cm" margin-left="2cm" margin-right="2.5cm" margin-top="0.5cm" margin-bottom="1cm">
-               <fo:region-body margin-top="1.5cm" margin-bottom="1.8cm" />
+               <fo:region-body margin-top="1.5cm" margin-bottom="2.5cm" />
             </fo:simple-page-master>
             <fo:page-sequence-master master-name="DIN-A4" page-height="29.7cm" page-width="21cm" margin-left="2cm" margin-right="2.5cm" margin-top="0.5cm" margin-bottom="1cm">
                <fo:repeatable-page-master-alternatives>
@@ -45,12 +45,9 @@
    </xsl:template>
 
    <xsl:template match="details[textonly='true']">
-   	  <fo:table-row>
+   	  <fo:table-row keep-with-next="always">
    	     <fo:table-cell>
-   	       <fo:block></fo:block>
-   	     </fo:table-cell>
-   	     <fo:table-cell>
-	        <fo:block font-size="10pt" margin-left="-1mm" font-weight="bold">
+	        <fo:block font-size="10pt" font-weight="bold">
 	        <xsl:if test="preceding-sibling::details[1][textonly='false']">
 	         <xsl:attribute name="margin-top">
                <xsl:value-of select="'2mm'"/>
@@ -64,10 +61,7 @@
    <xsl:template match="details[textonly='false']">
    	  <fo:table-row>
    	     <fo:table-cell>
-   	       <fo:block></fo:block>
-   	     </fo:table-cell>
-   	     <fo:table-cell>
-	        <fo:block font-size="10pt"><xsl:value-of select="text"/></fo:block>   	       
+	        <fo:block font-size="10pt" margin-left="1.5mm"><xsl:value-of select="text"/></fo:block>   	       
    	     </fo:table-cell>
    	     <fo:table-cell>
 	        <fo:block font-size="10pt" text-align="center"><xsl:value-of select="quantity"/></fo:block>   	       
@@ -94,9 +88,6 @@
    	       <fo:block></fo:block>
    	     </fo:table-cell>
    	     <fo:table-cell>
-   	       <fo:block></fo:block>
-   	     </fo:table-cell>
-   	     <fo:table-cell>
 	        <fo:block font-size="10pt" text-align="right">19%</fo:block>   	       
    	     </fo:table-cell>
    	     <fo:table-cell>
@@ -111,9 +102,8 @@
        <fo:block>Anbei erhalten Sie die Rechnung für die von Ihnen bestellten Periodika.</fo:block>
       </fo:block-container>
       <fo:table margin-top="5mm" table-layout="fixed" width="160mm">
-         <fo:table-column column-width="1cm" />
-         <fo:table-column column-width="8cm" />
-         <fo:table-column column-width="12mm" />
+         <fo:table-column column-width="94mm" />
+         <fo:table-column column-width="8mm" />
          <fo:table-column column-width="16mm" />
          <fo:table-column column-width="20mm" />
          <fo:table-column column-width="24mm" />
@@ -121,13 +111,10 @@
 	  	  <fo:table-row border-top-style="solid" border-bottom-style="solid" border-top-width="0.2mm" border-bottom-width="0.2mm" 
 	  	      space-after="3mm">
 	  	     <fo:table-cell>
-	  	       <fo:block font-size="10pt" margin-top="2mm" margin-bottom="2mm">Pos</fo:block>
-	  	     </fo:table-cell>
-	  	     <fo:table-cell>
 	  	       <fo:block font-size="10pt" margin-top="2mm" margin-bottom="2mm">Bezeichnung</fo:block>
 	  	     </fo:table-cell>
 	  	     <fo:table-cell>
-	           <fo:block font-size="10pt" margin-top="2mm" margin-bottom="2mm" text-align="center">Menge</fo:block>   	       
+	           <fo:block font-size="10pt" margin-top="2mm" margin-bottom="2mm" text-align="center">Mg</fo:block>   	       
 	  	     </fo:table-cell>
 	  	     <fo:table-cell>
 	           <fo:block font-size="10pt" margin-top="2mm" margin-bottom="2mm" text-align="right">EP €</fo:block>   	       

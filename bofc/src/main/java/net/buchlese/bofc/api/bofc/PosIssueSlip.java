@@ -64,6 +64,9 @@ public class PosIssueSlip {
 	private boolean printed;
 
 	@JsonProperty
+	private boolean includeOnInvoice;
+
+	@JsonProperty
 	private String type;
 	
 	@JsonProperty
@@ -262,6 +265,12 @@ public class PosIssueSlip {
 			return b;
 		}
 		return Long.valueOf(a + b);
+	}
+	public boolean isIncludeOnInvoice() {
+		return includeOnInvoice;
+	}
+	public void setIncludeOnInvoice(boolean includeOnInvoice) {
+		this.includeOnInvoice = includeOnInvoice;
 	}
 
 }

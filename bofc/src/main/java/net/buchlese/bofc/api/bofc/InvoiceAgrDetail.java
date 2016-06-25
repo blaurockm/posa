@@ -7,6 +7,8 @@ import org.joda.time.LocalDate;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class InvoiceAgrDetail {
+	public enum TYPE { SUBSCR, ISSUESLIP };	
+	
 	@JsonProperty
 	private long agreementId;
 
@@ -19,6 +21,9 @@ public class InvoiceAgrDetail {
 	@JsonProperty
 	private List<Long> deliveryIds;
 
+	@JsonProperty
+	private TYPE type = TYPE.SUBSCR;
+	
 	public long getAgreementId() {
 		return agreementId;
 	}
@@ -51,5 +56,12 @@ public class InvoiceAgrDetail {
 		this.deliveryIds = deliveryIds;
 	}
 
+	public TYPE getType() {
+		return type;
+	}
+
+	public void setType(TYPE type) {
+		this.type = type;
+	}
 	
 }

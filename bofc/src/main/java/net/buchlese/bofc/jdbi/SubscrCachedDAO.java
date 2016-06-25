@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import org.joda.time.LocalDate;
 
 import net.buchlese.bofc.api.bofc.PosInvoice;
+import net.buchlese.bofc.api.bofc.PosIssueSlip;
 import net.buchlese.bofc.api.bofc.UserChange;
 import net.buchlese.bofc.api.subscr.SubscrArticle;
 import net.buchlese.bofc.api.subscr.SubscrDelivery;
@@ -287,6 +288,21 @@ public class SubscrCachedDAO implements SubscrDAO {
 	@Override
 	public List<PosInvoice> getSubscriberInvoices(int debId) {
 		return dao.getSubscriberInvoices(debId);
+	}
+
+	@Override
+	public List<PosIssueSlip> findIssueSlipsToAdd(long id) {
+		return dao.findIssueSlipsToAdd(id);
+	}
+
+	@Override
+	public PosIssueSlip getIssueSlip(long id) {
+		return dao.getIssueSlip(id);
+	}
+
+	@Override
+	public void updateIssueSlip(PosIssueSlip inv) {
+		dao.updateIssueSlip(inv);
 	}
 
 }

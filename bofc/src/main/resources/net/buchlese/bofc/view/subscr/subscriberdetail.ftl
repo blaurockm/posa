@@ -112,7 +112,8 @@
 					<th>Lieferscheinnummer</th>
 					<th>Datum</th>
 					<th align="right">Betrag</th>
-					<th align="center">bezahlt</th>
+					<th align="center">Libras</th>
+					<th align="center">Sammelrech</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -122,6 +123,7 @@
 						<td><#if inv.date??>${inv.date.toString("dd.MM.yyyy")}<#else>kein Datum!</#if></td>
 						<td align="right">${money(inv.amount)}</td>
 						<td align="center">${inv.payed?string("bez","")}</td>
+						<td align="center"><input type="checkbox" ${inv.includeOnInvoice?string('checked','')} onChange="switchIssueSlip('${inv.number}','issueSlip.includeOnInvoice', this.checked)"></td>
 					</tr>
 				</#list>
 			</tbody>
@@ -137,7 +139,11 @@
      var switchCheckbox = function(fieldname, val) {
     	 $.post("/subscr/update", { pk: '${sub.id?c}', name: fieldname, value : val});
      }
-     
+
+     var switchIssueSlip = function(id, fieldname, val) {
+    	 $.post("/subscr/update", { pk: id, name: fieldname, value : val});
+     }
+
 	$('.editable').editable({
 	    url: '/subscr/update', pk:'${sub.id?c}'
 	});

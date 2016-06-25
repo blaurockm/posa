@@ -6,6 +6,7 @@ import java.util.List;
 import javax.validation.Valid;
 
 import net.buchlese.bofc.api.bofc.PosInvoice;
+import net.buchlese.bofc.api.bofc.PosIssueSlip;
 import net.buchlese.bofc.api.bofc.UserChange;
 import net.buchlese.bofc.api.subscr.SubscrArticle;
 import net.buchlese.bofc.api.subscr.SubscrDelivery;
@@ -199,5 +200,18 @@ public interface SubscrDAO {
 	@SqlUpdate("insert into userChanges (objectid, login, fieldId, oldValue, newValue, action, modDate) "
 			+ " values (:objectId, :login, :fieldId, :oldValue, :newValue, :action, :modDate) ")
 	void insert(@Valid @BindBean UserChange u);
+
+	@Mapper(PosIssueSlipMapper.class)
+	@SqlQuery("select * from posissueslip where debitor = :debId and payed = 0 order by number asc")
+	List<PosIssueSlip> findIssueSlipsToAdd(@Bind("debId") long id);
+
+	@Mapper(PosIssueSlipMapper.class)
+	@SqlQuery("select * from posissueslip where id = :num")
+	PosIssueSlip getIssueSlip(@Bind("num") long id);
+
+	@SqlUpdate("update posissueslip set (customer, debitor, invDate, complJson, name1, name2, name3,  street, city, payed) " +
+	" = (:customerId, :debitorId, :date, :complJson,  :name1, :name2, :name3, :street, :city, :payed )  where id = :id")
+	void updateIssueSlip(@Valid @BindBean PosIssueSlip inv);
+
 
 }

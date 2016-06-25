@@ -1,7 +1,5 @@
 package net.buchlese.bofc.resources;
 
-import io.dropwizard.views.View;
-
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Arrays;
@@ -22,6 +20,16 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 
+import org.apache.commons.lang3.StringUtils;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.joda.time.Period;
+import org.joda.time.format.DateTimeFormat;
+
+import com.google.common.base.Optional;
+import com.google.inject.Inject;
+
+import io.dropwizard.views.View;
 import net.buchlese.bofc.api.bofc.PosInvoice;
 import net.buchlese.bofc.api.bofc.ReportDeliveryNote;
 import net.buchlese.bofc.api.bofc.ReportDeliveryProtocol;
@@ -42,6 +50,7 @@ import net.buchlese.bofc.core.reports.ReportDeliveryNoteCreator;
 import net.buchlese.bofc.core.reports.ReportDeliveryProtocolCreator;
 import net.buchlese.bofc.jdbi.bofc.PosInvoiceDAO;
 import net.buchlese.bofc.jdbi.bofc.SubscrDAO;
+import net.buchlese.bofc.resources.helper.IssueSlipUpdateHelper;
 import net.buchlese.bofc.resources.helper.SubscrArticleUpdateHelper;
 import net.buchlese.bofc.resources.helper.SubscrDeliveryUpdateHelper;
 import net.buchlese.bofc.resources.helper.SubscrProductUpdateHelper;
@@ -61,15 +70,6 @@ import net.buchlese.bofc.view.subscr.SubscrProductsView;
 import net.buchlese.bofc.view.subscr.SubscriberDetailView;
 import net.buchlese.bofc.view.subscr.SubscriptionAddView;
 import net.buchlese.bofc.view.subscr.SubscriptionDetailView;
-
-import org.apache.commons.lang3.StringUtils;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-import org.joda.time.Period;
-import org.joda.time.format.DateTimeFormat;
-
-import com.google.common.base.Optional;
-import com.google.inject.Inject;
 
 @Path("/subscr")
 public class SubscrResource {
@@ -296,6 +296,7 @@ public class SubscrResource {
 					recordUserChange(dao, "master", inv.getId(), "collInvoice " + inv.getNumber(), null, null, "N");
 					generator.generatePDF(output);
 				} catch (Exception e) {
+					e.printStackTrace();
 					throw new WebApplicationException(e);
 				}
 				output.flush();
@@ -680,6 +681,9 @@ public class SubscrResource {
 		}
 		if (fieldname.startsWith("delivery")) {
 			res = new SubscrDeliveryUpdateHelper(dao).update(pk, fieldname, value);
+		}
+		if (fieldname.startsWith("issueSlip")) {
+			res = new IssueSlipUpdateHelper(invDao).update(pk, fieldname, value);
 		}
 		if (res == null) {
 			res = new UpdateResult();

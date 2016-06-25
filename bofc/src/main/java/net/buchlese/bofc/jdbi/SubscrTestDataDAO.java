@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import net.buchlese.bofc.api.bofc.PosInvoice;
+import net.buchlese.bofc.api.bofc.PosIssueSlip;
 import net.buchlese.bofc.api.bofc.UserChange;
 import net.buchlese.bofc.api.subscr.Address;
 import net.buchlese.bofc.api.subscr.PayIntervalType;
@@ -504,6 +505,20 @@ public class SubscrTestDataDAO implements SubscrDAO {
 	@Override
 	public List<PosInvoice> getSubscriberInvoices(int debId) {
 		return Collections.emptyList();
+	}
+
+	@Override
+	public List<PosIssueSlip> findIssueSlipsToAdd(long id) {
+		return Collections.emptyList();
+	}
+
+	@Override
+	public PosIssueSlip getIssueSlip(long id) {
+		return null;
+	}
+
+	@Override
+	public void updateIssueSlip(PosIssueSlip inv) {
 	}
 
 }
