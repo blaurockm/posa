@@ -185,6 +185,10 @@ public class SubscriptionInvoiceCreator {
 			// noch gar nicht bezahlt..
 			from = LocalDate.now().dayOfMonth().withMinimumValue(); // immer der erste des aktuellen monats
 		} else {
+			if (sub.getPayedUntil().isAfter(LocalDate.now())) {
+				// is schon bezahlt, wollen wir nich auf der Rechnung.
+				return null;
+			}
 			from = sub.getPayedUntil().plusMonths(1).dayOfMonth().withMinimumValue(); // immer der erste des nächsten monats
 		}
 		LocalDate till = from.plus(sub.getPaymentType().getPeriod()).minusMonths(1); // und period -1 monat drauf
