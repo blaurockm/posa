@@ -67,7 +67,7 @@ public interface SubscrDAO {
 	List<PosInvoice> getSubscriberInvoices(@Bind("debitorId") int debId);
 
 	@Mapper(SubscrDeliveryMapper.class)
-	@SqlQuery("select * from subscrDelivery where deliveryDate = (select max(deliveryDate) from subscrDelivery where subscriptionId = :subid)")
+	@SqlQuery("select * from subscrDelivery where subscriptionId = :subid and deliveryDate = (select max(deliveryDate) from subscrDelivery where subscriptionId = :subid)")
 	SubscrDelivery getLastDeliveryForSubscription(@Bind("subid") long id);
 
 	@Mapper(SubscrArticleMapper.class)
