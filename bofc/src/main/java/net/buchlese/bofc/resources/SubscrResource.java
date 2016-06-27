@@ -369,6 +369,7 @@ public class SubscrResource {
 					PDFInvoice generator = new PDFInvoice(inv);
 					generator.generatePDF(output);
 				} catch (Exception e) {
+					e.printStackTrace();
 					throw new WebApplicationException(e);
 				}
 				output.flush();
