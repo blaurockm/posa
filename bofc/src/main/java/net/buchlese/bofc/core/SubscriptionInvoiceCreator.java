@@ -120,7 +120,9 @@ public class SubscriptionInvoiceCreator {
 				addIntervalPayment(dao, sub, inv);
 			}
 		}
-		issueSlips.forEach(s -> addIssueSlipToInvoice(dao, s, inv));
+		if (issueSlips != null) {
+			issueSlips.forEach(s -> addIssueSlipToInvoice(dao, s, inv));
+		}
 		
 		updateTaxValues(inv);
 		
