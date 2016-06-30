@@ -1,5 +1,7 @@
 package net.buchlese.bofc.resources;
 
+import io.dropwizard.views.View;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Arrays;
@@ -15,21 +17,10 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 
-import org.apache.commons.lang3.StringUtils;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-import org.joda.time.Period;
-import org.joda.time.format.DateTimeFormat;
-
-import com.google.common.base.Optional;
-import com.google.inject.Inject;
-
-import io.dropwizard.views.View;
 import net.buchlese.bofc.api.bofc.PosInvoice;
 import net.buchlese.bofc.api.bofc.ReportDeliveryNote;
 import net.buchlese.bofc.api.bofc.ReportDeliveryProtocol;
@@ -70,6 +61,15 @@ import net.buchlese.bofc.view.subscr.SubscrProductsView;
 import net.buchlese.bofc.view.subscr.SubscriberDetailView;
 import net.buchlese.bofc.view.subscr.SubscriptionAddView;
 import net.buchlese.bofc.view.subscr.SubscriptionDetailView;
+
+import org.apache.commons.lang3.StringUtils;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.joda.time.Period;
+import org.joda.time.format.DateTimeFormat;
+
+import com.google.common.base.Optional;
+import com.google.inject.Inject;
 
 @Path("/subscr")
 public class SubscrResource {
@@ -286,22 +286,9 @@ public class SubscrResource {
 	@Produces({"application/pdf"})
 	@GET
 	@Path("/pdfcreateCollInvoice/{sub}")
-	public StreamingOutput createCollPdfInvoice(@PathParam("sub") String subIdP)  {
-		long subId = Long.parseLong(subIdP);
-		return new StreamingOutput() {
-			public void write(OutputStream output) throws IOException, WebApplicationException {
-				try {
-					PosInvoice inv = SubscriptionInvoiceCreator.createCollectiveSubscription(dao, dao.getSubscriber(subId), numGen);
-					PDFInvoice generator = new PDFInvoice(inv);
-					recordUserChange(dao, "master", inv.getId(), "collInvoice " + inv.getNumber(), null, null, "N");
-					generator.generatePDF(output);
-				} catch (Exception e) {
-					e.printStackTrace();
-					throw new WebApplicationException(e);
-				}
-				output.flush();
-			}
-		};	
+	public Response createCollPdfInvoice(@PathParam("sub") String subIdP)  {
+		PosInvoice inv = createCollInvoice(subIdP); 
+		return invoiceResponse(inv);
 	}
 
 	@GET
@@ -348,7 +335,7 @@ public class SubscrResource {
 
 	@GET
 	@Path("/createInvoice/{sub}")
-	@Produces(MediaType.TEXT_XML)
+	@Produces({"application/json"})
 	public PosInvoice createInvoice(@PathParam("sub") String subIdP) {
 		long subId = Long.parseLong(subIdP);
 		PosInvoice inv =  SubscriptionInvoiceCreator.createSubscription(dao, dao.getSubscription(subId), numGen);
@@ -356,25 +343,12 @@ public class SubscrResource {
 		return inv;
 	}
 
-	@Produces({"application/pdf"})
 	@GET
 	@Path("/pdfcreateInvoice/{sub}")
-	public StreamingOutput createPdfInvoice(@PathParam("sub") String subIdP)  {
-		long subId = Long.parseLong(subIdP);
-		return new StreamingOutput() {
-			public void write(OutputStream output) throws IOException, WebApplicationException {
-				try {
-					PosInvoice inv = SubscriptionInvoiceCreator.createSubscription(dao, dao.getSubscription(subId), numGen);
-					recordUserChange(dao, "master", inv.getId(), "invoice " + inv.getNumber(), null, null, "N");
-					PDFInvoice generator = new PDFInvoice(inv);
-					generator.generatePDF(output);
-				} catch (Exception e) {
-					e.printStackTrace();
-					throw new WebApplicationException(e);
-				}
-				output.flush();
-			}
-		};	
+	@Produces({"application/pdf"})
+	public Response createPdfInvoice(@PathParam("sub") String subIdP)  {
+		PosInvoice inv = createInvoice(subIdP); 
+		return invoiceResponse(inv);
 	}
 
 	@GET
@@ -426,7 +400,7 @@ public class SubscrResource {
 	@GET
 	@Path("/invoiceView/{inv}")
 	@Produces({"application/pdf"})
-	public StreamingOutput viewInvoice(@PathParam("inv") String invNum) {
+	public Response viewInvoice(@PathParam("inv") String invNum) {
 		PosInvoice inv = dao.getTempInvoice(invNum);
 		if (inv == null) {
 			List<PosInvoice> invs = invDao.fetch(invNum);
@@ -435,20 +409,28 @@ public class SubscrResource {
 			}
 			inv = invs.get(0);
 		}
+		return invoiceResponse(inv);
+	}
+
+	
+	private Response invoiceResponse(PosInvoice inv) {
 		final PosInvoice invs = inv;
-		return new StreamingOutput() {
+		StreamingOutput stream = new StreamingOutput() {
 			public void write(OutputStream output) throws IOException, WebApplicationException {
 				try {
 					PDFInvoice generator = new PDFInvoice(invs);
 					generator.generatePDF(output);
 				} catch (Exception e) {
+					e.printStackTrace();
 					throw new WebApplicationException(e);
 				}
 				output.flush();
 			}
 		};	
+		return Response.ok(stream).header("Content-Disposition","attachment; filename=Rechnung_" + inv.getNumber() + ".pdf").build();
 	}
-
+	
+	
 	@GET
 	@Path("/invoiceCancel/{inv}")
 	@Produces({"text/html"})

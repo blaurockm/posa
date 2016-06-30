@@ -8,33 +8,47 @@
    <xsl:template match="/invoice">
       <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
          <fo:layout-master-set>
-            <fo:simple-page-master master-name="DIN-A4-mAdr" page-height="29.7cm" page-width="21cm" margin-left="2cm" margin-right="2.5cm" margin-top="0.5cm" margin-bottom="1cm">
+            <fo:simple-page-master master-name="titlepage" page-height="29.7cm" page-width="21cm" margin-left="2cm" margin-right="2.5cm" margin-top="0.5cm" margin-bottom="1cm">
                <fo:region-body margin-top="10.5cm" margin-bottom="2.5cm"/>
-               <fo:region-before region-name="header-DIN-A4-mAdr" extent="10.3cm" />
-               <fo:region-after region-name="footer-DIN-A4-mAdr" extent="2.3cm" />
+               <fo:region-before region-name="header-mAdr" extent="10.3cm" />
+               <fo:region-after region-name="footer" extent="2.3cm" />
             </fo:simple-page-master>
-            <fo:simple-page-master master-name="DIN-A4-oAdr" page-height="29.7cm" page-width="21cm" margin-left="2cm" margin-right="2.5cm" margin-top="0.5cm" margin-bottom="1cm">
+            <fo:simple-page-master master-name="backside" page-height="29.7cm" page-width="21cm" margin-left="2cm" margin-right="2.5cm" margin-top="1.5cm" margin-bottom="1cm">
                <fo:region-body margin-top="1.5cm" margin-bottom="2.5cm" />
+               <fo:region-before region-name="header-even-oAdr" extent="10.3cm" />
+            </fo:simple-page-master>
+            <fo:simple-page-master master-name="frontother" page-height="29.7cm" page-width="21cm" margin-left="2cm" margin-right="2.5cm" margin-top="0.5cm" margin-bottom="1cm">
+               <fo:region-body margin-top="6.5cm" margin-bottom="2.5cm" />
+               <fo:region-before region-name="header-odd-oAdr" extent="6.3cm" />
+               <fo:region-after region-name="footer" extent="2.3cm" />
             </fo:simple-page-master>
             <fo:page-sequence-master master-name="DIN-A4" page-height="29.7cm" page-width="21cm" margin-left="2cm" margin-right="2.5cm" margin-top="0.5cm" margin-bottom="1cm">
                <fo:repeatable-page-master-alternatives>
-  		  	   	 <fo:conditional-page-master-reference master-reference="DIN-A4-mAdr" page-position="first"/>
-                 <fo:conditional-page-master-reference master-reference="DIN-A4-oAdr" page-position="rest"  />
+  		  	   	 <fo:conditional-page-master-reference master-reference="titlepage" page-position="first"/>
+                 <fo:conditional-page-master-reference master-reference="backside" odd-or-even="even" page-position="rest"  />
+                 <fo:conditional-page-master-reference master-reference="frontother" odd-or-even="odd"  page-position="rest"  />
                 </fo:repeatable-page-master-alternatives>
             </fo:page-sequence-master>
          </fo:layout-master-set>
          <fo:page-sequence master-reference="DIN-A4">
             <!-- <fo:static-content flow-name="header"> </fo:static-content> -->
-            <fo:static-content flow-name="header-DIN-A4-mAdr">
+            <fo:static-content flow-name="header-mAdr">
                <xsl:call-template name="briefkopf" />
+               <xsl:call-template name="seitenzahl" />
+               <xsl:call-template name="adressat" />
             </fo:static-content>
-            <fo:static-content flow-name="footer-DIN-A4-mAdr">
+            <fo:static-content flow-name="header-even-oAdr">
+               <xsl:call-template name="seitenzahl" />
+            </fo:static-content>
+            <fo:static-content flow-name="header-odd-oAdr">
+               <xsl:call-template name="briefkopf" />
+               <xsl:call-template name="seitenzahl" />
+            </fo:static-content>
+            <fo:static-content flow-name="footer">
                <xsl:call-template name="brieffuss" />
             </fo:static-content>
 
             <fo:flow flow-name="xsl-region-body">
-               <xsl:call-template name="adressat" />
-
                <xsl:call-template name="rechnungsinfozeile" />
                <xsl:call-template name="rechnungspositionen" />
                <xsl:call-template name="endbetrag" />
@@ -339,13 +353,10 @@
         </fo:external-graphic>
      </fo:block>
    </xsl:template>
-
-   <xsl:template name="brieffuss">
+   
+   <xsl:template name="seitenzahl">
       <fo:block font-size="8pt" text-align="right">
          Seite <fo:page-number/> von <fo:page-number-citation ref-id="end"/> 
-      </fo:block>
-      <fo:block>
-        <fo:external-graphic src="url(/xsl/images/footer.jpg)"  content-width="170mm"/>
       </fo:block>
       <xsl:if test="temporary = 'true'">
       <fo:block-container  height="30mm" width="82mm" top="106mm" left="20mm" position="fixed" fox:transform="rotate(-45)">
@@ -361,6 +372,12 @@
         </fo:block>
       </fo:block-container>
       </xsl:if>
+   </xsl:template>
+
+   <xsl:template name="brieffuss">
+      <fo:block>
+        <fo:external-graphic src="url(/xsl/images/footer.jpg)"  content-width="170mm"/>
+      </fo:block>
    </xsl:template>
 
   <xsl:template name="renderLetterAddress">
