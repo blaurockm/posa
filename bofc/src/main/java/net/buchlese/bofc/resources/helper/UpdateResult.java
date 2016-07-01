@@ -27,6 +27,8 @@ public class UpdateResult {
 	public String oldValue;
 	@JsonProperty
 	public String newValue;
+	@JsonProperty
+	public String endDate;
 
 	@JsonIgnore
 	public void initializeMoneyFieldsFromArticle(SubscrArticle art) {

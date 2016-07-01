@@ -3,9 +3,6 @@
 <a href="#subscrDispo/${p.id?c}" class="btn btn-primary">Dispo</a>
 <a href="#subscrCustAdd" class="btn btn-default">Neuer Abonnent</a>
 <a href="#subscrSubscrAdd/0/${p.id?c}" class="btn btn-default">Neues Abo</a>
-<#if articles?size == 0>
-<a href="/subscr/subscrarticlecreate/${p.id?c}" class="btn btn-default">Initial-Artikel</a>
-</#if>
 </h1>
 
 <h3>von <a href="#" class="editable" data-type="text" data-name="product.publisher">${p.publisher}</a> </h3>

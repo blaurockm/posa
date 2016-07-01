@@ -112,6 +112,11 @@ Path.map("#subscrarticlecreate/:id").to(function(){
     window.history.back();  // in der history einen schritt zurückgehen
 }).enter(setSubscrModule);
 
+Path.map("#subscrintervalcreate/:id").to(function(){
+    $("#output .content").load("/subscr/subscrintervalcreate/" + this.params["id"]);
+    window.history.back();  // in der history einen schritt zurückgehen
+}).enter(setSubscrModule);
+
 Path.map("#subscrProduct/:id").to(function(){
     $("#output .content").load("/subscr/product/" + this.params["id"]);
 }).enter(setSubscrModule);
@@ -134,6 +139,10 @@ Path.map("#subscriber/:id").to(function(){
 
 Path.map("#subscrDispo/:id").to(function(){
     $("#output .content").load("/subscr/dispo/" + this.params["id"]);
+}).enter(setSubscrModule);
+
+Path.map("#subscrDispoNav/:id/:dir/:art").to(function(){
+    $("#output .content").load("/subscr/disponav/" + this.params["id"] +"/" +this.params["dir"] +"/" +this.params["art"]);
 }).enter(setSubscrModule);
 
 Path.map("#subscrDelivery/:id").to(function(){

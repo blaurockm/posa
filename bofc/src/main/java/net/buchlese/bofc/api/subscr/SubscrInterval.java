@@ -83,6 +83,16 @@ public class SubscrInterval implements Comparable<SubscrInterval> {
 		}
 		return name;
 	}
+	
+	@JsonIgnore
+	public void updateEndDate() {
+		switch (getIntervalType()) {
+		case YEARLY: setEndDate(getStartDate().plusYears(1).minusDays(1)); break;
+		case HALFYEARLY: setEndDate(getStartDate().plusMonths(6).minusDays(1)); break;
+		case MONTHLY: setEndDate(getStartDate().plusMonths(1).minusDays(1)); break;
+		default: setEndDate(getStartDate().plusDays(1));
+		}
+	}
 
 	@JsonIgnore
 	public void updateBrutto(long br) {

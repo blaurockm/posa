@@ -241,7 +241,7 @@
       <xsl:attribute name="font-size">
       <xsl:value-of select="$fontsize"/>
     </xsl:attribute>
-      <xsl:value-of select="city"/>
+      <xsl:value-of select="postalcode"/>&#160;<xsl:value-of select="city"/>
     </fo:block>
   </xsl:template>
 

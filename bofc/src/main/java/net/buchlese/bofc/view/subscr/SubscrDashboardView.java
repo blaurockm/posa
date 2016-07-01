@@ -28,7 +28,7 @@ public class SubscrDashboardView extends AbstractBofcView {
 	public SubscrDashboardView(SubscrDAO dao, LocalDate d) {
 		super("subscrdashboard.ftl");
 		this.dao = dao;
-		List<SubscrDelivery> tempdelivs = dao.getDeliveries(d);
+		List<SubscrDelivery> tempdelivs = dao.getDeliveriesUnrecorded();
 		tempdelivs.forEach(i -> i.subscriberName = kunde(i));
 		tempdelivs.sort(Comparator.comparing(SubscrDelivery::getSubscriberName));
 		this.deliveries = tempdelivs;

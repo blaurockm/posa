@@ -93,12 +93,7 @@ public class SubscrProduct {
 		} else {
 			na.setStartDate(erschTag);
 		}
-		switch (na.getIntervalType()) {
-		case YEARLY: na.setEndDate(na.getStartDate().plusYears(1).minusDays(1)); break;
-		case HALFYEARLY: na.setEndDate(na.getStartDate().plusMonths(6).minusDays(1)); break;
-		case MONTHLY: na.setEndDate(na.getStartDate().plusMonths(1).minusDays(1)); break;
-		default: na.setEndDate(na.getStartDate().plus(getPeriod()));
-		}
+		na.updateEndDate();
 		setLastInterval(na.getEndDate());
 		na.setName(na.initializeName(namePattern));
 		return na;

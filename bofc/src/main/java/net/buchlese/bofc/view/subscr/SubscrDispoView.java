@@ -55,7 +55,7 @@ public class SubscrDispoView extends AbstractBofcView{
 	}
 
 	public SubscrDelivery delivery(Subscription sub, SubscrArticle art) {
-		return dao.getDeliveriesForSubscription(sub.getId()).stream().filter(d -> d.getArticleId() == art.getId() && d.getDeliveryDate().equals(dispoDate)).findFirst().orElse(null);
+		return dao.getDeliveriesForSubscription(sub.getId()).stream().filter(d -> d.getArticleId() == art.getId()).findFirst().orElse(null);
 	}
 	
 	public String kunde(Subscription s) {

@@ -17,8 +17,8 @@
   <div class="card card-block">
     <h3 class="card-title">auszuliefernder Artikel</h3>
     <ul class="list-group list-group-flush">
-      <li class="list-group-item"><button onclick="loadPrevArticle()">&lt;&lt;</button> Artikel-ID <span id="artid">${art.id?c}</span>
-       <button onclick="loadNextArticle()">&gt;&gt;</button>
+      <li class="list-group-item"><a class="btn btn-primary" href="#subscrDispoNav/${p.id?c}/prev/${art.id?c}">&lt;&lt;</a> Artikel-ID <span id="artid">${art.id?c}</span>
+       <a class="btn btn-primary" href="#subscrDispoNav/${p.id?c}/next/${art.id?c}">&gt;&gt;</a>
       </li>
       <li class="list-group-item">Name <a href="#" id="artname" class="editable" data-type="text"  data-name="article.name"  data-title="Artikelbezeichnung">${art.name}</a></li>
       <li class="list-group-item">Erscheinungsdatum <a href="#" id="artersch" class="namechangerfield" data-type="date" data-format="dd.mm.yyyy" data-name="article.erschTag"  data-title="Erscheinungstag" >${art.erschTag.toString("dd.MM.yyyy")}</a></li>
@@ -77,7 +77,7 @@
 			   <button id="create${sub.id?c}" class="btn btn-default">anlegen</button>
 			 <script>
    	   	 	   $( "#create${sub.id?c}" ).click(function() {
-   	    		 $.getJSON("/subscr/deliverycreate/${sub.id?c}/" + article.id + "/${dispoDate}", function() {console.log( "deliverycreate success" );})
+   	    		 $.getJSON("/subscr/deliverycreate/${sub.id?c}/${art.id?c}/${dispoDate}", function() {console.log( "deliverycreate success" );})
    	    		 $( "#create${sub.id?c}" ).hide();
 				});
 			 </script>
@@ -91,44 +91,12 @@
 </div>
 
 <script>
-	var article = null;
-	
-	var loadPrevArticle = function() {
-		var x = getArticlePk();
-	 	 $.getJSON("/subscr/subscrarticle/prev/${art.productId?c}/" + x, displayArticle);
-	} 
-
-	var loadNextArticle = function() {
-		var x = getArticlePk();
-	 	 $.getJSON("/subscr/subscrarticle/next/${art.productId?c}/" + x, displayArticle);
-	} 
-
-	var displayArticle = function(res) {
-		article = res;
-        $("#artname").editable('setValue',res.name, false);
-        $("#brutto").editable('setValue',res.brutto, true);
-        $("#brutto_half").editable('setValue',res.brutto_half, true);
-        $("#brutto_full").editable('setValue',res.brutto_full, true);
-        $("#half_percent").editable('setValue',res.halfPercentage, false);
-        $("#artcount").editable('setValue',res.issueNo, true);
-        $("#artid").text(res.id);
-
-//        $('.editable').editable({ pk:res.id});
-//	    $('.namechangerfield').editable({ pk:res.id});
-//	    $('.percentagefield').editable({ pk:res.id});
-//	    $('.editablemoney').editable({ pk : res.id});
-//	    alert(" pk = " + res.id);
-	} 
-
-	var getArticlePk = function() {
-		return article.id;
-	}
-    
+  
     $('.editable').editable({
-	    url: '/subscr/update', pk : getArticlePk
+	    url: '/subscr/update', pk : '${art.id?c}'
 	});
 	$('.namechangerfield').editable({
-	    url: '/subscr/update', pk : getArticlePk,
+	    url: '/subscr/update', pk : '${art.id?c}',
 	    mode : "popup",
 		success:function(res, newValue) {
 	        if(!res.success) return res.msg;
@@ -136,7 +104,7 @@
 	    }
     });
 	$('.percentagefield').editable({
-	    url: '/subscr/update', pk : getArticlePk,
+	    url: '/subscr/update', pk : '${art.id?c}',
 	    mode : "popup",
 	    display : function(value, jsonresponse) {
 	    	$(this).text(value * 100 + " %");
@@ -148,7 +116,7 @@
 	    }
     });
 	$('.editablemoney').editable({
-	    url: '/subscr/update', pk : getArticlePk,
+	    url: '/subscr/update', pk : '${art.id?c}'',
 	    mode : "popup",
 	    display : function(value, jsonresponse) {
 	    	$(this).text(formatMoney(value));
@@ -166,7 +134,5 @@
 	        }
 	    }
 	});
-    
-    $.getJSON("/subscr/subscrarticle/ex/${art.productId?c}/${art.id?c}", displayArticle);
     
 </script>

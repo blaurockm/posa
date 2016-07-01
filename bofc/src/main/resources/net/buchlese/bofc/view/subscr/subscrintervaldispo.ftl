@@ -17,12 +17,13 @@
   <div class="card card-block">
     <h3 class="card-title">zu disponierendes Intervall</h3>
     <ul class="list-group list-group-flush">
-      <li class="list-group-item"><button onclick="loadPrevArticle()">&lt;&lt;</button> Interval-ID <span id="artid">${art.id?c}</span>
-       <button onclick="loadNextArticle()">&gt;&gt;</button>
+      <li class="list-group-item"><a class="btn btn-primary" href="#subscrDispoNav/${p.id?c}/prev/${art.id?c}">&lt;&lt;</a> Interval-ID <span id="artid">${art.id?c}</span>
+       <a class="btn btn-primary" href="#subscrDispoNav/${p.id?c}/next/${art.id?c}">&gt;&gt;</a>
       </li>
       <li class="list-group-item">Name <a href="#" id="artname" class="editable" data-type="text"  data-name="interval.name"  data-title="Intervallbezeichnung">${art.name}</a></li>
-      <li class="list-group-item">Startdatum <a href="#" id="artersch" class="namechangerfield" data-type="date" data-format="dd.mm.yyyy" data-name="interval.startDate"  data-title="Anfang" >${art.startDate.toString("dd.MM.yyyy")}</a></li>
-      <li class="list-group-item">Enddatum <a href="#" id="artersch" class="namechangerfield" data-type="date" data-format="dd.mm.yyyy" data-name="interval.endDate"  data-title="Ende" >${art.endDate.toString("dd.MM.yyyy")}</a></li>
+      <li class="list-group-item">Type <a href="#" id="paytype"></a></li>
+      <li class="list-group-item">Startdatum <a href="#" id="artstart" class="namechangerfield" data-type="date" data-format="dd.mm.yyyy" data-name="interval.startDate"  data-title="Anfang" >${art.startDate.toString("dd.MM.yyyy")}</a></li>
+      <li class="list-group-item">Enddatum <a href="#" id="artend" class="namechangerfield" data-type="date" data-format="dd.mm.yyyy" data-name="interval.endDate"  data-title="Ende" >${art.endDate.toString("dd.MM.yyyy")}</a></li>
     </ul>
    </div>
 </div>
@@ -39,7 +40,7 @@
 </div>
 <div class="col-md-1">
     <#if showArticlePlusEins>
-    <a id="articlepluseins" class="btn btn-primary" href="#subscrintervalcreate/${art.productId?c}">Artikel +1</a>
+    <a id="articlepluseins" class="btn btn-primary" href="#subscrintervalcreate/${art.productId?c}">Interval +1</a>
     </#if>
 </div>
 </div>
@@ -77,7 +78,7 @@
 			   <button id="create${sub.id?c}" class="btn btn-default">anlegen</button>
 			 <script>
    	   	 	   $( "#create${sub.id?c}" ).click(function() {
-   	    		 $.getJSON("/subscr/intervaldeliverycreate/${sub.id?c}/" + article.id + "/${dispoDate}", function() {console.log( "intervaldeliverycreate success" );})
+   	    		 $.getJSON("/subscr/intervaldeliverycreate/${sub.id?c}/${art.id?c}/${dispoDate}", function() {console.log( "intervaldeliverycreate success" );})
    	    		 $( "#create${sub.id?c}" ).hide();
 				});
 			 </script>
@@ -91,44 +92,12 @@
 </div>
 
 <script>
-	var article = null;
-	
-	var loadPrevArticle = function() {
-		var x = getArticlePk();
-	 	 $.getJSON("/subscr/subscrinterval/prev/${art.productId?c}/" + x, displayArticle);
-	} 
-
-	var loadNextArticle = function() {
-		var x = getArticlePk();
-	 	 $.getJSON("/subscr/subscrinterval/next/${art.productId?c}/" + x, displayArticle);
-	} 
-
-	var displayArticle = function(res) {
-		article = res;
-        $("#artname").editable('setValue',res.name, false);
-        $("#brutto").editable('setValue',res.brutto, true);
-        $("#brutto_half").editable('setValue',res.brutto_half, true);
-        $("#brutto_full").editable('setValue',res.brutto_full, true);
-        $("#half_percent").editable('setValue',res.halfPercentage, false);
-        $("#artcount").editable('setValue',res.issueNo, true);
-        $("#artid").text(res.id);
-
-//        $('.editable').editable({ pk:res.id});
-//	    $('.namechangerfield').editable({ pk:res.id});
-//	    $('.percentagefield').editable({ pk:res.id});
-//	    $('.editablemoney').editable({ pk : res.id});
-//	    alert(" pk = " + res.id);
-	} 
-
-	var getArticlePk = function() {
-		return article.id;
-	}
     
     $('.editable').editable({
-	    url: '/subscr/update', pk : getArticlePk
+	    url: '/subscr/update', pk : '${art.id?c}'
 	});
 	$('.namechangerfield').editable({
-	    url: '/subscr/update', pk : getArticlePk,
+	    url: '/subscr/update', pk : '${art.id?c}',
 	    mode : "popup",
 		success:function(res, newValue) {
 	        if(!res.success) return res.msg;
@@ -136,7 +105,7 @@
 	    }
     });
 	$('.percentagefield').editable({
-	    url: '/subscr/update', pk : getArticlePk,
+	    url: '/subscr/update', pk : '${art.id?c}',
 	    mode : "popup",
 	    display : function(value, jsonresponse) {
 	    	$(this).text(value * 100 + " %");
@@ -148,7 +117,7 @@
 	    }
     });
 	$('.editablemoney').editable({
-	    url: '/subscr/update', pk : getArticlePk,
+	    url: '/subscr/update', pk : '${art.id?c}',
 	    mode : "popup",
 	    display : function(value, jsonresponse) {
 	    	$(this).text(formatMoney(value));
@@ -166,7 +135,18 @@
 	        }
 	    }
 	});
-    
-    $.getJSON("/subscr/subscrinterval/ex/${art.productId?c}/${art.id?c}", displayArticle);
+	$('#paytype').editable({
+	    url: '/subscr/update', pk:'${art.id?c}',
+		type : "select",
+		value : "${art.intervalType!}",
+		name : "interval.intervalType",
+		showbuttons:false,
+		success:function(res, newValue) {
+	        if(!res.success) return res.msg;
+	        $("#artname").editable('setValue',res.name, false);
+	        $("#artend").editable('setValue',res.endDate, true);
+	    },
+		source : paytypesList
+	});
     
 </script>

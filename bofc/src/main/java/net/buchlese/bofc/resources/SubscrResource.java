@@ -541,54 +541,6 @@ public class SubscrResource {
 	}
 
 	@GET
-	@Path("/subscrarticle/{dir}/{prod}/{art}")
-	@Produces({"application/json"})
-	public SubscrArticle retrieveSubscrArticle(@PathParam("dir") String dir, @PathParam("prod") String prodIdP, @PathParam("art") String artIdP) {
-		long artId = Long.parseLong(artIdP);
-		if (dir.equals("ex")) {
-			return dao.getSubscrArticle(artId);
-		}
-		long prodId = Long.parseLong(prodIdP);
-		List<SubscrArticle> arts = dao.getArticlesOfProduct(prodId);
-		long[] artIds = arts.stream().mapToLong(SubscrArticle::getId).sorted().toArray();
-		int idx = Arrays.binarySearch(artIds, artId);
-		if (dir.equals("prev") && idx > 0) {
-			return dao.getSubscrArticle(artIds[idx-1]);
-		}
-		if (dir.equals("next") && idx >= 0 && idx < artIds.length-1) {
-			return dao.getSubscrArticle(artIds[idx+1]);
-		}
-		if (dir.equals("next") && idx == artIds.length-1) {
-			return dao.getSubscrArticle(artIds[idx]);
-		}
-		throw new WebApplicationException(404);
-	}
-
-	@GET
-	@Path("/subscrinterval/{dir}/{prod}/{art}")
-	@Produces({"application/json"})
-	public SubscrInterval retrieveSubscrInterval(@PathParam("dir") String dir, @PathParam("prod") String prodIdP, @PathParam("art") String artIdP) {
-		long artId = Long.parseLong(artIdP);
-		if (dir.equals("ex")) {
-			return dao.getSubscrInterval(artId);
-		}
-		long prodId = Long.parseLong(prodIdP);
-		List<SubscrArticle> arts = dao.getArticlesOfProduct(prodId);
-		long[] artIds = arts.stream().mapToLong(SubscrArticle::getId).sorted().toArray();
-		int idx = Arrays.binarySearch(artIds, artId);
-		if (dir.equals("prev") && idx > 0) {
-			return dao.getSubscrInterval(artIds[idx-1]);
-		}
-		if (dir.equals("next") && idx >= 0 && idx < artIds.length-1) {
-			return dao.getSubscrInterval(artIds[idx+1]);
-		}
-		if (dir.equals("next") && idx == artIds.length-1) {
-			return dao.getSubscrInterval(artIds[idx]);
-		}
-		throw new WebApplicationException(404);
-	}
-
-	@GET
 	@Path("/customerCreateForm")
 	@Produces({"text/html"})
 	public View showCustomerAddForm() {
@@ -703,6 +655,44 @@ public class SubscrResource {
 			}
 		}
 		return new SubscrIntervalDispoView(dao, prod, art, from);
+	}
+
+	@GET
+	@Path("/disponav/{prod}/{dir}/{art}")
+	@Produces({"text/html"})
+	public View dispoNav(@PathParam("prod") String prodIdP, @PathParam("dir") String dir,  @PathParam("art") String artIdP) {
+		long artId = Long.parseLong(artIdP);
+		long prodId = Long.parseLong(prodIdP);
+		LocalDate from = LocalDate.now();
+		SubscrProduct prod = dao.getSubscrProduct(prodId );
+		if (prod.isPayPerDelivery()) {
+			List<SubscrArticle> arts = dao.getArticlesOfProduct(prodId);
+			long[] artIds = arts.stream().mapToLong(SubscrArticle::getId).sorted().toArray();
+			int idx = Arrays.binarySearch(artIds, artId);
+			if (dir.equals("prev") && idx > 0) {
+				return new SubscrDispoView(dao, prod, dao.getSubscrArticle(artIds[idx-1]), from);
+			}
+			if (dir.equals("next") && idx >= 0 && idx < artIds.length-1) {
+				return new SubscrDispoView(dao, prod, dao.getSubscrArticle(artIds[idx+1]), from);
+			}
+			if (dir.equals("next") && idx == artIds.length-1) {
+				return new SubscrDispoView(dao, prod, dao.getSubscrArticle(artIds[idx]), from);
+			}
+			return new SubscrDispoView(dao, prod, dao.getSubscrArticle(artId), from);
+		}
+		List<SubscrInterval> arts = dao.getIntervalsOfProduct(prodId);
+		long[] artIds = arts.stream().mapToLong(SubscrInterval::getId).sorted().toArray();
+		int idx = Arrays.binarySearch(artIds, artId);
+		if (dir.equals("prev") && idx > 0) {
+			return new SubscrIntervalDispoView(dao, prod, dao.getSubscrInterval(artIds[idx-1]), from);
+		}
+		if (dir.equals("next") && idx >= 0 && idx < artIds.length-1) {
+			return new SubscrIntervalDispoView(dao, prod, dao.getSubscrInterval(artIds[idx+1]), from);
+		}
+		if (dir.equals("next") && idx == artIds.length-1) {
+			return new SubscrIntervalDispoView(dao, prod, dao.getSubscrInterval(artIds[idx]), from);
+		}
+		return new SubscrIntervalDispoView(dao, prod, dao.getSubscrInterval(artId), from);
 	}
 
 	
