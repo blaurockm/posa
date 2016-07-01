@@ -26,8 +26,16 @@
 <div class="col-md-2"><a href="#" class="editable" data-type="text" data-name="product.period">${p.period}</a></div>
 </div>
 <div class="row">
+<div class="col-md-2">Rechnungstellung</div>
+<div class="col-md-2"><a href="#" id="paytype"></a></div>
+</div>
+<div class="row">
 <div class="col-md-2">Artikel-Namensmuster</div>
 <div class="col-md-6"><a href="#" class="editable" data-type="text" data-name="product.namePattern">${p.namePattern}</a></div>
+</div>
+<div class="row">
+<div class="col-md-2">Rechnung bis</div>
+<div class="col-md-2"><a href="#" class="editable" data-type="date" data-format="dd.mm.yyyy" data-mode="popup" data-name="product.lastInterval">${(p.lastInterval.toString("dd.MM.YYYY"))!}</a></div>
 </div>
 <div class="row">
 <div class="col-md-2">Proz Print-Anteil</div>
@@ -55,6 +63,7 @@
 <ul class="nav nav-tabs">
   <li class="active"><a data-toggle="tab" href="#abos">Abonnements</a></li>
   <li><a data-toggle="tab" href="#artikel">Artikel</a></li>
+  <li><a data-toggle="tab" href="#intervalle">Intervalle</a></li>
   <li><a data-toggle="tab" href="#rechnungen">Rechnungen</a></li>
 </ul>
 
@@ -106,6 +115,30 @@
 			</tbody>
 		</table>
   </div>
+  <div id="intervalle" class="tab-pane fade">
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th>Intervallnummer</th>
+					<th>Name</th>
+					<th>Start</th>
+					<th>Ende</th>
+					<th>Typ</th>
+				</tr>
+			</thead>
+			<tbody>
+				<#list intervals as a>
+					<tr>
+						<td>${a.id}</td>
+						<td>${a.name}</td>
+						<td>${(a.startDate.toString("dd.MM.yyyy"))!}</td>
+						<td>${(a.endDate.toString("dd.MM.yyyy"))!}</td>
+						<td>${a.intervalType}</td>
+					</tr>	
+				</#list>
+			</tbody>
+		</table>
+  </div>
   <div id="rechnungen" class="tab-pane fade">
 		<table class="table table-striped">
 			<thead>
@@ -132,6 +165,14 @@
     var switchCheckbox = function(fieldname, val) {
    	 $.post("/subscr/update", { pk: '${p.id?c}', name: fieldname, value : val});
     }
+	$('#paytype').editable({
+	    url: '/subscr/update', pk:'${p.id?c}',
+		type : "select",
+		value : "${p.intervalType!}",
+		name : "product.intervalType",
+		showbuttons:false,
+		source : paytypesList
+	});
 
 </script>
 

@@ -24,6 +24,8 @@ public class SubscrProduct {
 	@JsonProperty
 	private String publisher;
 	@JsonProperty
+	private long publisherId;
+	@JsonProperty
 	private Period period;
 	@JsonProperty
 	private LocalDate lastDelivery;
@@ -48,6 +50,12 @@ public class SubscrProduct {
 	@JsonProperty
 	private boolean payPerDelivery; // vorausbezahlt: bei Abos, Fortsetzungen bezahlt pro Lieferung
 
+	@JsonProperty
+	private LocalDate lastInterval;
+
+	@JsonProperty
+	private PayIntervalType intervalType;
+
 	
 	@JsonIgnore
 	public SubscrArticle createNextArticle(LocalDate erschTag) {
@@ -61,6 +69,37 @@ public class SubscrProduct {
 		na.updateBrutto(baseBrutto);
 		na.setErschTag(erschTag);
 		na.setIssueNo(++count);
+		na.setName(na.initializeName(namePattern));
+		return na;
+	}
+
+	@JsonIgnore
+	public SubscrInterval createNextInterval(LocalDate erschTag) {
+		SubscrInterval na = new SubscrInterval();
+		na.setProductId(getId());
+		if (getIntervalType() == null) {
+			na.setIntervalType(PayIntervalType.YEARLY);
+		} else {
+			na.setIntervalType(getIntervalType());
+		}
+		if (halfPercentage <= 0.0001d) {
+			na.setHalfPercentage(1d);
+		} else {
+			na.setHalfPercentage(halfPercentage);
+		}
+		na.updateBrutto(baseBrutto);
+		if (getLastInterval() != null) {
+			na.setStartDate(getLastInterval().plusDays(1));
+		} else {
+			na.setStartDate(erschTag);
+		}
+		switch (na.getIntervalType()) {
+		case YEARLY: na.setEndDate(na.getStartDate().plusYears(1).minusDays(1)); break;
+		case HALFYEARLY: na.setEndDate(na.getStartDate().plusMonths(6).minusDays(1)); break;
+		case MONTHLY: na.setEndDate(na.getStartDate().plusMonths(1).minusDays(1)); break;
+		default: na.setEndDate(na.getStartDate().plus(getPeriod()));
+		}
+		setLastInterval(na.getEndDate());
 		na.setName(na.initializeName(namePattern));
 		return na;
 	}
@@ -175,6 +214,30 @@ public class SubscrProduct {
 
 	public void setPayPerDelivery(boolean payPerDelivery) {
 		this.payPerDelivery = payPerDelivery;
+	}
+
+	public long getPublisherId() {
+		return publisherId;
+	}
+
+	public void setPublisherId(long publisherId) {
+		this.publisherId = publisherId;
+	}
+
+	public LocalDate getLastInterval() {
+		return lastInterval;
+	}
+
+	public void setLastInterval(LocalDate lastInterval) {
+		this.lastInterval = lastInterval;
+	}
+
+	public PayIntervalType getIntervalType() {
+		return intervalType;
+	}
+
+	public void setIntervalType(PayIntervalType intervalType) {
+		this.intervalType = intervalType;
 	}
 
 

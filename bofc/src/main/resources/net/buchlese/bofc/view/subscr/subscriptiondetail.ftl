@@ -8,11 +8,10 @@
 <div class="row">
   <div class="col-md-2">Letzte Lieferung</div>
   <div class="col-md-4">${(lastDelivery.articleName)!} am ${(lastDelivery.deliveryDate.toString("dd.MM.yyyy"))!}</div>
-  <div class="col-md-3" >
-  <#if !p.payPerDelivery>
-    Bruttoeinzelpreis <a href="#" id="brutto2" class="editablemoney" data-type="text" data-name="article.brutto">${newestArticle.brutto?c}</a>
-  </#if>
-  </div>
+</div>
+<div class="row">
+  <div class="col-md-2">Letztes Intervall </div>
+  <div class="col-md-4">${(lastIntDelivery.intervalName)!}</div>
 </div>
 <div class="row">
   <div class="col-md-2">Letzte Rechnung am</div>
@@ -24,6 +23,8 @@
   <li class="active"><a data-toggle="tab" href="#details">Abodaten</a></li>
   <li><a data-toggle="tab" href="#lieferungenub">unberechnete Lieferungen</a></li>
   <li><a data-toggle="tab" href="#lieferungenb">berechnete Lieferungen</a></li>
+  <li><a data-toggle="tab" href="#intervalleub">unberechnete Intervalle</a></li>
+  <li><a data-toggle="tab" href="#intervalleb">berechnete Intervalle</a></li>
   <li><a data-toggle="tab" href="#rechnungen">Rechnungen</a></li>
 </ul>
 
@@ -37,8 +38,6 @@
     	<li class="list-group-item">Start <a href="#" class="editable" data-type="date" data-format="dd.mm.yyyy" data-mode="popup" data-name="subscription.startDate">${(sub.startDate.toString("dd.MM.YYYY"))!}</a></li>
     	<li class="list-group-item">Ende <a href="#" class="editable" data-type="date" data-format="dd.mm.yyyy" data-mode="popup" data-name="subscription.endDate">${(sub.endDate.toString("dd.MM.YYYY"))!}</a></li>
     	<li class="list-group-item">Menge <a href="#" class="editable" data-type="text" data-name="subscription.quantity">${sub.quantity}</a></li>
-    	<li class="list-group-item">ArtikelBrutto <a href="#" id="brutto" class="editablemoney" data-type="text" data-name="article.brutto">${newestArticle.brutto?c}</a></li>
-    	<li class="list-group-item">ArtikelBrutto 7% <a href="#" id="brutto_half" class="editablemoney" data-type="text" data-name="article.brutto_half">${newestArticle.brutto_half?c}</a></li>
     	<li class="list-group-item">Zahlungsintervall <a href="#" id="paytype"></a></li>
     	<li class="list-group-item">Bezahlt bis <a href="#" class="editable" data-type="date" data-format="mm/yyyy" data-mode="popup" data-name="subscription.payedUntil">${sub.payedUntil!}</a></li>
     </ul>
@@ -114,6 +113,46 @@
 						<td>${d.articleName!}</td>
 						<td>${money(d.total)}</td>
 						<td>  <a href="#subscrDelivery/${d.id?c}">see</a> </td>
+					</tr>
+				</#list>
+			</tbody>
+		</table>
+  </div>
+  <div id="intervalleub" class="tab-pane fade">
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th>Interval</th>
+					<th>Preis</th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+				<#list intervalDeliveriesWithout as d>
+					<tr>
+						<td>${d.intervalName!}</td>
+						<td>${money(d.total)}</td>
+						<td>  <a href="#subscrIntervalDelivery/${d.id?c}">see</a> </td>
+					</tr>
+				</#list>
+			</tbody>
+		</table>
+  </div>
+  <div id="intervalleb" class="tab-pane fade">
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th>Intervall</th>
+					<th>Preis</th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+				<#list intervalDeliveriesWith as d>
+					<tr>
+						<td>${d.intervalName!}</td>
+						<td>${money(d.total)}</td>
+						<td>  <a href="#subscrIntervalDelivery/${d.id?c}">see</a> </td>
 					</tr>
 				</#list>
 			</tbody>

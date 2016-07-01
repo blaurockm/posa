@@ -14,6 +14,8 @@ import net.buchlese.bofc.api.bofc.PosIssueSlip;
 import net.buchlese.bofc.api.bofc.UserChange;
 import net.buchlese.bofc.api.subscr.SubscrArticle;
 import net.buchlese.bofc.api.subscr.SubscrDelivery;
+import net.buchlese.bofc.api.subscr.SubscrInterval;
+import net.buchlese.bofc.api.subscr.SubscrIntervalDelivery;
 import net.buchlese.bofc.api.subscr.SubscrProduct;
 import net.buchlese.bofc.api.subscr.Subscriber;
 import net.buchlese.bofc.api.subscr.Subscription;
@@ -25,6 +27,7 @@ public class SubscrCachedDAO implements SubscrDAO {
 	private final Map<Long, Subscriber> subscriberCache;
 	private final Map<Long, SubscrProduct> productCache;
 	private final Map<Long, SubscrArticle> articleCache;
+	private final Map<Long, SubscrInterval> intervalCache;
 	
 	
 	public SubscrCachedDAO(SubscrDAO dec) {
@@ -33,6 +36,7 @@ public class SubscrCachedDAO implements SubscrDAO {
 		this.subscriberCache = new HashMap<>(); 
 		this.productCache = new HashMap<>(); 
 		this.articleCache = new HashMap<>(); 
+		this.intervalCache = new HashMap<>(); 
 		System.err.println("firing SubscrDAO Cache");
 		List<Subscription> ls = dao.getSubscriptions();
 		ls.stream().forEach(s -> subscriptionCache.put(s.getId(), s));
@@ -303,6 +307,110 @@ public class SubscrCachedDAO implements SubscrDAO {
 	@Override
 	public void updateIssueSlip(PosIssueSlip inv) {
 		dao.updateIssueSlip(inv);
+	}
+
+	@Override
+	public void deleteIntervalDelivery(long delId) {
+		dao.deleteIntervalDelivery(delId);
+	}
+
+	@Override
+	public List<SubscrInterval> getIntervalsOfProduct(long prodid) {
+		return dao.getIntervalsOfProduct(prodid);
+	}
+
+	@Override
+	public List<SubscrIntervalDelivery> getIntervalDeliveriesForSubscription(long id) {
+		return dao.getIntervalDeliveriesForSubscription(id);
+	}
+
+	@Override
+	public List<SubscrIntervalDelivery> getIntervalDeliveriesForSubscription(long id, LocalDate from, LocalDate till) {
+		return dao.getIntervalDeliveriesForSubscription(id, from, till);
+	}
+
+	@Override
+	public List<SubscrIntervalDelivery> getIntervalDeliveriesForSubscriptionRecorded(long id) {
+		return dao.getIntervalDeliveriesForSubscriptionRecorded(id);
+	}
+
+	@Override
+	public List<SubscrIntervalDelivery> getIntervalDeliveriesForSubscriptionUnrecorded(long id) {
+		return dao.getIntervalDeliveriesForSubscriptionUnrecorded(id);
+	}
+
+	@Override
+	public Collection<String> getInvoiceNumsForSubscriptionIntervals(long id) {
+		return dao.getInvoiceNumsForSubscriptionIntervals(id);
+	}
+
+	@Override
+	public SubscrIntervalDelivery getLastIntervalDeliveryForSubscription(long id) {
+		return dao.getLastIntervalDeliveryForSubscription(id);
+	}
+
+	@Override
+	public SubscrInterval getNewestIntervalOfProduct(long prodid) {
+		return dao.getNewestIntervalOfProduct(prodid);
+	}
+
+	@Override
+	public SubscrInterval getSubscrInterval(long id) {
+		if (intervalCache.containsKey(id)) {
+			return intervalCache.get(id);
+		}
+		SubscrInterval art = dao.getSubscrInterval(id);
+		intervalCache.put(id, art);
+		return art;
+	}
+
+	@Override
+	public SubscrIntervalDelivery getSubscrIntervalDelivery(long delId) {
+		return dao.getSubscrIntervalDelivery(delId);
+	}
+
+	@Override
+	public long insertInterval(SubscrInterval art) {
+		long x = dao.insertInterval(art);
+		art.setId(x);
+		intervalCache.put(x, art);
+		return x;
+	}
+
+	@Override
+	public void insertIntervalDelivery(SubscrIntervalDelivery d) {
+		dao.insertIntervalDelivery(d);
+	}
+
+	@Override
+	public void recordIntervalDetailsOnInvoice(List<Long> deliveryIds,	String invNumber) {
+		dao.recordIntervalDetailsOnInvoice(deliveryIds, invNumber);
+	}
+
+	@Override
+	public void resetIntervalDetailsOfInvoice(List<Long> deliveryIds) {
+		dao.resetIntervalDetailsOfInvoice(deliveryIds);
+	}
+
+	@Override
+	public void updateInterval(SubscrInterval art) {
+		dao.updateInterval(art);
+		intervalCache.put(art.getId(), art);
+	}
+
+	@Override
+	public void updateIntervalDelivery(SubscrIntervalDelivery art) {
+		dao.updateIntervalDelivery(art);
+	}
+
+	@Override
+	public List<SubscrIntervalDelivery> getIntervalDeliveriesUnrecorded() {
+		return dao.getIntervalDeliveriesUnrecorded();
+	}
+
+	@Override
+	public List<SubscrDelivery> getDeliveriesUnrecorded() {
+		return dao.getDeliveriesUnrecorded();
 	}
 
 }

@@ -120,6 +120,10 @@ Path.map("#deliverydelete/:id").to(function(){
     $("#output .content").load("/subscr/deliverydelete/" + this.params["id"]);
 }).enter(setSubscrModule);
 
+Path.map("#intervaldeliverydelete/:id").to(function(){
+    $("#output .content").load("/subscr/intervaldeliverydelete/" + this.params["id"]);
+}).enter(setSubscrModule);
+
 Path.map("#subscription/:id").to(function(){
     $("#output .content").load("/subscr/subscription/" + this.params["id"]);
 }).enter(setSubscrModule);
@@ -135,6 +139,13 @@ Path.map("#subscrDispo/:id").to(function(){
 Path.map("#subscrDelivery/:id").to(function(){
 	// this is a modal window content
     $("#modal-output .content").load("/subscr/delivery/" + this.params["id"]);
+    $("#modal-title").text("Auslieferungsdetails");
+    $("#myModal").modal('show');
+}).enter(setSubscrModule);
+
+Path.map("#subscrIntervalDelivery/:id").to(function(){
+	// this is a modal window content
+    $("#modal-output .content").load("/subscr/intervaldelivery/" + this.params["id"]);
     $("#modal-title").text("Auslieferungsdetails");
     $("#myModal").modal('show');
 }).enter(setSubscrModule);

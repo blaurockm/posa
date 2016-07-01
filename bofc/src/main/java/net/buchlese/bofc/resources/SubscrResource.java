@@ -30,6 +30,8 @@ import net.buchlese.bofc.api.subscr.PayIntervalType;
 import net.buchlese.bofc.api.subscr.ShipType;
 import net.buchlese.bofc.api.subscr.SubscrArticle;
 import net.buchlese.bofc.api.subscr.SubscrDelivery;
+import net.buchlese.bofc.api.subscr.SubscrInterval;
+import net.buchlese.bofc.api.subscr.SubscrIntervalDelivery;
 import net.buchlese.bofc.api.subscr.SubscrProduct;
 import net.buchlese.bofc.api.subscr.Subscriber;
 import net.buchlese.bofc.api.subscr.Subscription;
@@ -44,6 +46,8 @@ import net.buchlese.bofc.jdbi.bofc.SubscrDAO;
 import net.buchlese.bofc.resources.helper.IssueSlipUpdateHelper;
 import net.buchlese.bofc.resources.helper.SubscrArticleUpdateHelper;
 import net.buchlese.bofc.resources.helper.SubscrDeliveryUpdateHelper;
+import net.buchlese.bofc.resources.helper.SubscrIntervalDeliveryUpdateHelper;
+import net.buchlese.bofc.resources.helper.SubscrIntervalUpdateHelper;
 import net.buchlese.bofc.resources.helper.SubscrProductUpdateHelper;
 import net.buchlese.bofc.resources.helper.SubscriberUpdateHelper;
 import net.buchlese.bofc.resources.helper.SubscriptionUpdateHelper;
@@ -56,6 +60,8 @@ import net.buchlese.bofc.view.subscr.SubscrCustomerView;
 import net.buchlese.bofc.view.subscr.SubscrDashboardView;
 import net.buchlese.bofc.view.subscr.SubscrDeliveryView;
 import net.buchlese.bofc.view.subscr.SubscrDispoView;
+import net.buchlese.bofc.view.subscr.SubscrIntervalDeliveryView;
+import net.buchlese.bofc.view.subscr.SubscrIntervalDispoView;
 import net.buchlese.bofc.view.subscr.SubscrProductDetailView;
 import net.buchlese.bofc.view.subscr.SubscrProductsView;
 import net.buchlese.bofc.view.subscr.SubscriberDetailView;
@@ -315,11 +321,6 @@ public class SubscrResource {
 			d.setTotalFull(subscription.getQuantity() * article.getBrutto_full());
 			d.setTotalHalf(d.getTotal() - d.getTotalFull());
 		}
-		if (subscription.getPayedUntil() != null && deliveryDate.isBefore(subscription.getPayedUntil())) {
-			d.setPayed(true);
-		} else {
-			d.setPayed(false);
-		}
 		d.setCreationDate(DateTime.now());
 
 		dao.insertDelivery(d);
@@ -330,6 +331,37 @@ public class SubscrResource {
 			p.setNextDelivery(deliveryDate.plus(p.getPeriod()));
 		}
 		dao.updateSubscrProduct(p);
+		return d;
+	}
+
+	@GET
+	@Path("/intervaldeliverycreate/{sub}/{art}/{date}")
+	@Produces({"application/json"})
+	public SubscrIntervalDelivery createIntervalDelivery(@PathParam("sub") String subIdP,@PathParam("art") String artIdP,@PathParam("date") String dateP ) {
+		long subId = Long.parseLong(subIdP);
+		long artId = Long.parseLong(artIdP);
+		LocalDate deliveryDate = new DateParam(dateP).getDate();
+		Subscription subscription = dao.getSubscription(subId);
+		SubscrInterval article = dao.getSubscrInterval(artId);
+		SubscrIntervalDelivery d = new SubscrIntervalDelivery();
+		d.setIntervalName(article.getName());
+		d.setDeliveryDate(deliveryDate);
+		d.setSubscriptionId(subscription.getId());
+		d.setSubscriberId(subscription.getSubscriberId());
+		d.setIntervalId(article.getId());
+		d.setQuantity(subscription.getQuantity());
+		d.setTotal(subscription.getQuantity() * article.getBrutto());
+		if (article.getHalfPercentage() >0.5) {
+			d.setTotalHalf(subscription.getQuantity() * article.getBrutto_half());
+			d.setTotalFull(d.getTotal() - d.getTotalHalf());
+		} else {
+			d.setTotalFull(subscription.getQuantity() * article.getBrutto_full());
+			d.setTotalHalf(d.getTotal() - d.getTotalFull());
+		}
+		d.setCreationDate(DateTime.now());
+
+		dao.insertIntervalDelivery(d);
+		recordUserChange(dao, "master", d.getId(), "subscrIntervalDelivery", null, null, "N");
 		return d;
 	}
 
@@ -357,11 +389,34 @@ public class SubscrResource {
 	public View createSubscrArticle(@PathParam("prod") String prodIdP) {
 		long prodId = Long.parseLong(prodIdP);
 		SubscrProduct product = dao.getSubscrProduct(prodId);
+		SubscrArticle art = createNewArticle(product);
+		return new SubscrDispoView(dao, product, art, LocalDate.now());
+	}
+
+	private SubscrArticle createNewArticle(SubscrProduct product) {
 		SubscrArticle art = product.createNextArticle(LocalDate.now());
 		dao.insertArticle(art);
 		dao.updateSubscrProduct(product);
 		recordUserChange(dao, "master", art.getId(), "subscrArticle", null, null, "N");
-		return new SubscrDispoView(dao, product, art, LocalDate.now());
+		return art;
+	}
+
+	@GET
+	@Path("/subscrintervalcreate/{prod}")
+	@Produces({"application/json"})
+	public View createSubscrInterval(@PathParam("prod") String prodIdP) {
+		long prodId = Long.parseLong(prodIdP);
+		SubscrProduct product = dao.getSubscrProduct(prodId);
+		SubscrInterval art = createNewInterval(product);
+		return new SubscrIntervalDispoView(dao, product, art, LocalDate.now());
+	}
+
+	private SubscrInterval createNewInterval(SubscrProduct product) {
+		SubscrInterval art = product.createNextInterval(LocalDate.now());
+		dao.insertInterval(art);
+		dao.updateSubscrProduct(product);
+		recordUserChange(dao, "master", art.getId(), "subscrInterval", null, null, "N");
+		return art;
 	}
 
 	@GET
@@ -380,7 +435,17 @@ public class SubscrResource {
 		}
 		dao.updateSubscrProduct(p);
 		dao.deleteDelivery(delId);
-		recordUserChange(dao, "master", delId, "subscrArticle", null, null, "D");
+		recordUserChange(dao, "master", delId, "subscrDelivery", null, null, "D");
+		return new SubscrDashboardView(dao, LocalDate.now());
+	}
+
+	@GET
+	@Path("/intervaldeliverydelete/{id}")
+	@Produces({"text/html"})
+	public View deleteIntervalDelivery(@PathParam("id") String deliIdP) {
+		long delId = Long.parseLong(deliIdP);
+		dao.deleteIntervalDelivery(delId);
+		recordUserChange(dao, "master", delId, "subscrIntervalDelivery", null, null, "D");
 		return new SubscrDashboardView(dao, LocalDate.now());
 	}
 
@@ -500,6 +565,30 @@ public class SubscrResource {
 	}
 
 	@GET
+	@Path("/subscrinterval/{dir}/{prod}/{art}")
+	@Produces({"application/json"})
+	public SubscrInterval retrieveSubscrInterval(@PathParam("dir") String dir, @PathParam("prod") String prodIdP, @PathParam("art") String artIdP) {
+		long artId = Long.parseLong(artIdP);
+		if (dir.equals("ex")) {
+			return dao.getSubscrInterval(artId);
+		}
+		long prodId = Long.parseLong(prodIdP);
+		List<SubscrArticle> arts = dao.getArticlesOfProduct(prodId);
+		long[] artIds = arts.stream().mapToLong(SubscrArticle::getId).sorted().toArray();
+		int idx = Arrays.binarySearch(artIds, artId);
+		if (dir.equals("prev") && idx > 0) {
+			return dao.getSubscrInterval(artIds[idx-1]);
+		}
+		if (dir.equals("next") && idx >= 0 && idx < artIds.length-1) {
+			return dao.getSubscrInterval(artIds[idx+1]);
+		}
+		if (dir.equals("next") && idx == artIds.length-1) {
+			return dao.getSubscrInterval(artIds[idx]);
+		}
+		throw new WebApplicationException(404);
+	}
+
+	@GET
 	@Path("/customerCreateForm")
 	@Produces({"text/html"})
 	public View showCustomerAddForm() {
@@ -533,6 +622,14 @@ public class SubscrResource {
 	public View showDelivery(@PathParam("deliv") String delivery) {
 		long delId = Long.parseLong(delivery);
 		return new SubscrDeliveryView(dao, dao.getSubscrDelivery(delId));
+	}
+
+	@GET
+	@Path("/intervaldelivery/{deliv}")
+	@Produces({"text/html"})
+	public View showIntervalDelivery(@PathParam("deliv") String delivery) {
+		long delId = Long.parseLong(delivery);
+		return new SubscrIntervalDeliveryView(dao, dao.getSubscrIntervalDelivery(delId));
 	}
 
 	@GET
@@ -583,13 +680,32 @@ public class SubscrResource {
 	public View showDispo(@PathParam("prod") String product, @QueryParam("date") Optional<String> dateP, @QueryParam("artid") Optional<String> artIdP) {
 		long productId = Long.parseLong(product);
 		LocalDate from = new DateParam(dateP.orNull()).getDate();
-		SubscrArticle art = null;
-		if (artIdP.isPresent()) {
-			art = dao.getSubscrArticle(Long.parseLong(artIdP.get()));
+		SubscrProduct prod = dao.getSubscrProduct(productId );
+		if (prod.isPayPerDelivery()) {
+			SubscrArticle art = null;
+			if (artIdP.isPresent()) {
+				art = dao.getSubscrArticle(Long.parseLong(artIdP.get()));
+			} else {
+				art = dao.getNewestArticleOfProduct(productId);
+				if (art == null) {
+					art = createNewArticle(prod);
+				}
+			}
+			return new SubscrDispoView(dao, prod, art, from);
 		}
-		return new SubscrDispoView(dao, dao.getSubscrProduct(productId ), art, from);
+		SubscrInterval art = null;
+		if (artIdP.isPresent()) {
+			art = dao.getSubscrInterval(Long.parseLong(artIdP.get()));
+		} else {
+			art = dao.getNewestIntervalOfProduct(productId);
+			if (art == null) {
+				art = createNewInterval(prod);
+			}
+		}
+		return new SubscrIntervalDispoView(dao, prod, art, from);
 	}
 
+	
 	@GET
 	@Path("/navigation")
 	public View showNavigation() {
@@ -652,6 +768,12 @@ public class SubscrResource {
 		UpdateResult res = null;
 		if (fieldname.startsWith("article")) {
 			res = new SubscrArticleUpdateHelper(dao).update(pk, fieldname, value);
+		}
+		if (fieldname.startsWith("intervalDelivery")) {
+			res = new SubscrIntervalDeliveryUpdateHelper(dao).update(pk, fieldname, value);
+		}
+		if (fieldname.startsWith("interval.")) {
+			res = new SubscrIntervalUpdateHelper(dao).update(pk, fieldname, value);
 		}
 		if (fieldname.startsWith("subscriber")) {
 			res = new SubscriberUpdateHelper(dao).update(pk, fieldname, value);

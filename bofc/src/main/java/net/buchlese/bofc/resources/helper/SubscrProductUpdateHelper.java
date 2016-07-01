@@ -1,5 +1,6 @@
 package net.buchlese.bofc.resources.helper;
 
+import net.buchlese.bofc.api.subscr.PayIntervalType;
 import net.buchlese.bofc.api.subscr.SubscrProduct;
 import net.buchlese.bofc.jdbi.bofc.SubscrDAO;
 
@@ -48,12 +49,21 @@ public class SubscrProductUpdateHelper {
 			art.setEndDate(LocalDate.parse(value, DateTimeFormat.forPattern("dd.MM.yyyy") ));
 			res.success = true;
 		}
+		if ("lastInterval".equals(field)) {
+			art.setLastInterval(LocalDate.parse(value, DateTimeFormat.forPattern("dd.MM.yyyy") ));
+			res.success = true;
+		}
 		if ("period".equals(field)) {
 			art.setPeriod(Period.parse(value));
 			res.success = true;
 		}
 		if ("payPerDelivery".equals(field)) {
 			art.setPayPerDelivery(Boolean.valueOf(value));
+			res.success = true;
+		}
+		if ("intervalType".equals(field)) {
+			res.oldValue = String.valueOf(art.getIntervalType());
+			art.setIntervalType(PayIntervalType.valueOf(value));
 			res.success = true;
 		}
 		if ("count".equals(field)) {

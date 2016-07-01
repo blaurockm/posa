@@ -2,8 +2,8 @@ package net.buchlese.bofc.view.subscr;
 
 import java.util.List;
 
-import net.buchlese.bofc.api.subscr.SubscrArticle;
-import net.buchlese.bofc.api.subscr.SubscrDelivery;
+import net.buchlese.bofc.api.subscr.SubscrInterval;
+import net.buchlese.bofc.api.subscr.SubscrIntervalDelivery;
 import net.buchlese.bofc.api.subscr.SubscrProduct;
 import net.buchlese.bofc.api.subscr.Subscriber;
 import net.buchlese.bofc.api.subscr.Subscription;
@@ -12,25 +12,21 @@ import net.buchlese.bofc.view.AbstractBofcView;
 
 import org.joda.time.LocalDate;
 
-public class SubscrDispoView extends AbstractBofcView{
+public class SubscrIntervalDispoView extends AbstractBofcView{
 
 	private final SubscrProduct p;
 	private final List<Subscription> subscriptions;
 	private final SubscrDAO dao;
-	private final SubscrArticle article;
+	private final SubscrInterval article;
 	private final LocalDate dispoDate;
 
 
-	public SubscrDispoView(SubscrDAO dao, SubscrProduct p, SubscrArticle art, LocalDate dispoDate) {
-		super("subscrdispo.ftl");
+	public SubscrIntervalDispoView(SubscrDAO dao, SubscrProduct p, SubscrInterval art, LocalDate dispoDate) {
+		super("subscrintervaldispo.ftl");
 		this.dao = dao;
-		this.p =  p;
+		this.p = p;
 		this.subscriptions = dao.getSubscriptionsForProduct(p.getId());
-		if (art == null) {
-			this.article = dao.getNewestArticleOfProduct(p.getId());
-		} else {
-			this.article = art;
-		}
+		this.article = art;
 		this.dispoDate = dispoDate;
 	}
 
@@ -42,7 +38,7 @@ public class SubscrDispoView extends AbstractBofcView{
 		return p;
 	}
 
-	public SubscrArticle getArt() {
+	public SubscrInterval getArt() {
 		return article;
 	}
 
@@ -50,12 +46,12 @@ public class SubscrDispoView extends AbstractBofcView{
 		return subscriptions;
 	}
 
-	public List<SubscrDelivery> deliveries(Subscription s) {
-		return dao.getDeliveriesForSubscriptionUnrecorded(s.getId());
+	public List<SubscrIntervalDelivery> deliveries(Subscription s) {
+		return dao.getIntervalDeliveriesForSubscriptionUnrecorded(s.getId());
 	}
 
-	public SubscrDelivery delivery(Subscription sub, SubscrArticle art) {
-		return dao.getDeliveriesForSubscription(sub.getId()).stream().filter(d -> d.getArticleId() == art.getId() && d.getDeliveryDate().equals(dispoDate)).findFirst().orElse(null);
+	public SubscrIntervalDelivery delivery(Subscription sub, SubscrInterval art) {
+		return dao.getIntervalDeliveriesForSubscription(sub.getId()).stream().filter(d -> d.getIntervalId() == art.getId()).findFirst().orElse(null);
 	}
 	
 	public String kunde(Subscription s) {
@@ -70,6 +66,6 @@ public class SubscrDispoView extends AbstractBofcView{
 	}
 
 	public boolean isShowArticlePlusEins() {
-		return article.getErschTag().equals(dispoDate) == false;
+		return article.getEndDate().isAfter(dispoDate) == false;
 	}
 }

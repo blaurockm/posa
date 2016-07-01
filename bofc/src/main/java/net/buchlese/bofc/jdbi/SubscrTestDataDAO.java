@@ -17,6 +17,8 @@ import net.buchlese.bofc.api.subscr.PayIntervalType;
 import net.buchlese.bofc.api.subscr.ShipType;
 import net.buchlese.bofc.api.subscr.SubscrArticle;
 import net.buchlese.bofc.api.subscr.SubscrDelivery;
+import net.buchlese.bofc.api.subscr.SubscrInterval;
+import net.buchlese.bofc.api.subscr.SubscrIntervalDelivery;
 import net.buchlese.bofc.api.subscr.SubscrProduct;
 import net.buchlese.bofc.api.subscr.Subscriber;
 import net.buchlese.bofc.api.subscr.Subscription;
@@ -519,6 +521,125 @@ public class SubscrTestDataDAO implements SubscrDAO {
 
 	@Override
 	public void updateIssueSlip(PosIssueSlip inv) {
+	}
+
+	@Override
+	public void deleteIntervalDelivery(long delId) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public List<SubscrInterval> getIntervalsOfProduct(long prodid) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<SubscrIntervalDelivery> getIntervalDeliveriesForSubscription(
+			long id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<SubscrIntervalDelivery> getIntervalDeliveriesForSubscription(
+			long id, LocalDate from, LocalDate till) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<SubscrIntervalDelivery> getIntervalDeliveriesForSubscriptionRecorded(
+			long id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<SubscrIntervalDelivery> getIntervalDeliveriesForSubscriptionUnrecorded(
+			long id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Collection<String> getInvoiceNumsForSubscriptionIntervals(long id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public SubscrIntervalDelivery getLastIntervalDeliveryForSubscription(long id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public SubscrInterval getNewestIntervalOfProduct(long prodid) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public SubscrInterval getSubscrInterval(long id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public SubscrIntervalDelivery getSubscrIntervalDelivery(long delId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public long insertInterval(SubscrInterval art) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void insertIntervalDelivery(SubscrIntervalDelivery d) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void recordIntervalDetailsOnInvoice(List<Long> deliveryIds,
+			String invNumber) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void resetIntervalDetailsOfInvoice(List<Long> deliveryIds) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void updateInterval(SubscrInterval art) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void updateIntervalDelivery(SubscrIntervalDelivery art) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public List<SubscrIntervalDelivery> getIntervalDeliveriesUnrecorded() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<SubscrDelivery> getDeliveriesUnrecorded() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import net.buchlese.bofc.api.bofc.PosInvoice;
 import net.buchlese.bofc.api.subscr.PayIntervalType;
 import net.buchlese.bofc.api.subscr.SubscrDelivery;
+import net.buchlese.bofc.api.subscr.SubscrIntervalDelivery;
 import net.buchlese.bofc.api.subscr.SubscrProduct;
 import net.buchlese.bofc.api.subscr.Subscriber;
 import net.buchlese.bofc.api.subscr.Subscription;
@@ -17,8 +18,8 @@ import org.joda.time.LocalDate;
 
 public class SubscrDashboardView extends AbstractBofcView {
 
-//	private final List<SubscrProduct> products;
 	private final List<SubscrDelivery> deliveries;
+	private final List<SubscrIntervalDelivery> intervalDeliveries;
 	private final List<Subscription> subscriptions;
 	private final List<Subscription> subscriptionsWithMemo;
 	private final List<PosInvoice> tempInvoices;
@@ -27,20 +28,18 @@ public class SubscrDashboardView extends AbstractBofcView {
 	public SubscrDashboardView(SubscrDAO dao, LocalDate d) {
 		super("subscrdashboard.ftl");
 		this.dao = dao;
-//		this.products = dao.getProductsForTimespan(d, d.plusWeeks(4)).stream().filter(p -> p.getPeriod() != null).collect(Collectors.toList());
 		List<SubscrDelivery> tempdelivs = dao.getDeliveries(d);
 		tempdelivs.forEach(i -> i.subscriberName = kunde(i));
 		tempdelivs.sort(Comparator.comparing(SubscrDelivery::getSubscriberName));
 		this.deliveries = tempdelivs;
+		List<SubscrIntervalDelivery> tempintdelivs = dao.getIntervalDeliveriesUnrecorded();
+		tempintdelivs.forEach(i -> i.subscriberName = kunde(i));
+		tempintdelivs.sort(Comparator.comparing(SubscrIntervalDelivery::getSubscriberName));
+		this.intervalDeliveries = tempintdelivs;
 		this.subscriptions = dao.getSubscriptionsForTimespan(d, d.plusMonths(1)).stream().filter(s -> s.getPaymentType().equals(PayIntervalType.EACHDELIVERY) == false).collect(Collectors.toList());
 		this.subscriptionsWithMemo = dao.getSubscriptionsWithMemo();
 		this.tempInvoices = dao.getTempInvoices();
 	}
-
-
-//	public List<SubscrProduct> getProducts() {
-//		return products;
-//	}
 
 	public List<Subscription> getSubscriptions() {
 		return subscriptions;
@@ -52,6 +51,10 @@ public class SubscrDashboardView extends AbstractBofcView {
 
 	public List<SubscrDelivery> getDeliveries() {
 		return deliveries;
+	}
+
+	public List<SubscrIntervalDelivery> getIntervalDeliveries() {
+		return intervalDeliveries;
 	}
 
 	public List<PosInvoice> getInvoices() {
@@ -70,6 +73,28 @@ public class SubscrDashboardView extends AbstractBofcView {
 	}
 
 	public Subscription abo(SubscrDelivery d) {
+		if (d.getSubscriptionId() > 0) {
+			Subscription x = dao.getSubscription(d.getSubscriptionId());
+			if (x != null) {
+				return x;
+			}
+			return null;
+		}
+		return null;
+	}
+
+	public String kunde(SubscrIntervalDelivery d) {
+		if (d.getSubscriberId() > 0) {
+			Subscriber x = dao.getSubscriber(d.getSubscriberId());
+			if (x != null) {
+				return x.getName();
+			}
+			return "not found " + d.getSubscriberId();
+		}
+		return "keine subId";
+	}
+
+	public Subscription abo(SubscrIntervalDelivery d) {
 		if (d.getSubscriptionId() > 0) {
 			Subscription x = dao.getSubscription(d.getSubscriptionId());
 			if (x != null) {

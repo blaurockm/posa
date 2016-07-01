@@ -15,10 +15,11 @@
 			<th>Publikation</th>
 			<th>Verlag</th>
 			<th>Abkü</th>
-			<th># Abos</th>
-			<th>Periodizität</th>
+			<th>Periode</th>
+			<th>Zahlung weise</th>
 			<th>letzer Eingang</th>
-			<th>nächster Eingang</th>
+			<th>Zahlzeit</th>
+			<th>berechnet bis</th>
 			<th></th>
 		</tr>
 	</thead>
@@ -28,10 +29,11 @@
 			<td>${p.name}</td>
 			<td>${p.publisher}</td>
 			<td>${p.abbrev}</td>
-			<td></td>
 			<td>${p.period!}</td>
+			<td>${p.payPerDelivery?string("pro Lieferung", "pro Zeit")}</td>
 			<td>${(p.lastDelivery.toString("dd.MM.yy"))!}</td>
-			<td>${(p.nextDelivery.toString("dd.MM.yy"))!}</td>
+			<td>${p.intervalType!}</td>
+			<td>${(p.lastInterval.toString("dd.MM.yy"))!}</td>
 			<td><a href="#subscrDispo/${p.id?c}" class="btn btn-default btn-sm">dispo</a>
 			 <a href="#subscrProduct/${p.id?c}" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span></a> </td>
 		</tr>

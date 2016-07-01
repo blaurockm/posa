@@ -315,5 +315,36 @@
          <column name="pointid" type="int"/>
      </addColumn>
    </changeSet>
+
+   <changeSet id="subscrInterval" author="mblaurock">
+     <createTable tableName="subscrInterval">
+         <column name="id" type="bigint" autoIncrement="true">
+            <constraints primaryKey="true" nullable="false" />
+         </column>
+         <column name="productId" type="bigint"/>
+         <column name="complJson" type="clob"/>
+         <column name="startDate" type="DATE"/>
+         <column name="endDate" type="DATE"/>
+     </createTable>
+     <createTable tableName="subscrIntervalDelivery">
+         <column name="id" type="bigint" autoIncrement="true">
+            <constraints primaryKey="true" nullable="false" />
+         </column>
+         <column name="subscriptionId" type="bigint"/>
+         <column name="intervalId" type="bigint"/>
+         <column name="subscriberId" type="bigint"/>
+         <column name="payed" type="boolean"/>
+         <column name="invoiceNumber" type="varchar(10)"/>
+         <column name="complJson" type="clob"/>
+     </createTable>
+     <createTable tableName="publisher">
+         <column name="id" type="bigint" autoIncrement="true">
+            <constraints primaryKey="true" nullable="false" />
+         </column>
+         <column name="name" type="varchar(100)"/>
+         <column name="creditorId" type="bigint"/>
+         <column name="complJson" type="clob"/>
+     </createTable>
+   </changeSet>
    
 </databaseChangeLog>
