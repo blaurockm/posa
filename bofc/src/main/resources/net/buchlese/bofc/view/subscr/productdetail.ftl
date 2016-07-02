@@ -12,16 +12,16 @@
 </div>
 <div class="row">
 <div class="col-md-2">ISSN</div>
-<div class="col-md-2"><a href="#" class="editable" data-type="text" data-name="product.issn">${p.issn!}</a></div>
+<div class="col-md-8"><a href="#" class="editable" data-type="text" data-name="product.issn">${p.issn!}</a></div>
 <#if p.issn! != "" >
-<div class="col-md-4"><a href="http://dispatch.opac.dnb.de/DB=1.1/CMD?ACT=SRCHA&IKT=8&TRM=${p.issn}" target="_blank">ZDB Opac<span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span></a></div>
+<div class="col-md-2"><a href="http://dispatch.opac.dnb.de/DB=1.1/CMD?ACT=SRCHA&IKT=8&TRM=${p.issn}" target="_blank">ZDB Opac<span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span></a></div>
 </#if>
 </div>
 <div class="row">
 <div class="col-md-2">URL zum Verlag</div>
-<div class="col-md-2"><a href="#" class="editable" data-type="text" data-name="product.url">${p.url!}</a></div>
+<div class="col-md-8"><a href="#" class="editable" data-type="text" data-name="product.url">${p.url!}</a></div>
 <#if p.url! != "" >
-<div class="col-md-4"><a href="http://${p.url}" target="_blank">website<span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span></a></div>
+<div class="col-md-2"><a href="${p.url}" target="_blank">website<span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span></a></div>
 </#if>
 </div>
 

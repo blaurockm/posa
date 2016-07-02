@@ -11,6 +11,8 @@ import net.buchlese.bofc.api.bofc.PosIssueSlip;
 import net.buchlese.bofc.api.subscr.PayIntervalType;
 import net.buchlese.bofc.api.subscr.SubscrArticle;
 import net.buchlese.bofc.api.subscr.SubscrDelivery;
+import net.buchlese.bofc.api.subscr.SubscrInterval;
+import net.buchlese.bofc.api.subscr.SubscrIntervalDelivery;
 import net.buchlese.bofc.api.subscr.Subscriber;
 import net.buchlese.bofc.api.subscr.Subscription;
 import net.buchlese.bofc.jdbi.bofc.PosInvoiceDAO;
@@ -18,7 +20,6 @@ import net.buchlese.bofc.jdbi.bofc.SubscrDAO;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
-import org.joda.time.YearMonth;
 
 public class SubscriptionInvoiceCreator {
 
@@ -117,7 +118,7 @@ public class SubscriptionInvoiceCreator {
 			if (PayIntervalType.EACHDELIVERY.equals(sub.getPaymentType())) {
 				addDeliveriesToInvoice(dao, sub, inv, dao.getDeliveriesForSubscriptionUnrecorded(sub.getId()));
 			} else {
-				addIntervalPayment(dao, sub, inv);
+				addIntervalDeliveriesToInvoice(dao, sub, inv, dao.getIntervalDeliveriesForSubscriptionUnrecorded(sub.getId()));
 			}
 		}
 		if (issueSlips != null) {
@@ -172,40 +173,6 @@ public class SubscriptionInvoiceCreator {
 		inv.addAgreementDetail(iad);
 		return iad;
 	}
-
-	/**
-	 * fügt die Zeitraumabrechnung eines Abos zur Rechnung hinzu
-	 * @param dao
-	 * @param sub
-	 * @param inv
-	 * @return
-	 */
-	private static InvoiceAgrDetail addIntervalPayment(SubscrDAO dao, Subscription sub, PosInvoice inv) {
-		InvoiceAgrDetail iad = new InvoiceAgrDetail();
-		LocalDate from = null;
-		if (sub.getPayedUntil() == null) {
-			// noch gar nicht bezahlt..
-			from = LocalDate.now().dayOfMonth().withMinimumValue(); // immer der erste des aktuellen monats
-		} else {
-			if (sub.getPayedUntil().isAfter(LocalDate.now())) {
-				// is schon bezahlt, wollen wir nich auf der Rechnung.
-				return null;
-			}
-			from = sub.getPayedUntil().plusMonths(1).dayOfMonth().withMinimumValue(); // immer der erste des nächsten monats
-		}
-		LocalDate till = from.plus(sub.getPaymentType().getPeriod()).minusMonths(1); // und period -1 monat drauf
-		addTextDetail(inv, sub.getDeliveryInfo1());
-		addTextDetail(inv, sub.getDeliveryInfo2());
-		inv.addInvoiceDetail(createInvoiceDetailForInterval(sub,dao.getNewestArticleOfProduct(sub.getProductId()), new YearMonth(from), new YearMonth(till)));
-
-		iad.setAgreementId(sub.getId());
-		iad.setDeliveryFrom(from);
-		iad.setDeliveryTill(till.dayOfMonth().withMaximumValue());  // immer der letzte des Monats
-		iad.setDeliveryIds(dao.getDeliveriesForSubscription(sub.getId(), from, till).stream().mapToLong(SubscrDelivery::getId).boxed().collect(Collectors.toList()));
-		inv.addAgreementDetail(iad);
-		return iad;
-	}
-
 	/**
 	 * fügt die Lieferung eines Artikel zur Rechnung hinzu
 	 * @param dao
@@ -245,7 +212,49 @@ public class SubscriptionInvoiceCreator {
 		inv.addAgreementDetail(iad);
 		return iad;
 	}
-	
+
+	/**
+	 * fügt die Lieferung eines Artikel zur Rechnung hinzu
+	 * @param dao
+	 * @param sub
+	 * @param inv
+	 * @param deliveries
+	 * @return
+	 */
+	private static InvoiceAgrDetail addIntervalDeliveriesToInvoice(SubscrDAO dao, Subscription sub, PosInvoice inv, List<SubscrIntervalDelivery> deliveries) {
+		if (deliveries.isEmpty()) {
+			// es gibt nix zu adden - back
+			return null;
+		}
+		InvoiceAgrDetail iad = new InvoiceAgrDetail();
+		addTextDetail(inv, sub.getDeliveryInfo1());
+		addTextDetail(inv, sub.getDeliveryInfo2());
+		LocalDate from = null;
+		LocalDate till = null;
+		// details per Delivery;
+		for (SubscrIntervalDelivery deliv : deliveries) {
+			SubscrInterval interval = dao.getSubscrInterval(deliv.getIntervalId());
+			inv.addInvoiceDetail(createInvoiceDetailForInterval(deliv, interval));
+			// Versandkosten
+			if (deliv.getShipmentCost() > 0) {
+				addShipmentCostDetail(inv, deliv.getShipmentCost());
+			}
+			if (from == null || interval.getStartDate().isBefore(from)) {
+				from = interval.getStartDate();
+			}
+			if (till == null || interval.getEndDate().isAfter(till)) {
+				till = interval.getEndDate();
+			}
+		}
+		sub.setPayedUntil(till);
+		iad.setAgreementId(sub.getId());
+		iad.setDeliveryFrom(from);
+		iad.setDeliveryTill(till.dayOfMonth().withMaximumValue());  // immer der letzte des Monats
+		iad.setDeliveryIds(deliveries.stream().mapToLong(SubscrIntervalDelivery::getId).boxed().collect(Collectors.toList()));
+		inv.addAgreementDetail(iad);
+		return iad;
+	}
+
 	private static PosInvoice createInvoiceSkeleton(Subscriber subscri) {
 		PosInvoice inv = new PosInvoice();
 		
@@ -275,18 +284,14 @@ public class SubscriptionInvoiceCreator {
 		return inv;
 	}
 	
-	private static PosInvoiceDetail createInvoiceDetailForInterval(Subscription sub, SubscrArticle art, YearMonth from, YearMonth till) {
+	private static PosInvoiceDetail createInvoiceDetailForInterval(SubscrIntervalDelivery deliv, SubscrInterval interval) {
 		PosInvoiceDetail detail = new PosInvoiceDetail();
-		detail.setQuantity(sub.getQuantity());
-		if (from.equals(till)) {
-			detail.setText(art.getName() + "  Zeitraum " + from.toString("MM/yyyy"));
-		} else {
-			detail.setText(art.getName() + "  Zeitraum von " + from.toString("MM/yyyy") + " bis " + till.toString("MM/yyyy"));
-		}
-		detail.setSinglePrice(art.getBrutto());
-		detail.setAmount(art.getBrutto() * sub.getQuantity());
-		detail.setAmountHalf(art.getBrutto_half() * sub.getQuantity());
-		detail.setAmountFull(detail.getAmount() - detail.getAmountHalf());
+		detail.setQuantity(deliv.getQuantity());
+		detail.setText(interval.getName());
+		detail.setSinglePrice(interval.getBrutto());
+		detail.setAmount(deliv.getTotal());
+		detail.setAmountFull(deliv.getTotalFull());
+		detail.setAmountHalf(deliv.getTotalHalf());
 		detail.setAmountNone(0L); // Abos ohne MwSt können wir noch nicht.
 		return detail;
 	}
