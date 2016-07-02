@@ -26,13 +26,13 @@
 	<tbody>
 		<#list products as p>
 		<tr>
-			<td>${p.name}</td>
+			<td><a href="#subscrProduct/${p.id?c}">${p.name}</a></td>
 			<td>${p.publisher}</td>
 			<td>${p.abbrev}</td>
 			<td>${p.period!}</td>
 			<td>${p.payPerDelivery?string("pro Lieferung", "pro Zeit")}</td>
 			<td>${(p.lastDelivery.toString("dd.MM.yy"))!}</td>
-			<td>${p.intervalType!}</td>
+			<td>${(p.intervalType.text)!}</td>
 			<td>${(p.lastInterval.toString("dd.MM.yy"))!}</td>
 			<td><a href="#subscrDispo/${p.id?c}" class="btn btn-default btn-sm">dispo</a>
 			 <a href="#subscrProduct/${p.id?c}" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span></a> </td>

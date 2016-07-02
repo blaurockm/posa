@@ -26,6 +26,12 @@ public class SubscrProduct {
 	@JsonProperty
 	private long publisherId;
 	@JsonProperty
+	private String issn;
+	@JsonProperty
+	private String memo;
+	@JsonProperty
+	private String url;
+	@JsonProperty
 	private Period period;
 	@JsonProperty
 	private LocalDate lastDelivery;
@@ -39,6 +45,8 @@ public class SubscrProduct {
 	private int quantity;
 	@JsonProperty
 	private String namePattern;
+	@JsonProperty
+	private String intervalPattern;
 	@JsonProperty
 	private double halfPercentage =1d; // prozentuale Anteil am Gesamtpreis , halber Steuersatz, 0 < x < 1
 	@JsonProperty
@@ -95,7 +103,7 @@ public class SubscrProduct {
 		}
 		na.updateEndDate();
 		setLastInterval(na.getEndDate());
-		na.setName(na.initializeName(namePattern));
+		na.setName(na.initializeName(intervalPattern != null ? intervalPattern: namePattern));
 		return na;
 	}
 	
@@ -233,6 +241,38 @@ public class SubscrProduct {
 
 	public void setIntervalType(PayIntervalType intervalType) {
 		this.intervalType = intervalType;
+	}
+
+	public String getIssn() {
+		return issn;
+	}
+
+	public void setIssn(String issn) {
+		this.issn = issn;
+	}
+
+	public String getMemo() {
+		return memo;
+	}
+
+	public void setMemo(String memo) {
+		this.memo = memo;
+	}
+
+	public String getUrl() {
+		return url;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
+	}
+
+	public String getIntervalPattern() {
+		return intervalPattern;
+	}
+
+	public void setIntervalPattern(String intervalPattern) {
+		this.intervalPattern = intervalPattern;
 	}
 
 

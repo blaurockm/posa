@@ -145,6 +145,14 @@ Path.map("#subscrDispoNav/:id/:dir/:art").to(function(){
     $("#output .content").load("/subscr/disponav/" + this.params["id"] +"/" +this.params["dir"] +"/" +this.params["art"]);
 }).enter(setSubscrModule);
 
+Path.map("#subscrIntervalDispo/:id").to(function(){
+    $("#output .content").load("/subscr/intervaldispo/" + this.params["id"]);
+}).enter(setSubscrModule);
+
+Path.map("#subscrIntervalDispoNav/:id/:dir/:art").to(function(){
+    $("#output .content").load("/subscr/intervaldisponav/" + this.params["id"] +"/" +this.params["dir"] +"/" +this.params["art"]);
+}).enter(setSubscrModule);
+
 Path.map("#subscrDelivery/:id").to(function(){
 	// this is a modal window content
     $("#modal-output .content").load("/subscr/delivery/" + this.params["id"]);

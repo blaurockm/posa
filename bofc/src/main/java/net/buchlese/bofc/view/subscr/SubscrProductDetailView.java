@@ -21,6 +21,8 @@ public class SubscrProductDetailView extends AbstractBofcView{
 	private final List<Subscription> subscriptions;
 	private final List<SubscrArticle> articles;
 	private final List<SubscrInterval> intervals;
+	private final SubscrArticle lastArticle;
+	private final SubscrInterval lastInterval;
 	private final SubscrDAO dao;
 	
 	public SubscrProductDetailView(SubscrDAO dao, SubscrProduct p, List<Subscription> subs) {
@@ -29,12 +31,22 @@ public class SubscrProductDetailView extends AbstractBofcView{
 		this.subscriptions = subs;
 		this.articles = dao.getArticlesOfProduct(p.getId());
 		this.intervals = dao.getIntervalsOfProduct(p.getId());
+		this.lastArticle = articles.isEmpty() ? null : articles.get(articles.size()-1);
+		this.lastInterval = intervals.isEmpty() ? null : intervals.get(intervals.size()-1);
 		this.p = p;
 	}
 
 
 	public SubscrProduct getP() {
 		return p;
+	}
+
+	public SubscrArticle getLastArticle() {
+		return lastArticle;
+	}
+
+	public SubscrInterval getLastInterval() {
+		return lastInterval;
 	}
 
 	public List<Subscription> getSubscriptions() {

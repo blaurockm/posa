@@ -13,38 +13,48 @@
 
 <div class="row">
 
-<div class="col-md-5">
-  <div class="card card-block">
-    <h3 class="card-title">auszuliefernder Artikel</h3>
-    <ul class="list-group list-group-flush">
-      <li class="list-group-item"><a class="btn btn-primary" href="#subscrDispoNav/${p.id?c}/prev/${art.id?c}">&lt;&lt;</a> Artikel-ID <span id="artid">${art.id?c}</span>
-       <a class="btn btn-primary" href="#subscrDispoNav/${p.id?c}/next/${art.id?c}">&gt;&gt;</a>
-      </li>
-      <li class="list-group-item">Name <a href="#" id="artname" class="editable" data-type="text"  data-name="article.name"  data-title="Artikelbezeichnung">${art.name}</a></li>
-      <li class="list-group-item">Erscheinungsdatum <a href="#" id="artersch" class="namechangerfield" data-type="date" data-format="dd.mm.yyyy" data-name="article.erschTag"  data-title="Erscheinungstag" >${art.erschTag.toString("dd.MM.yyyy")}</a></li>
-      <li class="list-group-item">Ausgabe <a href="#" id="artcount" class="namechangerfield" data-type="number"  data-name="article.issueNo"  data-title="Ausgabennummer">${art.issueNo}</a></li>
-    </ul>
-   </div>
-</div>
-
-<div class="col-md-5">
-  <div class="card card-block">
-   <h3 class="card-title">Preis</h3>
-    <ul class="list-group list-group-flush">
-      <li class="list-group-item">Gesamt Brutto <a href="#" id="brutto" class="editablemoney" data-type="text"  data-name="article.brutto"  data-title="Gesamtbetrag">${art.brutto?c}</a></li>
-      <li class="list-group-item">7% Brutto <a href="#" id="brutto_half" class="editablemoney" data-type="text"  data-name="article.brutto_half"  data-title="Betrag Print-Anteil" >${art.brutto_half?c}</a>    Anteil am Gesamtpreis <a href="#" id="half_percent" class="percentagefield" data-type="text"  data-name="article.halfPercentage"  data-title="Prozent Print-Anteil" >${art.halfPercentage?c}</a></li>
-      <li class="list-group-item">19% Brutto <a href="#" id="brutto_full" class="editablemoney" data-type="text"  data-name="article.brutto_full"  data-title="Betrag Online-Anteil"  >${art.brutto_full?c}</a> </li>
-	</ul>
-   </div>
-</div>
-<div class="col-md-1">
+ 
+<div class="col-md-6">
+  <div class="panel panel-info">
+    <div class="panel-heading">auszuliefernder Artikel <span id="artid">${art.id?c}</span>
     <#if showArticlePlusEins>
     <a id="articlepluseins" class="btn btn-primary" href="#subscrarticlecreate/${art.productId?c}">Artikel +1</a>
     </#if>
+    </div>
+     <dl class="dl-horizontal">
+      <dt>Name</dt><dd> <a href="#" id="artname" class="editable" data-type="text"  data-name="article.name"  data-title="Artikelbezeichnung">${art.name}</a></dd>
+      <dt>Erscheinungsdatum</dt><dd> <a href="#" id="artersch" class="namechangerfield" data-type="date" data-format="dd.mm.yyyy" data-name="article.erschTag"  data-title="Erscheinungstag" >${art.erschTag.toString("dd.MM.yyyy")}</a></dd>
+      <dt>Ausgabe</dt><dd> <a href="#" id="artcount" class="namechangerfield" data-type="number"  data-name="article.issueNo"  data-title="Ausgabennummer">${art.issueNo}</a></dd>
+    </dl>
+    <div class="panel-footer">
+	  <ul class="pager">
+	    <li class="previous"><a href="#subscrDispoNav/${p.id?c}/prev/${art.id?c}"><span aria-hidden="true">&larr;</span>Älter</a></li>
+	    <li class="next"><a href="#subscrDispoNav/${p.id?c}/next/${art.id?c}">Neuer<span aria-hidden="true">&rarr;</span></a></li>
+	  </ul>
+    </div>
+   </div>
 </div>
+
+<#if p.payPerDelivery>
+<div class="col-md-6">
+  <div class="panel panel-info">
+    <div class="panel-heading">Preis</span></div>
+    <div class="panel-body">
+    <dl class="dl-horizontal">
+      <dt>Gesamt Brutto</dt><dd> <a href="#" id="brutto" class="editablemoney" data-type="text"  data-name="article.brutto"  data-title="Gesamtbetrag">${art.brutto?c}</a></dd>
+      <dt>7% Brutto</dt><dd> <a href="#" id="brutto_half" class="editablemoney" data-type="text"  data-name="article.brutto_half"  data-title="Betrag Print-Anteil" >${art.brutto_half?c}</a></dd>
+      <dt>Print-Anteil am Gesamtpreis</dt><dd> <a href="#" id="half_percent" class="percentagefield" data-type="text"  data-name="article.halfPercentage"  data-title="Prozent Print-Anteil" >${art.halfPercentage?c}</a></dd>
+      <dt>19% Brutto</dt><dd> <a href="#" id="brutto_full" class="editablemoney" data-type="text"  data-name="article.brutto_full"  data-title="Betrag Online-Anteil"  >${art.brutto_full?c}</a> </dd>
+	</dl>
+   </div>
+  </div> 
+</div>
+</#if>
+
 </div>
 
 
+ 
 <h2>betroffene Abos</h2>
 
 <table class="table table-striped">
@@ -116,7 +126,7 @@
 	    }
     });
 	$('.editablemoney').editable({
-	    url: '/subscr/update', pk : '${art.id?c}'',
+	    url: '/subscr/update', pk : '${art.id?c}',
 	    mode : "popup",
 	    display : function(value, jsonresponse) {
 	    	$(this).text(formatMoney(value));

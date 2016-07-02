@@ -1,6 +1,6 @@
 <div class="container">
 <h1>Periodikum <a href="#" class="editable" data-type="text" data-name="product.name">${p.name}</a>
-<a href="#subscrDispo/${p.id?c}" class="btn btn-primary">Dispo</a>
+
 <a href="#subscrCustAdd" class="btn btn-default">Neuer Abonnent</a>
 <a href="#subscrSubscrAdd/0/${p.id?c}" class="btn btn-default">Neues Abo</a>
 </h1>
@@ -11,50 +11,85 @@
 <div class="col-md-2"><a href="#" class="editable" data-type="text" data-name="product.abbrev">${p.abbrev}</a></div>
 </div>
 <div class="row">
-<div class="col-md-2">Ausgabenzähler</div>
-<div class="col-md-2"><a href="#" class="editable" data-type="text" data-name="product.count">${p.count!"1"}</a></div>
+<div class="col-md-2">ISSN</div>
+<div class="col-md-2"><a href="#" class="editable" data-type="text" data-name="product.issn">${p.issn!}</a></div>
+<#if p.issn! != "" >
+<div class="col-md-4"><a href="http://dispatch.opac.dnb.de/DB=1.1/CMD?ACT=SRCHA&IKT=8&TRM=${p.issn}" target="_blank">ZDB Opac<span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span></a></div>
+</#if>
 </div>
 <div class="row">
-<div class="col-md-2">Bestellte Menge</div>
-<div class="col-md-2"><a href="#" class="editable" data-type="text" data-name="product.quantity">${p.quantity!"1"}</a></div>
-</div>
-<div class="row">
-<div class="col-md-2">Periodizität</div>
-<div class="col-md-2"><a href="#" class="editable" data-type="text" data-name="product.period">${p.period}</a></div>
-</div>
-<div class="row">
-<div class="col-md-2">Rechnungstellung</div>
-<div class="col-md-2"><a href="#" id="paytype"></a></div>
-</div>
-<div class="row">
-<div class="col-md-2">Artikel-Namensmuster</div>
-<div class="col-md-6"><a href="#" class="editable" data-type="text" data-name="product.namePattern">${p.namePattern}</a></div>
-</div>
-<div class="row">
-<div class="col-md-2">Rechnung bis</div>
-<div class="col-md-2"><a href="#" class="editable" data-type="date" data-format="dd.mm.yyyy" data-mode="popup" data-name="product.lastInterval">${(p.lastInterval.toString("dd.MM.YYYY"))!}</a></div>
-</div>
-<div class="row">
-<div class="col-md-2">Proz Print-Anteil</div>
-<div class="col-md-2"><a href="#" class="editable" data-type="text" data-name="product.halfPercent">${p.halfPercentage!"1"}</a></div>
-</div>
-<div class="row">
-<div class="col-md-2">Zahlung pro Lieferung</div>
-<div class="col-md-2"><input type="checkbox" ${p.payPerDelivery?string('checked','')} onChange="switchCheckbox('product.payPerDelivery', this.checked)"></div>
+<div class="col-md-2">URL zum Verlag</div>
+<div class="col-md-2"><a href="#" class="editable" data-type="text" data-name="product.url">${p.url!}</a></div>
+<#if p.url! != "" >
+<div class="col-md-4"><a href="http://${p.url}" target="_blank">website<span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span></a></div>
+</#if>
 </div>
 
+<p></p>
+
 <div class="row">
-<div class="col-md-2">Bezug seit</div>
-<div class="col-md-2"><a href="#" class="editable" data-type="date" data-format="dd.mm.yyyy" data-mode="popup" data-name="product.startDate">${(p.startDate.toString("dd.MM.YYYY"))!}</a></div>
+<div class="col-md-4">
+<div class="panel panel-info">
+  <div class="panel-heading">
+     Lieferinformationen <a href="#subscrDispo/${p.id?c}" class="btn btn-info text-right">Dispo</a>
+  </div>
+  <div class="panel-body">
+     Einstellungen für die Lieferscheine an unsere Kunden
+  </div>
+  <dl class="dl-horizontal">
+    <dt>Ausgabenzähler</dt><dd><a href="#" class="editable" data-type="text" data-name="product.count">${p.count!"1"}</a></dd>
+    <dt>Periodizität</dt><dd><a href="#" class="editable" data-type="text" data-name="product.period">${p.period}</a></dd>
+    <dt>Artikel-Namensmuster</dt><dd><a href="#" class="editable" data-type="text" data-name="product.namePattern">${p.namePattern}</a></dd>
+  </dl>
+  <div class="panel-footer">
+	Letzte Lieferung  ${(lastArticle.name)!} am ${(lastArticle.erschTag.toString("dd.MM.yy"))!}
+  </div>
+  </div>
 </div>
-<div class="row">
-<div class="col-md-2">Bezug bis</div>
-<div class="col-md-2"><a href="#" class="editable" data-type="date" data-format="dd.mm.yyyy" data-mode="popup" data-name="product.endDate">${(p.endDate.toString("dd.MM.YYYY"))!}</a></div>
+
+<div class="col-md-4">
+<div class="panel panel-info">
+  <div class="panel-heading">
+     Weiterberechnung  <a href="#subscrIntervalDispo/${p.id?c}" class="btn btn-info text-right">Abrechnen</a>
+  </div>
+  <div class="panel-body">
+     Einstellungen für die Weiterberechnung an unsere Kunden
+  </div>
+  <dl class="dl-horizontal">
+    <dt>Zahlung pro Lieferung</dt><dd><input type="checkbox" ${p.payPerDelivery?string('checked','')} onChange="switchCheckbox('product.payPerDelivery', this.checked)"></dd>
+    <dt>Intervall Namensmuster</dt><dd><a href="#" class="editable" data-type="text" data-name="product.intervalPattern">${p.intervalPattern!}</a></dd>
+    <dt>Rechnungstellung</dt><dd><a href="#" id="paytype"></a></dd>
+    <dt>Rechnung bis</dt><dd><a href="#" class="editable" data-type="date" data-format="dd.mm.yyyy" data-mode="popup" data-name="product.lastInterval">${(p.lastInterval.toString("dd.MM.YYYY"))!}</a></dd>
+    <dt>Proz Print-Anteil</dt><dd><a href="#" class="editable" data-type="text" data-name="product.halfPercent">${p.halfPercentage!"1"}</a></dd>
+  </dl>
+  <div class="panel-footer">
+	Letzte Zahlzeit ${(lastInterval.name)!}
+  </div>
 </div>
-<div class="row">
-<div class="col-md-2">Letzte Lieferung</div>
-<div class="col-md-2">${(p.lastDelivery.toString("dd.MM.yy"))!}</div>
 </div>
+
+<div class="col-md-4">
+<div class="panel panel-info">
+  <div class="panel-heading">
+     Buchleseabo
+  </div>
+  <div class="panel-body">
+     Infos über das Abo bei unserem Lieferanten
+  </div>
+  <dl class="dl-horizontal">
+    <dt>Bestellte Menge</dt><dd><a href="#" class="editable" data-type="text" data-name="product.quantity">${p.quantity!"1"}</a></dd>
+    <dt>Bezug seit</dt><dd><a href="#" class="editable" data-type="date" data-format="dd.mm.yyyy" data-mode="popup" data-name="product.startDate">${(p.startDate.toString("dd.MM.YYYY"))!}</a></dd>
+    <dt>Bezug bis</dt><dd><a href="#" class="editable" data-type="date" data-format="dd.mm.yyyy" data-mode="popup" data-name="product.endDate">${(p.endDate.toString("dd.MM.YYYY"))!}</a></dd>
+    <dt>Memo</dt><dd><a href="#" class="editable" data-type="textarea" data-mode="popup" data-name="product.memo">${p.memo!}</a></dd>
+  </dl>
+  <div class="panel-footer">
+  </div>
+</div>
+</div>
+
+</div>
+
+
 
 
 <ul class="nav nav-tabs">
@@ -130,7 +165,7 @@
 						<td>${a.name}</td>
 						<td>${(a.startDate.toString("dd.MM.yyyy"))!}</td>
 						<td>${(a.endDate.toString("dd.MM.yyyy"))!}</td>
-						<td>${a.intervalType}</td>
+						<td>${a.intervalType.text}</td>
 					</tr>	
 				</#list>
 			</tbody>

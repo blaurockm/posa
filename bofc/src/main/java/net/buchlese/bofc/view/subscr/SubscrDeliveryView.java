@@ -1,6 +1,7 @@
 package net.buchlese.bofc.view.subscr;
 
 import net.buchlese.bofc.api.subscr.SubscrDelivery;
+import net.buchlese.bofc.api.subscr.SubscrProduct;
 import net.buchlese.bofc.api.subscr.Subscriber;
 import net.buchlese.bofc.api.subscr.Subscription;
 import net.buchlese.bofc.jdbi.bofc.SubscrDAO;
@@ -10,11 +11,15 @@ public class SubscrDeliveryView extends AbstractBofcView{
 
 	private final SubscrDelivery del;
 	private final SubscrDAO dao;
+	private final SubscrProduct product;
+	private final Subscription sub;
 	
 	public SubscrDeliveryView(SubscrDAO dao, SubscrDelivery d) {
 		super("subscrdelivery.ftl");
 		this.dao = dao;
 		this.del = d;
+		this.sub = dao.getSubscription(d.getSubscriptionId());
+		this.product = null;
 	}
 
 
@@ -42,6 +47,16 @@ public class SubscrDeliveryView extends AbstractBofcView{
 			return null;
 		}
 		return null;
+	}
+
+
+	public SubscrProduct getProduct() {
+		return product;
+	}
+
+
+	public Subscription getSub() {
+		return sub;
 	}
 
 }

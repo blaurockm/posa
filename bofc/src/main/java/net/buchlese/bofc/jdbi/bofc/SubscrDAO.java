@@ -37,11 +37,11 @@ public interface SubscrDAO {
 	void deleteTempInvoice(@Bind("invNumber") String invNumber);
 
 	@Mapper(SubscrArticleMapper.class)
-	@SqlQuery("select * from subscrArticle where productId = :prodid")
+	@SqlQuery("select * from subscrArticle where productId = :prodid order by id asc")
 	List<SubscrArticle> getArticlesOfProduct(@Bind("prodid") long prodid);
 
 	@Mapper(SubscrIntervalMapper.class)
-	@SqlQuery("select * from subscrInterval where productId = :prodid")
+	@SqlQuery("select * from subscrInterval where productId = :prodid order by id asc")
 	List<SubscrInterval> getIntervalsOfProduct(@Bind("prodid") long prodid);
 
 	@Mapper(SubscrDeliveryMapper.class)

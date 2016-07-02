@@ -41,6 +41,22 @@ public class SubscrProductUpdateHelper {
 			art.setNamePattern(value);
 			res.success = true;
 		}
+		if ("intervalPattern".equals(field)) {
+			art.setIntervalPattern(value);
+			res.success = true;
+		}
+		if ("issn".equals(field)) {
+			art.setIssn(value);
+			res.success = true;
+		}
+		if ("memo".equals(field)) {
+			art.setMemo(value);
+			res.success = true;
+		}
+		if ("url".equals(field)) {
+			art.setUrl(value);
+			res.success = true;
+		}
 		if ("startDate".equals(field)) {
 			art.setStartDate(LocalDate.parse(value, DateTimeFormat.forPattern("dd.MM.yyyy") ));
 			res.success = true;

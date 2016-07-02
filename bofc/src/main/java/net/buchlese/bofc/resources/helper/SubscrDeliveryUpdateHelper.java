@@ -42,6 +42,10 @@ public class SubscrDeliveryUpdateHelper {
 			res.initializeMoneyFieldsFromArticle(art);
 			res.success = true;
 		}
+		if ("payed".equals(field)) {
+			art.setPayed(Boolean.valueOf(value));
+			res.success = true;
+		}
 		if (res.success) {
 			dao.updateDelivery(art);
 		}

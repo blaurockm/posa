@@ -307,6 +307,7 @@ public class SubscrResource {
 		Subscription subscription = dao.getSubscription(subId);
 		SubscrArticle article = dao.getSubscrArticle(artId);
 		SubscrDelivery d = new SubscrDelivery();
+		SubscrProduct p = dao.getSubscrProduct(subscription.getProductId());
 		d.setArticleName(article.getName());
 		d.setDeliveryDate(deliveryDate);
 		d.setSubscriptionId(subscription.getId());
@@ -322,10 +323,10 @@ public class SubscrResource {
 			d.setTotalHalf(d.getTotal() - d.getTotalFull());
 		}
 		d.setCreationDate(DateTime.now());
+		d.setPayed(p.isPayPerDelivery() == false);
 
 		dao.insertDelivery(d);
 		recordUserChange(dao, "master", d.getId(), "subscrDelivery", null, null, "N");
-		SubscrProduct p = dao.getSubscrProduct(subscription.getProductId());
 		p.setLastDelivery(deliveryDate);
 		if (p.getPeriod() != null) {
 			p.setNextDelivery(deliveryDate.plus(p.getPeriod()));
@@ -629,22 +630,29 @@ public class SubscrResource {
 	@GET
 	@Path("/dispo/{prod}")
 	@Produces({"text/html"})
-	public View showDispo(@PathParam("prod") String product, @QueryParam("date") Optional<String> dateP, @QueryParam("artid") Optional<String> artIdP) {
+	public View showArticleDispo(@PathParam("prod") String product, @QueryParam("date") Optional<String> dateP, @QueryParam("artid") Optional<String> artIdP) {
 		long productId = Long.parseLong(product);
 		LocalDate from = new DateParam(dateP.orNull()).getDate();
 		SubscrProduct prod = dao.getSubscrProduct(productId );
-		if (prod.isPayPerDelivery()) {
-			SubscrArticle art = null;
-			if (artIdP.isPresent()) {
-				art = dao.getSubscrArticle(Long.parseLong(artIdP.get()));
-			} else {
-				art = dao.getNewestArticleOfProduct(productId);
-				if (art == null) {
-					art = createNewArticle(prod);
-				}
+		SubscrArticle art = null;
+		if (artIdP.isPresent()) {
+			art = dao.getSubscrArticle(Long.parseLong(artIdP.get()));
+		} else {
+			art = dao.getNewestArticleOfProduct(productId);
+			if (art == null) {
+				art = createNewArticle(prod);
 			}
-			return new SubscrDispoView(dao, prod, art, from);
 		}
+		return new SubscrDispoView(dao, prod, art, from);
+	}
+
+	@GET
+	@Path("/intervaldispo/{prod}")
+	@Produces({"text/html"})
+	public View showIntervalDispo(@PathParam("prod") String product, @QueryParam("date") Optional<String> dateP, @QueryParam("artid") Optional<String> artIdP) {
+		long productId = Long.parseLong(product);
+		LocalDate from = new DateParam(dateP.orNull()).getDate();
+		SubscrProduct prod = dao.getSubscrProduct(productId );
 		SubscrInterval art = null;
 		if (artIdP.isPresent()) {
 			art = dao.getSubscrInterval(Long.parseLong(artIdP.get()));
@@ -660,26 +668,34 @@ public class SubscrResource {
 	@GET
 	@Path("/disponav/{prod}/{dir}/{art}")
 	@Produces({"text/html"})
-	public View dispoNav(@PathParam("prod") String prodIdP, @PathParam("dir") String dir,  @PathParam("art") String artIdP) {
+	public View dispoArticleNav(@PathParam("prod") String prodIdP, @PathParam("dir") String dir,  @PathParam("art") String artIdP) {
 		long artId = Long.parseLong(artIdP);
 		long prodId = Long.parseLong(prodIdP);
 		LocalDate from = LocalDate.now();
 		SubscrProduct prod = dao.getSubscrProduct(prodId );
-		if (prod.isPayPerDelivery()) {
-			List<SubscrArticle> arts = dao.getArticlesOfProduct(prodId);
-			long[] artIds = arts.stream().mapToLong(SubscrArticle::getId).sorted().toArray();
-			int idx = Arrays.binarySearch(artIds, artId);
-			if (dir.equals("prev") && idx > 0) {
-				return new SubscrDispoView(dao, prod, dao.getSubscrArticle(artIds[idx-1]), from);
-			}
-			if (dir.equals("next") && idx >= 0 && idx < artIds.length-1) {
-				return new SubscrDispoView(dao, prod, dao.getSubscrArticle(artIds[idx+1]), from);
-			}
-			if (dir.equals("next") && idx == artIds.length-1) {
-				return new SubscrDispoView(dao, prod, dao.getSubscrArticle(artIds[idx]), from);
-			}
-			return new SubscrDispoView(dao, prod, dao.getSubscrArticle(artId), from);
+		List<SubscrArticle> arts = dao.getArticlesOfProduct(prodId);
+		long[] artIds = arts.stream().mapToLong(SubscrArticle::getId).sorted().toArray();
+		int idx = Arrays.binarySearch(artIds, artId);
+		if (dir.equals("prev") && idx > 0) {
+			return new SubscrDispoView(dao, prod, dao.getSubscrArticle(artIds[idx-1]), from);
 		}
+		if (dir.equals("next") && idx >= 0 && idx < artIds.length-1) {
+			return new SubscrDispoView(dao, prod, dao.getSubscrArticle(artIds[idx+1]), from);
+		}
+		if (dir.equals("next") && idx == artIds.length-1) {
+			return new SubscrDispoView(dao, prod, dao.getSubscrArticle(artIds[idx]), from);
+		}
+		return new SubscrDispoView(dao, prod, dao.getSubscrArticle(artId), from);
+	}
+
+	@GET
+	@Path("/intervaldisponav/{prod}/{dir}/{art}")
+	@Produces({"text/html"})
+	public View dispoIntervalNav(@PathParam("prod") String prodIdP, @PathParam("dir") String dir,  @PathParam("art") String artIdP) {
+		long artId = Long.parseLong(artIdP);
+		long prodId = Long.parseLong(prodIdP);
+		LocalDate from = LocalDate.now();
+		SubscrProduct prod = dao.getSubscrProduct(prodId );
 		List<SubscrInterval> arts = dao.getIntervalsOfProduct(prodId);
 		long[] artIds = arts.stream().mapToLong(SubscrInterval::getId).sorted().toArray();
 		int idx = Arrays.binarySearch(artIds, artId);

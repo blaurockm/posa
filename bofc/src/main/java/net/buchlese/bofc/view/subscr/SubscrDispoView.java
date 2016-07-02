@@ -18,6 +18,7 @@ public class SubscrDispoView extends AbstractBofcView{
 	private final List<Subscription> subscriptions;
 	private final SubscrDAO dao;
 	private final SubscrArticle article;
+	private final SubscrArticle lastArticle;
 	private final LocalDate dispoDate;
 
 
@@ -26,8 +27,9 @@ public class SubscrDispoView extends AbstractBofcView{
 		this.dao = dao;
 		this.p =  p;
 		this.subscriptions = dao.getSubscriptionsForProduct(p.getId());
+		this.lastArticle = dao.getNewestArticleOfProduct(p.getId());
 		if (art == null) {
-			this.article = dao.getNewestArticleOfProduct(p.getId());
+			this.article = lastArticle;
 		} else {
 			this.article = art;
 		}
@@ -50,10 +52,6 @@ public class SubscrDispoView extends AbstractBofcView{
 		return subscriptions;
 	}
 
-	public List<SubscrDelivery> deliveries(Subscription s) {
-		return dao.getDeliveriesForSubscriptionUnrecorded(s.getId());
-	}
-
 	public SubscrDelivery delivery(Subscription sub, SubscrArticle art) {
 		return dao.getDeliveriesForSubscription(sub.getId()).stream().filter(d -> d.getArticleId() == art.getId()).findFirst().orElse(null);
 	}
@@ -70,6 +68,6 @@ public class SubscrDispoView extends AbstractBofcView{
 	}
 
 	public boolean isShowArticlePlusEins() {
-		return article.getErschTag().equals(dispoDate) == false;
+		return article.getErschTag().equals(dispoDate) == false && article.getId() == lastArticle.getId();
 	}
 }
