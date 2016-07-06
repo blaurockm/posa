@@ -17,10 +17,11 @@ public class ReportDeliveryNoteCreator {
 		ReportDeliveryNote rep = new ReportDeliveryNote();
 		SubscrDelivery fdeli = dao.getSubscrDelivery(deliveryId);
 		Subscriber s = dao.getSubscriber(fdeli.getSubscriberId());
+		Subscription sub1 = dao.getSubscription(fdeli.getSubscriptionId());
 		rep.customerId = s.getCustomerId();
 		rep.details = new ArrayList<ReportDeliveryNote.ReportDeliveryNoteDetail>();
 		
-		rep.deliveryAddress = s.getInvoiceAddress();
+		rep.deliveryAddress = sub1.getDeliveryAddress();
 		rep.deliveryDate = fdeli.getDeliveryDate();
 		rep.delivNum  = numgen.getNextNumber();
 		rep.creationTime = LocalDate.now();
