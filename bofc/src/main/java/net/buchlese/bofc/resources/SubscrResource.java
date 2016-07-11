@@ -308,6 +308,7 @@ public class SubscrResource {
 		SubscrArticle article = dao.getSubscrArticle(artId);
 		SubscrDelivery d = new SubscrDelivery();
 		SubscrProduct p = dao.getSubscrProduct(subscription.getProductId());
+		Subscriber subscriber  = dao.getSubscriber(subscription.getSubscriberId());
 		d.setArticleName(article.getName());
 		d.setDeliveryDate(deliveryDate);
 		d.setSubscriptionId(subscription.getId());
@@ -323,7 +324,7 @@ public class SubscrResource {
 			d.setTotalHalf(d.getTotal() - d.getTotalFull());
 		}
 		d.setCreationDate(DateTime.now());
-		d.setPayed(p.isPayPerDelivery() == false);
+		d.setPayed(p.isPayPerDelivery() == false && subscriber.isNeedsDeliveryNote() == false);
 
 		dao.insertDelivery(d);
 		recordUserChange(dao, "master", d.getId(), "subscrDelivery", null, null, "N");

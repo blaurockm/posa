@@ -36,6 +36,16 @@ ${d.quantity}
 </div>
 </div>
 
+<#if sub.paymentType != 'EACHDELIVERY'>
+<div class="row">
+<div class="col-md-2">
+bezahlt
+</div>
+<div class="col-md-2">
+<input type="checkbox" ${d.payed?string('checked','')} onChange="switchCheckbox('delivery.payed', this.checked)">
+</div>
+</div>
+<#else>
 <div class="row">
 <div class="col-md-5">
 <#if d.payed >
@@ -45,6 +55,7 @@ ${d.quantity}
 </#if>
 </div>
 </div>
+</#if>
 
 <div class="row">
    <h3 class="card-title">Preis</h3>

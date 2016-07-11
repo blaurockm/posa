@@ -21,7 +21,7 @@ public class ReportDeliveryNoteCreator {
 		rep.customerId = s.getCustomerId();
 		rep.details = new ArrayList<ReportDeliveryNote.ReportDeliveryNoteDetail>();
 		
-		rep.deliveryAddress = sub1.getDeliveryAddress();
+		rep.deliveryAddress = sub1.getDeliveryAddress() != null ? sub1.getDeliveryAddress() : s.getInvoiceAddress();
 		rep.deliveryDate = fdeli.getDeliveryDate();
 		rep.delivNum  = numgen.getNextNumber();
 		rep.creationTime = LocalDate.now();
