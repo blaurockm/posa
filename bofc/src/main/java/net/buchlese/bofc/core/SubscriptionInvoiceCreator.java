@@ -288,7 +288,7 @@ public class SubscriptionInvoiceCreator {
 		PosInvoiceDetail detail = new PosInvoiceDetail();
 		detail.setQuantity(deliv.getQuantity());
 		detail.setText(interval.getName());
-		detail.setSinglePrice(interval.getBrutto());
+		detail.setSinglePrice(deliv.getTotal() / deliv.getQuantity());
 		detail.setAmount(deliv.getTotal());
 		detail.setAmountFull(deliv.getTotalFull());
 		detail.setAmountHalf(deliv.getTotalHalf());
@@ -316,7 +316,7 @@ public class SubscriptionInvoiceCreator {
 		PosInvoiceDetail detail = new PosInvoiceDetail();
 		detail.setQuantity(deliv.getQuantity());
 		detail.setText(art.getName());
-		detail.setSinglePrice(art.getBrutto());
+		detail.setSinglePrice(deliv.getTotal() / deliv.getQuantity());
 		detail.setAmount(deliv.getTotal());
 		detail.setAmountFull(deliv.getTotalFull());
 		detail.setAmountHalf(deliv.getTotalHalf());
