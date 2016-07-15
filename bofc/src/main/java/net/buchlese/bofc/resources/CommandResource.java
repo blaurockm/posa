@@ -26,6 +26,7 @@ import javax.ws.rs.core.StreamingOutput;
 
 import net.buchlese.bofc.api.bofc.ArticleGroup;
 import net.buchlese.bofc.api.cmd.AbstractBofcCommand;
+import net.buchlese.bofc.api.cmd.PayOffCoupon;
 import net.buchlese.bofc.api.cmd.PayOffInvoice;
 
 import com.google.common.base.Optional;
@@ -50,7 +51,14 @@ public class CommandResource {
 	@Path("/cmdstodo")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Collection<AbstractBofcCommand> fetchCmdToDo()  {
-		toBeSend.add(new PayOffInvoice());
+		PayOffInvoice c = new PayOffInvoice();
+		c.setPointId(6);
+		c.setParams(new Object[] {"31602400"});
+		toBeSend.add(c);
+		PayOffCoupon c2 = new PayOffCoupon();
+		c2.setPointId(6);
+		c2.setParams(new Object[] {"31602400"});
+		toBeSend.add(c2);
 		return new ArrayList<AbstractBofcCommand>(toBeSend);
 	}
 

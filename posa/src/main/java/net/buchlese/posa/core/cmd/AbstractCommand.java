@@ -39,6 +39,9 @@ public abstract class AbstractCommand {
 	}
 
 	public void handle(JSONRPC2Request req) {
+		if (req == null) {
+			return;
+		}
 		if (canHandle(req)) {
 			try {
 				sendBack(execute(req), req.getID());
@@ -49,7 +52,7 @@ public abstract class AbstractCommand {
 			if (successor != null) {
 				successor.handle(req);
 			} else {
-				sendBack("unknownRequestMethod", req.getID());
+				sendBack("unknownRequestMethod, end of chain", req.getID());
 			}
 		}
 	}

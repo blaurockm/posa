@@ -12,12 +12,13 @@ public class PayOffCouponCommand extends AbstractCommand {
 
 	@Override
 	public boolean canHandle(JSONRPC2Request req) {
-		return false;
+		return req.getMethod().equals("payoffcoupon");
 	}
 
 	@Override
 	public Object execute(JSONRPC2Request req) {
-		return "PayOffCoupon notimplemented yet!";
+		System.out.println(" executing PayOffCoupon-cmd...." + req.getPositionalParams());
+		return "erfolreich";
 	}
 
 }

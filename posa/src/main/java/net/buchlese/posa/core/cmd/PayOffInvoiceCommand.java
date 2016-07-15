@@ -12,12 +12,13 @@ public class PayOffInvoiceCommand extends AbstractCommand {
 
 	@Override
 	public boolean canHandle(JSONRPC2Request req) {
-		return false;
+		return req.getMethod().equals("payoffinvoice");
 	}
 
 	@Override
 	public Object execute(JSONRPC2Request req) {
-		return null;
+		System.out.println(" executing PayOffInvoice-cmd...." + req.getPositionalParams());
+		return "invoice ok";
 	}
 
 }

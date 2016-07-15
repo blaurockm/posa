@@ -42,7 +42,8 @@ public class CommandTimer extends TimerTask {
 		this.homeUrl = config.getHomeUrl();
 		logger = LoggerFactory.getLogger(CommandTimer.class);
 		AbstractCommand chain = new PayOffCouponCommand(config);
-		commandChain = chain.concat(new PayOffInvoiceCommand(config));
+		commandChain = chain;
+		chain = chain.concat(new PayOffInvoiceCommand(config));
 	}
 
 	@Override
@@ -68,8 +69,9 @@ public class CommandTimer extends TimerTask {
 				String jsonString = r.accept(MediaType.APPLICATION_JSON_TYPE).get(String.class);
 
 				try {
-					reqIn = JSONRPC2Request.parse(jsonString);
-
+					if (jsonString != null && jsonString.isEmpty() == false) {
+						reqIn = JSONRPC2Request.parse(jsonString);
+					}
 				} catch (JSONRPC2ParseException e) {
 					logger.error("problem parsing command", e);
 				}

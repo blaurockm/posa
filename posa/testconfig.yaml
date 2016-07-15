@@ -57,10 +57,19 @@ syncStartDate: 2014-10-01
 pointOfSaleId: 6
 
 #homeUrl: http://localhost:7896/
-homeUrl: http://localhost:34343/
+homeUrl: http://localhost:8080/
 #homeHost: buchlese.selfhost.eu
 homeHost: 192.168.2.111
 
 sshEnabled: false
+
+server:
+  applicationConnectors:
+  - type: http 
+    port: 9000
+  adminConnectors:
+  - type: http
+    port: 9001
+
 
 
