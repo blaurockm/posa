@@ -346,5 +346,17 @@
          <column name="complJson" type="clob"/>
      </createTable>
    </changeSet>
+
+   <changeSet id="coupon" author="mblaurock">
+     <createTable tableName="coupon">
+         <column name="id" type="bigint" autoIncrement="true">
+            <constraints primaryKey="true" nullable="false" />
+         </column>
+         <column name="customerId" type="bigint"/>
+         <column name="payed" type="boolean"/>
+         <column name="invoiceNumber" type="varchar(10)"/>
+         <column name="complJson" type="clob"/>
+     </createTable>
+   </changeSet>
    
 </databaseChangeLog>
