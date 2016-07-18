@@ -358,5 +358,12 @@
          <column name="complJson" type="clob"/>
      </createTable>
    </changeSet>
+
+   <changeSet id="issueslipsIII" author="mblaurock">
+     <addColumn tableName="subscrDelivery">
+         <column name="slipped" type="boolean"/>
+         <column name="slipNumber" type="varchar(10)"/>
+     </addColumn>
+   </changeSet>
    
 </databaseChangeLog>

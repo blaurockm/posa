@@ -2,6 +2,8 @@ package net.buchlese.bofc.api.bofc;
 
 import java.util.List;
 
+import net.buchlese.bofc.api.subscr.PayIntervalType;
+
 import org.joda.time.LocalDate;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -23,6 +25,10 @@ public class InvoiceAgrDetail {
 
 	@JsonProperty
 	private TYPE type = TYPE.SUBSCR;
+
+	@JsonProperty
+	private PayIntervalType payType;
+
 	
 	public long getAgreementId() {
 		return agreementId;
@@ -62,6 +68,14 @@ public class InvoiceAgrDetail {
 
 	public void setType(TYPE type) {
 		this.type = type;
+	}
+
+	public PayIntervalType getPayType() {
+		return payType;
+	}
+
+	public void setPayType(PayIntervalType payType) {
+		this.payType = payType;
 	}
 	
 }

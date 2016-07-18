@@ -18,7 +18,8 @@ import org.joda.time.LocalDate;
 
 public class SubscrDashboardView extends AbstractBofcView {
 
-	private final List<SubscrDelivery> deliveries;
+	private final List<SubscrDelivery> deliveries1;
+	private final List<SubscrDelivery> deliveries2;
 	private final List<SubscrIntervalDelivery> intervalDeliveries;
 	private final List<Subscription> subscriptions;
 	private final List<Subscription> subscriptionsWithMemo;
@@ -28,10 +29,14 @@ public class SubscrDashboardView extends AbstractBofcView {
 	public SubscrDashboardView(SubscrDAO dao, LocalDate d) {
 		super("subscrdashboard.ftl");
 		this.dao = dao;
-		List<SubscrDelivery> tempdelivs = dao.getDeliveriesUnrecorded();
+		List<SubscrDelivery> tempdelivs = dao.getDeliveriesPayflag(false);
 		tempdelivs.forEach(i -> i.subscriberName = kunde(i));
 		tempdelivs.sort(Comparator.comparing(SubscrDelivery::getSubscriberName));
-		this.deliveries = tempdelivs;
+		this.deliveries1 = tempdelivs;
+		tempdelivs = dao.getDeliveriesSlipflag(false);
+		tempdelivs.forEach(i -> i.subscriberName = kunde(i));
+		tempdelivs.sort(Comparator.comparing(SubscrDelivery::getSubscriberName));
+		this.deliveries2 = tempdelivs;
 		List<SubscrIntervalDelivery> tempintdelivs = dao.getIntervalDeliveriesUnrecorded();
 		tempintdelivs.forEach(i -> i.subscriberName = kunde(i));
 		tempintdelivs.sort(Comparator.comparing(SubscrIntervalDelivery::getSubscriberName));
@@ -50,7 +55,11 @@ public class SubscrDashboardView extends AbstractBofcView {
 	}
 
 	public List<SubscrDelivery> getDeliveries() {
-		return deliveries;
+		return deliveries1;
+	}
+
+	public List<SubscrDelivery> getUnslippedDeliveries() {
+		return deliveries2;
 	}
 
 	public List<SubscrIntervalDelivery> getIntervalDeliveries() {

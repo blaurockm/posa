@@ -65,28 +65,32 @@ public interface SubscrDAO {
 	List<SubscrIntervalDelivery> getIntervalDeliveriesForSubscription(@Bind("subid") long id, @Bind("from") LocalDate from,	@Bind("till")LocalDate till);
 
 	@Mapper(SubscrIntervalDeliveryMapper.class)
-	@SqlQuery("select * from subscrIntervalDelivery where subscriptionId = :subid and payed = true")
-	List<SubscrIntervalDelivery> getIntervalDeliveriesForSubscriptionRecorded(@Bind("subid") long id);
-
-	@Mapper(SubscrIntervalDeliveryMapper.class)
-	@SqlQuery("select * from subscrIntervalDelivery where subscriptionId = :subid and payed = false")
-	List<SubscrIntervalDelivery> getIntervalDeliveriesForSubscriptionUnrecorded(@Bind("subid") long id);
+	@SqlQuery("select * from subscrIntervalDelivery where subscriptionId = :subid and payed = :py")
+	List<SubscrIntervalDelivery> getIntervalDeliveriesForSubscriptionPayflag(@Bind("subid") long id, @Bind("py") boolean payed);
 
 	@Mapper(SubscrIntervalDeliveryMapper.class)
 	@SqlQuery("select * from subscrIntervalDelivery where payed = false")
 	List<SubscrIntervalDelivery> getIntervalDeliveriesUnrecorded();
 
 	@Mapper(SubscrDeliveryMapper.class)
-	@SqlQuery("select * from subscrDelivery where subscriptionId = :subid and payed = true")
-	List<SubscrDelivery> getDeliveriesForSubscriptionRecorded(@Bind("subid") long id);
+	@SqlQuery("select * from subscrDelivery where subscriptionId = :subid and payed = :py")
+	List<SubscrDelivery> getDeliveriesForSubscriptionPayflag(@Bind("subid") long id, @Bind("py") boolean payed);
 
 	@Mapper(SubscrDeliveryMapper.class)
-	@SqlQuery("select * from subscrDelivery where subscriptionId = :subid and payed = false")
-	List<SubscrDelivery> getDeliveriesForSubscriptionUnrecorded(@Bind("subid") long id);
+	@SqlQuery("select * from subscrDelivery where subscriptionId = :subid and slipped = :sl")
+	List<SubscrDelivery> getDeliveriesForSubscriptionSlipflag(@Bind("subid") long id, @Bind("sl") boolean slipped);
 
 	@Mapper(SubscrDeliveryMapper.class)
-	@SqlQuery("select * from subscrDelivery where payed = false")
-	List<SubscrDelivery> getDeliveriesUnrecorded();
+	@SqlQuery("select * from subscrDelivery where subscriberId = :subid and deliveryDate = :dd and slipped = :sl")
+	List<SubscrDelivery> getDeliveriesForSubscriberSlipflag(@Bind("subid") long id, @Bind("dd") LocalDate now, @Bind("sl") boolean slipped);
+
+	@Mapper(SubscrDeliveryMapper.class)
+	@SqlQuery("select * from subscrDelivery where payed = :py")
+	List<SubscrDelivery> getDeliveriesPayflag(@Bind("py") boolean payed);
+
+	@Mapper(SubscrDeliveryMapper.class)
+	@SqlQuery("select * from subscrDelivery where slipped = :sl")
+	List<SubscrDelivery> getDeliveriesSlipflag(@Bind("sl") boolean slipped);
 
 	@SqlQuery("select invoiceNumber from subscrDelivery where subscriptionId = :subid and invoiceNumber is not null")
 	Collection<String> getInvoiceNumsForSubscription(@Bind("subid") long id);
@@ -191,8 +195,8 @@ public interface SubscrDAO {
 		    " values (:complJson, :productId, :erschTag)")
 	long insertArticle(@BindBean SubscrArticle art);
 
-	@SqlUpdate("insert into subscrDelivery (complJson, subscriptionId, articleId, subscriberId, deliveryDate, payed, invoiceNumber) " +
-		    " values (:complJson, :subscriptionId, :articleId, :subscriberId, :deliveryDate, :payed, :invoiceNumber)")
+	@SqlUpdate("insert into subscrDelivery (complJson, subscriptionId, articleId, subscriberId, deliveryDate, payed, slipped, invoiceNumber) " +
+		    " values (:complJson, :subscriptionId, :articleId, :subscriberId, :deliveryDate, :payed, :slipped, :invoiceNumber)")
 	void insertDelivery(@BindBean SubscrDelivery d);
 
 	@GetGeneratedKeys
@@ -237,6 +241,12 @@ public interface SubscrDAO {
 	@SqlBatch("update subscrDelivery set invoiceNumber = null, payed = false where id = :id")
 	void resetDetailsOfInvoice(@Bind("id") List<Long> deliveryIds);
 
+	@SqlBatch("update subscrDelivery set slipNumber = :invNum, slipped = true where id = :id")
+	void recordDetailsOnSlip(@Bind("id") List<Long> deliveryIds, @Bind("invNum") String invNumber);
+
+	@SqlBatch("update subscrDelivery set slipNumber = null, slipped = false where id = :id")
+	void resetDetailsOfSlip(@Bind("id") List<Long> deliveryIds);
+
 	@SqlBatch("update subscrIntervalDelivery set invoiceNumber = :invNum, payed = true where id = :id")
 	void recordIntervalDetailsOnInvoice(@Bind("id") List<Long> deliveryIds, @Bind("invNum") String invNumber);
 
@@ -247,8 +257,8 @@ public interface SubscrDAO {
 		    " = (:complJson, :productId, :erschTag) where id = :id")
 	void updateArticle(@BindBean SubscrArticle art);
 
-	@SqlUpdate("update subscrDelivery set (complJson, subscriptionId, articleId, subscriberId, deliveryDate, payed, invoiceNumber) " +
-		    " = (:complJson, :subscriptionId, :articleId, :subscriberId, :deliveryDate, :payed, :invoiceNumber) where id = :id")
+	@SqlUpdate("update subscrDelivery set (complJson, subscriptionId, articleId, subscriberId, deliveryDate, payed, slipped, invoiceNumber) " +
+		    " = (:complJson, :subscriptionId, :articleId, :subscriberId, :deliveryDate, :payed, :slipped, :invoiceNumber) where id = :id")
 	void updateDelivery(@BindBean SubscrDelivery art);
 
 	@SqlUpdate("update subscrInterval set (complJson, productId, startDate, endDate) " +

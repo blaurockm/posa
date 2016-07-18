@@ -42,6 +42,10 @@ public class SubscrIntervalDeliveryUpdateHelper {
 			res.initializeMoneyFieldsFromArticle(art);
 			res.success = true;
 		}
+		if ("payed".equals(field)) {
+			art.setPayed(Boolean.parseBoolean(value));
+			res.success = true;
+		}
 		if (res.success) {
 			dao.updateIntervalDelivery(art);
 		}

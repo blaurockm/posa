@@ -10,16 +10,22 @@ public class SubscrIntervalDeliveryView extends AbstractBofcView{
 
 	private final SubscrIntervalDelivery del;
 	private final SubscrDAO dao;
+	private final Subscription sub;
 	
 	public SubscrIntervalDeliveryView(SubscrDAO dao, SubscrIntervalDelivery d) {
 		super("subscrintervaldelivery.ftl");
 		this.dao = dao;
 		this.del = d;
+		this.sub = dao.getSubscription(del.getSubscriptionId());
 	}
 
 
 	public SubscrIntervalDelivery getD() {
 		return del;
+	}
+
+	public Subscription getSub() {
+		return sub;
 	}
 
 	public String kunde(SubscrIntervalDelivery s) {
@@ -33,15 +39,5 @@ public class SubscrIntervalDeliveryView extends AbstractBofcView{
 		return "keine subId";
 	}
 	
-	public Subscription abo(SubscrIntervalDelivery d) {
-		if (d.getSubscriptionId() > 0) {
-			Subscription x = dao.getSubscription(d.getSubscriptionId());
-			if (x != null) {
-				return x;
-			}
-			return null;
-		}
-		return null;
-	}
 
 }

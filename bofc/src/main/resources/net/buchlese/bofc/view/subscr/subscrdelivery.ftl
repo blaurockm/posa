@@ -54,6 +54,14 @@ bezahlt
 <input type="checkbox" ${d.payed?string('checked','')} onChange="switchCheckbox('delivery.payed', this.checked)">
 </div>
 </div>
+<div class="row">
+<div class="col-md-2">
+auf Lieferschein
+</div>
+<div class="col-md-2">
+<input type="checkbox" ${d.slipped?string('checked','')} onChange="switchCheckbox('delivery.slipped', this.checked)">
+</div>
+</div>
 <#else>
 <div class="row">
 <div class="col-md-5">
@@ -65,6 +73,15 @@ bezahlt
 </div>
 </div>
 </#if>
+<div class="row">
+<div class="col-md-5">
+<#if d.slipped >
+  auf Lieferschein <a href="/subscr/deliverynote/${d.id?c}"  target="_blank"> ${d.slipNumber!} </a>
+  
+</#if>
+</div>
+</div>
+
 
 <div class="row">
    <h3 class="card-title">Preis</h3>

@@ -37,7 +37,11 @@ public class SubscrDelivery implements Comparable<SubscrDelivery> {
 	@JsonProperty
 	private boolean payed;
 	@JsonProperty
+	private boolean slipped;
+	@JsonProperty
 	private String invoiceNumber;
+	@JsonProperty
+	private String slipNumber;
 	@JsonProperty
 	private DateTime creationDate;
 	@JsonProperty
@@ -166,6 +170,22 @@ public class SubscrDelivery implements Comparable<SubscrDelivery> {
 
 	public void setShipmentCost(long shipmentCost) {
 		this.shipmentCost = shipmentCost;
+	}
+
+	public boolean isSlipped() {
+		return slipped;
+	}
+
+	public void setSlipped(boolean slipped) {
+		this.slipped = slipped;
+	}
+
+	public String getSlipNumber() {
+		return slipNumber;
+	}
+
+	public void setSlipNumber(String slipNumber) {
+		this.slipNumber = slipNumber;
 	}
 	
 }

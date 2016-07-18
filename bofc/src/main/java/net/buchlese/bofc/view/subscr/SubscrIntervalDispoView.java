@@ -47,7 +47,7 @@ public class SubscrIntervalDispoView extends AbstractBofcView{
 	}
 
 	public List<SubscrIntervalDelivery> deliveries(Subscription s) {
-		return dao.getIntervalDeliveriesForSubscriptionUnrecorded(s.getId());
+		return dao.getIntervalDeliveriesForSubscriptionPayflag(s.getId(), false);
 	}
 
 	public SubscrIntervalDelivery delivery(Subscription sub, SubscrInterval art) {

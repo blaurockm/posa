@@ -42,10 +42,10 @@ public class SubscriptionDetailView extends AbstractBofcView{
 		this.newestArticle = dao.getNewestArticleOfProduct(s.getProductId());
 		this.lastIntDeliv = dao.getLastIntervalDeliveryForSubscription(s.getId());
 		this.newestInterval = dao.getNewestIntervalOfProduct(s.getProductId());
-		this.unpayedDelivs = dao.getDeliveriesForSubscriptionUnrecorded(sub.getId());
-		this.payedDelivs = dao.getDeliveriesForSubscriptionRecorded(sub.getId());
-		this.unpayedIntDelivs = dao.getIntervalDeliveriesForSubscriptionUnrecorded(sub.getId());
-		this.payedIntDelivs = dao.getIntervalDeliveriesForSubscriptionRecorded(sub.getId());
+		this.unpayedDelivs = dao.getDeliveriesForSubscriptionPayflag(sub.getId(),false);
+		this.payedDelivs = dao.getDeliveriesForSubscriptionPayflag(sub.getId(), true);
+		this.unpayedIntDelivs = dao.getIntervalDeliveriesForSubscriptionPayflag(sub.getId(), false);
+		this.payedIntDelivs = dao.getIntervalDeliveriesForSubscriptionPayflag(sub.getId(), true);
 	}
 
 

@@ -7,6 +7,7 @@ import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
@@ -616,7 +617,10 @@ public class SubscrResource {
 			public void write(OutputStream os) throws IOException,  WebApplicationException {
 				try {
 					long artId = Long.parseLong(deliveryId);
+					SubscrDelivery deli = dao.getSubscrDelivery(artId);
 					ReportDeliveryNote rep = ReportDeliveryNoteCreator.create(dao, numGen,  artId);
+					List<SubscrDelivery> deliveries = dao.getDeliveriesForSubscriberSlipflag(deli.getSubscriberId(), deli.getDeliveryDate(), false);
+					dao.recordDetailsOnSlip(deliveries.stream().map(SubscrDelivery::getId).collect(Collectors.toList()), "neu");
 					PDFReport generator = new PDFReport(rep, "report/deliveryNote.xsl");
 					generator.generatePDF(os);
 				} catch (Exception e) {

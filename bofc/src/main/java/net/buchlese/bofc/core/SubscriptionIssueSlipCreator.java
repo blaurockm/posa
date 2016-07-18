@@ -21,67 +21,30 @@ import net.buchlese.bofc.jdbi.bofc.SubscrDAO;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
-public class SubscriptionInvoiceCreator {
+public class SubscriptionIssueSlipCreator {
 
 	/**
-	 * Sammelrechnung für einen Abonnenten
-	 * @param dao
-	 * @param subscriber
-	 * @return
-	 */
-	public static PosInvoice createCollectiveSubscription(SubscrDAO dao, Subscriber subscriber, NumberGenerator numgen) {
-		List<PosIssueSlip> issueSlips = dao.findIssueSlipsToAdd(subscriber.getDebitorId());
-		PosInvoice inv = createTemporaryInvoice(dao, subscriber, dao.getSubscriptionsForSubscriber(subscriber.getId()), issueSlips, numgen);
-		inv.setCollective(true);
-		return inv;
-	}
-
-	/**
-	 * Einzelrechnung für ein Abo 
+	 * lieferschein für einen Tag und einen Abonnenten 
 	 * @param dao
 	 * @param sub
 	 * @return
 	 */
-	public static PosInvoice createSubscription(SubscrDAO dao, Subscription sub, NumberGenerator numgen) {
-		return createTemporaryInvoice(dao, dao.getSubscriber(sub.getSubscriberId()), Arrays.asList(sub), null, numgen);
+	public static PosIssueSlip createSubscription(SubscrDAO dao, PosInvoiceDAO invDao, Subscriber subscriber, NumberGenerator numgen) {
+//		final PosIssueSlip inv = createSlipSkeleton(subscriber);
+//		// details
+//		List<SubscrDelivery> deliveries = dao.getDeliveriesForSubscriberSlipflag(subscriber.getId(), false);
+//		for(SubscrDelivery sub : deliveries) {
+//			addDeliveriesToSlip(dao, sub, inv, dao.getDeliveriesForSubscriptionPayflag(sub.getId(), false));
+//		}
+//		
+//		inv.setNumber(String.valueOf(numgen.getNextNumber()));
+//		invDao.insertIssueSlip(inv);
+//		
+//		dao.recordDetailsOnInvoice(deliveries.stream().mapToLong(SubscrDelivery::getId).boxed().collect(Collectors.toList()), inv.getNumber());
+//		return inv;
+		return null;
 	}
 
-	/**
-	 * festschreiben einer Rechnung bei den Abos die dvon der Rechnung betroffen sind.
-	 * Die Rechnung selbst wird nicht angefasst
-	 * @param dao
-	 * @param inv
-	 */
-	private static void recordInvoiceOnAgreements(SubscrDAO dao, PosInvoice inv) {
-		for (InvoiceAgrDetail iad : inv.getAgreementDetails()) {
-			if (InvoiceAgrDetail.TYPE.SUBSCR.equals(iad.getType())) {
-				Subscription sub = dao.getSubscription(iad.getAgreementId());
-				sub.setPayedUntil(iad.getDeliveryTill());
-				if (iad.getPayType() != null && iad.getPayType().equals(PayIntervalType.EACHDELIVERY)) {
-					dao.recordDetailsOnInvoice(iad.getDeliveryIds(), inv.getNumber());
-				} else {
-					dao.recordIntervalDetailsOnInvoice(iad.getDeliveryIds(), inv.getNumber());
-				}
-				dao.updateSubscription(sub);
-			} else {
-				PosIssueSlip slip = dao.getIssueSlip(iad.getAgreementId());
-				slip.setPayed(Boolean.TRUE);
-				dao.updateIssueSlip(slip);  // TODO wir sollten den auch im Libras als bezahlt markieren
-			}
-		}
-	}
-
-	/**
-	 * festschreiben einer Rechnung
-	 * @param dao
-	 * @param invDao
-	 * @param inv
-	 */
-	public static void fakturiereInvoice(SubscrDAO dao, PosInvoiceDAO invDao, PosInvoice inv) {
-		inv.setTemporary(false);
-		invDao.insert(inv);
-		dao.deleteTempInvoice(inv.getNumber());
-	}
 
 	/**
 	 * festschreiben einer Rechnung wieder rückgängig machen (bei den Abos die von der Rechnung betroffen sind.
@@ -94,11 +57,7 @@ public class SubscriptionInvoiceCreator {
 			if (InvoiceAgrDetail.TYPE.SUBSCR.equals(iad.getType())) {
 				Subscription sub = dao.getSubscription(iad.getAgreementId());
 				sub.setPayedUntil(iad.getDeliveryFrom().minusDays(1));
-				if (iad.getPayType() != null && iad.getPayType().equals(PayIntervalType.EACHDELIVERY)) {
-					dao.resetDetailsOfInvoice(iad.getDeliveryIds());
-				} else {
-					dao.resetIntervalDetailsOfInvoice(iad.getDeliveryIds());
-				}
+				dao.resetDetailsOfInvoice(iad.getDeliveryIds());
 				dao.updateSubscription(sub);
 			} else {
 				PosIssueSlip slip = dao.getIssueSlip(iad.getAgreementId());
@@ -109,78 +68,8 @@ public class SubscriptionInvoiceCreator {
 	}
 	
 
-	/**
-	 * erzeugt eine komplette Rechnung und legt sie als temporär ab.
-	 * 
-	 * @param dao
-	 * @param subscriber
-	 * @param subs
-	 * @param issueSlips
-	 * @param numgen
-	 * @return
-	 */
-	private static PosInvoice createTemporaryInvoice(final SubscrDAO dao, Subscriber subscriber, List<Subscription> subs, List<PosIssueSlip> issueSlips, NumberGenerator numgen) {
-		final PosInvoice inv = createInvoiceSkeleton(subscriber);
-		// details
-		for(Subscription sub : subs) {
-			if (PayIntervalType.EACHDELIVERY.equals(sub.getPaymentType())) {
-				addDeliveriesToInvoice(dao, sub, inv, dao.getDeliveriesForSubscriptionPayflag(sub.getId(), false));
-			} else {
-				addIntervalDeliveriesToInvoice(dao, sub, inv, dao.getIntervalDeliveriesForSubscriptionPayflag(sub.getId(), false));
-			}
-		}
-		if (issueSlips != null) {
-			issueSlips.forEach(s -> addIssueSlipToInvoice(dao, s, inv));
-		}
-		
-		updateTaxValues(inv);
-		
-		inv.setTemporary(true);
-		inv.setNumber(numgen.getNextInvoiceNumber(inv.getPointid()));
-		dao.insertTempInvoice(inv);
-		
-		recordInvoiceOnAgreements(dao, inv);
-		return inv;
-	}
 
-	/**
-	 * errechnet die Steuerbeträge
-	 * @param inv
-	 */
-	private static void updateTaxValues(PosInvoice inv) {
-		inv.setNettoHalf((long) (inv.getAmountHalf() / 1.07));
-		inv.setTaxHalf(inv.getAmountHalf() - inv.getNettoHalf());
-		inv.setTax(inv.getTaxHalf());
-		if (inv.getAmountFull() != null) {
-			inv.setNettoFull((long) (inv.getAmountFull() / 1.19));
-			inv.setTaxFull(inv.getAmountFull() - inv.getNettoFull());
-			inv.setTax(inv.getTax() + inv.getTaxFull());
-		}
-	}
 	
-	/**
-	 * fügt einen Lieferschein aus Libras der Rechnung hinzu
-	 * @param dao
-	 * @param slip
-	 * @param inv
-	 * @return
-	 */
-	private static InvoiceAgrDetail addIssueSlipToInvoice(SubscrDAO dao, PosIssueSlip slip, PosInvoice inv) {
-		if (slip.isIncludeOnInvoice() == false) {
-			return null;
-		}
-		InvoiceAgrDetail iad = new InvoiceAgrDetail();
-		iad.setAgreementId(slip.getId());
-		iad.setType(InvoiceAgrDetail.TYPE.ISSUESLIP);
-		addTextDetail(inv, "Artikel des Lieferscheins " + slip.getNumber() + " vom " + slip.getDate().toString("dd.MM.yyyy"));
-		for (PosInvoiceDetail detail : slip.getDetails()) {
-			inv.addInvoiceDetail(detail);
-		}
-		iad.setDeliveryFrom(slip.getDate());
-		iad.setDeliveryTill(slip.getDate());
-		inv.addAgreementDetail(iad);
-		return iad;
-	}
 	/**
 	 * fügt die Lieferung eines Artikel zur Rechnung hinzu
 	 * @param dao
@@ -214,7 +103,6 @@ public class SubscriptionInvoiceCreator {
 			}
 		}
 		iad.setAgreementId(sub.getId());
-		iad.setPayType(sub.getPaymentType());
 		iad.setDeliveryFrom(from);
 		iad.setDeliveryTill(till.dayOfMonth().withMaximumValue());  // immer der letzte des Monats
 		iad.setDeliveryIds(deliveries.stream().mapToLong(SubscrDelivery::getId).boxed().collect(Collectors.toList()));
@@ -257,7 +145,6 @@ public class SubscriptionInvoiceCreator {
 		}
 		sub.setPayedUntil(till);
 		iad.setAgreementId(sub.getId());
-		iad.setPayType(sub.getPaymentType());
 		iad.setDeliveryFrom(from);
 		iad.setDeliveryTill(till.dayOfMonth().withMaximumValue());  // immer der letzte des Monats
 		iad.setDeliveryIds(deliveries.stream().mapToLong(SubscrIntervalDelivery::getId).boxed().collect(Collectors.toList()));

@@ -23,7 +23,7 @@ ${kunde(d)}
 wie
 </div>
 <div class="col-md-5">
-${abo(d).shipmentType.text}
+${sub.shipmentType.text}
 </div>
 </div>
 
@@ -42,7 +42,7 @@ ${d.quantity}
 bezahlt
 </div>
 <div class="col-md-2">
-<input type="checkbox" ${d.payed?string('checked','')} onChange="switchCheckbox('delivery.payed', this.checked)">
+<input type="checkbox" ${d.payed?string('checked','')} onChange="switchCheckbox('intervalDelivery.payed', this.checked)">
 </div>
 </div>
 <#else>
@@ -96,4 +96,9 @@ $('.editablemoney').editable({
         }
     }
 });
+
+var switchCheckbox = function(fieldname, val) {
+ 	 $.post("/subscr/update", { pk: '${d.id?c}', name: fieldname, value : val});
+  }
+
 </script>

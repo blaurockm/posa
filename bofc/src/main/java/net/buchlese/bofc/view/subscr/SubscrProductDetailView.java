@@ -77,7 +77,7 @@ public class SubscrProductDetailView extends AbstractBofcView{
 	}
 
 	private boolean hasUnpayedDeliveries(Subscription s) {
-		return dao.getDeliveriesForSubscriptionUnrecorded(s.getId()).isEmpty() == false;
+		return dao.getDeliveriesForSubscriptionPayflag(s.getId(), false).isEmpty() == false;
 	}
 
 	public String kunde(Subscription s) {

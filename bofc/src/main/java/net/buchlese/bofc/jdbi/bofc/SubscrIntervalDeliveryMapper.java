@@ -26,6 +26,7 @@ public class SubscrIntervalDeliveryMapper implements ResultSetMapper<SubscrInter
 		// just to be shure
 		cb.setId(rs.getLong("id"));
 		cb.setPayed(rs.getBoolean("payed"));
+		cb.setInvoiceNumber(rs.getString("invoiceNumber"));
 		return cb;
 	}
 

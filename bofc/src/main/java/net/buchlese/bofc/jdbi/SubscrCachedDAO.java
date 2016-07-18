@@ -75,13 +75,13 @@ public class SubscrCachedDAO implements SubscrDAO {
 	}
 
 	@Override
-	public List<SubscrDelivery> getDeliveriesForSubscriptionRecorded(long id) {
-		return dao.getDeliveriesForSubscriptionRecorded(id);
+	public List<SubscrDelivery> getDeliveriesForSubscriptionPayflag(long id, boolean payed) {
+		return dao.getDeliveriesForSubscriptionPayflag(id, payed);
 	}
 
 	@Override
-	public List<SubscrDelivery> getDeliveriesForSubscriptionUnrecorded(long id) {
-		return dao.getDeliveriesForSubscriptionUnrecorded(id);
+	public List<SubscrDelivery> getDeliveriesForSubscriptionSlipflag(long id, boolean slipped) {
+		return dao.getDeliveriesForSubscriptionSlipflag(id, slipped);
 	}
 
 	@Override
@@ -256,6 +256,16 @@ public class SubscrCachedDAO implements SubscrDAO {
 	}
 
 	@Override
+	public void recordDetailsOnSlip(List<Long> deliveryIds, String invNumber) {
+		dao.recordDetailsOnSlip(deliveryIds, invNumber);
+	}
+
+	@Override
+	public void resetDetailsOfSlip(List<Long> deliveryIds) {
+		dao.resetDetailsOfSlip(deliveryIds);
+	}
+
+	@Override
 	public void updateArticle(SubscrArticle art) {
 		dao.updateArticle(art);
 		articleCache.put(art.getId(), art);
@@ -330,13 +340,8 @@ public class SubscrCachedDAO implements SubscrDAO {
 	}
 
 	@Override
-	public List<SubscrIntervalDelivery> getIntervalDeliveriesForSubscriptionRecorded(long id) {
-		return dao.getIntervalDeliveriesForSubscriptionRecorded(id);
-	}
-
-	@Override
-	public List<SubscrIntervalDelivery> getIntervalDeliveriesForSubscriptionUnrecorded(long id) {
-		return dao.getIntervalDeliveriesForSubscriptionUnrecorded(id);
+	public List<SubscrIntervalDelivery> getIntervalDeliveriesForSubscriptionPayflag(long id, boolean payed) {
+		return dao.getIntervalDeliveriesForSubscriptionPayflag(id, payed);
 	}
 
 	@Override
@@ -409,8 +414,18 @@ public class SubscrCachedDAO implements SubscrDAO {
 	}
 
 	@Override
-	public List<SubscrDelivery> getDeliveriesUnrecorded() {
-		return dao.getDeliveriesUnrecorded();
+	public List<SubscrDelivery> getDeliveriesPayflag(boolean payed) {
+		return dao.getDeliveriesPayflag(payed);
+	}
+
+	@Override
+	public List<SubscrDelivery> getDeliveriesSlipflag(boolean slipped) {
+		return dao.getDeliveriesSlipflag(slipped);
+	}
+
+	@Override
+	public List<SubscrDelivery> getDeliveriesForSubscriberSlipflag(long id,	LocalDate n, boolean slipped) {
+		return dao.getDeliveriesForSubscriberSlipflag(id, n, slipped);
 	}
 
 }

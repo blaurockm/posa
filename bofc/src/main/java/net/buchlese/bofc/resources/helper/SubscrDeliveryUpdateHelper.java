@@ -46,6 +46,10 @@ public class SubscrDeliveryUpdateHelper {
 			art.setPayed(Boolean.valueOf(value));
 			res.success = true;
 		}
+		if ("slipped".equals(field)) {
+			art.setSlipped(Boolean.valueOf(value));
+			res.success = true;
+		}
 		if (res.success) {
 			dao.updateDelivery(art);
 		}

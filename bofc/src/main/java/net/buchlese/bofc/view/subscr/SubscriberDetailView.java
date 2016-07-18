@@ -43,11 +43,11 @@ public class SubscriberDetailView extends AbstractBofcView{
 	}
 
 	public List<SubscrDelivery> deliveriesWithout(Subscription s) {
-		return dao.getDeliveriesForSubscriptionUnrecorded(s.getId());
+		return dao.getDeliveriesForSubscriptionPayflag(s.getId(), false);
 	}
 
 	public List<SubscrDelivery> deliveriesWith(Subscription s) {
-		return dao.getDeliveriesForSubscriptionRecorded(s.getId());
+		return dao.getDeliveriesForSubscriptionPayflag(s.getId(), true);
 	}
 
 	public boolean willBeSettled(Subscription s) {
@@ -78,7 +78,7 @@ public class SubscriberDetailView extends AbstractBofcView{
 	}
 
 	private boolean hasUnpayedDeliveries(Subscription s) {
-		return dao.getDeliveriesForSubscriptionUnrecorded(s.getId()).isEmpty() == false;
+		return dao.getDeliveriesForSubscriptionPayflag(s.getId(), false).isEmpty() == false;
 	}
 	
 	public String kunde(Subscription s) {
