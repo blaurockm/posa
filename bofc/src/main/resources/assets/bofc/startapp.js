@@ -26,7 +26,14 @@ function setAccountingModule() {
 		$("#homebutton").attr("myModule", "accounting");
 	}
 }
-        
+
+function setCouponModule() {
+	if ($("#homebutton").attr("myModule") != "coupon") {
+		$("#navbar").load("/coupon/navigation");
+		$("#homebutton").attr("myModule", "coupon");
+	}
+}
+
 // Here we define our routes.  You'll notice that I only define three routes, even
 // though there are four links.  Each route has an action assigned to it (via the 
 // `to` method, as well as an `enter` method.  The `enter` method is called before
@@ -40,6 +47,37 @@ function setAccountingModule() {
 Path.map("#index").to(function(){
     $("#output .content").load("/menu/index");
 }).enter(setMenu);
+
+///////////////////////////////////////
+///////////////////////////////////////
+///////////////////////////////////////
+///////////////////////////////////////
+Path.map("#coupon").to(function(){
+$("#output .content").load("/coupon/dashboard");
+}).enter(setCouponModule);
+
+Path.map("#couponCust").to(function(){
+	$("#output .content").load("/coupon/customers");
+}).enter(setCouponModule);
+
+Path.map("#coupons").to(function(){
+	$("#output .content").load("/coupon/coupons");
+}).enter(setCouponModule);
+
+Path.map("#couponDetail").to(function(){
+	$("#output .content").load("/coupon/couponDetail/" + this.params["id"]);
+}).enter(setCouponModule);
+
+Path.map("#couponAdd").to(function(){
+	// this is a modal window content
+    $("#entrymodal-output .content").load("/coupon/couponCreateForm");
+    $("#entrymodal-title").text("Neuen Externen Gutschein anlegen");
+    $("#entryModal").modal('show');
+}).enter(setSubscrModule);
+
+Path.map("#couponCustDetail/:id").to(function(){
+    $("#output .content").load("/coupon/couponCustDetail/" + this.params["id"]);
+}).enter(setSubscrModule);
 
 ///////////////////////////////////////
 ///////////////////////////////////////
