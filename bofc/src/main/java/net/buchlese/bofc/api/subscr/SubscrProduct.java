@@ -75,7 +75,7 @@ public class SubscrProduct {
 			na.setHalfPercentage(halfPercentage);
 		}
 		na.updateBrutto(baseBrutto);
-		na.setErschTag(erschTag);
+		na.setErschTag(LocalDate.now());
 		na.setIssueNo(++count);
 		na.setName(na.initializeName(namePattern));
 		return na;

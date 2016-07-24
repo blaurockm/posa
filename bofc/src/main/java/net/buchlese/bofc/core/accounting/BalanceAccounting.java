@@ -3,11 +3,14 @@ package net.buchlese.bofc.core.accounting;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import net.buchlese.bofc.api.bofc.ArticleGroup;
 import net.buchlese.bofc.api.bofc.PaymentMethod;
 import net.buchlese.bofc.api.bofc.PosCashBalance;
+import net.buchlese.bofc.api.bofc.PosTx;
 import net.buchlese.bofc.api.bofc.Tax;
+import net.buchlese.bofc.api.bofc.TxType;
 
 /**
  * erzeugt aus einer CashBalance einträge für die Buchhaltung.
@@ -24,7 +27,7 @@ public class BalanceAccounting {
 		List<LedgerEntry> res = new ArrayList<LedgerEntry>();
 		// den Datumstring...
 		String dateShort = bal.getLastCovered().toString("dd.MM.");
-		String entryNum = String.valueOf(bal.getPointid()) + "-" + bal.getLastCovered().toString("yyyyMMdd") +".";
+		String entryNum = String.valueOf(bal.getPointid()) + "-" + bal.getLastCovered().toString("yyMMdd") +".";
 		
 		
 		// zuerst die Einnahmen
@@ -36,7 +39,7 @@ public class BalanceAccounting {
 		LedgerEntry ausgaben = createAusgabenEntry(bal, dateShort);
 		ausgaben.setNumber(entryNum+"A");
 		res.add(ausgaben);
-	
+		
 		// und jetzt die Kassendifferenz.
 		if (bal.getCashDiff() != 0) {
 			// natürlich nur, wenn es eine gibt..
@@ -44,7 +47,11 @@ public class BalanceAccounting {
 			kassdiff.setNumber(entryNum+"D");
 			res.add(kassdiff);
 		}
-		
+
+		// für jede getätige Ausgabe einen Ledger-Entry erzeugen
+		List<LedgerEntry> cashOut = bal.getTickets().stream().flatMap(x -> x.getTxs().stream()).filter(t -> t.getType().equals(TxType.CASHOUT)).map(BalanceAccounting::createCashOutLedgerEntry).collect(Collectors.toList());
+		res.addAll(cashOut);
+
 		return res;
 	}
 
@@ -108,9 +115,48 @@ public class BalanceAccounting {
 		}
 	
 		soll.setBetrag(ges);
+		
 		return ausgaben;
 	}
 
+	public static LedgerEntry createCashOutLedgerEntry(PosTx cashOutTx) {
+		LedgerEntry ausgaben = new LedgerEntry();
+		ausgaben.setSoll(false);
+		ausgaben.setNumber("KA"+String.valueOf(cashOutTx.getBelegNr()));
+		Booking soll = new Booking();
+		soll.setAccount(getKassenkonto(cashOutTx.getPointid()));
+		soll.setDate(cashOutTx.getTimestamp());
+		soll.setText(cashOutTx.getMatchCode());
+		soll.setBetrag(-cashOutTx.getTotal());
+		soll.setCode(null);
+		ausgaben.add(soll);
+		Booking haben = new Booking();
+		haben.setAccount(6800); // alles auf Porto ? TODO: Mapping von Matchcode auf Konto ?
+		haben.setCode(null);
+		ausgaben.add(haben);
+		return ausgaben;
+	}
+
+	public static LedgerEntry createPayedInvoiceLedgerEntry(PosTx payedInvoTx) {
+		LedgerEntry einnahme = new LedgerEntry();
+		einnahme.setSoll(true);
+		einnahme.setNumber("KA"+String.valueOf(payedInvoTx.getBelegNr()));
+		Booking soll = new Booking();
+		soll.setAccount(getKassenkonto(payedInvoTx.getPointid()));
+		soll.setDate(payedInvoTx.getTimestamp());
+		soll.setText("bar bezahlt:" + payedInvoTx.getMatchCode());
+		soll.setBetrag(payedInvoTx.getTotal());
+		soll.setCode(null);
+		einnahme.add(soll);
+		Booking haben = new Booking();
+		// finde die Rechnung !
+		haben.setAccount(6800); 
+		haben.setCode(null);
+		einnahme.add(haben);
+		return einnahme;
+	}
+
+	
 	private static LedgerEntry createEinnahmenEntry(PosCashBalance bal,	String dateShort) {
 		LedgerEntry einnahmen = new LedgerEntry(); 
 		einnahmen.setSoll(true);
