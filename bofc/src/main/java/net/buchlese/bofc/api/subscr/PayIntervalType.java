@@ -5,6 +5,7 @@ import org.joda.time.Period;
 public enum PayIntervalType {
 	EACHDELIVERY ("pro Lieferung", null),
 	MONTHLY ("Monatlich", Period.months(1)),
+	QUARTERLY ("Vierteljährlich", Period.months(3)),
 	HALFYEARLY ("Halbjährlich", Period.months(6)),
 	YEARLY ("Jährlich", Period.months(12));
 	
