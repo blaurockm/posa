@@ -1,6 +1,10 @@
 package net.buchlese.bofc;
 
+import io.dropwizard.db.DataSourceFactory;
+import io.dropwizard.hibernate.HibernateBundle;
+import io.dropwizard.hibernate.ScanningHibernateBundle;
 import io.dropwizard.jdbi.DBIFactory;
+import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import net.buchlese.bofc.core.NumberGenerator;
 import net.buchlese.bofc.jdbi.SubscrCachedDAO;
@@ -16,7 +20,9 @@ import net.buchlese.bofc.jdbi.bofc.ShiftCalDAO;
 import net.buchlese.bofc.jdbi.bofc.SubscrDAO;
 import net.buchlese.bofc.jdbi.bofc.TaxArgumentFactory;
 import net.buchlese.bofc.jdbi.bofc.TxTypeArgumentFactory;
+import net.buchlese.bofc.jpa.JpaPosTicketDAO;
 
+import org.hibernate.SessionFactory;
 import org.skife.jdbi.v2.DBI;
 
 import com.google.inject.AbstractModule;
@@ -26,6 +32,18 @@ import com.google.inject.name.Named;
 
 public class BackOfcModule extends AbstractModule {
 
+	public BackOfcModule(Bootstrap<BackOfcConfiguration> bootstrap) {
+		super();
+		bootstrap.addBundle(hibernate);
+	}
+
+	private final HibernateBundle<BackOfcConfiguration> hibernate = new ScanningHibernateBundle<BackOfcConfiguration>("net.buchlese.bofc.api.bofc") {
+	    @Override
+	    public DataSourceFactory getDataSourceFactory(BackOfcConfiguration configuration) {
+	        return configuration.getDataSourceFactory();
+	    }
+	};
+
 	@Override
 	protected void configure() {
 		// TODO Auto-generated method stub
@@ -33,6 +51,14 @@ public class BackOfcModule extends AbstractModule {
 	}
 	private DBI bofcDBI;
 	private NumberGenerator numService;
+
+	
+	@Provides
+	@Named("jpaSessFactory")
+	public SessionFactory provideHibernateSessionFactory(BackOfcConfiguration configuration, Environment environment) {
+		return hibernate.getSessionFactory();
+	}
+
 	
 	@Provides
 	@Named("bofcdb")
@@ -58,6 +84,10 @@ public class BackOfcModule extends AbstractModule {
 		return numService;
 	}
 
+	@Provides @Inject
+	public JpaPosTicketDAO provideJpaPosTicketDao(@Named("jpaSessFactory")SessionFactory sf) {
+		return new JpaPosTicketDAO(sf);
+	}
 	
 	@Provides @Inject
 	public PosTxDAO providePosTxDao(@Named("bofcdb")DBI posDBI) {

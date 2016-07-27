@@ -1,19 +1,27 @@
 bofcDb:
-  # the name of your JDBC driver
   driverClass: org.h2.Driver
-
-  # the username
   user: sa
-
-  # the password
   password:
   
   # the JDBC URL 
   # vom cubietruck
 #  url: jdbc:h2:tcp://192.168.2.111:9092//var/lib/bofc/backoffice;IFEXISTS=TRUE
-#  url: jdbc:h2:~/backofficeg
-  url: jdbc:h2:tcp://localhost:19092//var/lib/bofc/backoffice;IFEXISTS=TRUE
+  url: jdbc:h2:~/backofficeg
+#  url: jdbc:h2:tcp://localhost:19092//var/lib/bofc/backoffice;IFEXISTS=TRUE
 
+
+jpamysql:
+  driverClass: com.mysql.jdbc.Driver
+  user: bofc
+  password: bofc
+  url: jdbc:mysql://localhost:3306/bofc
+  properties:
+    charSet: UTF-8
+    useSSL: false
+    hibernate.dialect: org.hibernate.dialect.MySQLDialect
+    hibernate.hbm2ddl.auto: create
+
+  
 articleGroupMappings:
   lotto:  { wargrindex: 'L', text : 'Lotto',  key : 'lotto', type : 'GOOD', marge : 0.05, account : '1373' }
   rubbellose: { wargrindex: 'U', text : 'Rubbel-Lose',key : 'rubbellose', type: 'GOOD', marge : 0.02, account : '1373' }

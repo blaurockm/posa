@@ -35,6 +35,11 @@
       </dependency>
       <dependency>
          <groupId>io.dropwizard</groupId>
+         <artifactId>dropwizard-hibernate</artifactId>
+         <version>${dropwizard.version}</version>
+      </dependency>
+      <dependency>
+         <groupId>io.dropwizard</groupId>
          <artifactId>dropwizard-migrations</artifactId>
          <version>${dropwizard.version}</version>
       </dependency>
@@ -85,6 +90,12 @@
          <artifactId>jsonrpc2-base</artifactId>
          <version>1.38</version>
       </dependency>
+		<!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
+		<dependency>
+		    <groupId>mysql</groupId>
+		    <artifactId>mysql-connector-java</artifactId>
+		    <version>5.1.39</version>
+		</dependency>
    </dependencies>
 
    <build>
