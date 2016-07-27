@@ -2,22 +2,40 @@ package net.buchlese.bofc.api.bofc;
 
 import java.util.List;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Transient;
+
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.DateTime;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+@Entity
+@Table( name = "posticket" )
 public class PosTicket {
-	@NotEmpty
+	@Id
+	@GeneratedValue(generator="increment")
+	@GenericGenerator(name="increment", strategy = "increment")
+//	@NotEmpty
 	@JsonProperty
 	private long id;
 
 	@JsonProperty
 	private long belegNr;
+	
 	@JsonProperty
 	private int pointid;
 
-	@NotEmpty
+//	@NotEmpty
 	@JsonProperty
 	private Long total;
 
@@ -27,11 +45,14 @@ public class PosTicket {
 	@JsonProperty
 	private boolean cancel;
 
-	@NotEmpty
+//	@NotEmpty
 	@JsonProperty
+	@Enumerated(EnumType.STRING)
 	private PaymentMethod paymentMethod;
 
-	@NotEmpty
+	//@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "belegdatum")
+//	@NotEmpty
 	@JsonProperty
 	private DateTime timestamp;
 
@@ -39,6 +60,7 @@ public class PosTicket {
 	private boolean toBeCheckedAgain;
 
 	@JsonProperty
+	@Transient
 	private List<PosTx> txs;
 	
 	public long getId() {

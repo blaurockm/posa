@@ -42,6 +42,15 @@ public class BackOfcConfiguration extends Configuration {
     @JsonProperty
     private DataSourceFactory bofcDb;
     
+    @Valid
+    @NotNull
+    @JsonProperty
+    private DataSourceFactory jpamysql;
+
+    public DataSourceFactory getDataSourceFactory() {
+        return jpamysql;
+    }
+    
     @JsonProperty
     private Map<String, ArticleGroup> articleGroupMappings = new HashMap<>();
 
@@ -55,6 +64,12 @@ public class BackOfcConfiguration extends Configuration {
     	this.bofcDb.setUser("sa");
     	this.bofcDb.setPassword("");
     	this.bofcDb.setUrl("jdbc:h2:~/backoffice");
+    	
+    	this.jpamysql = new DataSourceFactory();
+    	this.jpamysql.setDriverClass("com.mysql.jdbc.Driver");
+    	this.bofcDb.setUser("bofc");
+    	this.bofcDb.setPassword("bofc");
+    	this.bofcDb.setUrl("jdbc:mysql://localhost:3306/bofc");
     }
     
     public DataSourceFactory getBackOfficeDB() {
