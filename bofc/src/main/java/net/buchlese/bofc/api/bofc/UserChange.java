@@ -1,13 +1,21 @@
 package net.buchlese.bofc.api.bofc;
 
-import org.hibernate.validator.constraints.NotEmpty;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+
 import org.joda.time.DateTime;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+@Entity
+@Table( name = "userchange" )
 public class UserChange {
 
-	@NotEmpty
+	@Id
+	@NotNull
 	@JsonProperty
 	private long id;
 
@@ -26,6 +34,7 @@ public class UserChange {
 	@JsonProperty
 	private String newValue;
 
+	@Column(name = "act")
 	@JsonProperty
 	private String action;
 

@@ -7,6 +7,10 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import net.buchlese.bofc.core.Validator;
@@ -19,9 +23,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+//@Entity
+//@Table( name = "poscashbalance")
 @XmlRootElement(name = "CashBalance")
 public class PosCashBalance {
-	@NotEmpty
+	@Id
+	@NotNull
 	@JsonProperty
 	private long id;
 	@JsonProperty

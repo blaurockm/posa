@@ -2,7 +2,14 @@ package net.buchlese.bofc.api.subscr;
 
 import io.dropwizard.jackson.Jackson;
 
-import org.hibernate.validator.constraints.NotEmpty;
+import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
@@ -11,8 +18,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+@Entity
+@Table( name = "subscrDelivery" )
 public class SubscrDelivery implements Comparable<SubscrDelivery> {
-	@NotEmpty
+	@NotNull
+	@Id
 	@JsonProperty
 	private long id;
 
@@ -49,6 +59,27 @@ public class SubscrDelivery implements Comparable<SubscrDelivery> {
 
 	@JsonIgnore
 	public String subscriberName;
+
+	@JsonIgnore
+	@ManyToOne
+	@JoinColumn(name = "article_id",
+	foreignKey = @ForeignKey(name = "ARTICLE_ID_FK")
+)
+	private SubscrArticle article;
+
+	@JsonIgnore
+	@ManyToOne
+	@JoinColumn(name = "subscriber_id",
+	foreignKey = @ForeignKey(name = "CUSTOMER_ID_FK")
+)
+	private Subscriber subscriber;
+
+	@JsonIgnore
+	@ManyToOne
+	@JoinColumn(name = "subscription_id",
+    			foreignKey = @ForeignKey(name = "SUBSCRIPTION_ID_FK")
+    )
+	private Subscription subscription;
 
 	@JsonIgnore
 	public String getSubscriberName() {

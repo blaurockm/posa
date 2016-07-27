@@ -1,7 +1,10 @@
 package net.buchlese.bofc.api.bofc;
 
+import javax.persistence.Embeddable;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+@Embeddable
 public class PosInvoiceDetail {
 	@JsonProperty
 	private Long amount;     // Positionsbetrag gesamt

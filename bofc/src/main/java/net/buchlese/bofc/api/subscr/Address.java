@@ -1,10 +1,15 @@
 package net.buchlese.bofc.api.subscr;
 
+import javax.persistence.Embeddable;
+import javax.persistence.Transient;
+
 import org.hibernate.validator.constraints.NotEmpty;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+@Embeddable
 public class Address {
+	@Transient
 	@NotEmpty
 	@JsonProperty
 	private long id;

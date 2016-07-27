@@ -2,12 +2,19 @@ package net.buchlese.bofc.api.bofc;
 
 import java.util.List;
 
+import javax.persistence.ElementCollection;
+import javax.persistence.Embeddable;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.Transient;
+
 import net.buchlese.bofc.api.subscr.PayIntervalType;
 
 import org.joda.time.LocalDate;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+@Embeddable
 public class InvoiceAgrDetail {
 	public enum TYPE { SUBSCR, ISSUESLIP };	
 	
@@ -21,12 +28,15 @@ public class InvoiceAgrDetail {
 	private LocalDate deliveryTill;
 
 	@JsonProperty
+	@Transient
 	private List<Long> deliveryIds;
 
 	@JsonProperty
+	@Enumerated(EnumType.STRING)
 	private TYPE type = TYPE.SUBSCR;
 
 	@JsonProperty
+	@Enumerated(EnumType.STRING)
 	private PayIntervalType payType;
 
 	

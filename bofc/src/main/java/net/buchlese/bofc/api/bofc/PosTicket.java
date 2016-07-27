@@ -6,15 +6,10 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.DateTime;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -23,8 +18,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @Table( name = "posticket" )
 public class PosTicket {
 	@Id
-	@GeneratedValue(generator="increment")
-	@GenericGenerator(name="increment", strategy = "increment")
+//	@GeneratedValue(generator="increment")
+//	@GenericGenerator(name="increment", strategy = "increment")
 //	@NotEmpty
 	@JsonProperty
 	private long id;

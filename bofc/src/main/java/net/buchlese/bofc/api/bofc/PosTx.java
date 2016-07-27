@@ -1,14 +1,24 @@
 package net.buchlese.bofc.api.bofc;
 
-import org.hibernate.validator.constraints.NotEmpty;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+
 import org.joda.time.DateTime;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+@Entity
+@Table( name = "postx" )
 public class PosTx {
 
-	@NotEmpty
+	@Id
+	@NotNull
 	@JsonProperty
 	private long id;
 
@@ -26,7 +36,6 @@ public class PosTx {
 	@JsonProperty
 	private String articleKey;
 
-	@NotEmpty
 	@JsonProperty
 	private String articleGroupKey;
 
@@ -36,15 +45,16 @@ public class PosTx {
 	@JsonProperty
 	private String isbn;
 
-	@NotEmpty
+	@NotNull
 	@JsonProperty
 	private String matchCode;
 
 	@JsonProperty
 	private String description;
 
-	@NotEmpty
+	@NotNull
 	@JsonProperty
+	@Column(name = "count_")
 	private int count;
 
 	@JsonProperty
@@ -56,27 +66,28 @@ public class PosTx {
 	@JsonProperty
 	private double rebate;  // marge
 
-	@NotEmpty
+	@NotNull
 	@JsonProperty
 	private Long total;
 
-	@NotEmpty
+	@NotNull
 	@JsonProperty
+	@Enumerated(EnumType.STRING)
 	private Tax tax;
 
-	@NotEmpty
+	@NotNull
 	@JsonProperty
+	@Enumerated(EnumType.STRING)
 	private TxType type;
 
-	@NotEmpty
+	@NotNull
 	@JsonProperty
+	@Column(name = "belegdatum")
 	private DateTime timestamp;
 
-	@NotEmpty
 	@JsonProperty
 	private boolean toBeIgnored;
 
-	@NotEmpty
 	@JsonProperty
 	private boolean toBeCheckedAgain;
 

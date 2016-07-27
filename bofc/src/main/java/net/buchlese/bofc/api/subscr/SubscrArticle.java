@@ -5,7 +5,12 @@ import io.dropwizard.jackson.Jackson;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.hibernate.validator.constraints.NotEmpty;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+
 import org.joda.time.LocalDate;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -13,8 +18,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+@Entity
+@Table( name = "subscrarticle" )
 public class SubscrArticle implements Comparable<SubscrArticle> {
-	@NotEmpty
+	@NotNull
+	@Id
 	@JsonProperty
 	private long id;
 
@@ -40,6 +48,10 @@ public class SubscrArticle implements Comparable<SubscrArticle> {
 	
 	@JsonProperty
 	private int issueNo =1;
+
+	@JsonIgnore
+	@ManyToOne
+	private SubscrProduct product;
 
 	// sich selber als json-object ausgeben
 	@JsonIgnore
@@ -176,6 +188,14 @@ public class SubscrArticle implements Comparable<SubscrArticle> {
 
 	public void setIssueNo(int issueNo) {
 		this.issueNo = issueNo;
+	}
+
+	public SubscrProduct getProduct() {
+		return product;
+	}
+
+	public void setProduct(SubscrProduct subscrProduct) {
+		this.product = subscrProduct;
 	}
 
 	

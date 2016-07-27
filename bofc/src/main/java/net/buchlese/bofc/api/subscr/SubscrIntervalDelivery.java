@@ -2,7 +2,14 @@ package net.buchlese.bofc.api.subscr;
 
 import io.dropwizard.jackson.Jackson;
 
-import org.hibernate.validator.constraints.NotEmpty;
+import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
@@ -11,8 +18,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+@Entity
+@Table( name = "subscrIntervalDelivery" )
 public class SubscrIntervalDelivery implements Comparable<SubscrIntervalDelivery> {
-	@NotEmpty
+	@Id
+	@NotNull
 	@JsonProperty
 	private long id;
 
@@ -45,6 +55,27 @@ public class SubscrIntervalDelivery implements Comparable<SubscrIntervalDelivery
 
 	@JsonIgnore
 	public String subscriberName;
+
+	@JsonIgnore
+	@ManyToOne
+	@JoinColumn(name = "interval_id",
+	foreignKey = @ForeignKey(name = "INTERVAL_ID_FK")
+)
+	private SubscrInterval interval;
+
+	@JsonIgnore
+	@ManyToOne
+	@JoinColumn(name = "subscriber_id",
+	foreignKey = @ForeignKey(name = "CUSTOMER_ID_FK2")
+)
+	private Subscriber subscriber;
+
+	@JsonIgnore
+	@ManyToOne
+	@JoinColumn(name = "subscription_id",
+    			foreignKey = @ForeignKey(name = "SUBSCRIPTION_ID_FK2")
+    )
+	private Subscription subscription;
 
 	@JsonIgnore
 	public String getSubscriberName() {
@@ -170,6 +201,30 @@ public class SubscrIntervalDelivery implements Comparable<SubscrIntervalDelivery
 
 	public void setIntervalName(String intervalName) {
 		this.intervalName = intervalName;
+	}
+
+	public SubscrInterval getInterval() {
+		return interval;
+	}
+
+	public void setInterval(SubscrInterval interval) {
+		this.interval = interval;
+	}
+
+	public Subscriber getSubscriber() {
+		return subscriber;
+	}
+
+	public void setSubscriber(Subscriber subscriber) {
+		this.subscriber = subscriber;
+	}
+
+	public Subscription getSubscription() {
+		return subscription;
+	}
+
+	public void setSubscription(Subscription subscription) {
+		this.subscription = subscription;
 	}
 	
 }

@@ -2,7 +2,16 @@ package net.buchlese.bofc.api.subscr;
 
 import io.dropwizard.jackson.Jackson;
 
-import org.hibernate.validator.constraints.NotEmpty;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
+
 import org.joda.time.LocalDate;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -10,14 +19,18 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+@Entity
+@Table( name = "subscription" )
 public class Subscription {
-	@NotEmpty
+	@Id
+	@NotNull
 	@JsonProperty
 	private long id;
 	@JsonProperty
 	private int pointid;
 
 	@JsonProperty
+	@Transient
 	private long subscriberId;
 	@JsonProperty
 	private long productId;
@@ -27,6 +40,7 @@ public class Subscription {
 	private LocalDate startDate;
 	@JsonProperty
 	private LocalDate endDate;
+	@Embedded
 	@JsonProperty
 	private Address deliveryAddress;
 	@JsonProperty
@@ -35,10 +49,25 @@ public class Subscription {
 	private String deliveryInfo2;
 	
 	@JsonProperty
+	@Enumerated(EnumType.STRING)
 	private ShipType shipmentType;
 
+	@JsonIgnore
+	@ManyToOne
+	private Subscriber subscriber;
+	public Subscriber getSubscriber() {
+		return subscriber;
+	}
+	public void setSubscriber(Subscriber s) {
+		this.subscriber = s;
+	}
+
+	@JsonIgnore
+	@ManyToOne
+	private SubscrProduct product;
 
 	@JsonProperty
+	@Enumerated(EnumType.STRING)
 	private PayIntervalType paymentType;
 
 	@JsonProperty
@@ -159,6 +188,12 @@ public class Subscription {
 
 	public void setMemo(String memo) {
 		this.memo = memo;
+	}
+	public SubscrProduct getProduct() {
+		return product;
+	}
+	public void setProduct(SubscrProduct subscrProduct) {
+		this.product = subscrProduct;
 	}
 	
 }

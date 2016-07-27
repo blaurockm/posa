@@ -5,6 +5,15 @@ import io.dropwizard.jackson.Jackson;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+
 import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.LocalDate;
 import org.joda.time.Period;
@@ -14,8 +23,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+@Entity
+@Table( name = "subscrInterval" )
 public class SubscrInterval implements Comparable<SubscrInterval> {
-	@NotEmpty
+	@NotNull
+	@Id
 	@JsonProperty
 	private long id;
 
@@ -42,11 +54,17 @@ public class SubscrInterval implements Comparable<SubscrInterval> {
 	private LocalDate endDate;
 
 	@JsonProperty
+	@Column(name =" interval_")
 	private Period interval;
 
 	@NotEmpty
 	@JsonProperty
+	@Enumerated(EnumType.STRING)
 	private PayIntervalType intervalType;
+
+	@JsonIgnore
+	@ManyToOne
+	private SubscrProduct product;
 
 	// sich selber als json-object ausgeben
 	@JsonIgnore
@@ -215,6 +233,14 @@ public class SubscrInterval implements Comparable<SubscrInterval> {
 
 	public void setIntervalType(PayIntervalType intervalType) {
 		this.intervalType = intervalType;
+	}
+
+	public SubscrProduct getProduct() {
+		return product;
+	}
+
+	public void setProduct(SubscrProduct product) {
+		this.product = product;
 	}
 
 	

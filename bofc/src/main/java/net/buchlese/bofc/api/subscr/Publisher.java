@@ -2,15 +2,22 @@ package net.buchlese.bofc.api.subscr;
 
 import io.dropwizard.jackson.Jackson;
 
-import org.hibernate.validator.constraints.NotEmpty;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+@Entity
+@Table( name = "publisher" )
 public class Publisher {
-	@NotEmpty
+	@Id
+	@NotNull
 	@JsonProperty
 	private long id;
 
@@ -25,6 +32,7 @@ public class Publisher {
 	@JsonProperty
 	private String email;
 	@JsonProperty
+	@Embedded
 	private Address address;
 
 	// sich selber als json-object ausgeben

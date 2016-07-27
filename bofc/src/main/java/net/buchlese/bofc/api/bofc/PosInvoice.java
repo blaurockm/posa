@@ -5,9 +5,14 @@ import io.dropwizard.jackson.Jackson;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
@@ -16,9 +21,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+@Entity
+@Table( name = "posinvoice")
 @XmlRootElement(name = "invoice")
 public class PosInvoice {
-	@NotEmpty
+	@Id
+	@NotNull
 	@JsonProperty
 	private long id;
 	@JsonProperty
@@ -87,9 +95,11 @@ public class PosInvoice {
 	private String type;
 	
 	@JsonProperty
+	@ElementCollection
 	private List<PosInvoiceDetail> details;
 
 	@JsonProperty
+	@ElementCollection
 	private List<InvoiceAgrDetail> agreementDetails;
 
 	@JsonProperty

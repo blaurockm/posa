@@ -1,8 +1,12 @@
 package net.buchlese.bofc;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.hibernate.HibernateBundle;
 import io.dropwizard.hibernate.ScanningHibernateBundle;
+import io.dropwizard.hibernate.SessionFactoryFactory;
 import io.dropwizard.jdbi.DBIFactory;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
@@ -25,6 +29,7 @@ import net.buchlese.bofc.jpa.JpaPosTicketDAO;
 import org.hibernate.SessionFactory;
 import org.skife.jdbi.v2.DBI;
 
+import com.google.common.collect.ImmutableList;
 import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
 import com.google.inject.Provides;
@@ -34,15 +39,20 @@ public class BackOfcModule extends AbstractModule {
 
 	public BackOfcModule(Bootstrap<BackOfcConfiguration> bootstrap) {
 		super();
+		ImmutableList<Class<?>> allCl = new ImmutableList.Builder<Class<?>>().
+		addAll(ScanningHibernateBundle.findEntityClassesFromDirectory("net.buchlese.bofc.api.bofc"))
+		.addAll(ScanningHibernateBundle.findEntityClassesFromDirectory("net.buchlese.bofc.api.subscr")).build();
+		
+		hibernate = new HibernateBundle<BackOfcConfiguration>(allCl, new SessionFactoryFactory()) {
+		    @Override
+		    public DataSourceFactory getDataSourceFactory(BackOfcConfiguration configuration) {
+		        return configuration.getDataSourceFactory();
+		    }
+		};
 		bootstrap.addBundle(hibernate);
 	}
 
-	private final HibernateBundle<BackOfcConfiguration> hibernate = new ScanningHibernateBundle<BackOfcConfiguration>("net.buchlese.bofc.api.bofc") {
-	    @Override
-	    public DataSourceFactory getDataSourceFactory(BackOfcConfiguration configuration) {
-	        return configuration.getDataSourceFactory();
-	    }
-	};
+	private final HibernateBundle<BackOfcConfiguration> hibernate;
 
 	@Override
 	protected void configure() {

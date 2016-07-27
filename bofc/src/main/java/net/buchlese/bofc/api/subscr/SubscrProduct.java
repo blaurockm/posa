@@ -3,7 +3,17 @@ package net.buchlese.bofc.api.subscr;
 
 import io.dropwizard.jackson.Jackson;
 
-import org.hibernate.validator.constraints.NotEmpty;
+import java.util.List;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+
 import org.joda.time.LocalDate;
 import org.joda.time.Period;
 
@@ -12,8 +22,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+@Entity
+@Table( name = "subscrproduct" )
 public class SubscrProduct {
-	@NotEmpty
+	@Id
+	@NotNull
 	@JsonProperty
 	private long id;
 
@@ -62,9 +75,21 @@ public class SubscrProduct {
 	private LocalDate lastInterval;
 
 	@JsonProperty
+	@Enumerated(EnumType.STRING)
 	private PayIntervalType intervalType;
 
-	
+	@JsonIgnore
+	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<SubscrInterval> intervals;
+
+	@JsonIgnore
+	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<SubscrArticle> articles;
+
+	@JsonIgnore
+	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Subscription> subscriptions;
+
 	@JsonIgnore
 	public SubscrArticle createNextArticle(LocalDate erschTag) {
 		SubscrArticle na = new SubscrArticle();
@@ -273,6 +298,22 @@ public class SubscrProduct {
 
 	public void setIntervalPattern(String intervalPattern) {
 		this.intervalPattern = intervalPattern;
+	}
+
+	public List<SubscrArticle> getArticles() {
+		return articles;
+	}
+
+	public void setArticles(List<SubscrArticle> articles) {
+		this.articles = articles;
+	}
+
+	public List<Subscription> getSubscriptions() {
+		return subscriptions;
+	}
+
+	public void setSubscriptions(List<Subscription> subscriptions) {
+		this.subscriptions = subscriptions;
 	}
 
 
