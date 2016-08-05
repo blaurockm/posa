@@ -13,6 +13,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.NotEmpty;
@@ -33,6 +34,7 @@ public class SubscrInterval implements Comparable<SubscrInterval> {
 	private String name;
 
 	@JsonProperty
+	@Transient
 	private long productId;
 
 	@JsonProperty

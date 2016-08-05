@@ -9,6 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -28,10 +29,13 @@ public class SubscrDelivery implements Comparable<SubscrDelivery> {
 	@JsonProperty
 	private int quantity;
 	@JsonProperty
+	@Transient
 	private long subscriptionId;
 	@JsonProperty
+	@Transient
 	private long subscriberId;
 	@JsonProperty
+	@Transient
 	private long articleId;
 	@JsonProperty
 	private String articleName;

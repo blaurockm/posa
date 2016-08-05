@@ -30,10 +30,12 @@
 			<artifactId>spring-boot-starter</artifactId>
 		</dependency>
 		
+<!-- 		
 		<dependency>
 		    <groupId>org.springframework.boot</groupId>
 		    <artifactId>spring-boot-starter-remote-shell</artifactId>
 		</dependency>
+-->
 
 		<dependency>
 		    <groupId>org.springframework.boot</groupId>
@@ -49,7 +51,76 @@
 		    <groupId>org.springframework.boot</groupId>
 		    <artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
+
+	    <dependency>
+	        <groupId>org.springframework.data</groupId>
+	        <artifactId>spring-data-rest-webmvc</artifactId>
+	    </dependency>
+	    
+	    <dependency>
+	        <groupId>org.springframework.boot</groupId>
+	        <artifactId>spring-boot-starter-thymeleaf</artifactId>
+	    </dependency>
+	    
+		<dependency>
+		    <groupId>org.thymeleaf.extras</groupId>
+		    <artifactId>thymeleaf-extras-java8time</artifactId>
+		</dependency>
+
+		<dependency>
+		    <groupId>io.github.jpenren</groupId>
+		    <artifactId>thymeleaf-spring-data-dialect</artifactId>
+		    <version>3.1.1</version>
+		</dependency>
+
+		<dependency>
+		    <groupId>org.webjars.bower</groupId>
+		    <artifactId>lodash</artifactId>
+		    <version>4.14.1</version>
+		</dependency>
 		
+		<dependency>
+		    <groupId>org.webjars</groupId>
+		    <artifactId>bootstrap</artifactId>
+		    <version>3.3.7</version>
+		</dependency>
+
+		<dependency>
+		    <groupId>org.webjars.bower</groupId>
+		    <artifactId>angular</artifactId>
+		    <version>1.5.8</version>
+		</dependency>
+
+		<dependency>
+		    <groupId>org.webjars.bower</groupId>
+		    <artifactId>angular-resource</artifactId>
+		    <version>1.5.8</version>
+		</dependency>
+
+		<dependency>
+		    <groupId>org.webjars.bower</groupId>
+		    <artifactId>angular-bootstrap</artifactId>
+		    <version>2.0.1</version>
+		</dependency>
+
+		<dependency>
+		    <groupId>org.webjars.bower</groupId>
+		    <artifactId>angular-ui-router</artifactId>
+		    <version>0.3.1</version>
+		</dependency>
+
+		<dependency>
+		    <groupId>org.webjars.bower</groupId>
+		    <artifactId>angular-ui-select</artifactId>
+		    <version>0.18.1</version>
+		</dependency>
+
+		<dependency>
+		    <groupId>org.webjars.bower</groupId>
+		    <artifactId>angular-xeditable</artifactId>
+		    <version>0.1.11</version>
+		</dependency>
+ 
 		<!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
 		<dependency>
 		    <groupId>mysql</groupId>

@@ -29,6 +29,7 @@ public class Subscription {
 	@Transient
 	private long subscriberId;
 	@JsonProperty
+	@Transient
 	private long productId;
 	@JsonProperty
 	private int quantity;

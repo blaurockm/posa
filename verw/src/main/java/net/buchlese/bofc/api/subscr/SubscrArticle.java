@@ -10,6 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -27,6 +28,7 @@ public class SubscrArticle implements Comparable<SubscrArticle> {
 	private String name;
 
 	@JsonProperty
+	@Transient
 	private long productId;
 
 	@JsonProperty
