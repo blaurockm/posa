@@ -1,17 +1,17 @@
 (function(angular) {
-  var AppController = function($scope, Coupon) {
+  var CouponInputController = function($scope, $http, Coupon) {
 	Coupon.query(function(response) {
       $scope.coupons = response ? response : [];
     });
     
-    $scope.addCoupon = function(description) {
-      new Coupon({
-        pupilsname: description,
-        pupilclass : '1984',
-      }).$save(function(coupon) {
+    $scope.addCoupon = function(coup) {
+      $scope.error = "";
+      $scope.success = "";
+      new Coupon(coup).$save(function(coupon) {
         $scope.coupons.push(coupon);
-      });
-      $scope.newCoupon = "";
+      }).then(function(req) { $scope.success = req; })
+      .catch(function(req) { $scope.error = req; });
+      $scope.newcoup = "";
     };
 
     $scope.filtering = function(filter) {
@@ -30,8 +30,18 @@
         $scope.coupons.splice($scope.coupons.indexOf(coupon), 1);
       });
     };
+    
+    $scope.customers = [];
+    $scope.refreshCustomers = function(cust) {
+      var params = {name: cust};
+      return $http.get('/customer', {params: params})
+        .then(function(response) {
+          $scope.customers = response.data._embedded.customer
+        });
+    };    
+    
   };
   
-  AppController.$inject = ['$scope', 'Coupon'];
-  angular.module("myApp.controllers").controller("AppController", AppController);
+  CouponInputController.$inject = ['$scope', '$http', 'CouponDAO'];
+  angular.module("verwApp.controllers").controller("CouponInputController", CouponInputController);
 }(angular));

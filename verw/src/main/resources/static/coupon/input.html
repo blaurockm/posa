@@ -1,0 +1,52 @@
+<div class="container">
+	<div class="page-header">
+		<h1>Coupon-Input 	<input type="text" ng-model="filter" placeholder="filter..." />
+	<button ng-click="filtering(filter)">filter</button>
+		</h1>
+	</div>
+	<div class="alert alert-info" role="alert" ng-hide="coupons && coupons.length > 0">There are no items yet.
+	</div>
+    <div class="alert alert-danger" ng-show="error">Nicht gespeichert: Server meldet '{{error.data.exception}}'</div>
+    <div class="alert alert-success" ng-show="success">{{success.pupilsname}} erfolgreich gespeichert</div>
+	<form class="form-horizontal" role="form" ng-submit="addCoupon(newcoup)">
+		<div class="input-group">
+		    <div class="form-control">
+		  		<label class="radio-inline"><input type="radio" ng-model="newcoup.pointId" ng-value="1"/> Dornhan</label> 
+				<label class="radio-inline"><input type="radio" ng-model="newcoup.pointId" ng-value="2"/> Sulz</label> 
+				<label class="radio-inline"><input type="radio" ng-model="newcoup.pointId" ng-value="3"/> Schramberg</label>
+			</div> 
+			<ui-select ng-model="$parent.newcoup.customerId" theme="bootstrap">
+		          <ui-select-match placeholder="Select or search a customer in the list...">{{$select.selected.name}}</ui-select-match>
+		          <ui-select-choices repeat="item.customerId as item in customers | filter: $select.search" refresh="refreshCustomers($select.search)">
+		            <div ng-bind-html="item.name | highlight: $select.search"></div>
+		            <small ng-bind-html="item.customerId | highlight: $select.search"></small>
+		          </ui-select-choices>
+            </ui-select>
+			<input type="text" class="form-control" ng-model="newcoup.pupilsname" placeholder="Schülername" /> 
+			<input type="text" class="form-control" ng-model="newcoup.pupilclass" placeholder="Klasse" /> 
+			<input type="text" class="form-control" ng-model="newcoup.pupilyear" placeholder="Schuljahr" /> 
+			<input type="text" class="form-control" ng-model="newcoup.reason" placeholder="...oder den Grund" /> 
+			<input type="date" class="form-control" ng-model="newcoup.acceptDate" placeholder="Einlösedatum" /> 
+			<input type="text" class="form-control" ng-model="newcoup.amount" placeholder="Betrag" /> 
+			<span	class="input-group-btn">
+				<button class="btn btn-default" type="submit" ng-disabled="!newcoup" title="Add">
+					<span class="glyphicon glyphicon-plus"></span>
+				</button>
+			</span>
+		</div>
+        <pre>newcoup = {{newcoup | json}}</pre>
+		<div class="form-group" ng-repeat="coupon in coupons">
+			<div class="checkbox col-xs-9">
+				<label> 
+				  <input type="checkbox" ng-model="coupon.checked" ng-change="updateCoupon(coupon)" /> {{coupon.pupilsname}},	{{coupon.amount}}
+				</label>
+			</div>
+			<div class="col-xs-3">
+				<button class="pull-right btn btn-danger" type="button" title="Delete" ng-click="deleteCoupon(coupon)">
+					<span class="glyphicon glyphicon-trash"></span>
+				</button>
+			</div>
+		</div>
+		<hr />
+	</form>
+</div>

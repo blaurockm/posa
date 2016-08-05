@@ -7,5 +7,5 @@
   };
   
   CouponFactory.$inject = ['$resource'];
-  angular.module("myApp.services").factory("Coupon", CouponFactory);
+  angular.module("verwApp.services").factory("CouponDAO", CouponFactory);
 }(angular));
