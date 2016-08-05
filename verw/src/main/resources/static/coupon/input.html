@@ -15,7 +15,7 @@
 				<label class="radio-inline"><input type="radio" ng-model="newcoup.pointId" ng-value="2"/> Sulz</label> 
 				<label class="radio-inline"><input type="radio" ng-model="newcoup.pointId" ng-value="3"/> Schramberg</label>
 			</div> 
-			<ui-select ng-model="$parent.newcoup.customerId" theme="bootstrap">
+			<ui-select ng-model="$parent.newcoup.customer_id" theme="bootstrap">
 		          <ui-select-match placeholder="Select or search a customer in the list...">{{$select.selected.name}}</ui-select-match>
 		          <ui-select-choices repeat="item.customerId as item in customers | filter: $select.search" refresh="refreshCustomers($select.search)">
 		            <div ng-bind-html="item.name | highlight: $select.search"></div>
