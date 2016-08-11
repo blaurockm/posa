@@ -2,17 +2,11 @@ package net.buchlese.bofc.api.coupon;
 
 import java.time.LocalDate;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
-import net.buchlese.bofc.api.subscr.Subscriber;
 
 @Entity
 public class Coupon {
@@ -24,7 +18,6 @@ public class Coupon {
 	private int pointid;
 
 	@JsonProperty
-	@Column(name="customer_id", insertable=false, updatable=false)
 	private int customerId;  // die Schule
 	@JsonProperty
 	private String pupilsname;
@@ -41,17 +34,6 @@ public class Coupon {
 	@JsonProperty
 	private boolean payed;
 
-	@JsonIgnore
-	@ManyToOne
-	@JoinColumn(name="customer_id")
-	private Subscriber customer; // die Schule
-	public Subscriber getCustomer() {
-		return customer;
-	}
-	public void setCustomer(Subscriber s) {
-		this.customer = s;
-	}
-	
 	public Long getId() {
 		return id;
 	}

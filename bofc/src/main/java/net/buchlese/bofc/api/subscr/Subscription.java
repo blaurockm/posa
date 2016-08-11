@@ -7,10 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import javax.validation.constraints.NotNull;
 
 import org.joda.time.LocalDate;
 
@@ -23,7 +21,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Table( name = "subscription" )
 public class Subscription {
 	@Id
-	@NotNull
 	@JsonProperty
 	private long id;
 	@JsonProperty
@@ -51,20 +48,6 @@ public class Subscription {
 	@JsonProperty
 	@Enumerated(EnumType.STRING)
 	private ShipType shipmentType;
-
-	@JsonIgnore
-	@ManyToOne
-	private Subscriber subscriber;
-	public Subscriber getSubscriber() {
-		return subscriber;
-	}
-	public void setSubscriber(Subscriber s) {
-		this.subscriber = s;
-	}
-
-	@JsonIgnore
-	@ManyToOne
-	private SubscrProduct product;
 
 	@JsonProperty
 	@Enumerated(EnumType.STRING)
@@ -188,12 +171,6 @@ public class Subscription {
 
 	public void setMemo(String memo) {
 		this.memo = memo;
-	}
-	public SubscrProduct getProduct() {
-		return product;
-	}
-	public void setProduct(SubscrProduct subscrProduct) {
-		this.product = subscrProduct;
 	}
 	
 }

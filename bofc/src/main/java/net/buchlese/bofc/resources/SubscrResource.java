@@ -325,7 +325,8 @@ public class SubscrResource {
 			d.setTotalHalf(d.getTotal() - d.getTotalFull());
 		}
 		d.setCreationDate(DateTime.now());
-		d.setPayed(p.isPayPerDelivery() == false && subscriber.isNeedsDeliveryNote() == false);
+		d.setPayed(p.isPayPerDelivery() == false);
+		d.setSlipped(subscriber.isNeedsDeliveryNote() == false);
 
 		dao.insertDelivery(d);
 		recordUserChange(dao, "master", d.getId(), "subscrDelivery", null, null, "N");

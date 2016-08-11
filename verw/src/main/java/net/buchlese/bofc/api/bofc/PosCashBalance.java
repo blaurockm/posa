@@ -6,8 +6,11 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.validation.constraints.NotNull;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.hibernate.validator.constraints.NotEmpty;
@@ -15,46 +18,54 @@ import org.hibernate.validator.constraints.NotEmpty;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-//@Entity
-//@Table( name = "poscashbalance")
+@Entity
+@Table( name = "poscashbalance")
 @XmlRootElement(name = "CashBalance")
 public class PosCashBalance {
 	@Id
-	@NotNull
 	@JsonProperty
-	private long id;
+	private Long id;
 	@JsonProperty
 	private int pointid;
 	@NotEmpty
 	@JsonProperty
 	private String abschlussId;
 	@JsonProperty
+    @ElementCollection
 	private Map<Tax, Long> taxBalance = new EnumMap<Tax, Long>(Tax.class);
 	@JsonProperty
-	private Map<String, Long> articleGroupBalance;
+    @ElementCollection
+    private Map<String, Long> articleGroupBalance;
 	@JsonProperty
 	private Long goodsOut;  // Warenverkäufe
 	@JsonProperty
+    @ElementCollection
 	private Map<PaymentMethod, Long> paymentMethodBalance = new EnumMap<PaymentMethod, Long>(PaymentMethod.class);
 	@JsonProperty
+    @ElementCollection
 	private Map<String, Long> newCoupon;  // neue Gutscheine (nr + betrag)
 	@JsonProperty
+    @ElementCollection
 	private Map<String, Long> oldCoupon;  // eingel. Gutscheine (nr + betrag)
 	@JsonProperty
 	private Long couponTradeIn;  // Gutscheine angenommen
 	@JsonProperty
 	private Long couponTradeOut;  // Gutscheine verkauft
 	@JsonProperty
+    @ElementCollection
 	private Map<String, Long> payedInvoices;  // bezahlte rechnungen ( nr + betrag)
 	@JsonProperty
+    @ElementCollection
 	private Map<String, Long> createdInvoices;  // erstellte rechnungen ( nr + betrag)
 	@JsonProperty
 	private Long payedInvoicesSum;  // Rechnungen bezahlt
 	@JsonProperty
 	private Long createdInvoicesSum;  // Rechnungen ausgestellt
 	@JsonProperty
+    @ElementCollection
 	private Map<String, Long> cashIn;  // Einzahlungen
 	@JsonProperty
+    @ElementCollection
 	private Map<String, Long> cashOut;  // Auszahlungen
 	@JsonProperty
 	private Long cashInSum;  // Rechnungen bezahlt
@@ -99,6 +110,7 @@ public class PosCashBalance {
 	@JsonProperty
 	private LocalDateTime lastCovered;
 	@JsonProperty
+	@Transient
 	private List<PosTicket> tickets;
 
 	@JsonIgnore
@@ -114,10 +126,10 @@ public class PosCashBalance {
 		return "PosCashBalance of " + abschlussId + ", rev " + revenue / 100; 
 	}
 	
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 	public String getAbschlussId() {

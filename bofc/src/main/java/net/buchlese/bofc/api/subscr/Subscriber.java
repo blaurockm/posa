@@ -2,17 +2,12 @@ package net.buchlese.bofc.api.subscr;
 
 import io.dropwizard.jackson.Jackson;
 
-import java.util.List;
-
-import javax.persistence.CascadeType;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -23,7 +18,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Table( name = "customer" )
 public class Subscriber {
 	@Id
-	@NotNull
 	@JsonProperty
 	private long id;
 	@JsonProperty
@@ -56,11 +50,6 @@ public class Subscriber {
 		return om.writeValueAsString(this);
 	}
 
-	@JsonIgnore
-	@OneToMany(mappedBy = "subscriber", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<Subscription> subscriptions;
-	
-	
 	@JsonIgnore
 	public String getName1() {
 		if (getInvoiceAddress() != null) {
@@ -142,14 +131,6 @@ public class Subscriber {
 	}
 	public void setEmail(String email) {
 		this.email = email;
-	}
-
-	public List<Subscription> getSubscriptions() {
-		return subscriptions;
-	}
-
-	public void setSubscriptions(List<Subscription> subscriptions) {
-		this.subscriptions = subscriptions;
 	}
 
 }
