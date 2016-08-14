@@ -1,5 +1,6 @@
 package net.buchlese.bofc.resources;
 
+import io.dropwizard.hibernate.UnitOfWork;
 import io.dropwizard.views.View;
 
 import java.io.BufferedWriter;
@@ -28,6 +29,8 @@ import net.buchlese.bofc.api.bofc.PosIssueSlip;
 import net.buchlese.bofc.core.AccountingExportFactory;
 import net.buchlese.bofc.core.AccountingExportFile;
 import net.buchlese.bofc.jdbi.bofc.PosInvoiceDAO;
+import net.buchlese.bofc.jpa.JpaPosInvoiceDAO;
+import net.buchlese.bofc.jpa.JpaPosIssueSlipDAO;
 import net.buchlese.bofc.view.AccountingExportView;
 
 import org.joda.time.DateTime;
@@ -42,11 +45,15 @@ import com.google.inject.Inject;
 public class InvoiceResource {
 
 	private final PosInvoiceDAO dao;
+	private final JpaPosInvoiceDAO jpaDao;
+	private final JpaPosIssueSlipDAO jpaSlipDao;
 
 	@Inject
-	public InvoiceResource(PosInvoiceDAO dao) {
+	public InvoiceResource(PosInvoiceDAO dao, JpaPosInvoiceDAO jid, JpaPosIssueSlipDAO isd ) {
 		super();
 		this.dao = dao;
+		this.jpaDao = jid;
+		this.jpaSlipDao = isd;
 	}
 
 	private static final org.slf4j.Logger log = LoggerFactory.getLogger(InvoiceResource.class);
@@ -105,6 +112,26 @@ public class InvoiceResource {
 	@Path("/{nr}")
 	public List<PosInvoice> fetch(@PathParam("nr") String num)  {
 		return dao.fetch(num);
+	}
+
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("transferinv/{nr}")
+	@UnitOfWork
+	public PosInvoice transferInv(@PathParam("nr") String num)  {
+		PosInvoice inv = dao.fetchById(num);
+		jpaDao.create(inv);
+		return inv;
+	}
+
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("transferslip/{nr}")
+	@UnitOfWork
+	public PosIssueSlip transferSlip(@PathParam("nr") String num)  {
+		PosIssueSlip inv = dao.fetchSlipById(num);
+		jpaSlipDao.create(inv);
+		return inv;
 	}
 
 	@GET

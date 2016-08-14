@@ -26,6 +26,13 @@ public interface PosInvoiceDAO {
 	@SqlQuery("select * from posinvoice where number = :nummer order by number asc")
 	List<PosInvoice> fetch(@Bind("nummer") String num);
 
+	@SqlQuery("select * from posinvoice where id = :id")
+	PosInvoice fetchById(@Bind("id") String num);
+
+	@Mapper(PosIssueSlipMapper.class)
+	@SqlQuery("select * from posissueslip where id = :id")
+	PosIssueSlip fetchSlipById(@Bind("id") String num);
+
 	@Mapper(PosIssueSlipMapper.class)
 	@SqlQuery("select * from posissueslip where number = :nummer order by number asc")
 	List<PosIssueSlip> fetchIssueSlip(@Bind("nummer") String num);

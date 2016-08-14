@@ -93,9 +93,11 @@ public class PosTx {
 
 	// das ArticleGroup-Object wollen wir im json drin haben, aber nicht in der datenbank
 	public ArticleGroup getArticleGroup() {
-		ArticleGroup g =  ArticleGroup.getArticleGroups().get(getArticleGroupKey());
-		if (g != null) {
-			return g;
+		if (ArticleGroup.getArticleGroups() != null) {
+			ArticleGroup g =  ArticleGroup.getArticleGroups().get(getArticleGroupKey());
+			if (g != null) {
+				return g;
+			}
 		}
 		return ArticleGroup.NONE;
 	}

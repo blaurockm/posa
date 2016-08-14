@@ -1,12 +1,8 @@
 package net.buchlese.bofc;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.hibernate.HibernateBundle;
 import io.dropwizard.hibernate.ScanningHibernateBundle;
-import io.dropwizard.hibernate.SessionFactoryFactory;
 import io.dropwizard.jdbi.DBIFactory;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
@@ -25,6 +21,7 @@ import net.buchlese.bofc.jdbi.bofc.SubscrDAO;
 import net.buchlese.bofc.jdbi.bofc.TaxArgumentFactory;
 import net.buchlese.bofc.jdbi.bofc.TxTypeArgumentFactory;
 import net.buchlese.bofc.jpa.JpaPosTicketDAO;
+import net.buchlese.bofc.jpa.listeners.MySessionFactoryFactory;
 
 import org.hibernate.SessionFactory;
 import org.skife.jdbi.v2.DBI;
@@ -43,7 +40,7 @@ public class BackOfcModule extends AbstractModule {
 		addAll(ScanningHibernateBundle.findEntityClassesFromDirectory("net.buchlese.bofc.api.bofc"))
 		.addAll(ScanningHibernateBundle.findEntityClassesFromDirectory("net.buchlese.bofc.api.subscr")).build();
 		
-		hibernate = new HibernateBundle<BackOfcConfiguration>(allCl, new SessionFactoryFactory()) {
+		hibernate = new HibernateBundle<BackOfcConfiguration>(allCl, new MySessionFactoryFactory()) {
 		    @Override
 		    public DataSourceFactory getDataSourceFactory(BackOfcConfiguration configuration) {
 		        return configuration.getDataSourceFactory();
@@ -64,9 +61,13 @@ public class BackOfcModule extends AbstractModule {
 
 	
 	@Provides
-	@Named("jpaSessFactory")
 	public SessionFactory provideHibernateSessionFactory(BackOfcConfiguration configuration, Environment environment) {
-		return hibernate.getSessionFactory();
+		SessionFactory sessionFactory = hibernate.getSessionFactory();
+		// jetzt per integrator only !?!
+//		EventListenerRegistry listenerRegistry = sessionFactory.getSessionFactoryOptions().getServiceRegistry().getService(EventListenerRegistry.class);
+//		listenerRegistry.appendListeners(EventType.PRE_INSERT, new PreInsertCashBalanceListener());
+//		listenerRegistry.appendListeners(EventType.POST_LOAD, new PostLoadBalanceListener());
+		return sessionFactory;
 	}
 
 	
@@ -95,10 +96,10 @@ public class BackOfcModule extends AbstractModule {
 	}
 
 	@Provides @Inject
-	public JpaPosTicketDAO provideJpaPosTicketDao(@Named("jpaSessFactory")SessionFactory sf) {
+	public JpaPosTicketDAO provideJpaPosTicketDao(SessionFactory sf) {
 		return new JpaPosTicketDAO(sf);
 	}
-	
+
 	@Provides @Inject
 	public PosTxDAO providePosTxDao(@Named("bofcdb")DBI posDBI) {
 		return posDBI.onDemand(PosTxDAO.class);

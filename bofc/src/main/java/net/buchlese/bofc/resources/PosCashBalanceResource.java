@@ -37,6 +37,7 @@ import net.buchlese.bofc.core.Validator;
 import net.buchlese.bofc.jdbi.bofc.PosCashBalanceDAO;
 import net.buchlese.bofc.jdbi.bofc.PosTicketDAO;
 import net.buchlese.bofc.jdbi.bofc.PosTxDAO;
+import net.buchlese.bofc.jpa.JpaPosBalanceDAO;
 import net.buchlese.bofc.jpa.JpaPosTicketDAO;
 import net.buchlese.bofc.view.AccountingExportView;
 import net.buchlese.bofc.view.CashBalView;
@@ -55,15 +56,17 @@ public class PosCashBalanceResource {
 	private final PosCashBalanceDAO dao;
 	private final PosTicketDAO ticketDao;
 	private final JpaPosTicketDAO jpaTicketDao;
+	private final JpaPosBalanceDAO jpaBalanceDao;
 	private final PosTxDAO txDao;
 
 	@Inject
-	public PosCashBalanceResource(PosCashBalanceDAO dao,PosTicketDAO ticketdao, PosTxDAO txdao, JpaPosTicketDAO jpaTicketDao) {
+	public PosCashBalanceResource(PosCashBalanceDAO dao,PosTicketDAO ticketdao, PosTxDAO txdao, JpaPosTicketDAO jpaTicketDao, JpaPosBalanceDAO jbd) {
 		super();
 		this.dao = dao;
 		this.ticketDao = ticketdao;
 		this.txDao = txdao;
 		this.jpaTicketDao = jpaTicketDao;
+		this.jpaBalanceDao = jbd;
 	}
 
 	private static String IDFORMAT = "yyyyMMdd";
@@ -121,10 +124,21 @@ public class PosCashBalanceResource {
 	@UnitOfWork
 	public PosTicket fetchTicket(@PathParam("belegnr") String belegnr)  {
 		PosTicket x = ticketDao.fetch(Long.parseLong(belegnr));
-		jpaTicketDao.create(x);
 		return x;
 	}
 
+	@GET
+	@Path("/transferbal/{id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	@UnitOfWork
+	public PosCashBalance transferBalance(@PathParam("id") String balid)  {
+		PosCashBalance bal = dao.fetchForId(balid);
+		jpaBalanceDao.create(bal);
+		return bal;
+	}
+
+	
+	
 	@GET
 	@Path("/jpaticket/{belegnr}")
 	@Produces(MediaType.APPLICATION_JSON)

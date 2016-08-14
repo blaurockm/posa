@@ -6,7 +6,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -15,7 +14,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class UserChange {
 
 	@Id
-	@NotNull
 	@JsonProperty
 	private long id;
 

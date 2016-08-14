@@ -9,8 +9,9 @@ import java.util.Map;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import net.buchlese.bofc.core.Validator;
@@ -19,16 +20,16 @@ import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.DateTime;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-//@Entity
-//@Table( name = "poscashbalance")
+@Entity
+@Table( name = "poscashbalance")
 @XmlRootElement(name = "CashBalance")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class PosCashBalance {
 	@Id
-	@NotNull
 	@JsonProperty
 	private long id;
 	@JsonProperty
@@ -37,32 +38,41 @@ public class PosCashBalance {
 	@JsonProperty
 	private String abschlussId;
 	@JsonProperty
+	@Transient
 	private Map<Tax, Long> taxBalance = new EnumMap<Tax, Long>(Tax.class);
 	@JsonProperty
+	@Transient
 	private Map<String, Long> articleGroupBalance;
 	@JsonProperty
 	private Long goodsOut;  // Warenverkäufe
 	@JsonProperty
+	@Transient
 	private Map<PaymentMethod, Long> paymentMethodBalance = new EnumMap<PaymentMethod, Long>(PaymentMethod.class);
 	@JsonProperty
+	@Transient
 	private Map<String, Long> newCoupon;  // neue Gutscheine (nr + betrag)
 	@JsonProperty
+	@Transient
 	private Map<String, Long> oldCoupon;  // eingel. Gutscheine (nr + betrag)
 	@JsonProperty
 	private Long couponTradeIn;  // Gutscheine angenommen
 	@JsonProperty
 	private Long couponTradeOut;  // Gutscheine verkauft
 	@JsonProperty
+	@Transient
 	private Map<String, Long> payedInvoices;  // bezahlte rechnungen ( nr + betrag)
 	@JsonProperty
+	@Transient
 	private Map<String, Long> createdInvoices;  // erstellte rechnungen ( nr + betrag)
 	@JsonProperty
 	private Long payedInvoicesSum;  // Rechnungen bezahlt
 	@JsonProperty
 	private Long createdInvoicesSum;  // Rechnungen ausgestellt
 	@JsonProperty
+	@Transient
 	private Map<String, Long> cashIn;  // Einzahlungen
 	@JsonProperty
+	@Transient
 	private Map<String, Long> cashOut;  // Auszahlungen
 	@JsonProperty
 	private Long cashInSum;  // Rechnungen bezahlt
@@ -97,6 +107,7 @@ public class PosCashBalance {
 	@JsonProperty
 	private DateTime creationtime;
 	@JsonProperty
+	@Lob
 	private String origAbschluss;
 	@JsonProperty
 	private boolean exported;
@@ -107,14 +118,9 @@ public class PosCashBalance {
 	@JsonProperty
 	private DateTime lastCovered;
 	@JsonProperty
+	@Transient
 	private List<PosTicket> tickets;
 
-	// sich selber als json-object ausgeben
-	@JsonIgnore
-	public String getBalanceSheet() throws JsonProcessingException {
-		ObjectMapper om = Jackson.newObjectMapper();
-		return om.writeValueAsString(this);
-	}
 
 	// Die Daten des orginalen KassenAbschlusses als Map bereitstellen
 	@JsonIgnore
@@ -122,9 +128,23 @@ public class PosCashBalance {
 		ObjectMapper om = Jackson.newObjectMapper();
 		return om.readValue(origAbschluss, Map.class);
 	}
+	
+	@JsonIgnore
+	@Lob
+	private String balanceSheet;
+	
+	@JsonIgnore
+	public String getBalanceSheet() {
+		return balanceSheet;
+	}
+	
+	@JsonIgnore
+	public void setBalanceSheet(String bals)  {
+		this.balanceSheet = bals;
+	}
 
 	@JsonIgnore
-	private boolean checked;
+	private transient boolean checked;
 	
 	@JsonProperty("checked")
 	public boolean getChecked() {

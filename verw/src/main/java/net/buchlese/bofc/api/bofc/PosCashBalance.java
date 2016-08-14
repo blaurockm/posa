@@ -6,24 +6,36 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.ElementCollection;
+import javax.persistence.Basic;
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
+import javax.persistence.PostLoad;
+import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import net.buchlese.verw.util.JPAMapper;
+
 import org.hibernate.validator.constraints.NotEmpty;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 @Table( name = "poscashbalance")
 @XmlRootElement(name = "CashBalance")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class PosCashBalance {
 	@Id
 	@JsonProperty
+	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Long id;
 	@JsonProperty
 	private int pointid;
@@ -31,41 +43,41 @@ public class PosCashBalance {
 	@JsonProperty
 	private String abschlussId;
 	@JsonProperty
-    @ElementCollection
+	@Transient
 	private Map<Tax, Long> taxBalance = new EnumMap<Tax, Long>(Tax.class);
 	@JsonProperty
-    @ElementCollection
+	@Transient
     private Map<String, Long> articleGroupBalance;
 	@JsonProperty
 	private Long goodsOut;  // Warenverkäufe
 	@JsonProperty
-    @ElementCollection
+	@Transient
 	private Map<PaymentMethod, Long> paymentMethodBalance = new EnumMap<PaymentMethod, Long>(PaymentMethod.class);
 	@JsonProperty
-    @ElementCollection
+	@Transient
 	private Map<String, Long> newCoupon;  // neue Gutscheine (nr + betrag)
 	@JsonProperty
-    @ElementCollection
+	@Transient
 	private Map<String, Long> oldCoupon;  // eingel. Gutscheine (nr + betrag)
 	@JsonProperty
 	private Long couponTradeIn;  // Gutscheine angenommen
 	@JsonProperty
 	private Long couponTradeOut;  // Gutscheine verkauft
 	@JsonProperty
-    @ElementCollection
+	@Transient
 	private Map<String, Long> payedInvoices;  // bezahlte rechnungen ( nr + betrag)
 	@JsonProperty
-    @ElementCollection
+	@Transient
 	private Map<String, Long> createdInvoices;  // erstellte rechnungen ( nr + betrag)
 	@JsonProperty
 	private Long payedInvoicesSum;  // Rechnungen bezahlt
 	@JsonProperty
 	private Long createdInvoicesSum;  // Rechnungen ausgestellt
 	@JsonProperty
-    @ElementCollection
+	@Transient
 	private Map<String, Long> cashIn;  // Einzahlungen
 	@JsonProperty
-    @ElementCollection
+	@Transient
 	private Map<String, Long> cashOut;  // Auszahlungen
 	@JsonProperty
 	private Long cashInSum;  // Rechnungen bezahlt
@@ -100,6 +112,9 @@ public class PosCashBalance {
 	@JsonProperty
 	private LocalDateTime creationtime;
 	@JsonProperty
+	@Column
+	@Lob
+	@Basic(fetch = FetchType.LAZY)
 	private String origAbschluss;
 	@JsonProperty
 	private boolean exported;
@@ -114,11 +129,48 @@ public class PosCashBalance {
 	private List<PosTicket> tickets;
 
 	@JsonIgnore
-	private boolean checked;
-	
+	@Lob
+	private String balanceSheet;
 	
 	@JsonIgnore
+	public String getBalanceSheet() {
+		return balanceSheet;
+	}
+
+	@JsonIgnore
+	@PrePersist
+	public void computeBalanceSheet() {
+		balanceSheet = JPAMapper.writeValueAsString(this);
+	}
+
+	@JsonIgnore
+	@PostLoad
+	public void computeMapValues() {
+		if (balanceSheet != null) {
+			PosCashBalance bal = JPAMapper.readValue(balanceSheet, this.getClass());
+			this.articleGroupBalance = bal.articleGroupBalance;
+			this.cashIn = bal.cashIn;
+			this.cashOut = bal.cashOut;
+			this.createdInvoices = bal.createdInvoices;
+			this.tickets = bal.tickets;
+			this.paymentMethodBalance = bal.paymentMethodBalance;
+			this.payedInvoices = bal.payedInvoices;
+			this.taxBalance = bal.taxBalance;
+			this.oldCoupon = bal.oldCoupon;
+			this.newCoupon = bal.newCoupon;
+		}
+	}
+	
+	public void setBalanceSheet(String bals)  {
+		this.balanceSheet = bals;
+	}
+	
+	
 	public void setChecked() {
+		
+	}
+	
+	public void getChecked() {
 		
 	}
 	

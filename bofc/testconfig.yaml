@@ -18,7 +18,8 @@ jpamysql:
     charSet: UTF-8
     useSSL: false
     hibernate.dialect: org.hibernate.dialect.MySQLDialect
-    hibernate.hbm2ddl.auto: create
+    hibernate.hbm2ddl.auto: update
+    hibernate.ejb.naming_strategy: org.hibernate.cfg.ImprovedNamingStrategy
 
   
 articleGroupMappings:
@@ -36,3 +37,14 @@ articleGroupMappings:
   kalender: { wargrindex: '7', text : 'Kalender',key : 'kalender', type : 'GOOD', marge : 0.3 }
   nonbook: { wargrindex: '4568', text : 'NonBook',key : 'nonbook', type : 'GOOD', marge : 0.5 }
 
+logging:
+
+  # The default level of all loggers. Can be OFF, ERROR, WARN, INFO, DEBUG, TRACE, or ALL.
+  level: INFO
+
+  # Logger-specific levels.
+  loggers:
+    # Sets the level for 'com.example.app' to DEBUG.
+    com.example.app: DEBUG
+
+    org.hibernate.SQL: TRACE

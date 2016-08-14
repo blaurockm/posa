@@ -2,7 +2,6 @@ package net.buchlese.bofc.api.bofc;
 
 import java.util.List;
 
-import javax.persistence.ElementCollection;
 import javax.persistence.Embeddable;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;

@@ -45,7 +45,6 @@ public class PosTicket {
 	@Enumerated(EnumType.STRING)
 	private PaymentMethod paymentMethod;
 
-	//@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "belegdatum")
 //	@NotEmpty
 	@JsonProperty
