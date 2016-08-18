@@ -214,7 +214,10 @@ public class SubscrCachedDAO implements SubscrDAO {
 
 	@Override
 	public long insertSubscriber(Subscriber p) {
-		return dao.insertSubscriber(p);
+		long x = dao.insertSubscriber(p);
+		p.setId(x);
+		subscriberCache.put(x, p);
+		return x;
 	}
 
 	@Override
