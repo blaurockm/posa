@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=utf-8">
+<title>Kassenbericht</title>
+
+</head>
+<body>
+   <h1>Kassenabschluss vom {{balance.lastCovered | localdate }}</h1>
+   
+   <table>
+   <tr><td valign="top" style="padding-right:5mm">
+   <h3>Kassenvorgänge</h3>
+   <table>
+   	<tr>
+   	  <td>Kassenanfangsbestand</td>	<td align="right" style="padding-left:10mm">{{balance.cashStart / 100 | currency}}</td>
+   	</tr>
+   	<tr>
+   	  <td>Bareinnahmen</td>	<td align="right">{{balance.paymentMethodBalance['CASH'] / 100 | currency }}</td>
+   	</tr>
+   	<tr>
+   	  <td>Barbestandsdifferenz</td>	<td align="right">{{balance.cashDiff/100|currency}}</td>
+   	</tr>
+   	<tr>
+   	  <td>Bareinzahlungen</td>	<td align="right">{{balance.cashInSum/100|currency}}</td>
+   	</tr>
+   	<tr>
+   	  <td>Barauszahlungen</td>	<td align="right">{{balance.cashOutSum/100|currency}}</td>
+   	</tr>
+   	<tr>
+   	  <td>(-) Abschöpfung</td>	<td align="right">{{balance.absorption/100|currency}}</td>
+   	</tr>
+   	<tr>  
+   	  <td>Kassenendbestand</td>	<td align="right">{{balance.cashEnd/100|currency}}</td>
+   	</tr>
+   </table>
+   </td>
+   <td valign="top">
+   <h3>Zahlungsarten</h3>
+   <table>
+   	<tr>
+   	  <td>Bar</td>	<td align="right" style="padding-left:10mm">{{balance.paymentMethodBalance['CASH']/100|currency}}</td>
+   	</tr>
+   	<tr>
+   	  <td>Telecash</td>	<td align="right">{{balance.paymentMethodBalance['TELE']/100|currency}}</td>
+   	</tr>
+   	<tr>
+   	  <td>Wertgutscheine (ang)</td> <td align="right">{{-balance.couponTradeIn/100|currency}}</td>
+   	</tr>
+   </table>
+   </td></tr>
+   </table>
+   
+   <h3>Umsatzsteuerverteilung der Gesamteinnahmen von {{(balance.revenue  - balance.couponTradeIn)/100|currency}}</h3>
+   <table>
+   	<tr>
+   	  <td>Voller Satz (19%)</td>	<td align="right" style="padding-left:10mm">{{balance.taxBalance['FULL']/100|currency}}</td>
+   	</tr>
+   	<tr>
+   	  <td>Halber Satz (7%)</td>	<td align="right">{{balance.taxBalance['HALF']/100|currency}}</td>
+   	</tr>
+   	<tr>
+   	  <td>Ohne Umsatzsteuer (0%)</td> <td align="right">{{balance.taxBalance['NONE']/100|currency}}</td>
+   	</tr>
+   	<tr>
+   	  <td>Verkaufte Gutscheine</td> <td align="right">{{balance.couponTradeOut/100|currency}}</td>
+   	</tr>
+   	<tr ng-repeat="(key, value) in balance.payedInvoices">
+   	  <td>siehe {{key}}  </td> <td align="right" style="padding-left:10mm">{{value/100|currency}}</td>
+   	</tr>
+   	  
+   </table>
+   
+   <h3>Verteilung der Einnahmen auf Warengruppen</h3>
+   <table>
+   	<tr ng-repeat="(key,value) in balance.articleGroupBalance">
+   	  <td>{{key}}</td> <td align="right" style="padding-left:10mm">{{value/100|currency}}</td>
+   	</tr>
+   </table>
+   
+   <p style="font-size:small; margin-top:2cm">Erzeugt am {{balance.creationtime | localdatetime}}</p>
+</body>

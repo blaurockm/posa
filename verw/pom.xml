@@ -8,8 +8,7 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<name>demo</name>
-	<description>Demo project for Spring Boot</description>
+	<name>verw</name>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -56,22 +55,6 @@
 	        <groupId>org.springframework.data</groupId>
 	        <artifactId>spring-data-rest-webmvc</artifactId>
 	    </dependency>
-	    
-	    <dependency>
-	        <groupId>org.springframework.boot</groupId>
-	        <artifactId>spring-boot-starter-thymeleaf</artifactId>
-	    </dependency>
-	    
-		<dependency>
-		    <groupId>org.thymeleaf.extras</groupId>
-		    <artifactId>thymeleaf-extras-java8time</artifactId>
-		</dependency>
-
-		<dependency>
-		    <groupId>io.github.jpenren</groupId>
-		    <artifactId>thymeleaf-spring-data-dialect</artifactId>
-		    <version>3.1.1</version>
-		</dependency>
 
 		<dependency>
 		    <groupId>org.webjars.bower</groupId>
@@ -109,6 +92,19 @@
 		    <version>2.0.1</version>
 		</dependency>
 
+		<!-- https://mvnrepository.com/artifact/org.webjars/momentjs -->
+		<dependency>
+		    <groupId>org.webjars</groupId>
+		    <artifactId>momentjs</artifactId>
+		    <version>2.14.1</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.webjars/angular-moment -->
+		<dependency>
+		    <groupId>org.webjars</groupId>
+		    <artifactId>angular-moment</artifactId>
+		    <version>0.10.3</version>
+		</dependency>
 
 		<dependency>
 		    <groupId>org.webjars.bower</groupId>
@@ -128,11 +124,25 @@
 		    <version>0.1.11</version>
 		</dependency>
 		
- <dependency>
-    <groupId>org.webjars.bower</groupId>
-    <artifactId>github-com-Schlogen-angular-confirm</artifactId>
-    <version>1.2.3</version>
-</dependency>
+   	    <dependency>
+		    <groupId>org.webjars.bower</groupId>
+		    <artifactId>github-com-Schlogen-angular-confirm</artifactId>
+		    <version>1.2.3</version>
+		</dependency>
+
+  	    <!-- https://mvnrepository.com/artifact/org.webjars.bower/angular-i18n -->
+		<dependency>
+		    <groupId>org.webjars.bower</groupId>
+		    <artifactId>angular-i18n</artifactId>
+		    <version>1.5.8</version>
+		</dependency>
+ 
+		<!-- https://mvnrepository.com/artifact/org.webjars/ng-table -->
+		<dependency>
+		    <groupId>org.webjars</groupId>
+		    <artifactId>ng-table</artifactId>
+		    <version>1.0.0-beta.9</version>
+		</dependency>
  
 		<!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
 		<dependency>
@@ -174,6 +184,32 @@
 			<groupId>com.fasterxml.jackson.datatype</groupId>
 			<artifactId>jackson-datatype-joda</artifactId>
 		</dependency>
+		
+	    <dependency>
+	      <groupId>com.querydsl</groupId>
+	      <artifactId>querydsl-core</artifactId>
+	      <version>4.1.3</version>
+	    </dependency>
+	    <dependency>
+	      <groupId>com.querydsl</groupId>
+	      <artifactId>querydsl-apt</artifactId>
+	      <version>4.1.3</version>
+	    </dependency>
+	    <dependency>
+	      <groupId>com.querydsl</groupId>
+	      <artifactId>querydsl-jpa</artifactId>
+	      <version>4.1.3</version>
+	    </dependency>
+
+	    <!-- <dependency>
+	    	<groupId>org.springframework.boot</groupId>
+	    	<artifactId>spring-boot-starter-jta-narayana</artifactId>
+	    </dependency>
+	    <dependency>
+	    	<groupId>org.scala-lang</groupId>
+	    	<artifactId>scala-library</artifactId>
+	    	<version>2.11.0</version>
+	    </dependency> -->
 	</dependencies>
 
 	<build>
@@ -185,8 +221,29 @@
 				   <executable>true</executable>
 				</configuration>
 			</plugin>
+			
+		    <plugin>
+		      <groupId>com.mysema.maven</groupId>
+		      <artifactId>apt-maven-plugin</artifactId>
+		      <version>1.1.3</version>
+		      <executions>
+		        <execution>
+		          <goals>
+		            <goal>process</goal>
+		          </goals>
+		          <configuration>
+		            <outputDirectory>target/generated-sources/annotations</outputDirectory>
+		            <processor>com.querydsl.apt.jpa.JPAAnnotationProcessor</processor>
+		            <options>
+		              <querydsl.entityAccessors>true</querydsl.entityAccessors>
+		            </options>          
+		          </configuration>
+		        </execution>
+		      </executions>
+		    </plugin>
 		</plugins>
 	</build>
 
 
+	<description>Buchlese Verwaltungs Apps</description>
 </project>

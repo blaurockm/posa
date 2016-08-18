@@ -42,6 +42,32 @@
     
   };
   
+
+  var CouponFactory = function($resource) {
+    return $resource('/coupons/:id', { id: '@id' }, {
+    	  update: {method:'PUT'}
+    });
+  };
+  
+  
+  angular.module("verwApp.coupon").
+   factory("CouponDAO", CouponFactory).
+   controller("CouponInputController", CouponInputController).
+   controller("CouponMainController", function($scope) {}).
+   config(function ($stateProvider) {
+    $stateProvider.
+		state('coupon.input', {
+			url: "/input",
+			templateUrl: "modcoupon/input.html",
+			controller: 'CouponInputController'	
+		}).
+		state('coupon.dashboard', {
+			url: "/dashboard",
+			templateUrl: "modcoupon/dashboard.html"
+		});
+   });
+
   CouponInputController.$inject = ['$scope', '$http', 'CouponDAO'];
-  angular.module("verwApp.controllers").controller("CouponInputController", CouponInputController);
+  CouponFactory.$inject = ['$resource'];
+
 }(angular));

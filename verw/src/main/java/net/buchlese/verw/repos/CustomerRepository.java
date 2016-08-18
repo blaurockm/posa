@@ -8,7 +8,7 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 import net.buchlese.bofc.api.subscr.Subscriber;
 
-@RepositoryRestResource(collectionResourceRel = "customer", path = "customer")
+@RepositoryRestResource(collectionResourceRel = "customers", path = "customer")
 public interface CustomerRepository extends JpaRepository<Subscriber, Long> {
 
     List<Subscriber> findByName(@Param("name") String firstName);

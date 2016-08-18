@@ -7,7 +7,7 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 import net.buchlese.bofc.api.coupon.Coupon;
 
-@RepositoryRestResource(collectionResourceRel = "coupon", path = "coupon")
+@RepositoryRestResource(collectionResourceRel = "coupons", path = "coupon")
 public interface CouponRepository extends JpaRepository<Coupon, Long> {
 
 	List<Coupon> findByPupilsname(String firstName);
