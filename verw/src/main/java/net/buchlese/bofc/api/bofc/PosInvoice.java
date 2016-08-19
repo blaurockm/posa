@@ -105,6 +105,24 @@ public class PosInvoice {
 
 	@JsonProperty
 	private boolean exported;
+	
+	public void export(AccountingInvoiceExport x) {
+		if (exported || x == null) {
+			return;
+		}
+		if (x.getExecDate() != null) {
+			setExportDate(x.getExecDate());
+		}
+		setExported(true);
+	}
+	
+	public void unexport() {
+		if (!exported) {
+			return;
+		}
+		setExportDate(null);
+		setExported(false);
+	}
 
 	@JsonIgnore
 	public PosInvoiceDetail addInvoiceDetail(PosInvoiceDetail detail) {

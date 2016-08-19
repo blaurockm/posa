@@ -2,15 +2,15 @@ package net.buchlese.verw.ctrl;
 
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Set;
 
-import net.buchlese.bofc.api.bofc.AccountingExport;
+import net.buchlese.bofc.api.bofc.AccountingBalanceExport;
 import net.buchlese.bofc.api.bofc.PosCashBalance;
-import net.buchlese.bofc.api.bofc.PosInvoice;
+import net.buchlese.verw.repos.BalanceExportRepository;
 import net.buchlese.verw.repos.BalanceRepository;
-import net.buchlese.verw.repos.ExportRepository;
-import net.buchlese.verw.repos.InvoiceRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -28,14 +28,12 @@ import com.querydsl.core.types.Predicate;
 
 
 @RestController
-@RequestMapping(path="accounting")
-public class AccountingController {
+@RequestMapping(path="balances")
+public class BalancesController {
 	
 	@Autowired BalanceRepository balanceRepository;
 
-	@Autowired InvoiceRepository invoiceRepository;
-
-	@Autowired ExportRepository exportRepository;
+	@Autowired BalanceExportRepository exportRepository;
 
 	@ResponseBody
 	@RequestMapping(path="balancesDyn", method = RequestMethod.GET)
@@ -44,43 +42,47 @@ public class AccountingController {
 
 		return balanceRepository.findAll(predicate, pageable);
 	}
-	
-	
-	@ResponseBody
-	@RequestMapping(path="invoicesDyn", method = RequestMethod.GET)
-	public Page<PosInvoice> invoicesDynamic(@QuerydslPredicate(root = PosInvoice.class) Predicate predicate,    
-	          Pageable pageable, @RequestParam MultiValueMap<String, String> parameters) {
-
-		return invoiceRepository.findAll(predicate, pageable);
-	}
 
 	@ResponseBody
 	@RequestMapping(path="exportsDyn", method = RequestMethod.GET)
-	public Page<AccountingExport> exportsDynamic(@QuerydslPredicate(root = AccountingExport.class) Predicate predicate,    
+	public Page<AccountingBalanceExport> exportsDynamic(@QuerydslPredicate(root = AccountingBalanceExport.class) Predicate predicate,    
 	          Pageable pageable, @RequestParam MultiValueMap<String, String> parameters) {
 
 		return exportRepository.findAll(predicate, pageable);
 	}
 
 	@ResponseBody
-	@RequestMapping(path="createBalanceExport", method = RequestMethod.GET)
+	@RequestMapping(path="createExport", method = RequestMethod.GET)
 	@Transactional
-	public String createBalanceExport(@RequestParam int pointid) {
+	public AccountingBalanceExport createBalanceExport(@RequestParam("pointid") Integer pointid) {
 		PosCashBalance firstUnexported = balanceRepository.findFirstByExportedAndPointidOrderByAbschlussIdAsc(false, pointid);
 		// Buchungsperiode es ersten Abschlusses ermitteln
 		LocalDate tag = firstUnexported.getFirstCovered().toLocalDate();
 		String maxAbschlussId = tag.withDayOfMonth(tag.lengthOfMonth()).format(DateTimeFormatter.ofPattern("yyyyMMdd"));
 		List<PosCashBalance> balToExp = balanceRepository.findAllByExportedAndPointidAndAbschlussIdLessThanEqualOrderByAbschlussId(false, pointid, maxAbschlussId);
 		
-		AccountingExport export = new AccountingExport();
-		export.setKey(1);
-		export.setExecDate(LocalDate.now());
-		export.setFrom(balToExp.get(0).getFirstCovered().toLocalDate());
-		export.setTill(balToExp.get(balToExp.size()-1).getLastCovered().toLocalDate());
-		export.addBalances(balToExp);
+		AccountingBalanceExport export = new AccountingBalanceExport();
+		export.setDescription("..asd.");
+		export.setExecDate(LocalDateTime.now());
+		export.setPointId(pointid);
+		export.setBalances(balToExp); // seiteneffekt: ändert die Balances auf "exported"
 		
 		exportRepository.saveAndFlush(export);
 		
-		return "erfolgreich"+balToExp.size();
+		return export;
 	}
+	
+	
+	@ResponseBody
+	@RequestMapping(path="deleteExport", method = RequestMethod.DELETE)
+	@Transactional
+	public void deleteBalanceExport(@RequestParam("id") Long id) {
+		AccountingBalanceExport export = exportRepository.findOne(id);
+		Set<PosCashBalance> expBal = export.getBalances(); 
+		expBal.forEach(PosCashBalance::unexport);
+		exportRepository.delete(export);
+		
+		return;
+	}
+
 }

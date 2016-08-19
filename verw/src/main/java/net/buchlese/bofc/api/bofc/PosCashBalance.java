@@ -165,14 +165,27 @@ public class PosCashBalance {
 		this.balanceSheet = bals;
 	}
 	
-	
-	public void setChecked() {
-		
+	public void export(AccountingBalanceExport x) {
+		if (exported || x == null) {
+			return;
+		}
+		if (x.getExecDate() != null) {
+			setExportDate(x.getExecDate());
+		}
+		setExported(true);
 	}
 	
-	public void getChecked() {
-		
+	public void unexport() {
+		if (!exported) {
+			return;
+		}
+		setExportDate(null);
+		setExported(false);
 	}
+	
+	public void setChecked() {}
+	
+	public void getChecked() {}
 	
 	public String toString() {
 		return "PosCashBalance of " + abschlussId + ", rev " + revenue / 100; 

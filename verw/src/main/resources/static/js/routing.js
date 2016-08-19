@@ -18,15 +18,27 @@
 			  		}
 			  	}
 		  }).
-		  state('accounting', {
-				url: "/accounting",
+		  state('balances', {
+				url: "/balances",
 				views :{
 			  		"@" :  {
-			  			templateUrl : 'modaccounting/start.html',
-			  			controller: 'AccountingMainController'	
+			  			templateUrl : 'modbalances/start.html',
+			  			controller: 'BalancesMainController'	
 			  		},
 			  		"mainmenunav" :  {
-			  			templateUrl : 'modaccounting/menu.html',
+			  			templateUrl : 'modbalances/menu.html',
+			  		}
+				} 
+		  }).
+		  state('invoices', {
+				url: "/invoices",
+				views :{
+			  		"@" :  {
+			  			templateUrl : 'modinvoices/start.html',
+			  			controller: 'InvoicesMainController'	
+			  		},
+			  		"mainmenunav" :  {
+			  			templateUrl : 'modinvoices/menu.html',
 			  		}
 				} 
 		  }).

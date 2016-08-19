@@ -1,0 +1,52 @@
+<div class="container">
+	<div class="page-header">
+		<h1>FiBu-Übergaben Kassenberichte</h1>
+	</div>
+	<div>
+	 <p>Suchkriterien</p>
+	</div>
+	<hr>
+	<div>
+	 <p>Suchergebnis</p>	
+	<table ng-table="tableParams" class="table" show-filter="true">
+    <tr ng-repeat="row in $data">
+        <td>
+			<button class="pull-left btn btn-info" type="button" title="View" ng-click="showExport(row)">
+				<span class="glyphicon glyphicon-list-alt"></span>
+			</button>
+			<button class="pull-left btn btn-info" type="button" title="View" ng-click="showDetailsOfExport(row)">
+				<span class="glyphicon glyphicon-expand"></span>
+			</button>
+		</td>		
+        <td title="'Art'"  sortable="'category'">{{row.category}}</td>
+        <td title="'von-Datum'"  sortable="'from'">{{row.from | localdate}}</td>
+        <td title="'bis-Datum'"  sortable="'till'">{{row.till | localdate}}</td>
+        <td title="'#Datensätze'" >{{row.datasize}}</td>
+        <td title="'Kasse'" filter="{pointId: 'number'}" sortable="'pointId'">{{row.pointId}}</td>
+        <td title="'Exportdatum'" sortable="'execDate'">{{row.execDate | localdatetime }}</td>
+        <td>
+			<button class="pull-right btn btn-danger" type="button" title="Delete" ng-click="deleteExport(row)" confirm="Bitte das Löschen bestätigen!">
+				<span class="glyphicon glyphicon-trash"></span>
+			</button>
+		</td>		
+    </tr>
+    </table>
+    
+    <hr>
+    <div ng-if="detailTable">
+    <table ng-table="detailTable" class="table table-condensed table-bordered table-striped">
+    <tr ng-repeat="row in $data">
+        <td title="'AbschlussID'" sortable="'abschlussId'">
+        <a ng-click="showBalance(row)"  class="cursor-pointer">{{row.abschlussId}}</a>
+        </td>
+        <td title="'Datum'" sortable="'abschlussId'" align="right">{{row.abschlussId | abschlussdate}}</td>
+        <td title="'Kasse'" sortable="'pointid'" align="center">{{row.pointid}}</td>
+        <td title="'Umsatz'" sortable="'revenue'" align="right">{{row.revenue / 100 | currency}}</td>
+        <td title="'Exportiert'" sortable="'exported'">{{row.exported}}</td>
+        <td title="'Exportdatum'" sortable="'exportDate'">{{row.exportDate | localdatetime }}</td>
+    </tr>
+    </table>
+    </div>
+    
+	</div>
+</div>

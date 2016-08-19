@@ -1,5 +1,5 @@
 (function(angular) {
-  var AccountingBalanceController = function($scope, $http, BalanceDao, NgTableParams, $uibModal) {
+  var BalanceController = function($scope, $http, BalanceDao, NgTableParams, $uibModal) {
 	    $scope.showBalance = function (bal) {
 	    	$uibModal.open({
 	    	      animation: true,
@@ -17,7 +17,7 @@
 	    		$scope.pointofsale = pointOfSale;
 	    	}
 	        var params = {pointid: pointOfSale};
-	    	$http.get('/accounting/createBalanceExport', {params: params})
+	    	$http.get('/balances/createExport', {params: params})
 	        .then(function(response) {
 	          alert("Kassenberichtexport erzeugt" + response.data);
 	        }, function(response) {
@@ -26,9 +26,6 @@
 	    }
 	    
 	    $scope.reloadData = function () {
-//	        $scope.tableParams.settings({
-//	          dataset: $scope.foundBalances
-//	        });
 	    	$scope.tableParams.reload();
 	    }
 
@@ -60,44 +57,37 @@
 	    });
   };
 
-  var AccountingInvoiceController = function($scope, $http, InvoiceDao, NgTableParams) {
-	    $scope.showInvoice = function (id) {
-	        alert("You selected balance ID: " + id);
-	    }
-	    
-	    $scope.reloadData = function () {
-//	        $scope.tableParams.settings({
-//	          dataset: $scope.foundBalances
-//	        });
-	    	$scope.tableParams.reload();
-	    }
-
-	    $scope.tableParams = new NgTableParams({ count: 10 }, {
-	        getData: function($defer, params) {
-	            var queryParams = {
-	                page:params.page() - 1, 
-	                size:params.count()
-	            };
-	            var sortingProp = Object.keys(params.sorting());
-	            if(sortingProp.length == 1){
-	                queryParams["sort"] = sortingProp[0];
-	                queryParams["sortDir"] = params.sorting()[sortingProp[0]];
-	            }
-	            if (params.hasFilter()) {
-	            	angular.extend(queryParams, params.filter());
-	            }
-	            InvoiceDao.search(queryParams, function(data) {
-	                params.total(data.totalElements);
-	                $defer.resolve( data.content);
-	            })
-	        }
-	    });
-  };
-
-  var AccountingExportController = function($scope, $http, ExportDao, NgTableParams) {
+  var BalancesExportController = function($scope, $http, ExportDao, NgTableParams, $uibModal) {
 	$scope.deleteExport = function(accExport) {
+		ExportDao.delete({id : accExport.id }, function () {
+	    	$scope.tableParams.reload();
+		})
     };
 
+	$scope.showExport = function(accExport) {
+	}
+	
+	$scope.showDetailsOfExport = function(accExport) {
+		ExportDao.get({id : accExport.id}, function(bal) {
+			$http.get(bal._links.balances.href, {})
+			.then(function(data) {
+    			$scope.detailTable = new NgTableParams({},{dataset:data.data._embedded.cashbalances});
+			})
+		});
+		
+	}
+	
+    $scope.showBalance = function (bal) {
+    	$uibModal.open({
+    	      animation: true,
+    	      templateUrl: '/templates/balanceReport.html',
+    	      controller: function($scope) {
+    	    	  $scope.balance = bal;
+    	      },
+    	      size: 'lg'
+    	    });
+    }
+    
     $scope.tableParams = new NgTableParams({ count: 10 }, {
         getData: function($defer, params) {
             var queryParams = {
@@ -122,69 +112,53 @@
     
   };
   
-  AccountingBalanceController.$inject = ['$scope', '$http', 'CashbalanceDAO', 'NgTableParams', '$uibModal'];
-  AccountingInvoiceController.$inject = ['$scope', '$http', 'InvoiceDAO', 'NgTableParams'];
-  AccountingExportController.$inject = ['$scope', '$http', 'ExportDAO', 'NgTableParams'];
+  BalanceController.$inject = ['$scope', '$http', 'CashbalanceDAO', 'NgTableParams', '$uibModal'];
+  BalancesExportController.$inject = ['$scope', '$http', 'BalExportDAO', 'NgTableParams', '$uibModal'];
 
   var CashbalanceFactory = function($resource) {
     return $resource('/api/cashbalance/:id', { id: '@id' },
     		{ 'query':  {method:'GET', isArray:false},
-    	      'search' : { method:'GET', isArray :false, url:'/accounting/balancesDyn' } 
+    	      'search' : { method:'GET', isArray :false, url:'/balances/balancesDyn' } 
     		} );
   };
   
   CashbalanceFactory.$inject = ['$resource'];
 
-  var InvoiceFactory = function($resource) {
-	    return $resource('/api/invoice/:id', { id: '@id' },
+  var BalExportFactory = function($resource) {
+	    return $resource('/api/balexport/:id', { id: '@id' },
 	    		{ 'query':  {method:'GET', isArray:false},
-	    		  'search' : { method:'GET', isArray :false, url:'/accounting/invoicesDyn' } 
-  		        } );
-	  };
-	  
-  InvoiceFactory.$inject = ['$resource'];
-
-  var ExportFactory = function($resource) {
-	    return $resource('/api/export/:id', { id: '@id' },
-	    		{ 'query':  {method:'GET', isArray:false},
-	    		  'search' : { method:'GET', isArray :false, url:'/accounting/exportsDyn' } 
+	    		  'search' : { method:'GET', isArray :false, url:'/balances/exportsDyn' }, 
+	        	  'delete' : { method:'DELETE', parms: {id:'@id'}, url: '/balances/deleteExport' }
 		        } );
 	  };
 	  
-  ExportFactory.$inject = ['$resource'];
+	  BalExportFactory.$inject = ['$resource'];
 
-  angular.module("verwApp.accounting").
+  angular.module("verwApp.balances").
    factory("CashbalanceDAO", CashbalanceFactory).
-   factory("InvoiceDAO", InvoiceFactory).
-   factory("ExportDAO", ExportFactory).
-   controller("AccountingExportController", AccountingExportController).
-   controller("AccountingInvoiceController", AccountingInvoiceController).
-   controller("AccountingBalanceController", AccountingBalanceController).
-   controller("AccountingMainController", function($scope) {}).
+   factory("BalExportDAO", BalExportFactory).
+   controller("BalancesExportController", BalancesExportController).
+   controller("BalanceController", BalanceController).
+   controller("BalancesMainController", function($scope) {}).
    config(function ($stateProvider) {
     $stateProvider.
-		state('accounting.invoices', {
-			url: "/invoices",
-			templateUrl: "modaccounting/invoices.html",
-			controller: 'AccountingInvoiceController'	
-		}).
-		state('accounting.balances', {
+		state('balances.balances', {
 			url: "/balances",
-			templateUrl: "modaccounting/balances.html",
-			controller: 'AccountingBalanceController'	
+			templateUrl: "modbalances/balances.html",
+			controller: 'BalanceController'	
 		}).
-		state('accounting.exports', {
+		state('balances.exports', {
 			url: "/exports",
-			templateUrl: "modaccounting/exports.html",
-			controller: 'AccountingExportController'	
+			templateUrl: "modbalances/exports.html",
+			controller: 'BalancesExportController'	
 		}).
-		state('accounting.dashboard', {
+		state('balances.dashboard', {
 			url: "/dashboard",
-			templateUrl: "modaccounting/dashboard.html"
+			templateUrl: "modbalances/dashboard.html"
 		});
    });
 
-  angular.module("verwApp.accounting").
+  angular.module("verwApp.balances").
    filter('abschlussdate', function($filter) {
 	    return function(input, optional) {
 	        return new moment(input).format("dd DD.MM. / [KW] w / [Q] Q");
