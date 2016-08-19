@@ -27,6 +27,10 @@ public class JpaPosIssueSlipDAO extends AbstractDAO<PosIssueSlip> {
         currentSession().save(person);
     }
 
+    public void update(PosIssueSlip person) {
+        currentSession().update(person);
+    }
+
 	public List<PosIssueSlip> findByIdNr(long belegnr) {
 		Criteria c = criteria().add(Restrictions.eq("id", belegnr ));
 		return list(c);

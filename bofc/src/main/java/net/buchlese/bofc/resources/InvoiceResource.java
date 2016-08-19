@@ -70,10 +70,13 @@ public class InvoiceResource {
 			}
 			List<PosInvoice> old = dao.fetch(invoice.getNumber());
 			if (old.isEmpty()) {
-				dao.insert(invoice);
+				long newId = dao.insert(invoice);
+				invoice.setId(newId);
+				jpaDao.create(invoice);
 			} else {
 				invoice.setId(old.get(0).getId());
 				dao.updateInvoice(invoice);
+				jpaDao.update(invoice);
 			}
 			return Response.ok().build();
 		} catch (Throwable t) {
@@ -94,10 +97,13 @@ public class InvoiceResource {
 			}
 			List<PosInvoice> old = dao.fetch(invoice.getNumber());
 			if (old.isEmpty()) {
-				dao.insertIssueSlip(invoice);
+				long newid = dao.insertIssueSlip(invoice);
+				invoice.setId(newid);
+				jpaSlipDao.create(invoice);
 			} else {
 				invoice.setId(old.get(0).getId());
 				dao.updateIssueSlip(invoice);
+				jpaSlipDao.update(invoice);
 			}
 			return Response.ok().build();
 		} catch (Throwable t) {

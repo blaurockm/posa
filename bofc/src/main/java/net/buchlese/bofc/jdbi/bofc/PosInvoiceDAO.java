@@ -11,6 +11,7 @@ import net.buchlese.bofc.api.bofc.PosIssueSlip;
 import org.joda.time.DateTime;
 import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.BindBean;
+import org.skife.jdbi.v2.sqlobject.GetGeneratedKeys;
 import org.skife.jdbi.v2.sqlobject.SqlBatch;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
 import org.skife.jdbi.v2.sqlobject.SqlUpdate;
@@ -63,13 +64,14 @@ public interface PosInvoiceDAO {
 	@BatchChunkSize(500)
 	void insertAll(@Valid @BindBean Iterator<PosInvoice> transactions);
 
+	@GetGeneratedKeys
 	@SqlUpdate("insert into posinvoice (number, customer, pointid, debitor, amount, amountFull, amountHalf, amountNone, invDate, creationtime, " +
 	" complJson, agrType, printed, temporary, exported, exportDate, " +
 	" printdate, name1, name2, name3,  street, city, payed, cancelled, actionum) " +
 	" values (:number, :customerId, :pointid, :debitorId, :amount, :amountFull, :amountHalf, :amountNone, :date,:creationTime," +
 	" :complJson, :type, :printed, :temporary, :exported, :exportDate, " +
 	" :printTime, :name1, :name2, :name3, :street, :city, :payed, :cancelled, :actionum)")
-	void insert(@Valid @BindBean PosInvoice inv);
+	long insert(@Valid @BindBean PosInvoice inv);
 
 	@SqlUpdate("update posinvoice set (customer, pointid, debitor, amount, amountFull, amountHalf, amountNone, invDate, creationtime, " +
 			" complJson, agrType, printed, temporary, exported, exportDate, " +
@@ -83,11 +85,12 @@ public interface PosInvoiceDAO {
 	Integer mapDebitor(@Bind("pointid") Integer pointid, @Bind("customerid") Integer customerId);
 
 
+	@GetGeneratedKeys
 	@SqlUpdate("insert into posissueslip (number, customer, pointid, debitor, invDate, creationtime, " +
 			" complJson,  name1, name2, name3,  street, city, payed, actionum) " +
 			" values (:number, :customerId, :pointid, :debitorId, :date,:creationTime," +
 			" :complJson, :name1, :name2, :name3, :street, :city, :payed, :actionum  )")
-	void insertIssueSlip(@Valid @BindBean PosIssueSlip inv);
+	long insertIssueSlip(@Valid @BindBean PosIssueSlip inv);
 
 	@SqlUpdate("update posissueslip set (customer, debitor, invDate, complJson, name1, name2, name3,  street, city, payed) " +
 	" = (:customerId, :debitorId, :date, :complJson,  :name1, :name2, :name3, :street, :city, :payed )  where id = :id")

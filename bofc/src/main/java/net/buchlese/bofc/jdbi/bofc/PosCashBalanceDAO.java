@@ -7,6 +7,7 @@ import net.buchlese.bofc.api.bofc.PosCashBalance;
 import org.joda.time.DateTime;
 import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.BindBean;
+import org.skife.jdbi.v2.sqlobject.GetGeneratedKeys;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
 import org.skife.jdbi.v2.sqlobject.SqlUpdate;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
@@ -32,9 +33,10 @@ public interface PosCashBalanceDAO {
 	@SqlQuery("select id from poscashbalance where abschlussid = :abschlussid and pointid = :pointId")
 	Long getIdOfExistingBalance(@Bind("abschlussid") String abschlussid,@Bind("pointId") Integer pointId);
 
+	@GetGeneratedKeys
 	@SqlUpdate("insert into poscashbalance (pointid, abschlussid, revenue, creationtime, balancesheet, origsheet, exported, exportdate, firstCovered, lastCovered) " +
 	    " values (:pointid, :abschlussId, :revenue, :creationtime, :balanceSheet, :origAbschluss, :exported, :exportDate, :firstCovered, :lastCovered)")
-	void insert(@BindBean PosCashBalance cashBal);
+	long insert(@BindBean PosCashBalance cashBal);
 
 	@SqlUpdate("update poscashbalance set (revenue, creationtime, balancesheet, origsheet, exported, exportdate, firstCovered, lastCovered) " +
 		    " = (:revenue, :creationtime, :balanceSheet, :origAbschluss, :exported, :exportDate, :firstCovered, :lastCovered)" +

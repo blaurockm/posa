@@ -88,10 +88,13 @@ public class PosCashBalanceResource {
 				txDao.deleteAll(cashBal.getFirstCovered(), cashBal.getLastCovered(), cashBal.getPointid());
 				ticketDao.insertAll(tickets.iterator());
 				txDao.insertAll(txs.iterator());
+				jpaBalanceDao.update(cashBal);
 			} else {
-				dao.insert(cashBal);
+				long newId = dao.insert(cashBal);
 				ticketDao.insertAll(tickets.iterator());
 				txDao.insertAll(txs.iterator());
+				cashBal.setId(newId); // damit die ID in beiden gleich ist.
+				jpaBalanceDao.create(cashBal);
 			}
 			return Response.ok().build();
 		} catch (Throwable t) {

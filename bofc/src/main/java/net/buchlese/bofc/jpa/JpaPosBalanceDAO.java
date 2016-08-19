@@ -27,6 +27,10 @@ public class JpaPosBalanceDAO extends AbstractDAO<PosCashBalance> {
         currentSession().save(person);
     }
 
+    public void update(PosCashBalance person) {
+        currentSession().saveOrUpdate(person);
+    }
+
 	public List<PosCashBalance> findByIdNr(long belegnr) {
 		Criteria c = criteria().add(Restrictions.eq("id", belegnr ));
 		return list(c);

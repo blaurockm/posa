@@ -27,6 +27,10 @@ public class JpaPosInvoiceDAO extends AbstractDAO<PosInvoice> {
         currentSession().save(person);
     }
 
+    public void update(PosInvoice person) {
+        currentSession().update(person);
+    }
+
 	public List<PosInvoice> findByIdNr(long belegnr) {
 		Criteria c = criteria().add(Restrictions.eq("id", belegnr ));
 		return list(c);
