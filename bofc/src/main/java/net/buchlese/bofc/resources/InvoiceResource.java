@@ -61,6 +61,7 @@ public class InvoiceResource {
 	@POST
 	@Path("/acceptInvoice")
 	@Consumes(MediaType.APPLICATION_JSON)
+	@UnitOfWork
 	public Response acceptInvoice(PosInvoice invoice)  {
 		try {
 			// mapping der Debitor-Nummer
@@ -88,6 +89,7 @@ public class InvoiceResource {
 	@POST
 	@Path("/acceptIssueSlip")
 	@Consumes(MediaType.APPLICATION_JSON)
+	@UnitOfWork
 	public Response acceptIssueSlip(PosIssueSlip invoice)  {
 		try {
 			// mapping der Debitor-Nummer

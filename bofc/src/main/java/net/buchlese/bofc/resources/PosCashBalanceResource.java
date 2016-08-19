@@ -75,6 +75,7 @@ public class PosCashBalanceResource {
 	@POST
 	@Path("/acceptBalance")
 	@Consumes(MediaType.APPLICATION_JSON)
+	@UnitOfWork
 	public Response acceptBalance(PosCashBalance cashBal)  {
 		try {
 			Long id = dao.getIdOfExistingBalance(cashBal.getAbschlussId(), cashBal.getPointid());
