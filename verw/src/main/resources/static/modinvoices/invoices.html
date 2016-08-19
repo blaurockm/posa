@@ -4,6 +4,16 @@
 	</div>
 	<div>
 	 <p>Suchkriterien</p>
+	 <div class="radio">
+	  <label><input type="radio" ng-model="pointofsale" value="1">Dornhan</label>
+	</div>
+	<div class="radio">
+	  <label><input type="radio" ng-model="pointofsale" value="2">Sulz</label>
+	</div>
+	<div class="radio">
+	  <label><input type="radio" ng-model="pointofsale" value="3">Schramberg</label>
+	</div>
+	 <label>  <input type="checkbox" ng-model="exported"> Exportiert?</label>
 	 <button ng-click="reloadData()">neu laden</button>
 	 <button ng-click="createInvoiceExport()">Neuer Ausgangsrechnungen-Export</button>
 	</div>
@@ -17,11 +27,11 @@
         </td>
         <td title="'Name'" filter="{name1: 'text'}" sortable="'name1'">{{row.name1}}</td>
         <td title="'Debitor'" filter="{debitorId: 'number'}" sortable="'debitorId'">{{row.debitorId}}</td>
-        <td title="'Datum'" filter="{datum: 'text'}" sortable="'date'">{{row.date}}</td>
+        <td title="'Datum'" filter="{datum: 'text'}" sortable="'date'">{{row.date | localdate}}</td>
         <td title="'Kasse'" filter="{pointid: 'number'}" sortable="'pointid'">{{row.pointid}}</td>
         <td title="'Betrag'" sortable="'amount'" align="right">{{row.amount / 100 | currency}}</td>
         <td title="'Exportiert'" sortable="'exported'">{{row.exported}}</td>
-        <td title="'Exportdatum'" filter="{exportDate: 'text'}" sortable="'exportDate'">{{row.exportDate | json }}</td>
+        <td title="'Exportdatum'" filter="{exportDate: 'text'}" sortable="'exportDate'">{{row.exportDate | localdatetime }}</td>
     </tr>
     </table>
 	</div>

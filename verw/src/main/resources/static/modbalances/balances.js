@@ -166,12 +166,18 @@
 	}).
    filter('localdatetime', function($filter) {
 	    return function(input, optional) {
+	    	if (input == null) {
+	    		return "";
+	    	}
 	        var d = new Date(input);
 	        return $filter('date')(d,(optional ? optional : 'medium'));
 	    };
 	}).
    filter('localdate', function($filter) {
 	    return function(input, optional) {
+	    	if (input == null) {
+	    		return "";
+	    	}
 	        var d = new Date(input);
 	        return $filter('date')(d, (optional ? optional : 'fullDate'));
 	    };

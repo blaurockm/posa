@@ -1,7 +1,10 @@
 package net.buchlese.verw;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import net.buchlese.verw.util.LocalDateDeserializer;
+import net.buchlese.verw.util.LocalDateSerializer;
 import net.buchlese.verw.util.LocalDateTimeDeserializer;
 import net.buchlese.verw.util.LocalDateTimeSerializer;
 
@@ -10,8 +13,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
-import org.springframework.hateoas.config.EnableHypermediaSupport;
-import org.springframework.hateoas.config.EnableHypermediaSupport.HypermediaType;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -27,7 +28,9 @@ public class VerwaltungsApp {
         ObjectMapper objectMapper = new ObjectMapper();
         JavaTimeModule javaTimeModule = new JavaTimeModule();
         javaTimeModule.addSerializer(LocalDateTime.class, new LocalDateTimeSerializer());
+        javaTimeModule.addSerializer(LocalDate.class, new LocalDateSerializer());
         javaTimeModule.addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer());
+        javaTimeModule.addDeserializer(LocalDate.class, new LocalDateDeserializer());
         objectMapper.registerModule(javaTimeModule);
         return objectMapper;
     }

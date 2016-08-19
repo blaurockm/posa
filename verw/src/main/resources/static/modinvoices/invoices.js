@@ -22,6 +22,12 @@
 	            if (params.hasFilter()) {
 	            	angular.extend(queryParams, params.filter());
 	            }
+	            if ($scope.hasOwnProperty('pointofsale')) {
+	            	queryParams['pointid'] = $scope.pointofsale;
+	            }
+	            if ($scope.hasOwnProperty('exported')) {
+	            	queryParams['exported'] = $scope.exported;
+	            }
 	            InvoiceDao.search(queryParams, function(data) {
 	                params.total(data.totalElements);
 	                $defer.resolve( data.content);
@@ -111,6 +117,9 @@
   angular.module("verwApp.invoices").
    filter('localdatetime', function($filter) {
 	    return function(input, optional) {
+	    	if (input == null) {
+	    		return "";
+	    	}
 	        var d = new Date(input);
 	        return $filter('date')(d,(optional ? optional : 'medium'));
 	    };
@@ -118,7 +127,7 @@
    filter('localdate', function($filter) {
 	    return function(input, optional) {
 	        var d = new Date(input);
-	        return $filter('date')(d, (optional ? optional : 'fullDate'));
+	        return $filter('date')(d, (optional ? optional : 'mediumDate'));
 	    };
 	}).
 	run(function (amMoment) {

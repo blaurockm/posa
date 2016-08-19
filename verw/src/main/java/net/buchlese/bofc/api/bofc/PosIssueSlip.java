@@ -6,9 +6,11 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -72,6 +74,7 @@ public class PosIssueSlip {
 	
 	@JsonProperty
 	@ElementCollection
+	@CollectionTable(joinColumns=@JoinColumn(name="pos_issue_slip"))
 	private List<PosInvoiceDetail> details;
 
 	@JsonProperty
