@@ -13,6 +13,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+import org.springframework.data.repository.init.Jackson2RepositoryPopulatorFactoryBean;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -34,7 +37,17 @@ public class VerwaltungsApp {
         objectMapper.registerModule(javaTimeModule);
         return objectMapper;
     }
-	
+
+	@Bean
+	public Jackson2RepositoryPopulatorFactoryBean repositoryPopulator() {
+
+		Resource sourceData = new ClassPathResource("defaultArticleGroups.json");
+
+		Jackson2RepositoryPopulatorFactoryBean factory = new Jackson2RepositoryPopulatorFactoryBean();
+		factory.setResources(new Resource[] { sourceData });
+		return factory;
+	}
+	  
 	public static void main(String[] args) {
 		SpringApplication.run(VerwaltungsApp.class, args);
 	}

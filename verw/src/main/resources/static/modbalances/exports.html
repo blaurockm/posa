@@ -11,10 +11,13 @@
 	<table ng-table="tableParams" class="table" show-filter="true">
     <tr ng-repeat="row in $data">
         <td>
-			<button class="pull-left btn btn-info" type="button" title="View" ng-click="showExport(row)">
+			<button class="btn btn-info" type="button" title="Download" ng-click="download(row)">
+				<span class="glyphicon glyphicon-file"></span>
+			</button>
+			<button class="btn btn-info" type="button" title="View" ng-click="showExport(row)">
 				<span class="glyphicon glyphicon-list-alt"></span>
 			</button>
-			<button class="pull-left btn btn-info" type="button" title="View" ng-click="showDetailsOfExport(row)">
+			<button class="btn btn-info" type="button" title="Sätze" ng-click="showDetailsOfExport(row)">
 				<span class="glyphicon glyphicon-expand"></span>
 			</button>
 		</td>		

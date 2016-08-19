@@ -1,46 +1,53 @@
 package net.buchlese.bofc.api.bofc;
 
-import java.util.Map;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+@Entity
 public class ArticleGroup {
 
 	public static Character UNDEF_WARGRINDEX = '-';
 	
 	@JsonIgnore
-	public static ArticleGroup NONE = new ArticleGroup("n.m.", "unbekannt",UNDEF_WARGRINDEX);
+//	public static ArticleGroup NONE = new ArticleGroup("n.m.", "unbekannt",UNDEF_WARGRINDEX);
 	
-	private static Map<String, ArticleGroup> articleGroupMappings;
+//	private static Map<String, ArticleGroup> articleGroupMappings;
 	
-	public static void injectMappings(Map<String, ArticleGroup> m) {
-		articleGroupMappings = m;
-		articleGroupMappings.put(NONE.key, NONE);
-	}
-	@JsonIgnore
-	public static  Map<String, ArticleGroup> getArticleGroups() {
-		return articleGroupMappings;
-	}
+//	public static void injectMappings(Map<String, ArticleGroup> m) {
+//		articleGroupMappings = m;
+//		articleGroupMappings.put(NONE.key, NONE);
+//	}
+//	@JsonIgnore
+//	public static  Map<String, ArticleGroup> getArticleGroups() {
+//		return articleGroupMappings;
+//	}
 	
-	public ArticleGroup() {
-	}
-
-	public ArticleGroup(String key, String name, Character wargridx) {
-		this.key = key;
-		this.text = name;
-		this.wargrindex = String.valueOf(wargridx);
-	}
+//	public ArticleGroup() {
+//	}
+//
+//	public ArticleGroup(String key, String name, Character wargridx) {
+//		this.key = key;
+//		this.text = name;
+//		this.wargrindex = String.valueOf(wargridx);
+//	}
 
 	@JsonProperty
 	private String wargrindex;
 	@JsonProperty
+	@Column(name="match_")
 	private String match;
 	@JsonProperty
 	private String text;
 	@JsonProperty
+	@Id
+	@Column(name="key_")
 	private String key;
 	@JsonProperty
+	@Column(name="type_")
 	private String type;
 	@JsonProperty
 	private Double marge;

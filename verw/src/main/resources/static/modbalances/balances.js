@@ -57,7 +57,7 @@
 	    });
   };
 
-  var BalancesExportController = function($scope, $http, ExportDao, NgTableParams, $uibModal) {
+  var BalancesExportController = function($scope, $http, ExportDao, NgTableParams, $uibModal, $window) {
 	$scope.deleteExport = function(accExport) {
 		ExportDao.delete({id : accExport.id }, function () {
 	    	$scope.tableParams.reload();
@@ -66,7 +66,11 @@
 
 	$scope.showExport = function(accExport) {
 	}
-	
+
+	$scope.download = function(accExport) {
+		window.open("/balances/exportfile?id="+accExport.id);
+	}
+
 	$scope.showDetailsOfExport = function(accExport) {
 		ExportDao.get({id : accExport.id}, function(bal) {
 			$http.get(bal._links.balances.href, {})
@@ -113,7 +117,7 @@
   };
   
   BalanceController.$inject = ['$scope', '$http', 'CashbalanceDAO', 'NgTableParams', '$uibModal'];
-  BalancesExportController.$inject = ['$scope', '$http', 'BalExportDAO', 'NgTableParams', '$uibModal'];
+  BalancesExportController.$inject = ['$scope', '$http', 'BalExportDAO', 'NgTableParams', '$uibModal', '$window'];
 
   var CashbalanceFactory = function($resource) {
     return $resource('/api/cashbalance/:id', { id: '@id' },

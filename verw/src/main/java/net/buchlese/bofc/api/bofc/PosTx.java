@@ -10,7 +10,6 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
@@ -90,22 +89,6 @@ public class PosTx {
 
 	@JsonProperty
 	private boolean toBeCheckedAgain;
-
-	// das ArticleGroup-Object wollen wir im json drin haben, aber nicht in der datenbank
-	public ArticleGroup getArticleGroup() {
-		if (ArticleGroup.getArticleGroups() != null) {
-			ArticleGroup g =  ArticleGroup.getArticleGroups().get(getArticleGroupKey());
-			if (g != null) {
-				return g;
-			}
-		}
-		return ArticleGroup.NONE;
-	}
-
-	@JsonIgnore
-	public void setArticleGroup(ArticleGroup g) {
-		
-	}
 
 	public long getId() {
 		return id;
