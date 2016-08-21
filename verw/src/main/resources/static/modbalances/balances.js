@@ -10,7 +10,7 @@
 	    	      size: 'lg'
 	    	    });
 	    }
-	    
+
 	    $scope.createBalanceExport = function(pointOfSale) {
 	    	if (!pointOfSale) {
 	    		pointOfSale = 1;
@@ -64,8 +64,20 @@
 		})
     };
 
-	$scope.showExport = function(accExport) {
-	}
+    $scope.showExport = function (exp) {
+        var params = {id : exp.id};
+    	$http.get('/balances/exportreport', {params: params}).
+    	then( function (data) {
+    		$uibModal.open({
+    			animation: true,
+    			templateUrl: '/templates/reportBalanceExport.html',
+    			controller: function($scope) {
+    				$scope.exp = data.data;
+    			},
+    			size: 'lg'
+    		})
+    	});
+    }
 
 	$scope.download = function(accExport) {
 		window.open("/balances/exportfile?id="+accExport.id);

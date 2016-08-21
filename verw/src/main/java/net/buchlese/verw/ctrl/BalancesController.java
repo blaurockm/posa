@@ -13,6 +13,8 @@ import java.util.Set;
 import net.buchlese.bofc.api.bofc.AccountingBalanceExport;
 import net.buchlese.bofc.api.bofc.PosCashBalance;
 import net.buchlese.verw.core.AccountingExportFile;
+import net.buchlese.verw.reports.ReportBalanceExportCreator;
+import net.buchlese.verw.reports.obj.ReportBalanceExport;
 import net.buchlese.verw.repos.BalanceExportRepository;
 import net.buchlese.verw.repos.BalanceRepository;
 
@@ -44,7 +46,9 @@ public class BalancesController {
 	@Autowired BalanceExportRepository exportRepository;
 
 	@Autowired AccountingExportFile exportFileCreator;
-	
+
+	@Autowired ReportBalanceExportCreator reportBalanceExport;
+
 	@ResponseBody
 	@RequestMapping(path="balancesDyn", method = RequestMethod.GET)
 	public Page<PosCashBalance> balancesDynamic(@QuerydslPredicate(root = PosCashBalance.class) Predicate predicate,    
@@ -83,7 +87,6 @@ public class BalancesController {
 	}
 	
 	
-	@ResponseBody
 	@RequestMapping(path="deleteExport", method = RequestMethod.DELETE)
 	@Transactional
 	public void deleteBalanceExport(@RequestParam("id") Long id) {
@@ -91,8 +94,6 @@ public class BalancesController {
 		Set<PosCashBalance> expBal = export.getBalances(); 
 		expBal.forEach(PosCashBalance::unexport);
 		exportRepository.delete(export);
-		
-		return;
 	}
 
 	
@@ -115,4 +116,11 @@ public class BalancesController {
 		return ResponseEntity.ok().headers(respHeaders).body(result.toString());
 	}
 
+	@ResponseBody
+	@RequestMapping(path="exportreport", method = RequestMethod.GET)
+	@Transactional
+	public ReportBalanceExport getExportReport(@RequestParam("id") Long id) {
+		AccountingBalanceExport export = exportRepository.findOne(id);
+		return reportBalanceExport.createReport(export);
+	}
 }
