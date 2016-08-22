@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=utf-8">
+<title>Kassenbericht</title>
+
+</head>
+<body>
+   <img src="/images/header{{inv.pointid}}.jpg" />
+   <p>
+   {{ inv.name1 }} <br/>
+   {{ inv.name2 }} <br/>
+   {{ inv.name3 }} <br/>
+   {{ inv.street }} <br/>
+   {{ inv.city }}
+   <p>
+   <p>
+   <b>Rechnung {{ inv.number }}</b> 
+   <p>
+   <p>
+   <table border="1">
+     <tr><th>Debitor</th><th>Kunde</th><th>Datum</th></tr>
+     <tr><td>{{inv.debitorId}}</td><td>{{inv.customerId}}</td><td>{{inv.date | localdate}}</td></tr>
+   </table>
+   <p>
+   <table class="table table-condensed">
+     <tr ng-repeat="line in inv.details">
+       <td>{{line.text}}</td>
+       <td>{{line.singlePrice / 100 | currency }}</td>
+       <td>{{line.rebatePrice / 100 | currency }}</td>
+       <td>{{line.quantity}}</td>
+       <td>{{line.amount / 100 | currency}}</td>
+     </tr>
+   </table>
+   <p>
+   Rechnungsgesamtbetrag {{inv.amount / 100 | currency}}
+   <p>
+   Steueraufteilung TODO
+   <img src="/images/footer.jpg" />
+</body>

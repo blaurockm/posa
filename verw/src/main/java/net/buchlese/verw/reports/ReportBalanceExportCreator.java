@@ -25,6 +25,7 @@ public class ReportBalanceExportCreator {
 		rep.setExecDate(export.getExecDate());
 		rep.setPosname(decodePos(export.getPointId()));
 		rep.setDescription("Kassenberichtsexport für " + rep.getPosname());
+		rep.setExportId(export.getId());
 		PosCashBalance[] bals = export.getBalances().toArray(new PosCashBalance[]{});
 		Arrays.sort(bals, Comparator.comparing(PosCashBalance::getFirstCovered));
 		rep.setBalances(bals);

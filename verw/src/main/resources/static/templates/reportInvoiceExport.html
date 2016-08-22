@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=utf-8">
+<title>{{exp.description}}</title>
+</head>
+<body>
+  <div class="modal-content">
+	<div class="modal-header">
+	   <h5>Bericht</h5>
+	</div>
+
+	<div class="modal-body" id="modelPrintThis">
+		<h1>Rechnungsausgangsjournal vom {{exp.execDate | localdate:'fullDate'}}</h1>
+		
+		<p>Kasse <b>{{exp.posname}}</b></p>
+		<p>Erste Rechnung {{exp.firstInvoice.number}} vom {{ exp.firstInvoice.date | localdate:'fullDate'}}</p>
+		<p>Letzte Rechnung {{exp.lastInvoice.number}} vom {{ exp.lastInvoice.date | localdate:'fullDate'}}</p>
+	
+		<table class="table table-condensed table-bordered small">
+			<thead>
+				<tr>
+				    <th>Rechnung Nr</th>
+				    <th>Belegdatum</th>
+				    <th>Kunde</th>
+				    <th>Debitkto</th>
+				    <th>bezahlt?</th>
+				    <th>Betrag</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="inv in exp.invoices">
+					<td>{{inv.number}}</td>
+					<td>{{inv.date | localdate:'mediumDate'}}</td>
+					<td>{{inv.name1}} ({{inv.customerId}})</td>
+					<td align="right">{{inv.debitorId}}</td>
+					<td align="right">{{inv.payed }}</td>
+					<td align="right">{{inv.amount / 100 | currency}}</td>
+				</tr>
+
+				<tr>
+					<td><b>Summe</b></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td align="right"><b>{{exp.invoicesSum/100 | currency}}</b></td>
+				</tr>
+
+			</tbody>
+		</table>
+		<table class="table table-condensed table-bordered">
+			<tbody>
+				<tr><td>Summe Einnahmen 19%</td><td>{{exp.taxFullSum/100 | currency}}</td></tr>
+				<tr><td>Summe Einnahmen 7%</td><td>{{exp.taxHalfSum/100 | currency}}</td></tr>
+				<tr><td>Summe Einnahmen 0%</td><td>{{exp.taxNoneSum/100 | currency}}</td></tr>
+			</tbody>
+		</table>
+		
+	</div> <!--  modal body -->
+	<div class="modal-footer">
+		<button class="btn btn-info" type="button" title="Download"	ng-click="download(exp.exportId)">
+			<span class="glyphicon glyphicon-file"></span>
+		</button>
+		<button class="btn btn-primary" ng-print print-element-id="modelPrintThis"><i class="fa fa-print"></i> Print</button>
+	</div>
+   </div>	
+</body>
+</html>
+

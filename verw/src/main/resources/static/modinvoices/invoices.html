@@ -14,6 +14,7 @@
 	  <label><input type="radio" ng-model="pointofsale" value="3">Schramberg</label>
 	</div>
 	 <label>  <input type="checkbox" ng-model="exported"> Exportiert?</label>
+	 <label>  <input type="checkbox" ng-model="mapped"> Gemappt?</label>
 	 <button ng-click="reloadData()">neu laden</button>
 	 <button ng-click="createInvoiceExport()">Neuer Ausgangsrechnungen-Export</button>
 	</div>
@@ -23,10 +24,10 @@
 	<table ng-table="tableParams" class="table" show-filter="true">
     <tr ng-repeat="row in $data">
         <td title="'Nummer'" filter="{number: 'text'}" sortable="'number'">
-        <a ng-click="showBalance(row.id)"  class="cursor-pointer">{{row.number}}</a>
+        <a ng-click="showInvoice(row)"  class="cursor-pointer">{{row.number}}</a>
         </td>
         <td title="'Name'" filter="{name1: 'text'}" sortable="'name1'">{{row.name1}}</td>
-        <td title="'Debitor'" filter="{debitorId: 'number'}" sortable="'debitorId'">{{row.debitorId}}</td>
+        <td title="'Debitor'" filter="{debitorId: 'number'}" sortable="'debitorId'"><a href="#" editable-text="row.debitorId" onaftersave="updateMapping(row)">{{ row.debitorId }}</a></td>
         <td title="'Datum'" filter="{datum: 'text'}" sortable="'date'">{{row.date | localdate}}</td>
         <td title="'Kasse'" filter="{pointid: 'number'}" sortable="'pointid'">{{row.pointid}}</td>
         <td title="'Betrag'" sortable="'amount'" align="right">{{row.amount / 100 | currency}}</td>

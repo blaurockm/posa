@@ -1,6 +1,11 @@
 package net.buchlese.bofc.api.bofc;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -34,10 +39,10 @@ public class AccountingInvoiceExport {
 	private LocalDateTime execDate;
 	@JsonProperty
 	@Column(name="fromDate")
-	private LocalDateTime from;
+	private LocalDate from;
 	@JsonProperty
 	@Column(name="tillDate")
-	private LocalDateTime till;
+	private LocalDate till;
 	
 	@JsonIgnore
 	@OneToMany
@@ -82,19 +87,39 @@ public class AccountingInvoiceExport {
 		this.invoices = invoices;
 	}
 
-	public LocalDateTime getFrom() {
+	public void setInvoices(Collection<PosInvoice> coll) {
+		if (coll == null || coll.isEmpty()) {
+			return;
+		}
+		Optional<PosInvoice> first = coll.stream().min(Comparator.comparing(PosInvoice::getDate));
+		Optional<PosInvoice> last = coll.stream().max(Comparator.comparing(PosInvoice::getDate));
+		setFrom(first.get().getDate());
+		setTill(last.get().getDate());
+		setDatasize(coll.size());
+		coll.forEach(this::addInvoice);
+	}
+	
+	public void addInvoice(PosInvoice bal) {
+		if (getInvoices() == null) {
+			setInvoices(new HashSet<PosInvoice>());
+		}
+		getInvoices().add(bal);
+		bal.export(this);
+	}
+
+	public LocalDate getFrom() {
 		return from;
 	}
 
-	public void setFrom(LocalDateTime from) {
+	public void setFrom(LocalDate from) {
 		this.from = from;
 	}
 
-	public LocalDateTime getTill() {
+	public LocalDate getTill() {
 		return till;
 	}
 
-	public void setTill(LocalDateTime till) {
+	public void setTill(LocalDate till) {
 		this.till = till;
 	}
 

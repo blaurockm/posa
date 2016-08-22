@@ -1,5 +1,8 @@
 package net.buchlese.verw.repos;
 
+import java.time.LocalDate;
+import java.util.List;
+
 import net.buchlese.bofc.api.bofc.PosInvoice;
 import net.buchlese.bofc.api.bofc.QPosInvoice;
 
@@ -12,18 +15,23 @@ import org.springframework.data.rest.core.annotation.RestResource;
 
 @RepositoryRestResource(collectionResourceRel = "invoices", path = "invoice")
 public interface InvoiceRepository extends JpaRepository<PosInvoice, Long>,
-											QueryDslPredicateExecutor<PosInvoice>,
-											QuerydslBinderCustomizer<QPosInvoice>{
-	  @Override
-	  @RestResource(exported = false)
-	  void delete(Long id);
+QueryDslPredicateExecutor<PosInvoice>,
+QuerydslBinderCustomizer<QPosInvoice>{
+	
+	@Override
+	@RestResource(exported = false)
+	void delete(Long id);
 
-	  @Override
-	  @RestResource(exported = false)
-	  void delete(PosInvoice entity);
+	@Override
+	@RestResource(exported = false)
+	void delete(PosInvoice entity);
 
-	  @Override
-	  default public void customize(QuerydslBindings bindings, QPosInvoice inv) {
-		  bindings.bind(inv.name1).first((path, value) -> path.likeIgnoreCase(value));
-	  }
+	@Override
+	default public void customize(QuerydslBindings bindings, QPosInvoice inv) {
+		bindings.bind(inv.name1).first((path, value) -> path.likeIgnoreCase(value));
+	}
+
+	PosInvoice findFirstByExportedAndPointidOrderByDateAsc(boolean b, Integer pointid);
+
+	List<PosInvoice> findAllByExportedAndPointidAndDateLessThanEqualOrderByDateAsc(boolean b, Integer pointid, LocalDate maxTag);
 }

@@ -79,10 +79,6 @@
     		})
     	});
     }
-
-    $scope.printReport = function () {
-    	
-    }
     
 	$scope.download = function(expId) {
 		window.open("/balances/exportfile?id="+expId);
@@ -95,7 +91,6 @@
     			$scope.detailTable = new NgTableParams({},{dataset:data.data._embedded.cashbalances});
 			})
 		});
-		
 	}
 	
     $scope.showBalance = function (bal) {

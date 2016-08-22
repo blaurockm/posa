@@ -34,7 +34,7 @@ QueryDslPredicateExecutor<PosCashBalance>,QuerydslBinderCustomizer<QPosCashBalan
 
 	PosCashBalance findFirstByExportedAndPointidOrderByAbschlussIdAsc(@Param("exported")boolean b, @Param("pointid") int pointid);
 
-	List<PosCashBalance> findAllByExportedAndPointidAndAbschlussIdLessThanEqualOrderByAbschlussId(@Param("exported")boolean b,  @Param("pointid") int pointid,  @Param("abschlussId") String maxAbschlussId);
+	List<PosCashBalance> findAllByExportedAndPointidAndAbschlussIdLessThanEqualOrderByAbschlussIdAsc(@Param("exported")boolean b,  @Param("pointid") int pointid,  @Param("abschlussId") String maxAbschlussId);
 
 	@Override
 	default public void customize(QuerydslBindings bindings, QPosCashBalance bal) {

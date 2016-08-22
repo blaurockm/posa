@@ -16,6 +16,8 @@ public class ReportBalanceExport {
 	@JsonProperty
 	private LocalDateTime execDate;
 	@JsonProperty
+	private long exportId;
+	@JsonProperty
 	private String description;
 	@JsonProperty
 	private String posname;
@@ -225,6 +227,12 @@ public class ReportBalanceExport {
 	}
 	public void setCashDiffSum(long cashDiffSum) {
 		this.cashDiffSum = cashDiffSum;
+	}
+	public long getExportId() {
+		return exportId;
+	}
+	public void setExportId(long exportId) {
+		this.exportId = exportId;
 	}
 
 

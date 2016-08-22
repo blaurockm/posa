@@ -73,7 +73,7 @@ public class BalancesController {
 		// Buchungsperiode es ersten Abschlusses ermitteln
 		LocalDate tag = firstUnexported.getFirstCovered().toLocalDate();
 		String maxAbschlussId = tag.withDayOfMonth(tag.lengthOfMonth()).format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-		List<PosCashBalance> balToExp = balanceRepository.findAllByExportedAndPointidAndAbschlussIdLessThanEqualOrderByAbschlussId(false, pointid, maxAbschlussId);
+		List<PosCashBalance> balToExp = balanceRepository.findAllByExportedAndPointidAndAbschlussIdLessThanEqualOrderByAbschlussIdAsc(false, pointid, maxAbschlussId);
 		
 		AccountingBalanceExport export = new AccountingBalanceExport();
 		export.setDescription("..asd.");
