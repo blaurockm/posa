@@ -58,33 +58,38 @@
   };
 
   var BalancesExportController = function($scope, $http, ExportDao, NgTableParams, $uibModal, $window) {
-	$scope.deleteExport = function(accExport) {
-		ExportDao.delete({id : accExport.id }, function () {
+	$scope.deleteExport = function(expId) {
+		ExportDao.delete({id : expId }, function () {
 	    	$scope.tableParams.reload();
 		})
     };
 
-    $scope.showExport = function (exp) {
-        var params = {id : exp.id};
+    $scope.showExport = function (expId) {
+        var params = {id : expId};
     	$http.get('/balances/exportreport', {params: params}).
     	then( function (data) {
     		$uibModal.open({
-    			animation: true,
     			templateUrl: '/templates/reportBalanceExport.html',
+    			scope : $scope,
     			controller: function($scope) {
     				$scope.exp = data.data;
+    				$scope.exp.id  = expId;
     			},
     			size: 'lg'
     		})
     	});
     }
 
-	$scope.download = function(accExport) {
-		window.open("/balances/exportfile?id="+accExport.id);
+    $scope.printReport = function () {
+    	
+    }
+    
+	$scope.download = function(expId) {
+		window.open("/balances/exportfile?id="+expId);
 	}
 
-	$scope.showDetailsOfExport = function(accExport) {
-		ExportDao.get({id : accExport.id}, function(bal) {
+	$scope.showDetailsOfExport = function(expId) {
+		ExportDao.get({id : expId}, function(bal) {
 			$http.get(bal._links.balances.href, {})
 			.then(function(data) {
     			$scope.detailTable = new NgTableParams({},{dataset:data.data._embedded.cashbalances});

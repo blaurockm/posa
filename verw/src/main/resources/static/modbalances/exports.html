@@ -11,13 +11,13 @@
 	<table ng-table="tableParams" class="table" show-filter="true">
     <tr ng-repeat="row in $data">
         <td>
-			<button class="btn btn-info" type="button" title="Download" ng-click="download(row)">
+			<button class="btn btn-info" type="button" title="Download" ng-click="download(row.id)">
 				<span class="glyphicon glyphicon-file"></span>
 			</button>
-			<button class="btn btn-info" type="button" title="View" ng-click="showExport(row)">
+			<button class="btn btn-info" type="button" title="View" ng-click="showExport(row.id)">
 				<span class="glyphicon glyphicon-list-alt"></span>
 			</button>
-			<button class="btn btn-info" type="button" title="Sätze" ng-click="showDetailsOfExport(row)">
+			<button class="btn btn-info" type="button" title="Sätze" ng-click="showDetailsOfExport(row.id)">
 				<span class="glyphicon glyphicon-expand"></span>
 			</button>
 		</td>		
@@ -28,7 +28,7 @@
         <td title="'Kasse'" filter="{pointId: 'number'}" sortable="'pointId'">{{row.pointId}}</td>
         <td title="'Exportdatum'" sortable="'execDate'">{{row.execDate | localdatetime }}</td>
         <td>
-			<button class="pull-right btn btn-danger" type="button" title="Delete" ng-click="deleteExport(row)" confirm="Bitte das Löschen bestätigen!">
+			<button class="pull-right btn btn-danger" type="button" title="Delete" ng-click="deleteExport(row.id)" confirm="Bitte das Löschen bestätigen!">
 				<span class="glyphicon glyphicon-trash"></span>
 			</button>
 		</td>		

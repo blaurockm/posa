@@ -1,0 +1,25 @@
+@media screen {
+    #printSection {
+        display: none;
+    }
+}
+
+@media print {
+    body div.container {
+        display:none;
+    }
+
+    body div.modal-content {
+        display:none;
+    }
+
+/*!    #printSection, #printSection * {
+        display: inline;
+    }  sonst is alles in erine Zeile drin */
+
+    #printSection {
+        position:absolute;
+        left:0;
+        top:0;
+    }
+}

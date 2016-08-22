@@ -18,6 +18,8 @@ public class ReportBalanceExport {
 	@JsonProperty
 	private String description;
 	@JsonProperty
+	private String posname;
+	@JsonProperty
 	private PosCashBalance firstBalance;
 	@JsonProperty
 	private PosCashBalance lastBalance;
@@ -29,6 +31,8 @@ public class ReportBalanceExport {
 	private long absorptionSum;
 	@JsonProperty
 	private long telecashSum;
+	@JsonProperty
+	private long cashDiffSum;
 	@JsonProperty
 	private long revenueSum;
 	@JsonProperty
@@ -42,9 +46,19 @@ public class ReportBalanceExport {
 	@JsonProperty
 	private long couponOutSum;
 	@JsonProperty
+	private long taxFullSum;
+	@JsonProperty
+	private long taxHalfSum;
+	@JsonProperty
+	private long taxNoneSum;
+	@JsonProperty
 	private PosCashBalance[] balances;
 	@JsonProperty
-	private List<InvoicePay> invoicePays;
+	private List<ExtraPay> invoicePays;
+	@JsonProperty
+	private List<ExtraPay> cashInPays;
+	@JsonProperty
+	private List<ExtraPay> cashOutPays;
 	
 	public long getCashStart() {
 		return cashStart;
@@ -113,34 +127,11 @@ public class ReportBalanceExport {
 		this.balances = balances;
 	}
 	
-	public static class InvoicePay {
-		private long amount;
-		private String invNum;
-		private LocalDate payDate;
-		public long getAmount() {
-			return amount;
-		}
-		public void setAmount(long amount) {
-			this.amount = amount;
-		}
-		public String getInvNum() {
-			return invNum;
-		}
-		public void setInvNum(String invNum) {
-			this.invNum = invNum;
-		}
-		public LocalDate getPayDate() {
-			return payDate;
-		}
-		public void setPayDate(LocalDate payDate) {
-			this.payDate = payDate;
-		}
-	}
 
-	public List<InvoicePay> getInvoicePays() {
+	public List<ExtraPay> getInvoicePays() {
 		return invoicePays;
 	}
-	public void setInvoicePays(List<InvoicePay> invoicePays) {
+	public void setInvoicePays(List<ExtraPay> invoicePays) {
 		this.invoicePays = invoicePays;
 	}
 	public LocalDateTime getExecDate() {
@@ -167,5 +158,74 @@ public class ReportBalanceExport {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	
+	public String getPosname() {
+		return posname;
+	}
+	public void setPosname(String posname) {
+		this.posname = posname;
+	}
+
+	public static class ExtraPay {
+		private long amount;
+		private String text;
+		private LocalDate payDate;
+		public long getAmount() {
+			return amount;
+		}
+		public void setAmount(long amount) {
+			this.amount = amount;
+		}
+		
+		public LocalDate getPayDate() {
+			return payDate;
+		}
+		public void setPayDate(LocalDate payDate) {
+			this.payDate = payDate;
+		}
+		public String getText() {
+			return text;
+		}
+		public void setText(String text) {
+			this.text = text;
+		}
+	}
+
+	public List<ExtraPay> getCashInPays() {
+		return cashInPays;
+	}
+	public void setCashInPays(List<ExtraPay> cashInPays) {
+		this.cashInPays = cashInPays;
+	}
+	public List<ExtraPay> getCashOutPays() {
+		return cashOutPays;
+	}
+	public void setCashOutPays(List<ExtraPay> cashOutPays) {
+		this.cashOutPays = cashOutPays;
+	}
+	public long getTaxFullSum() {
+		return taxFullSum;
+	}
+	public void setTaxFullSum(long taxFullSum) {
+		this.taxFullSum = taxFullSum;
+	}
+	public long getTaxHalfSum() {
+		return taxHalfSum;
+	}
+	public void setTaxHalfSum(long taxHalfSum) {
+		this.taxHalfSum = taxHalfSum;
+	}
+	public long getTaxNoneSum() {
+		return taxNoneSum;
+	}
+	public void setTaxNoneSum(long taxNoneSum) {
+		this.taxNoneSum = taxNoneSum;
+	}
+	public long getCashDiffSum() {
+		return cashDiffSum;
+	}
+	public void setCashDiffSum(long cashDiffSum) {
+		this.cashDiffSum = cashDiffSum;
+	}
+
+
 }

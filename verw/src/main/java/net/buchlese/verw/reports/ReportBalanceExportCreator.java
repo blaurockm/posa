@@ -10,9 +10,10 @@ import net.buchlese.bofc.api.bofc.PaymentMethod;
 import net.buchlese.bofc.api.bofc.PosCashBalance;
 import net.buchlese.bofc.api.bofc.PosTicket;
 import net.buchlese.bofc.api.bofc.PosTx;
+import net.buchlese.bofc.api.bofc.Tax;
 import net.buchlese.bofc.api.bofc.TxType;
 import net.buchlese.verw.reports.obj.ReportBalanceExport;
-import net.buchlese.verw.reports.obj.ReportBalanceExport.InvoicePay;
+import net.buchlese.verw.reports.obj.ReportBalanceExport.ExtraPay;
 
 import org.springframework.stereotype.Component;
 
@@ -22,7 +23,8 @@ public class ReportBalanceExportCreator {
 	public ReportBalanceExport createReport(AccountingBalanceExport export) {
 		ReportBalanceExport rep = new ReportBalanceExport();
 		rep.setExecDate(export.getExecDate());
-		rep.setDescription(export.getDescription());
+		rep.setPosname(decodePos(export.getPointId()));
+		rep.setDescription("Kassenberichtsexport für " + rep.getPosname());
 		PosCashBalance[] bals = export.getBalances().toArray(new PosCashBalance[]{});
 		Arrays.sort(bals, Comparator.comparing(PosCashBalance::getFirstCovered));
 		rep.setBalances(bals);
@@ -32,6 +34,7 @@ public class ReportBalanceExportCreator {
 		rep.setCashEnd(bals[bals.length-1].getCashEnd());
 		
 		rep.setAbsorptionSum(Arrays.stream(bals).mapToLong(PosCashBalance::getAbsorption).sum());
+		rep.setCashDiffSum(Arrays.stream(bals).mapToLong(x -> x.getCashDiff() != null ? x.getCashDiff() : Long.valueOf(0L)).sum());
 		rep.setTelecashSum(Arrays.stream(bals).mapToLong(x -> x.getPaymentMethodBalance().get(PaymentMethod.TELE) != null ? x.getPaymentMethodBalance().get(PaymentMethod.TELE).longValue() : 0L).sum());
 		rep.setRevenueSum(Arrays.stream(bals).mapToLong(PosCashBalance::getRevenue).sum());
 		rep.setCashInSum(Arrays.stream(bals).mapToLong(PosCashBalance::getCashInSum).sum());
@@ -39,18 +42,32 @@ public class ReportBalanceExportCreator {
 		rep.setInvoicesPayedSum(Arrays.stream(bals).mapToLong(PosCashBalance::getPayedInvoicesSum).sum());
 		rep.setCouponInSum(Arrays.stream(bals).mapToLong(PosCashBalance::getCouponTradeIn).sum());
 		rep.setCouponOutSum(Arrays.stream(bals).mapToLong(PosCashBalance::getCouponTradeOut).sum());
-		List<InvoicePay> ip = new ArrayList<>();
+		List<ExtraPay> ip = new ArrayList<>();
+		List<ExtraPay> cop = new ArrayList<>();
+		List<ExtraPay> cip = new ArrayList<>();
+		long taxSumFull = 0;
+		long taxSumHalf = 0;
+		long taxSumNone = 0;
 		for (PosCashBalance bal : bals) {
-			if (bal.getPayedInvoicesSum()> 0) {
-				for (PosTicket ticket : bal.getTickets()) {
-					for (PosTx tx : ticket.getTxs()) {
-						if (tx.getType().equals(TxType.DEBITPAY)) {
-							InvoicePay p = new InvoicePay();
-							p.setAmount(tx.getTotal());
-							p.setInvNum(tx.getMatchCode());
-							p.setPayDate(tx.getTimestamp().toLocalDate());
-							ip.add(p);
-						}
+			if (bal.getTaxBalance().containsKey(Tax.FULL)) {
+				taxSumFull += bal.getTaxBalance().get(Tax.FULL);
+			}
+			if (bal.getTaxBalance().containsKey(Tax.HALF)) {
+				taxSumHalf += bal.getTaxBalance().get(Tax.HALF);
+			}
+			if (bal.getTaxBalance().containsKey(Tax.NONE)) {
+				taxSumNone += bal.getTaxBalance().get(Tax.NONE);
+			}
+			for (PosTicket ticket : bal.getTickets()) {
+				for (PosTx tx : ticket.getTxs()) {
+					if (tx.getType().equals(TxType.DEBITPAY)) {
+						ip.add(convertTx(tx));
+					}
+					if (tx.getType().equals(TxType.CASHIN)) {
+						cip.add(convertTx(tx));
+					}
+					if (tx.getType().equals(TxType.CASHOUT)) {
+						cop.add(convertTx(tx));
 					}
 				}
 			}
@@ -58,7 +75,30 @@ public class ReportBalanceExportCreator {
 			bal.setTickets(null); // hopefully this doesnt get saved, its transient
 		}
 		rep.setInvoicePays(ip);
+		rep.setCashInPays(cip);
+		rep.setCashOutPays(cop);
+		rep.setTaxFullSum(taxSumFull);
+		rep.setTaxHalfSum(taxSumHalf);
+		rep.setTaxNoneSum(taxSumNone);
 		return rep;
+	}
+	
+	private ExtraPay convertTx(PosTx tx) {
+		ExtraPay p = new ExtraPay();
+		p.setAmount(tx.getTotal());
+		p.setText(tx.getMatchCode());
+		p.setPayDate(tx.getTimestamp().toLocalDate());
+		return p;
+	}
+	
+
+	private String decodePos(int pointId) {
+		switch (pointId) {
+		case 1: return "Dornhan";
+		case 2: return "Sulz";
+		case 3: return "Schramberg";
+		default: return "neuer Laden";
+		}
 	}
 
 	public long getTelecashForBalance(PosCashBalance bal) {
