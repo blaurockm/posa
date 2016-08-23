@@ -2,6 +2,8 @@
 	<div class="page-header">
 		<h1>Ausgangsrechnungen</h1>
 	</div>
+    <div class="alert alert-danger" ng-show="error">Nicht gespeichert: Server meldet '{{error.data.exception}}'</div>
+    <div class="alert alert-success" ng-show="success">{{success.name}} erfolgreich gespeichert</div>
 	<div>
 	 <p>Suchkriterien</p>
 	 <div class="radio">

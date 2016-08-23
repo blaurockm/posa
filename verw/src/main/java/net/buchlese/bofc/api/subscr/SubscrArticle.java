@@ -7,11 +7,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -19,7 +20,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @Entity
 @Table( name = "subscrarticle" )
 public class SubscrArticle implements Comparable<SubscrArticle> {
-	@NotNull
+	@GeneratedValue(strategy=GenerationType.AUTO)
 	@Id
 	@JsonProperty
 	private long id;

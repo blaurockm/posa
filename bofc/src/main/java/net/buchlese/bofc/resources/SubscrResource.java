@@ -1,5 +1,6 @@
 package net.buchlese.bofc.resources;
 
+import io.dropwizard.hibernate.UnitOfWork;
 import io.dropwizard.views.View;
 
 import java.io.IOException;
@@ -18,6 +19,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
@@ -44,6 +46,13 @@ import net.buchlese.bofc.core.reports.ReportDeliveryNoteCreator;
 import net.buchlese.bofc.core.reports.ReportDeliveryProtocolCreator;
 import net.buchlese.bofc.jdbi.bofc.PosInvoiceDAO;
 import net.buchlese.bofc.jdbi.bofc.SubscrDAO;
+import net.buchlese.bofc.jpa.JpaSubscrArticleDAO;
+import net.buchlese.bofc.jpa.JpaSubscrDeliveryDAO;
+import net.buchlese.bofc.jpa.JpaSubscrIntervalDAO;
+import net.buchlese.bofc.jpa.JpaSubscrIntervalDeliveryDAO;
+import net.buchlese.bofc.jpa.JpaSubscrProductDAO;
+import net.buchlese.bofc.jpa.JpaSubscriberDAO;
+import net.buchlese.bofc.jpa.JpaSubscriptionDAO;
 import net.buchlese.bofc.resources.helper.IssueSlipUpdateHelper;
 import net.buchlese.bofc.resources.helper.SubscrArticleUpdateHelper;
 import net.buchlese.bofc.resources.helper.SubscrDeliveryUpdateHelper;
@@ -98,6 +107,14 @@ public class SubscrResource {
 	
 	private final PosInvoiceDAO invDao;
 
+	private final JpaSubscriberDAO jpaSubscriberDao;
+	private final JpaSubscriptionDAO jpaSubscriptionDao;
+	private final JpaSubscrProductDAO jpaSubscrProductDao;
+	private final JpaSubscrArticleDAO jpaSubscrArticleDao;
+	private final JpaSubscrDeliveryDAO jpaSubscrDeliveryDao;
+	private final JpaSubscrIntervalDAO jpaSubscrIntervalDao;
+	private final JpaSubscrIntervalDeliveryDAO jpaSubscrIntervalDeliveryDao;
+
 	private final NumberGenerator numGen;
 	
 	private void recordUserChange(SubscrDAO dao, String login, long object, String fieldId, String oldValue, String newValue, String action) {
@@ -113,11 +130,56 @@ public class SubscrResource {
 	}
 	
 	@Inject
-	public SubscrResource(PosInvoiceDAO invd, SubscrDAO sdao, NumberGenerator g) {
+	public SubscrResource(PosInvoiceDAO invd, SubscrDAO sdao, NumberGenerator g,
+			JpaSubscriberDAO j1, JpaSubscriptionDAO j2, JpaSubscrProductDAO j3, JpaSubscrArticleDAO j4,
+			JpaSubscrDeliveryDAO j5, JpaSubscrIntervalDAO j6, JpaSubscrIntervalDeliveryDAO j7) {
 		super();
 		this.invDao = invd;
 		this.dao = sdao;
 		this.numGen =g;
+		this.jpaSubscriberDao = j1;
+		this.jpaSubscriptionDao = j2;
+		this.jpaSubscrProductDao = j3;
+		this.jpaSubscrArticleDao = j4;
+		this.jpaSubscrDeliveryDao = j5;
+		this.jpaSubscrIntervalDao = j6;
+		this.jpaSubscrIntervalDeliveryDao = j7;
+		
+	}
+
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("transferAll")
+	@UnitOfWork
+	public void transferAll()  {
+		List<Subscriber> subscrs = dao.getSubscribers();
+		for(Subscriber sub : subscrs) {
+			jpaSubscriberDao.create(sub);
+		}
+		List<SubscrProduct> products = dao.getSubscrProducts();
+		for(SubscrProduct p : products) {
+			jpaSubscrProductDao.create(p);
+			List<SubscrArticle> arts = dao.getArticlesOfProduct(p.getId());
+			for(SubscrArticle a : arts) {
+				jpaSubscrArticleDao.create(a);
+			}
+			List<SubscrInterval> ints = dao.getIntervalsOfProduct(p.getId());
+			for(SubscrInterval i : ints) {
+				jpaSubscrIntervalDao.create(i);
+			}
+		}
+		List<Subscription> subs = dao.getSubscriptions();
+		for(Subscription s : subs) {
+			jpaSubscriptionDao.create(s);
+			List<SubscrDelivery> arts = dao.getDeliveriesForSubscription(s.getId());
+			for(SubscrDelivery a : arts) {
+				jpaSubscrDeliveryDao.create(a);
+			}
+			List<SubscrIntervalDelivery> ints = dao.getIntervalDeliveriesForSubscription(s.getId());
+			for(SubscrIntervalDelivery a : ints) {
+				jpaSubscrIntervalDeliveryDao.create(a);
+			}
+		}
 	}
 
 	@POST

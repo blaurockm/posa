@@ -1,0 +1,84 @@
+<div class="container">
+    <div class="alert alert-danger" ng-show="error">Nicht gespeichert: Server meldet '{{error.data.exception}}'</div>
+    <div class="alert alert-success" ng-show="success">{{success.name}} erfolgreich gespeichert</div>
+	<form editable-form name="editableForm" onaftersave="updateCustomer(cust)">
+	<div class="page-header">
+		<h1>Kunde <span editable-text="cust.name" e-name="name" e-required>{{ cust.name|| '--' }}</span>
+		</h1>
+	</div>
+		<div>
+			<div class="row">
+				<div class="col-md-2">Ladengeschäft</div>
+				<div class="col-md-3">
+   			 	   <span editable-select="cust.pointid" e-name="pointid" e-ng-options="s.value as s.text for s in laeden">
+				        {{ (laeden | filter:{value: cust.pointid})[0].text || 'Nicht gesetzt' }}
+				   </span>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-2">Debitorenkonto</div>
+				<div class="col-md-3">
+                   <span editable-text="cust.debitorId" e-name="debitorId" e-required>{{ cust.debitorId|| 'leer' }}</span>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-2">Sammelrechnung</div>
+				<div class="col-md-3">
+				 <span editable-radiolist="cust.collectiveInvoice" e-name="collectiveInvoice" e-ng-options="s.value as s.text for s in sammelnDerRechnungen">
+				    {{ (sammelnDerRechnungen | filter:{value: cust.collectiveInvoice})[0].text || 'Nicht gesetzt!' }}
+				 </span>
+<!--                <span editable-checkbox="cust.collectiveInvoice" e-name="collectiveInvoice">{{ cust.collectiveInvoice && 'will Sammelrechnung' || 'keine' }}</span> -->
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-2">Lieferschein nötig</div>
+				<div class="col-md-3">
+				 <span editable-radiolist="cust.needsDeliveryNote" e-name="needsDeliveryNote" e-ng-options="s.value as s.text for s in liefernMitSchein">
+				    {{ (liefernMitSchein | filter:{value: cust.needsDeliveryNote})[0].text || 'Nicht gesetzt!' }}
+				 </span>
+ <!--                  <span editable-checkbox="cust.needsDeliveryNote" e-name="needsDeliveryNote">{{ cust.needsDeliveryNote && 'will Lieferschein' || 'kein' }}</span> -->
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-2">Standard-Versandart</div>
+				<div class="col-md-3">
+   			 	   <span editable-select="cust.shipmentType" e-name="shipmentType" e-ng-options="s.value as s.text for s in versandarten">
+				        {{ (versandarten | filter:{value: cust.shipmentType})[0].text || 'Nicht gesetzt' }}
+				   </span>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-2">Telefon</div>
+				<div class="col-md-3">
+                   <span editable-text="cust.telephone" e-name="telephone" >{{ cust.telephone|| 'leer' }}</span>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-2">Email</div>
+				<div class="col-md-3">
+                   <span editable-text="cust.email" e-name="email" >{{ cust.email|| 'leer' }}</span>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-2">Rechnungsadresse</div>
+				<div class="col-md-4">
+					<span editable-text="cust.invoiceAddress.name1" e-name="name1" >{{ cust.invoiceAddress.name1 }}</span>
+					<br/> <span editable-text="cust.invoiceAddress.name2" e-name="name2" >{{ cust.invoiceAddress.name2 }}</span>
+					<br/> <span editable-text="cust.invoiceAddress.name3" e-name="name3" >{{ cust.invoiceAddress.name3 }}</span>
+					<br/> <span editable-text="cust.invoiceAddress.street" e-name="street" >{{ cust.invoiceAddress.street }}</span>
+					<br/> <span editable-text="cust.invoiceAddress.postalcode" e-name="postalcode" >{{ cust.invoiceAddress.postalcode}}</span>
+					<span editable-text="cust.invoiceAddress.city" e-name="city" >{{ cust.invoiceAddress.city}}</span>
+				</div>
+			</div>
+		</div>
+		<div class="buttons">
+			<!-- button to show form -->
+			<button type="button" class="btn btn-default" ng-click="editableForm.$show()" ng-show="!editableForm.$visible">Edit</button>
+			<!-- buttons to submit / cancel form -->
+			<span ng-show="editableForm.$visible">
+				<button type="submit" class="btn btn-primary" ng-disabled="editableForm.$waiting">Save</button>
+				<button type="button" class="btn btn-default" ng-disabled="editableForm.$waiting" ng-click="editableForm.$cancel()">Cancel</button>
+			</span>
+		</div>
+	</form>
+</div>

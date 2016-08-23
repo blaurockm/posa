@@ -53,8 +53,7 @@ public class InvoicesController {
 
 	@Autowired ReportInvoiceExportCreator reportInvoiceExport;
 
-	@PersistenceContext
-	EntityManager em;
+	@PersistenceContext	EntityManager em;
 	
 	@ResponseBody
 	@RequestMapping(path="invoicesDyn", method = RequestMethod.GET)

@@ -43,10 +43,8 @@ public class SubscrInterval implements Comparable<SubscrInterval> {
 	@JsonProperty
 	private double halfPercentage =1d; // prozentuale Anteil am Gesamtpreis , halber Steuersatz, 0 < x < 1
 	
-	@NotEmpty
 	@JsonProperty
 	private LocalDate startDate;
-	@NotEmpty
 	@JsonProperty
 	private LocalDate endDate;
 
@@ -54,7 +52,6 @@ public class SubscrInterval implements Comparable<SubscrInterval> {
 	@Column(name =" interval_")
 	private Period interval;
 
-	@NotEmpty
 	@JsonProperty
 	@Enumerated(EnumType.STRING)
 	private PayIntervalType intervalType;

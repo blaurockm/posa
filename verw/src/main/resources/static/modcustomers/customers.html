@@ -1,0 +1,23 @@
+<div class="container">
+	<div class="page-header">
+		<h1>Kunden</h1>
+	</div>
+	<div>
+		<p>Suchergebnis</p>
+		<table ng-table="tableParams" class="table" show-filter="true">
+			<tr ng-repeat="row in $data">
+				<td title="'Nummer'" filter="{customerId: 'text'}"
+					sortable="'customerId'"><a ui-sref="customers.customerdetail({id: row.id})"
+					class="cursor-pointer">{{row.customerId}}</a></td>
+				<td title="'Debitor'" filter="{debitorId: 'text'}"
+					sortable="'debitorId'">{{row.debitorId}}</td>
+				<td title="'Name'" filter="{name: 'text'}" sortable="'name'">{{row.name}}</td>
+				<td title="'Tel'" filter="{telephone: 'text'}"
+					sortable="'telephone'">{{row.telephone}}</td>
+				<td title="'Email'" filter="{email: 'text'}" sortable="'email'">{{row.email}}</td>
+
+				<td title="'Kasse'" sortable="'pointid'" align="center">{{row.pointid}}</td>
+			</tr>
+		</table>
+	</div>
+</div>
