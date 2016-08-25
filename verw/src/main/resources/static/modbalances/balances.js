@@ -156,7 +156,7 @@
    controller("BalancesExportController", BalancesExportController).
    controller("BalanceController", BalanceController).
    controller("BalancesMainController", function($scope) {}).
-   config(function ($stateProvider) {
+   config(['$stateProvider','eehNavigationProvider',function ($stateProvider, eehNavigationProvider) {
     $stateProvider.
 		state('balances.balances', {
 			url: "/balances",
@@ -172,7 +172,23 @@
 			url: "/dashboard",
 			templateUrl: "modbalances/dashboard.html"
 		});
-   });
+      eehNavigationProvider.
+	    menuItem('navside.balances', {
+	 	     text : 'Kassenberichte',isCollapsed: true, iconClass: 'fa fa-money'
+	 	}).
+      	menuItem('navside.balances.dashboard', {
+        	 text : 'Kassenberichte Übersicht',
+        	 state : 'balances.dashboard'
+	    }).
+      	menuItem('navside.balances.balances', {
+	       	 text : 'Kassenberichte Suche',
+	       	 state : 'balances.balances'
+	    }).
+      	menuItem('navside.balances.export', {
+        	 text : 'Kassenbericht Exporte',
+        	 state : 'balances.exports'
+         });
+   }]);
 
   angular.module("verwApp.balances").
    filter('abschlussdate', function($filter) {
@@ -198,7 +214,7 @@
 	        return $filter('date')(d, (optional ? optional : 'fullDate'));
 	    };
 	}).
-	run(function (amMoment) {
+	run(function (amMoment, $state, eehNavigation) {
 		amMoment.changeLocale('de');
 	});
 

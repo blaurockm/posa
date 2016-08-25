@@ -1,9 +1,16 @@
 package net.buchlese.verw.ctrl;
 
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.transaction.Transactional;
+
 import net.buchlese.bofc.api.subscr.QSubscrProduct;
+import net.buchlese.bofc.api.subscr.SubscrInterval;
+import net.buchlese.bofc.api.subscr.SubscrIntervalDelivery;
 import net.buchlese.bofc.api.subscr.SubscrProduct;
 import net.buchlese.bofc.api.subscr.Subscriber;
+import net.buchlese.bofc.api.subscr.Subscription;
 import net.buchlese.verw.repos.SubscrProductRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.querydsl.binding.QuerydslPredicate;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -22,11 +30,13 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 
 
 @RestController
-@RequestMapping(path="subscrproduct")
+@RequestMapping(path="subscrproducts")
 public class SubscrProductController {
 
 	@Autowired SubscrProductRepository productRepository;
 	
+	@PersistenceContext	EntityManager em;
+
 	@ResponseBody
 	@RequestMapping(path="subscrproductsDyn", method = RequestMethod.GET)
 	public Page<Subscriber> productsDynamic(@QuerydslPredicate(root = SubscrProduct.class) Predicate predicate,    
@@ -44,5 +54,27 @@ public class SubscrProductController {
 		return productRepository.findAll(a.and(predicate), pageable);
 	}
 
+	@ResponseBody
+	@RequestMapping(path="createinterval", method = RequestMethod.POST)
+	@Transactional
+	public void createSubscrInterval(@RequestBody SubscrInterval intvl) {
+		SubscrProduct p = em.find(SubscrProduct.class, intvl.getProductId());
+		intvl.setProduct(p);
+		em.persist(intvl);
+	}
 
+	@ResponseBody
+	@RequestMapping(path="createintervaldelivery", method = RequestMethod.POST)
+	@Transactional
+	public void createSubscrIntervalDelivery(@RequestBody SubscrIntervalDelivery intvldeliv) {
+		Subscription s = em.find(Subscription.class, intvldeliv.getSubscriptionId());
+		Subscriber sub = em.find(Subscriber.class, intvldeliv.getSubscriberId());
+		SubscrInterval intvl = em.find(SubscrInterval.class, intvldeliv.getIntervalId());
+		intvldeliv.setSubscription(s);
+		intvldeliv.setSubscriber(sub);
+		intvldeliv.setInterval(intvl);
+		em.persist(intvldeliv);
+	}
+
+	
 }

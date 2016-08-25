@@ -1,8 +1,8 @@
 package net.buchlese.verw.ctrl;
 
 
-import net.buchlese.bofc.api.subscr.Subscriber;
-import net.buchlese.verw.repos.CustomerRepository;
+import net.buchlese.bofc.api.subscr.Subscription;
+import net.buchlese.verw.repos.SubscriptionRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -19,10 +19,10 @@ import com.querydsl.core.types.Predicate;
 
 
 @RestController
-@RequestMapping(path="customers")
-public class CustomersController {
+@RequestMapping(path="subscriptions")
+public class SubscriptionsController {
 
-	@Autowired CustomerRepository customerRepository;
+	@Autowired SubscriptionRepository subscriptionRepository;
 
 
 //	@Autowired AccountingExportFile exportFileCreator;
@@ -30,11 +30,11 @@ public class CustomersController {
 //	@PersistenceContext	EntityManager em;
 	
 	@ResponseBody
-	@RequestMapping(path="customersDyn", method = RequestMethod.GET)
-	public Page<Subscriber> invoicesDynamic(@QuerydslPredicate(root = Subscriber.class) Predicate predicate,    
+	@RequestMapping(path="subscriptionsDyn", method = RequestMethod.GET)
+	public Page<Subscription> subscriptionsDynamic(@QuerydslPredicate(root = Subscription.class) Predicate predicate,    
 	          Pageable pageable, @RequestParam MultiValueMap<String, String> parameters) {
 
-		return customerRepository.findAll(predicate, pageable);
+		return subscriptionRepository.findAll(predicate, pageable);
 	}
 
 

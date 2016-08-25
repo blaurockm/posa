@@ -8,7 +8,6 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import org.joda.time.LocalDate;
 
@@ -27,7 +26,6 @@ public class Subscription {
 	private int pointid;
 
 	@JsonProperty
-	@Transient
 	private long subscriberId;
 	@JsonProperty
 	private long productId;
@@ -64,6 +62,16 @@ public class Subscription {
 	
 	@JsonProperty
 	private String memo;
+
+	// in verw we need this, not for transfer
+//	@ManyToOne
+//	@JoinColumn(name = "subscriber_id")
+//	private Subscriber subscriber;
+//
+//	@ManyToOne
+//	@JoinColumn(name = "product_id",
+//	foreignKey = @ForeignKey(name = "PRODUCT_ID_FK23")
+//)	private SubscrProduct product;
 
 	// sich selber als json-object ausgeben
 	@JsonIgnore

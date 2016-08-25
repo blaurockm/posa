@@ -18,7 +18,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 
 @Entity
-@Table( name = "subscrDelivery" )
+@Table( name = "subscrdelivery" )
 public class SubscrDelivery implements Comparable<SubscrDelivery> {
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	@Id

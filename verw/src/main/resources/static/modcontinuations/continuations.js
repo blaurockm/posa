@@ -46,9 +46,9 @@
   ContinuationDetailController.$inject = ['$scope', '$stateParams', '$http', 'ContinuationDAO'];
 
   var ContinuationFactory = function($resource) {
-    return $resource('/api/continuation/:id', { id: '@id' },
+    return $resource('/api/subscrproduct/:id', { id: '@id' },
     		{ 'query':  {method:'GET', isArray:false},
-    	      'search' : { method:'GET', isArray :false, url:'/subscrproduct/continuationsDyn' } 
+    	      'search' : { method:'GET', isArray :false, url:'/subscrproducts/continuationsDyn' } 
     		} );
   };
   
@@ -59,7 +59,7 @@
    controller("ContinuationController", ContinuationController).
    controller("ContinuationDetailController", ContinuationDetailController).
    controller("ContinuationMainController", function($scope) {}).
-   config(function ($stateProvider) {
+   config(['$stateProvider','eehNavigationProvider', function ($stateProvider, eehNavigationProvider) {
     $stateProvider.
 		state('continuations.continuations', {
 			url: "/continuations",
@@ -71,7 +71,16 @@
 			templateUrl: "modcontinuations/continuationdetail.html",
 			controller: 'ContinuationDetailController'	
 		});
-   });
+    eehNavigationProvider.
+    menuItem('navside.continuations', {
+ 	     text : 'Fortsetzungen', isCollapsed: true, iconClass: 'fa fa-file-text-o'
+    }).
+  	menuItem('navside.continuations.continuations', {
+       	 text : 'Fortsetzungs-Suche',
+       	 state : 'continuations.continuations'
+    });
+
+   }]);
 
   angular.module("verwApp.continuations").
    filter('localdatetime', function($filter) {

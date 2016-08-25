@@ -7,6 +7,7 @@ import java.util.regex.Pattern;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.joda.time.LocalDate;
@@ -45,6 +46,10 @@ public class SubscrArticle implements Comparable<SubscrArticle> {
 	
 	@JsonProperty
 	private int issueNo =1;
+
+	@JsonIgnore
+	@ManyToOne
+	private SubscrProduct product;
 
 	// sich selber als json-object ausgeben
 	@JsonIgnore

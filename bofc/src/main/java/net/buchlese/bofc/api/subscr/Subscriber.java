@@ -43,6 +43,11 @@ public class Subscriber {
 	@JsonProperty
 	@Enumerated(EnumType.STRING)
 	private ShipType shipmentType;
+	
+//	@JsonIgnore
+//	@OneToMany(mappedBy = "subscriber", cascade = CascadeType.ALL, orphanRemoval = true)
+//	private Set<Subscription> subscriptions;
+
 	// sich selber als json-object ausgeben
 	@JsonIgnore
 	public String getComplJson() throws JsonProcessingException {

@@ -10,6 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.PostLoad;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -18,7 +19,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 
 @Entity
-@Table( name = "subscrIntervalDelivery" )
+@Table( name = "subscrintervaldelivery" )
 public class SubscrIntervalDelivery implements Comparable<SubscrIntervalDelivery> {
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
@@ -79,6 +80,12 @@ public class SubscrIntervalDelivery implements Comparable<SubscrIntervalDelivery
     )
 	private Subscription subscription;
 
+	@PostLoad
+	public void initDelivery() {
+		setSubscriberId(subscriber.getId());
+		setSubscriptionId(subscription.getId());
+	}
+	
 	@JsonIgnore
 	public String getSubscriberName() {
 		return subscriberName;

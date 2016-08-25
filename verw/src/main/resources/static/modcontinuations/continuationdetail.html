@@ -1,75 +1,121 @@
 <div class="container">
-    <div class="alert alert-danger" ng-show="error">Nicht gespeichert: Server meldet '{{error.data.exception}}'</div>
-    <div class="alert alert-success" ng-show="success">{{success.name}} erfolgreich gespeichert</div>
-	<form editable-form name="editableForm" onaftersave="updateCustomer(cust)">
-	<div class="page-header">
-		<h1>Kunde <span editable-text="cust.name" e-name="name" e-required>{{ cust.name|| '--' }}</span>
-		</h1>
-	</div>
-		<div>
-			<div class="row">
-				<div class="col-md-2">Ladengeschäft</div>
-				<div class="col-md-3">
-   			 	   <span editable-select="cust.pointid" e-name="pointid" e-ng-options="s.value as s.text for s in laeden">
-				        {{ (laeden | filter:{value: cust.pointid})[0].text || 'Nicht gesetzt' }}
-				   </span>
+	<div class="alert alert-danger" ng-show="error">Nicht gespeichert: Server meldet '{{error.data.exception}}'</div>
+	<div class="alert alert-success" ng-show="success">{{success.name}} erfolgreich gespeichert</div>
+	<form editable-form name="editableForm" onaftersave="updateContinuation(cust)">
+		<div class="page-header">
+			<h1>
+				Fortsetzung <span editable-text="cust.name" e-name="name" e-required>{{ cust.name|| '--' }}</span>
+			</h1>
+		</div>
+		<h3>
+			von <span editable-text="cust.publisher" e-name="publisher">{{cust.publisher}}</span>
+		</h3>
+		<div class="row">
+			<div class="col-md-2">Abkürzung</div>
+			<div class="col-md-2">
+				<span editable-text="cust.abbrev" e-name="abbrev">{{cust.abbrev}}</span>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-2">ISSN</div>
+			<div class="col-md-8">
+				<span editable-text="cust.issn" e-name="issn">{{cust.issn}}</span>
+			</div>
+			<div class="col-md-2" ng-show="cust.issn">
+				<a href="http://dispatch.opac.dnb.de/DB=1.1/CMD?ACT=SRCHA&IKT=8&TRM=${p.issn}" target="_blank">ZDB Opac<span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span></a>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-2">URL zum Verlag</div>
+			<div class="col-md-8">
+				<span editable-text="cust.url" e-name="url">{{cust.url}}</span>
+			</div>
+			<div class="col-md-2" ng-show="cust.url">
+				<a href="${p.url}" target="_blank">website<span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span></a>
+			</div>
+		</div>
+
+		<p></p>
+
+		<div class="row">
+			<div class="col-md-4">
+				<div class="panel panel-info">
+					<div class="panel-heading">
+						Lieferinformationen <a href="#subscrDispo/${p.id?c}" class="btn btn-info text-right">Dispo</a>
+					</div>
+					<div class="panel-body">Einstellungen für die Lieferscheine an unsere Kunden</div>
+					<dl class="dl-horizontal">
+						<dt>Ausgabenzähler</dt>
+						<dd>
+							<span editable-text="cust.count" e-name="issn">{{cust.count}}</span>
+						</dd>
+						<dt>Periodizität</dt>
+						<dd>
+							<span editable-text="cust.period" e-name="issn">{{cust.period}}</span>
+						</dd>
+						<dt>Artikel-Namensmuster</dt>
+						<dd>
+							<span editable-text="cust.namePattern" e-name="namePattern">{{cust.namePattern}}</span>
+						</dd>
+					</dl>
+					<div class="panel-footer">Letzte Lieferung ${(lastArticle.name)!} am ${(lastArticle.erschTag.toString("dd.MM.yy"))!}</div>
 				</div>
 			</div>
-			<div class="row">
-				<div class="col-md-2">Debitorenkonto</div>
-				<div class="col-md-3">
-                   <span editable-text="cust.debitorId" e-name="debitorId" e-required>{{ cust.debitorId|| 'leer' }}</span>
+
+			<div class="col-md-4">
+				<div class="panel panel-info">
+					<div class="panel-heading">
+						Weiterberechnung <a href="#subscrIntervalDispo/${p.id?c}" class="btn btn-info text-right">Abrechnen</a>
+					</div>
+					<div class="panel-body">Einstellungen für die Weiterberechnung an unsere Kunden</div>
+					<dl class="dl-horizontal">
+						<dt>Intervall Namensmuster</dt>
+						<dd>
+							<span editable-text="cust.intervalPattern" e-name="intervalPattern">{{cust.intervalPattern}}</span>
+						</dd>
+						<dt>Rechnungstellung</dt>
+						<dd>
+							<span editable-select="cust.paytype" e-name="paytype" e-ng-options="s.value as s.text for s in zahlintervalle"> {{ (zahlintervalle | filter:{value: cust.paytype})[0].text || 'Nicht gesetzt' }} </span>
+						</dd>
+						<dt>Rechnung bis</dt>
+						<dd>
+							<span editable-bsdate="cust.lastInterval" e-name="lastInterval">{{cust.lastInterval}}</span>
+						</dd>
+						<dt>Proz Print-Anteil</dt>
+						<dd>
+							<span editable-text="cust.halfPercentage" e-name="halfPercentage">{{cust.halfPercentage || '1'}}</span>
+						</dd>
+					</dl>
+					<div class="panel-footer">Letzte Zahlzeit ${(lastInterval.name)!}</div>
 				</div>
 			</div>
-			<div class="row">
-				<div class="col-md-2">Sammelrechnung</div>
-				<div class="col-md-3">
-				 <span editable-radiolist="cust.collectiveInvoice" e-name="collectiveInvoice" e-ng-options="s.value as s.text for s in sammelnDerRechnungen">
-				    {{ (sammelnDerRechnungen | filter:{value: cust.collectiveInvoice})[0].text || 'Nicht gesetzt!' }}
-				 </span>
-<!--                <span editable-checkbox="cust.collectiveInvoice" e-name="collectiveInvoice">{{ cust.collectiveInvoice && 'will Sammelrechnung' || 'keine' }}</span> -->
+
+			<div class="col-md-4">
+				<div class="panel panel-info">
+					<div class="panel-heading">Buchleseabo</div>
+					<div class="panel-body">Infos über das Abo bei unserem Lieferanten</div>
+					<dl class="dl-horizontal">
+						<dt>Bestellte Menge</dt>
+						<dd>
+							<span editable-text="cust.quantity" e-name="quantity">{{cust.quantity}}</span>
+						</dd>
+						<dt>Bezug seit</dt>
+						<dd>
+							<span editable-bsdate="cust.startDate" e-name="startDate">{{cust.startDate}}</span>
+						</dd>
+						<dt>Bezug bis</dt>
+						<dd>
+							<span editable-bsdate="cust.endDate" e-name="endDate">{{cust.endDate}}</span>
+						</dd>
+						<dt>Memo</dt>
+						<dd>
+							<span editable-textarea="cust.memo" e-name="memo">{{cust.memo}}</span>
+						</dd>
+					</dl>
+					<div class="panel-footer"></div>
 				</div>
 			</div>
-			<div class="row">
-				<div class="col-md-2">Lieferschein nötig</div>
-				<div class="col-md-3">
-				 <span editable-radiolist="cust.needsDeliveryNote" e-name="needsDeliveryNote" e-ng-options="s.value as s.text for s in liefernMitSchein">
-				    {{ (liefernMitSchein | filter:{value: cust.needsDeliveryNote})[0].text || 'Nicht gesetzt!' }}
-				 </span>
- <!--                  <span editable-checkbox="cust.needsDeliveryNote" e-name="needsDeliveryNote">{{ cust.needsDeliveryNote && 'will Lieferschein' || 'kein' }}</span> -->
-				</div>
-			</div>
-			<div class="row">
-				<div class="col-md-2">Standard-Versandart</div>
-				<div class="col-md-3">
-   			 	   <span editable-select="cust.shipmentType" e-name="shipmentType" e-ng-options="s.value as s.text for s in versandarten">
-				        {{ (versandarten | filter:{value: cust.shipmentType})[0].text || 'Nicht gesetzt' }}
-				   </span>
-				</div>
-			</div>
-			<div class="row">
-				<div class="col-md-2">Telefon</div>
-				<div class="col-md-3">
-                   <span editable-text="cust.telephone" e-name="telephone" >{{ cust.telephone|| 'leer' }}</span>
-				</div>
-			</div>
-			<div class="row">
-				<div class="col-md-2">Email</div>
-				<div class="col-md-3">
-                   <span editable-text="cust.email" e-name="email" >{{ cust.email|| 'leer' }}</span>
-				</div>
-			</div>
-			<div class="row">
-				<div class="col-md-2">Rechnungsadresse</div>
-				<div class="col-md-4">
-					<span editable-text="cust.invoiceAddress.name1" e-name="name1" >{{ cust.invoiceAddress.name1 }}</span>
-					<br/> <span editable-text="cust.invoiceAddress.name2" e-name="name2" >{{ cust.invoiceAddress.name2 }}</span>
-					<br/> <span editable-text="cust.invoiceAddress.name3" e-name="name3" >{{ cust.invoiceAddress.name3 }}</span>
-					<br/> <span editable-text="cust.invoiceAddress.street" e-name="street" >{{ cust.invoiceAddress.street }}</span>
-					<br/> <span editable-text="cust.invoiceAddress.postalcode" e-name="postalcode" >{{ cust.invoiceAddress.postalcode}}</span>
-					<span editable-text="cust.invoiceAddress.city" e-name="city" >{{ cust.invoiceAddress.city}}</span>
-				</div>
-			</div>
+
 		</div>
 		<div class="buttons">
 			<!-- button to show form -->
@@ -81,4 +127,6 @@
 			</span>
 		</div>
 	</form>
+		<pre>{{ cust | json }}</pre>
+	
 </div>

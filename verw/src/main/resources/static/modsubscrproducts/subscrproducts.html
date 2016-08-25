@@ -1,16 +1,17 @@
 <div class="container">
 	<div class="page-header">
-		<h1>Fortsetzungen</h1>
+		<h1>Abonnements</h1>
 	</div>
 	<div>
 		<p>Suchergebnis</p>
 		<table ng-table="tableParams" class="table" show-filter="true">
 			<tr ng-repeat="row in $data">
-				<td title="'abbrev'" filter="{abbrev: 'text'}"
-					sortable="'abbrev'"><a ui-sref="continuations.continuationdetail({id: row.id})"
+				<td title="'Abkü'" filter="{abbrev: 'text'}"
+					sortable="'abbrev'"><a ui-sref="subscrproducts.subscrproductdetail({id: row.id})"
 					class="cursor-pointer">{{row.abbrev}}</a></td>
 				<td title="'Name'" filter="{name: 'text'}" sortable="'name'">{{row.name}}</td>
 				<td title="'Lieferant'" filter="{publisher: 'text'}" sortable="'publisher'">{{row.publisher}}</td>
+				<td title="'Bezahlt bis'" sortable="'publisher'">{{row.lastInterval | localdate:'mediumDate'}}</td>
 				<td title="'ISSN'" filter="{issn: 'text'}"
 					sortable="'issn'">{{row.issn}}</td>
 			</tr>

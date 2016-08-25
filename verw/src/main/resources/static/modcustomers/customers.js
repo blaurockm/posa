@@ -27,6 +27,7 @@
 	            })
 	        }
 	    });
+	    
   };
 
   var CustomerDetailController = function($scope, $stateParams, $http, CustomerDao ) {
@@ -59,7 +60,7 @@
    controller("CustomerController", CustomerController).
    controller("CustomerDetailController", CustomerDetailController).
    controller("CustomerMainController", function($scope) {}).
-   config(function ($stateProvider) {
+   config(['$stateProvider', 'eehNavigationProvider',function ($stateProvider, eehNavigationProvider) {
     $stateProvider.
 		state('customers.customers', {
 			url: "/customers",
@@ -71,7 +72,17 @@
 			templateUrl: "modcustomers/customerdetail.html",
 			controller: 'CustomerDetailController'	
 		});
-   });
+    eehNavigationProvider.
+    menuItem('navside.customers', {
+ 	     text : 'Kunden',
+ 	     iconClass : 'fa fa-female'
+    }).
+  	menuItem('navside.customers.customers', {
+       	 text : 'Kunden Suche',
+       	 state : 'customers.customers'
+    });
+    
+   }]);
 
   angular.module("verwApp.customers").
    filter('localdatetime', function($filter) {

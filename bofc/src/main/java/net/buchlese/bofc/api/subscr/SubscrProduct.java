@@ -8,6 +8,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.joda.time.LocalDate;
 import org.joda.time.Period;
@@ -39,6 +40,7 @@ public class SubscrProduct {
 	@JsonProperty
 	private String url;
 	@JsonProperty
+	@Transient
 	private Period period;
 	@JsonProperty
 	private LocalDate lastDelivery;
@@ -71,6 +73,18 @@ public class SubscrProduct {
 	@JsonProperty
 	@Enumerated(EnumType.STRING)
 	private PayIntervalType intervalType;
+
+//	@JsonIgnore
+//	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+//	private Set<SubscrInterval> intervals;
+//
+//	@JsonIgnore
+//	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+//	private Set<SubscrArticle> articles;
+//
+//	@JsonIgnore
+//	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+//	private Set<Subscription> subscriptions;
 
 	@JsonIgnore
 	public SubscrArticle createNextArticle(LocalDate erschTag) {

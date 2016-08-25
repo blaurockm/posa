@@ -3,6 +3,7 @@ package net.buchlese.bofc.api.subscr;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -14,21 +15,20 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-
-import org.hibernate.validator.constraints.NotEmpty;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 
 @Entity
-@Table( name = "subscrInterval" )
+@Table( name = "subscrinterval" )
 public class SubscrInterval implements Comparable<SubscrInterval> {
-	@GeneratedValue(strategy=GenerationType.AUTO)
-	@Id
 	@JsonProperty
+	@Id
+	@GeneratedValue(strategy=GenerationType.AUTO)
 	private long id;
 
 	@JsonProperty
@@ -47,10 +47,8 @@ public class SubscrInterval implements Comparable<SubscrInterval> {
 	@JsonProperty
 	private double halfPercentage =1d; // prozentuale Anteil am Gesamtpreis , halber Steuersatz, 0 < x < 1
 	
-	@NotEmpty
 	@JsonProperty
 	private LocalDate startDate;
-	@NotEmpty
 	@JsonProperty
 	private LocalDate endDate;
 
@@ -58,7 +56,6 @@ public class SubscrInterval implements Comparable<SubscrInterval> {
 	@Column(name =" interval_")
 	private Period interval;
 
-	@NotEmpty
 	@JsonProperty
 	@Enumerated(EnumType.STRING)
 	private PayIntervalType intervalType;
@@ -67,6 +64,9 @@ public class SubscrInterval implements Comparable<SubscrInterval> {
 	@ManyToOne
 	private SubscrProduct product;
 
+	@JsonIgnore
+	@OneToMany(mappedBy="interval")
+	private Set<SubscrIntervalDelivery> deliveries;
 
 	@JsonIgnore
 	public String initializeName(String namePattern) {
@@ -236,6 +236,14 @@ public class SubscrInterval implements Comparable<SubscrInterval> {
 
 	public void setProduct(SubscrProduct product) {
 		this.product = product;
+	}
+
+	public Set<SubscrIntervalDelivery> getDeliveries() {
+		return deliveries;
+	}
+
+	public void setDeliveries(Set<SubscrIntervalDelivery> deliveries) {
+		this.deliveries = deliveries;
 	}
 
 	

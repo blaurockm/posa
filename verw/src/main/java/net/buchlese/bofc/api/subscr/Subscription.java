@@ -1,15 +1,20 @@
 package net.buchlese.bofc.api.subscr;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.PostLoad;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -50,9 +55,10 @@ public class Subscription {
 	@Enumerated(EnumType.STRING)
 	private ShipType shipmentType;
 
-	@JsonIgnore
 	@ManyToOne
+	@JoinColumn(name = "subscriber_id")
 	private Subscriber subscriber;
+	
 	public Subscriber getSubscriber() {
 		return subscriber;
 	}
@@ -60,9 +66,19 @@ public class Subscription {
 		this.subscriber = s;
 	}
 
-	@JsonIgnore
 	@ManyToOne
-	private SubscrProduct product;
+	@JoinColumn(name = "product_id",
+	foreignKey = @ForeignKey(name = "PRODUCT_ID_FK23")
+)	private SubscrProduct product;
+
+	
+	@JsonIgnore
+	@OneToMany(mappedBy="subscription")
+	private Set<SubscrDelivery> articleDeliveries;
+
+	@JsonIgnore
+	@OneToMany(mappedBy="subscription")
+	private Set<SubscrIntervalDelivery> intervalDeliveries;
 
 	@JsonProperty
 	@Enumerated(EnumType.STRING)
@@ -79,6 +95,14 @@ public class Subscription {
 	
 	@JsonProperty
 	private String memo;
+
+	@PostLoad
+	public void initDelivery() {
+		if (getSubscriber()!= null) {
+			setSubscriberId(getSubscriber().getId());
+		}
+		setProductId(product.getId());
+	}
 
 	public long getId() {
 		return id;
@@ -185,6 +209,18 @@ public class Subscription {
 	}
 	public void setProduct(SubscrProduct subscrProduct) {
 		this.product = subscrProduct;
+	}
+	public Set<SubscrDelivery> getArticleDeliveries() {
+		return articleDeliveries;
+	}
+	public void setArticleDeliveries(Set<SubscrDelivery> articleDeliveries) {
+		this.articleDeliveries = articleDeliveries;
+	}
+	public Set<SubscrIntervalDelivery> getIntervalDeliveries() {
+		return intervalDeliveries;
+	}
+	public void setIntervalDeliveries(Set<SubscrIntervalDelivery> intervalDeliveries) {
+		this.intervalDeliveries = intervalDeliveries;
 	}
 	
 }

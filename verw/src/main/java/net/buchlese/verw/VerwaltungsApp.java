@@ -3,6 +3,11 @@ package net.buchlese.verw;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import net.buchlese.bofc.api.subscr.SubscrArticle;
+import net.buchlese.bofc.api.subscr.SubscrInterval;
+import net.buchlese.bofc.api.subscr.SubscrProduct;
+import net.buchlese.bofc.api.subscr.Subscriber;
+import net.buchlese.bofc.api.subscr.Subscription;
 import net.buchlese.verw.util.LocalDateDeserializer;
 import net.buchlese.verw.util.LocalDateSerializer;
 import net.buchlese.verw.util.LocalDateTimeDeserializer;
@@ -16,14 +21,24 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.data.repository.init.Jackson2RepositoryPopulatorFactoryBean;
+import org.springframework.data.rest.core.config.RepositoryRestConfiguration;
+import org.springframework.data.rest.webmvc.config.RepositoryRestConfigurerAdapter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 @SpringBootApplication
 @EntityScan(basePackages= {"net.buchlese.bofc.api.coupon","net.buchlese.bofc.api.subscr","net.buchlese.bofc.api.bofc"})
-public class VerwaltungsApp {
+public class VerwaltungsApp extends RepositoryRestConfigurerAdapter {
 	
+	@Override
+	public void configureRepositoryRestConfiguration(RepositoryRestConfiguration config) {
+		config.exposeIdsFor(Subscriber.class);
+		config.exposeIdsFor(SubscrProduct.class);
+		config.exposeIdsFor(SubscrInterval.class);
+		config.exposeIdsFor(SubscrArticle.class);
+		config.exposeIdsFor(Subscription.class);
+	}
 
 	@Bean
 	@Primary

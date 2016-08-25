@@ -12,7 +12,6 @@ import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.LocalDate;
 import org.joda.time.Period;
 
@@ -22,7 +21,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Entity
-@Table( name = "subscrInterval" )
+@Table( name = "subscrinterval" )
 public class SubscrInterval implements Comparable<SubscrInterval> {
 	@Id
 	@JsonProperty
@@ -55,6 +54,14 @@ public class SubscrInterval implements Comparable<SubscrInterval> {
 	@JsonProperty
 	@Enumerated(EnumType.STRING)
 	private PayIntervalType intervalType;
+
+//	@JsonIgnore
+//	@ManyToOne
+//	private SubscrProduct product;
+
+//	@JsonIgnore
+//	@OneToMany(mappedBy="interval")
+//	private Set<SubscrIntervalDelivery> deliveries;
 
 	// sich selber als json-object ausgeben
 	@JsonIgnore

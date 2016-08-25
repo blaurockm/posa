@@ -1,0 +1,89 @@
+<div class="container">
+	<form editable-form name="editableForm" onaftersave="updateSubscription(cust)">
+		<div class="page-header">
+			<h1>KundenAbo {{cust.id}}</h1>
+			<h4><span ng-if="product.payPerDelivery == true">Fortsetzung</span>
+			<span ng-if="product.payPerDelivery == false">Abonnement</span>
+			{{product.name}}</h4>
+			<h4>Abonnent {{subscriber.name}}</h4>
+		</div>
+
+		<div cass="row">
+			<div class="col-md-4">
+				<div class="card card-block">
+					<h3 class="card-title">Berechnung</h3>
+					<ul class="list-group list-group-flush">
+						<li class="list-group-item">Start <span editable-bsdate="cust.startDate" e-name="startDate">{{cust.startDate | localdate:'mediumDate'}}</span></li>
+						<li class="list-group-item">Ende <span editable-bsdate="cust.endDate" e-name="endDate">{{cust.endDate | localdate:'mediumDate'}}</span></li>
+						<li class="list-group-item">Menge <span editable-text="cust.quantity" e-name="quantity">{{ cust.quantity }}</span></li>
+						<li class="list-group-item">Zahlungsintervall <span editable-select="cust.paymentType" e-name="paytype" e-ng-options="s.value as s.text for s in zahlintervalle"> {{ (zahlintervalle | filter:{value: cust.paymentType})[0].text || 'Nicht
+								gesetzt' }} </span></li>
+						<li class="list-group-item">Bezahlt bis <span editable-bsdate="cust.payedUntil" e-name="payedUntil">{{cust.payedUntil | localdate:'mediumDate'}}</span></li>
+					</ul>
+				</div>
+			</div>
+			<div class="col-md-4">
+				<div class="card card-block">
+					<h3 class="card-title">Lieferung</h3>
+					<ul class="list-group list-group-flush">
+						<li class="list-group-item">Versandart <span editable-select="cust.shipmentType" e-name="shipmentType" e-ng-options="s.value as s.text for s in versandarten"> {{ (versandarten | filter:{value: cust.shipmentType})[0].text || 'Nicht
+								gesetzt' }} </span>
+						</li>
+						<li class="list-group-item">Lieferhinweis1 <span editable-text="cust.deliveryInfo1" e-name="deliveryInfo1">{{ cust.deliveryInfo1 }}</span>
+						</li>
+						<li class="list-group-item">Lieferhinweis2 <span editable-text="cust.deliveryInfo2" e-name="deliveryInfo2">{{ cust.deliveryInfo2 }}</span>
+						</li>
+						<li class="list-group-item">Lieferaddresse <br> <span editable-text="cust.deliveryAddress.name1" e-name="name1">{{ cust.deliveryAddress.name1 }}</span> <br /> <span editable-text="cust.deliveryAddress.name2" e-name="name2">{{
+								cust.deliveryAddress.name2 }}</span> <br /> <span editable-text="cust.deliveryAddress.name3" e-name="name3">{{ cust.deliveryAddress.name3 }}</span> <br /> <span editable-text="cust.deliveryAddress.street" e-name="street">{{
+								cust.deliveryAddress.street }}</span> <br /> <span editable-text="cust.deliveryAddress.postalcode" e-name="postalcode">{{ cust.deliveryAddress.postalcode}}</span> <span editable-text="cust.deliveryAddress.city" e-name="city">{{
+								cust.deliveryAddress.city}}</span>
+						</li>
+					</ul>
+				</div>
+			</div>
+
+			<div class="col-md-4">
+				<div class="card card-block">
+					<h3 class="card-title">Kontaktdaten</h3>
+					<ul class="list-group list-group-flush">
+						<li class="list-group-item">Telefon <span editable-text="cust.telephone" e-name="telephone">{{ cust.telephone|| 'leer' }}</span></li>
+						<li class="list-group-item">Email <span editable-text="cust.email" e-name="email">{{ cust.email|| 'leer' }}</span></li>
+						<li class="list-group-item">Bookmark <span editable-checkbox="cust.needsAttention">{{ cust.needsAttention&& 'brauch Aufmerksamkeit' || '-' }}</span>
+						</li>
+						<li class="list-group-item">Memo <span editable-textarea="cust.memo" e-name="memo">{{ cust.memo }}</span>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<div class="row"></div>
+		<div class="row">
+			<!-- button to show form -->
+			<button type="button" class="btn btn-default" ng-click="editableForm.$show()" ng-show="!editableForm.$visible">Edit</button>
+			<!-- buttons to submit / cancel form -->
+			<span ng-show="editableForm.$visible">
+				<button type="submit" class="btn btn-primary" ng-disabled="editableForm.$waiting">Save</button>
+				<button type="button" class="btn btn-default" ng-disabled="editableForm.$waiting" ng-click="editableForm.$cancel()">Cancel</button>
+			</span>
+		</div>
+		<div class="col-md-6">
+		<table ng-table="articleDeliveries" class="table table-condensed">
+			<tr ng-repeat="row in $data">
+				<td title="'Name'" sortable="'name'">{{row.articleName}}</td>
+				<td title="'Datum'" sortable="'deliveryDate'">{{row.deliveryDate | localdate:'mediumDate'}}</td>
+				<td title="'Preis'" sortable="'brutto'">{{row.total / 100 | currency}}</td>
+			</tr>
+		</table>
+		</div>
+		<div class="col-md-6">
+		<table ng-table="intervalDeliveries" class="table table-condensed">
+			<tr ng-repeat="row in $data">
+				<td title="'Name'" sortable="'name'">{{row.intervalName}}</td>
+				<td title="'Datum'" sortable="'deliveryDate'">{{row.deliveryDate | localdate:'mediumDate'}}</td>
+				<td title="'Preis'" sortable="'brutto'">{{row.total / 100 | currency}}</td>
+			</tr>
+		</table>
+		</div>
+		
+	</form>
+</div>

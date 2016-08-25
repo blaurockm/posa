@@ -3,7 +3,7 @@ package net.buchlese.bofc.api.subscr;
 
 import java.time.LocalDate;
 import java.time.Period;
-import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -79,15 +79,15 @@ public class SubscrProduct {
 
 	@JsonIgnore
 	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<SubscrInterval> intervals;
+	private Set<SubscrInterval> intervals;
 
 	@JsonIgnore
 	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<SubscrArticle> articles;
+	private Set<SubscrArticle> articles;
 
 	@JsonIgnore
 	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<Subscription> subscriptions;
+	private Set<Subscription> subscriptions;
 
 	@JsonIgnore
 	public SubscrArticle createNextArticle(LocalDate erschTag) {
@@ -293,20 +293,28 @@ public class SubscrProduct {
 		this.intervalPattern = intervalPattern;
 	}
 
-	public List<SubscrArticle> getArticles() {
+	public Set<SubscrArticle> getArticles() {
 		return articles;
 	}
 
-	public void setArticles(List<SubscrArticle> articles) {
+	public void setArticles(Set<SubscrArticle> articles) {
 		this.articles = articles;
 	}
 
-	public List<Subscription> getSubscriptions() {
+	public Set<Subscription> getSubscriptions() {
 		return subscriptions;
 	}
 
-	public void setSubscriptions(List<Subscription> subscriptions) {
+	public void setSubscriptions(Set<Subscription> subscriptions) {
 		this.subscriptions = subscriptions;
+	}
+
+	public Set<SubscrInterval> getIntervals() {
+		return intervals;
+	}
+
+	public void setIntervals(Set<SubscrInterval> intervals) {
+		this.intervals = intervals;
 	}
 
 

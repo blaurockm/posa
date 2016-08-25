@@ -15,7 +15,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Entity
-@Table( name = "subscrIntervalDelivery" )
+@Table( name = "subscrintervaldelivery" )
 public class SubscrIntervalDelivery implements Comparable<SubscrIntervalDelivery> {
 	@Id
 	@JsonProperty
@@ -55,6 +55,27 @@ public class SubscrIntervalDelivery implements Comparable<SubscrIntervalDelivery
 	public String getSubscriberName() {
 		return subscriberName;
 	}
+	// not for transfer
+//	@JsonIgnore
+//	@ManyToOne
+//	@JoinColumn(name = "interval_id",
+//	foreignKey = @ForeignKey(name = "INTERVAL_ID_FK")
+//)
+//	private SubscrInterval interval;
+//
+//	@JsonIgnore
+//	@ManyToOne
+//	@JoinColumn(name = "subscriber_id",
+//	foreignKey = @ForeignKey(name = "CUSTOMER_ID_FK2")
+//)
+//	private Subscriber subscriber;
+//
+//	@JsonIgnore
+//	@ManyToOne
+//	@JoinColumn(name = "subscription_id",
+//    			foreignKey = @ForeignKey(name = "SUBSCRIPTION_ID_FK2")
+//    )
+//	private Subscription subscription;
 	
 	// sich selber als json-object ausgeben
 	@JsonIgnore

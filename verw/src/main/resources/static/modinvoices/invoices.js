@@ -171,7 +171,7 @@
    controller("InvoicesExportController", InvoicesExportController).
    controller("InvoiceController", InvoiceController).
    controller("InvoicesMainController", function($scope) {}).
-   config(function ($stateProvider) {
+   config(['$stateProvider','eehNavigationProvider', function ($stateProvider, eehNavigationProvider) {
     $stateProvider.
 		state('invoices.invoices', {
 			url: "/invoices",
@@ -187,7 +187,24 @@
 			url: "/dashboard",
 			templateUrl: "modinvoices/dashboard.html"
 		});
-   });
+    eehNavigationProvider.
+    menuItem('navside.invoices', {
+ 	     text : 'Ausgangsrechnungen',
+ 	    isCollapsed: true, iconClass : 'fa fa-files-o'
+    }).
+  	menuItem('navside.invoices.dashboard', {
+    	 text : 'Rechnungen Übersicht',
+    	 state : 'invoices.dashboard'
+    }).
+  	menuItem('navside.invoices.invoices', {
+       	 text : 'Rechnungen Suche',
+       	 state : 'invoices.invoices'
+    }).
+  	menuItem('navside.invoices.exports', {
+    	 text : 'Rechnungsjournale',
+    	 state : 'invoices.exports'
+     });
+   }]);
 
   angular.module("verwApp.invoices").
    filter('localdatetime', function($filter) {

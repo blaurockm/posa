@@ -1,0 +1,19 @@
+<div class="container">
+	<div class="page-header">
+		<h1>Kunden-Abos</h1>
+	</div>
+	<div>
+		<p>Suchergebnis</p>
+		<table ng-table="tableParams" class="table" show-filter="true">
+			<tr ng-repeat="row in $data">
+				<td title="'Abonr'" filter="{abbrev: 'text'}"
+					sortable="'id'"><a ui-sref="subscriptions.subscriptiondetail({id: row.id})"
+					class="cursor-pointer">{{row.id}}</a></td>
+				<td title="'Name'" filter="{'subscriber.name': 'text'}" sortable="'subscriber.name'">{{row.subscriber.name}}</td>
+				<td title="'Hinweis1'" filter="{deliveryInfo1: 'text'}" sortable="'deliveryInfo1'">{{row.deliveryInfo1}}</td>
+				<td title="'Hinweis2'" filter="{deliveryInfo2: 'text'}" sortable="'deliveryInfo2'">{{row.deliveryInfo2}}</td>
+				<td title="'Periodikum'" filter="{'product.name': 'text'}" sortable="'product.name'">{{row.product.name}}</td>
+			</tr>
+		</table>
+	</div>
+</div>
