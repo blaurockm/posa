@@ -174,7 +174,7 @@
 		});
       eehNavigationProvider.
 	    menuItem('navside.balances', {
-	 	     text : 'Kassenberichte',isCollapsed: true, iconClass: 'fa fa-money'
+	 	     text : 'Kassenberichte',isCollapsed: true, iconClass: 'fa fa-money', weight:200
 	 	}).
       	menuItem('navside.balances.dashboard', {
         	 text : 'Kassenberichte Übersicht',

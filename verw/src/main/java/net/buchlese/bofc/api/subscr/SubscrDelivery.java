@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -12,6 +13,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+
+import org.springframework.format.annotation.DateTimeFormat;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -25,6 +28,7 @@ public class SubscrDelivery implements Comparable<SubscrDelivery> {
 	@JsonProperty
 	private long id;
 
+	@DateTimeFormat(pattern="dd.MM.yyyy")
 	@JsonProperty
 	private LocalDate deliveryDate;
 	@JsonProperty
@@ -62,14 +66,12 @@ public class SubscrDelivery implements Comparable<SubscrDelivery> {
 	@JsonIgnore
 	public String subscriberName;
 
-	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name = "article_id",
 	foreignKey = @ForeignKey(name = "ARTICLE_ID_FK")
 )
 	private SubscrArticle article;
 
-	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name = "subscriber_id",
 	foreignKey = @ForeignKey(name = "CUSTOMER_ID_FK")
@@ -77,7 +79,7 @@ public class SubscrDelivery implements Comparable<SubscrDelivery> {
 	private Subscriber subscriber;
 
 	@JsonIgnore
-	@ManyToOne
+	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name = "subscription_id",
     			foreignKey = @ForeignKey(name = "SUBSCRIPTION_ID_FK")
     )
@@ -213,6 +215,41 @@ public class SubscrDelivery implements Comparable<SubscrDelivery> {
 
 	public void setSlipNumber(String slipNumber) {
 		this.slipNumber = slipNumber;
+	}
+
+
+	public SubscrArticle getArticle() {
+		return article;
+	}
+
+
+	public void setArticle(SubscrArticle article) {
+		this.article = article;
+	}
+
+
+	public Subscriber getSubscriber() {
+		return subscriber;
+	}
+
+
+	public void setSubscriber(Subscriber subscriber) {
+		this.subscriber = subscriber;
+	}
+
+
+	public Subscription getSubscription() {
+		return subscription;
+	}
+
+
+	public void setSubscription(Subscription subscription) {
+		this.subscription = subscription;
+	}
+
+
+	public void setSubscriberName(String subscriberName) {
+		this.subscriberName = subscriberName;
 	}
 	
 }

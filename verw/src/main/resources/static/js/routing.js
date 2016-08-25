@@ -13,9 +13,6 @@
 			  	views : {
 			  		"@" :  {
 			  			template : '<div class="container"> Startseite </div>'
-			  		},
-			  		"mainmenunav" :  {
-			  			templateUrl : 'menu.html',
 			  		}
 			  	}
 		  }).
@@ -26,9 +23,6 @@
 			  		"@" :  {
 			  			templateUrl : 'modbalances/start.html',
 			  			controller: 'BalancesMainController'	
-			  		},
-			  		"mainmenunav" :  {
-			  			templateUrl : 'modbalances/menu.html',
 			  		}
 				} 
 		  }).
@@ -44,9 +38,6 @@
 			  				$scope.sammelnDerRechnungen =[{value:true, text: 'Sammelrechnung erwünscht'},{value:false,text:'keine Sammelrechnung'}];
 			  				$scope.liefernMitSchein=[{value:true, text: 'Lieferschein notwendig'},{value:false,text:'ohne Dok'}];
 			  			}	
-			  		},
-			  		"mainmenunav" :  {
-			  			templateUrl : 'modcustomers/menu.html',
 			  		}
 				} 
 		  }).
@@ -59,9 +50,6 @@
 			  				$scope.versandarten = [{value:'DELIVERY', text: 'Belieferung d. Buchlese'},{value:'PICKUP', text: 'Abholer'},{value:'PUBLISHER', text: 'durch den Verlag'},{value:'MAILCOST', text: 'per Post mit Porto'},{value:'MAIL', text: 'per Post'}];
 			  				$scope.zahlintervalle = [{value:'EACHDELIVERY', text: 'pro Lieferung '}];
 			  			}	
-			  		},
-			  		"mainmenunav" :  {
-			  			templateUrl : 'modcontinuations/menu.html',
 			  		}
 				} 
 		  }).
@@ -74,9 +62,6 @@
 			  				$scope.versandarten = [{value:'DELIVERY', text: 'Belieferung d. Buchlese'},{value:'PICKUP', text: 'Abholer'},{value:'PUBLISHER', text: 'durch den Verlag'},{value:'MAILCOST', text: 'per Post mit Porto'},{value:'MAIL', text: 'per Post'}];
 			  				$scope.zahlintervalle = [{value:'EACHDELIVERY', text: 'pro Lieferung '},{value:'MONTHLY', text: 'Monatlich'},{value:'QUARTERLY', text: 'Vierteljährlich'},{value:'HALFYEARLY', text: 'Halbjährlich'},{value:'YEARLY', text: 'Jährlich'}];
 			  			}	
-			  		},
-			  		"mainmenunav" :  {
-			  			templateUrl : 'modsubscrproducts/menu.html',
 			  		}
 				} 
 		  }).
@@ -93,9 +78,6 @@
 			  				$scope.sammelnDerRechnungen =[{value:true, text: 'Sammelrechnung erwünscht'},{value:false,text:'keine Sammelrechnung'}];
 			  				$scope.liefernMitSchein=[{value:true, text: 'Lieferschein notwendig'},{value:false,text:'ohne Dok'}];
 			  			}	
-			  		},
-			  		"mainmenunav" :  {
-			  			templateUrl : 'modsubscriptions/menu.html',
 			  		}
 				} 
 		  }).
@@ -106,9 +88,6 @@
 			  		"@" :  {
 			  			templateUrl : 'modinvoices/start.html',
 			  			controller: 'InvoicesMainController'	
-			  		},
-			  		"mainmenunav" :  {
-			  			templateUrl : 'modinvoices/menu.html',
 			  		}
 				} 
 		  }).
@@ -118,9 +97,6 @@
 			  		"@" :  {
 			  			templateUrl : 'modcoupon/start.html',
 			  			controller: 'CouponMainController'	
-			  		},
-			  		"mainmenunav" :  {
-			  			templateUrl : 'modcoupon/menu.html',
 			  		}
 			    }
 		  });

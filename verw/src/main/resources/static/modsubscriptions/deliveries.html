@@ -1,0 +1,16 @@
+
+<div class="page-header">
+	<h1>Kunden Belieferungen</h1>
+</div>
+<div>
+	<table ng-table="tableParams" class="table" show-filter="true">
+		<tr ng-repeat="row in $data">
+			<td title="'Datum'" filter="{deliveryDate: 'text'}" sortable="'deliveryDate'"><a ui-sref="subscriptions.deliverydetail({id: row.id})" class="cursor-pointer">{{row.deliveryDate | localdate:'mediumDate'}}</a></td>
+			<td title="'Kunde'" filter="{'subscriber.name': 'text'}" sortable="'subscriber.name'">{{row.subscriber.name}}</td>
+			<td title="'Periodikum'" filter="{'articleName': 'text'}" sortable="'articleName'">{{row.articleName}}</td>
+			<td title="'Nummer'" filter="{'article.issueNo': 'text'}" sortable="'article.issueNo'">{{row.article.issueNo}}</td>
+			<td title="'bezahlt?'" sortable="'payed'">{{row.payed }}</td>
+			<td title="'dokumentiert?'" sortable="'slipped'">{{row.slipped}}</td>
+		</tr>
+	</table>
+</div>

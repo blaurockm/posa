@@ -1,10 +1,11 @@
 (function(angular) {
-  var SubscriptionController = function($scope, $http, SubscriptionDao, NgTableParams) {
+  var DeliveryController = function($scope, $http, NgTableParams) {
 	    $scope.reloadData = function () {
 	    	$scope.tableParams.reload();
 	    }
 
-	    $scope.tableParams = new NgTableParams({ count: 15 }, {
+	    $scope.tableParams = new NgTableParams({ count: 12 }, {
+	    	filterDelay : 3000,
 	        getData: function($defer, params) {
 	            var queryParams = {
 	                page:params.page() - 1, 
@@ -12,8 +13,7 @@
 	            };
 	            var sortingProp = Object.keys(params.sorting());
 	            if(sortingProp.length == 1){
-	                queryParams["sort"] = sortingProp[0];
-	                queryParams["sortDir"] = params.sorting()[sortingProp[0]];
+	                queryParams["sort"] = sortingProp[0] +"," + params.sorting()[sortingProp[0]];
 	            }
 	            if (params.hasFilter()) {
 	            	angular.extend(queryParams, params.filter());
@@ -21,9 +21,10 @@
 	            if ($scope.hasOwnProperty('pointofsale')) {
 	            	queryParams['pointid'] = $scope.pointofsale;
 	            }
-	            SubscriptionDao.search(queryParams, function(data) {
-	                params.total(data.totalElements);
-	                $defer.resolve( data.content);
+	            $http.get('/subscriptions/deliveriesDyn', {params : queryParams}).
+	            then(function(data) {
+	                params.total(data.data.totalElements);
+	                $defer.resolve( data.data.content);
 	            })
 	        }
 	    });
@@ -59,6 +60,37 @@
 	  }
   };
 
+  var SubscriptionController = function($scope, $http, SubscriptionDao, NgTableParams) {
+	    $scope.reloadData = function () {
+	    	$scope.tableParams.reload();
+	    }
+
+	    $scope.tableParams = new NgTableParams({ count: 15 }, {
+	        getData: function($defer, params) {
+	            var queryParams = {
+	                page:params.page() - 1, 
+	                size:params.count()
+	            };
+	            var sortingProp = Object.keys(params.sorting());
+	            if(sortingProp.length == 1){
+	                queryParams["sort"] = sortingProp[0];
+	                queryParams["sortDir"] = params.sorting()[sortingProp[0]];
+	            }
+	            if (params.hasFilter()) {
+	            	angular.extend(queryParams, params.filter());
+	            }
+	            if ($scope.hasOwnProperty('pointofsale')) {
+	            	queryParams['pointid'] = $scope.pointofsale;
+	            }
+	            SubscriptionDao.search(queryParams, function(data) {
+	                params.total(data.totalElements);
+	                $defer.resolve( data.content);
+	            })
+	        }
+	    });
+};
+
+  DeliveryController.$inject = ['$scope', '$http', 'NgTableParams'];
   SubscriptionController.$inject = ['$scope', '$http', 'SubscriptionDAO', 'NgTableParams'];
   SubscriptionDetailController.$inject = ['$scope', '$stateParams', '$http', 'SubscriptionDAO','NgTableParams'];
 
@@ -74,6 +106,7 @@
   angular.module("verwApp.subscriptions").
    factory("SubscriptionDAO", SubscriptionFactory).
    controller("SubscriptionController", SubscriptionController).
+   controller("DeliveryController", DeliveryController).
    controller("SubscriptionDetailController", SubscriptionDetailController).
    controller("SubscriptionMainController", function($scope) {}).
    config(['$stateProvider','eehNavigationProvider',function ($stateProvider, eehNavigationProvider) {
@@ -87,10 +120,19 @@
 			url: "/subscriptiondetail/{id:int}",
 			templateUrl: "modsubscriptions/subscriptiondetail.html",
 			controller: 'SubscriptionDetailController'	
+		}).
+		state('subscriptions.deliveries', {
+			url: "/deliveries",
+			templateUrl: "modsubscriptions/deliveries.html",
+			controller: 'DeliveryController'	
 		});
     eehNavigationProvider.
     menuItem('navside.subscriptions', {
  	     text : 'Kunden-Abos', isCollapsed: true, iconClass: 'fa fa-newspaper-o'
+    }).
+  	menuItem('navside.subscriptions.deliveries', {
+       	 text : 'Kundenbelieferungen',
+       	 state : 'subscriptions.deliveries', weight : 50
     }).
   	menuItem('navside.subscriptions.subscriptions', {
        	 text : 'Kundenabo Suche',

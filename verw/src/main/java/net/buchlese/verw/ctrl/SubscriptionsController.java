@@ -1,7 +1,9 @@
 package net.buchlese.verw.ctrl;
 
 
+import net.buchlese.bofc.api.subscr.SubscrDelivery;
 import net.buchlese.bofc.api.subscr.Subscription;
+import net.buchlese.verw.repos.SubscrDeliveryRepository;
 import net.buchlese.verw.repos.SubscriptionRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,7 @@ public class SubscriptionsController {
 
 	@Autowired SubscriptionRepository subscriptionRepository;
 
+	@Autowired SubscrDeliveryRepository deliveryRepository;
 
 //	@Autowired AccountingExportFile exportFileCreator;
 
@@ -37,5 +40,12 @@ public class SubscriptionsController {
 		return subscriptionRepository.findAll(predicate, pageable);
 	}
 
+	@ResponseBody
+	@RequestMapping(path="deliveriesDyn", method = RequestMethod.GET)
+	public Page<SubscrDelivery> deliveriesDynamic(@QuerydslPredicate(root = SubscrDelivery.class) Predicate predicate,    
+	          Pageable pageable, @RequestParam MultiValueMap<String, String> parameters) {
+
+		return deliveryRepository.findAll(predicate, pageable);
+	}
 
 }

@@ -190,7 +190,7 @@
     eehNavigationProvider.
     menuItem('navside.invoices', {
  	     text : 'Ausgangsrechnungen',
- 	    isCollapsed: true, iconClass : 'fa fa-files-o'
+ 	    isCollapsed: true, iconClass : 'fa fa-files-o', weight :100
     }).
   	menuItem('navside.invoices.dashboard', {
     	 text : 'Rechnungen Übersicht',

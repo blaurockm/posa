@@ -75,7 +75,7 @@
     eehNavigationProvider.
     menuItem('navside.customers', {
  	     text : 'Kunden',
- 	     iconClass : 'fa fa-female'
+ 	     iconClass : 'fa fa-female', weight:-10
     }).
   	menuItem('navside.customers.customers', {
        	 text : 'Kunden Suche',
