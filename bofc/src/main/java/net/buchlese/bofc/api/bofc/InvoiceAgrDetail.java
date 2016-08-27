@@ -2,21 +2,28 @@ package net.buchlese.bofc.api.bofc;
 
 import java.util.List;
 
-import javax.persistence.Embeddable;
+import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import net.buchlese.bofc.api.subscr.PayIntervalType;
 
 import org.joda.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-@Embeddable
+@Entity
+@Table(name="posinvoice_agrdetail")
 public class InvoiceAgrDetail {
 	@Id
+	@GeneratedValue(strategy=GenerationType.AUTO)
 	@JsonProperty
 	private Long id;
 	public enum TYPE { SUBSCR, ISSUESLIP };	
@@ -42,6 +49,10 @@ public class InvoiceAgrDetail {
 	@Enumerated(EnumType.STRING)
 	private PayIntervalType payType;
 
+	@JsonIgnore
+	@ManyToOne
+	private PosInvoice invoice;
+	
 	
 	public long getAgreementId() {
 		return agreementId;

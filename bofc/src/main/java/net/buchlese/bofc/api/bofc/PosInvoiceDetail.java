@@ -1,13 +1,20 @@
 package net.buchlese.bofc.api.bofc;
 
-import javax.persistence.Embeddable;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-@Embeddable
+@Entity
+@Table( name = "posinvoice_detail")
 public class PosInvoiceDetail {
 	@Id
+	@GeneratedValue(strategy=GenerationType.AUTO)
 	@JsonProperty
 	private Long id;
 	@JsonProperty
@@ -42,6 +49,13 @@ public class PosInvoiceDetail {
 	@JsonProperty
 	private boolean inclTax = true;
 	
+	@JsonIgnore
+	@ManyToOne
+	private PosInvoice invoice;
+
+	@JsonIgnore
+	@ManyToOne
+	private PosIssueSlip issueslip;
 
 	public Long getAmount() {
 		return amount;

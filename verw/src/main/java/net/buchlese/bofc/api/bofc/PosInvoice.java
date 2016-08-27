@@ -4,13 +4,15 @@ package net.buchlese.bofc.api.bofc;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
-import javax.persistence.CollectionTable;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -22,6 +24,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @XmlRootElement(name = "invoice")
 public class PosInvoice {
 	@Id
+	@GeneratedValue(strategy=GenerationType.AUTO)
 	@JsonProperty
 	private Long id;
 	@JsonProperty
@@ -90,14 +93,12 @@ public class PosInvoice {
 	private String type;
 	
 	@JsonProperty
-	@ElementCollection
-	@CollectionTable(joinColumns=@JoinColumn(name="pos_invoice"))
+	@OneToMany(mappedBy="invoice")
 	private List<PosInvoiceDetail> details;
 
 	@JsonProperty
-	@ElementCollection
-	@CollectionTable(joinColumns=@JoinColumn(name="pos_invoice"))
-	private List<InvoiceAgrDetail> agreementDetails;
+	@OneToMany(mappedBy="invoice")
+	private Set<InvoiceAgrDetail> agreementDetails;
 
 	@JsonProperty
 	private LocalDate deliveryFrom;
@@ -149,7 +150,7 @@ public class PosInvoice {
 			return null;
 		}
 		if (getAgreementDetails() == null) {
-			setAgreementDetails(new ArrayList<InvoiceAgrDetail>());
+			setAgreementDetails(new HashSet<InvoiceAgrDetail>());
 		}
 		getAgreementDetails().add(detail);
 		if (deliveryFrom == null || deliveryFrom.isAfter(detail.getDeliveryFrom())) {
@@ -354,11 +355,11 @@ public class PosInvoice {
 		this.nettoFull = nettoFull;
 	}
 
-	public List<InvoiceAgrDetail> getAgreementDetails() {
+	public Set<InvoiceAgrDetail> getAgreementDetails() {
 		return agreementDetails;
 	}
 
-	public void setAgreementDetails(List<InvoiceAgrDetail> agreementDetails) {
+	public void setAgreementDetails(Set<InvoiceAgrDetail> agreementDetails) {
 		this.agreementDetails = agreementDetails;
 	}
 

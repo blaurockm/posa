@@ -3,11 +3,13 @@ package net.buchlese.bofc.api.bofc;
 import io.dropwizard.jackson.Jackson;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -92,12 +94,12 @@ public class PosInvoice {
 	private String type;
 	
 	@JsonProperty
-	@ElementCollection
+	@OneToMany(mappedBy="invoice")
 	private List<PosInvoiceDetail> details;
 
 	@JsonProperty
-	@ElementCollection
-	private List<InvoiceAgrDetail> agreementDetails;
+	@OneToMany(mappedBy="invoice")
+	private Set<InvoiceAgrDetail> agreementDetails;
 
 	@JsonProperty
 	private LocalDate deliveryFrom;
@@ -131,7 +133,7 @@ public class PosInvoice {
 			return null;
 		}
 		if (getAgreementDetails() == null) {
-			setAgreementDetails(new ArrayList<InvoiceAgrDetail>());
+			setAgreementDetails(new HashSet<InvoiceAgrDetail>());
 		}
 		getAgreementDetails().add(detail);
 		if (deliveryFrom == null || deliveryFrom.isAfter(detail.getDeliveryFrom())) {
@@ -343,11 +345,11 @@ public class PosInvoice {
 		this.nettoFull = nettoFull;
 	}
 
-	public List<InvoiceAgrDetail> getAgreementDetails() {
+	public Set<InvoiceAgrDetail> getAgreementDetails() {
 		return agreementDetails;
 	}
 
-	public void setAgreementDetails(List<InvoiceAgrDetail> agreementDetails) {
+	public void setAgreementDetails(Set<InvoiceAgrDetail> agreementDetails) {
 		this.agreementDetails = agreementDetails;
 	}
 
