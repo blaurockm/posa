@@ -1,4 +1,7 @@
 (function(angular) {
+  var SubDashboardController = function($scope, $http, NgTableParams) {
+	  
+  }
   var DeliveryController = function($scope, $http, NgTableParams) {
 	    $scope.reloadData = function () {
 	    	$scope.tableParams.reload();
@@ -90,6 +93,7 @@
 	    });
 };
 
+  SubDashboardController.$inject = ['$scope', '$http', 'NgTableParams'];
   DeliveryController.$inject = ['$scope', '$http', 'NgTableParams'];
   SubscriptionController.$inject = ['$scope', '$http', 'SubscriptionDAO', 'NgTableParams'];
   SubscriptionDetailController.$inject = ['$scope', '$stateParams', '$http', 'SubscriptionDAO','NgTableParams'];
@@ -107,6 +111,7 @@
    factory("SubscriptionDAO", SubscriptionFactory).
    controller("SubscriptionController", SubscriptionController).
    controller("DeliveryController", DeliveryController).
+   controller("SubDashboardController", SubDashboardController).
    controller("SubscriptionDetailController", SubscriptionDetailController).
    controller("SubscriptionMainController", function($scope) {}).
    config(['$stateProvider','eehNavigationProvider',function ($stateProvider, eehNavigationProvider) {
@@ -125,10 +130,19 @@
 			url: "/deliveries",
 			templateUrl: "modsubscriptions/deliveries.html",
 			controller: 'DeliveryController'	
+		}).
+		state('subscriptions.dashboard', {
+			url: "/dashboard",
+			templateUrl: "modsubscriptions/dashboard.html",
+			controller: 'SubDashboardController'	
 		});
     eehNavigationProvider.
     menuItem('navside.subscriptions', {
  	     text : 'Kunden-Abos', isCollapsed: true, iconClass: 'fa fa-newspaper-o'
+    }).
+  	menuItem('navside.subscriptions.dashboard', {
+       	 text : 'Periodika Dashboard',
+       	 state : 'subscriptions.dashboard', weight: 1
     }).
   	menuItem('navside.subscriptions.deliveries', {
        	 text : 'Kundenbelieferungen',
@@ -136,7 +150,7 @@
     }).
   	menuItem('navside.subscriptions.subscriptions', {
        	 text : 'Kundenabo Suche',
-       	 state : 'subscriptions.subscriptions'
+       	 state : 'subscriptions.subscriptions', weight:2
     });
 
    }]);
