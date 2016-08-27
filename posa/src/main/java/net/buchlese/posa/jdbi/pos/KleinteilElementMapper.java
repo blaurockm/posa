@@ -13,7 +13,7 @@ public class KleinteilElementMapper implements ResultSetMapper<KleinteilElement>
 	public KleinteilElement map(int arg0, ResultSet rs, StatementContext ctx) throws SQLException {
 		KleinteilElement vorg = new KleinteilElement();
 		vorg.setRechnungsNummer(rs.getInt("KopfNummer"));
-//		[LfdNummer] [int] NOT NULL,
+		vorg.setLaufendeNummer(rs.getInt("LaufendeNummer"));
 		vorg.setPositionsNummer(rs.getInt("PositionsNummer"));
 //		[ISBN] [varchar](20) NULL,
 		vorg.setIsbn(rs.getString("isbn"));

@@ -58,6 +58,22 @@ public abstract class AbstractSynchronizer {
 		return false;
 	}
 
+	protected boolean updLong(Consumer<Long> c, Long val1, BigDecimal val2) {
+		if (val2 == null && val1 != null) {
+			c.accept(0L);
+			return true;
+		}
+		if (val2 == null) {
+			return false;
+		}
+		long v = val2.longValue();
+		if (val1 == null || val1.longValue() != v) {
+			c.accept(v);
+			return true;
+		}
+		return false;
+	}
+
 	protected boolean updBool(Consumer<Boolean> c, boolean val1, Boolean val2) {
 		if (val2 == null && val1 == true) {
 			c.accept(false);

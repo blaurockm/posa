@@ -214,5 +214,27 @@ public class SubscrDelivery implements Comparable<SubscrDelivery> {
 	public void setSlipNumber(String slipNumber) {
 		this.slipNumber = slipNumber;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (int) (id ^ (id >>> 32));
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		SubscrDelivery other = (SubscrDelivery) obj;
+		if (id != other.id)
+			return false;
+		return true;
+	}
 	
 }

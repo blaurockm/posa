@@ -4,6 +4,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class PosInvoiceDetail {
 	@JsonProperty
+	private Long lfdNr;     // Laufende Nummer
+
+	@JsonProperty
 	private Long amount;     // Positionsbetrag gesamt
 	@JsonProperty
 	private Long amountHalf;     // Positionsbetrag mit halben MwSt-Satz
@@ -120,6 +123,14 @@ public class PosInvoiceDetail {
 
 	public void setInclTax(boolean inclTax) {
 		this.inclTax = inclTax;
+	}
+
+	public Long getLfdNr() {
+		return lfdNr;
+	}
+
+	public void setLfdNr(Long lfdNr) {
+		this.lfdNr = lfdNr;
 	}
 
 }

@@ -1,11 +1,16 @@
 package net.buchlese.bofc.api.bofc;
 
 import javax.persistence.Embeddable;
+import javax.persistence.Id;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Embeddable
 public class PosInvoiceDetail {
+	@Id
+	@JsonProperty
+	private Long id;
+
 	@JsonProperty
 	private Long amount;     // Positionsbetrag gesamt
 	@JsonProperty
@@ -14,6 +19,8 @@ public class PosInvoiceDetail {
 	private Long amountFull;     // Positionsbetrag mit vollem MwSt-Satz
 	@JsonProperty
 	private Long amountNone;     // Positionsbetrag ohne MwSt
+	@JsonProperty
+	private Long lfdNr;     // Laufende Nummer
 
 	@JsonProperty
 	private String text;
@@ -123,6 +130,47 @@ public class PosInvoiceDetail {
 
 	public void setInclTax(boolean inclTax) {
 		this.inclTax = inclTax;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		PosInvoiceDetail other = (PosInvoiceDetail) obj;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		return true;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public Long getLfdNr() {
+		return lfdNr;
+	}
+
+	public void setLfdNr(Long lfdNr) {
+		this.lfdNr = lfdNr;
 	}
 
 }

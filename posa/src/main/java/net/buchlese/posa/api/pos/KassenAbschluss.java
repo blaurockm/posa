@@ -66,7 +66,9 @@ public class KassenAbschluss {
 	private BigDecimal auszahlungenHalb;
 	@JsonProperty
 	private BigDecimal auszahlungenOhne;
-	
+	@JsonProperty
+	private BigDecimal zeitmarke;
+
 	public int getId() {
 		return id;
 	}
@@ -228,6 +230,12 @@ public class KassenAbschluss {
 	}
 	public void setDifferenz(BigDecimal differenz) {
 		this.differenz = differenz;
+	}
+	public BigDecimal getZeitmarke() {
+		return zeitmarke;
+	}
+	public void setZeitmarke(BigDecimal zeitmarke) {
+		this.zeitmarke = zeitmarke;
 	}
 	
 	

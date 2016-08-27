@@ -51,6 +51,8 @@ public class KleinteilKopf {
 	private BigDecimal brutto19;
 	@JsonProperty
 	private Boolean bezahlt;
+	@JsonProperty
+	private int art;  // 0 = angebot, 1 = rechnung, 2, lieferschein, 8, gutschrift, 10, storno-rech, 12 = remission
 	
 	@JsonProperty
 	private BigDecimal zeitmarke;
@@ -222,6 +224,14 @@ public class KleinteilKopf {
 
 	public void setZeitmarke(BigDecimal zeitmarke) {
 		this.zeitmarke = zeitmarke;
+	}
+
+	public int getArt() {
+		return art;
+	}
+
+	public void setArt(int art) {
+		this.art = art;
 	}
 
 }

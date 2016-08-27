@@ -120,7 +120,16 @@ public class SyncTimer extends TimerTask {
     	    	lastSync = lastRuns.get(0);
     	    	bofc.execute("update dynamicstate set value = ? where key = 'lastsyncrun'", DateTime.now());
     	    }
+
+    	    BigDecimal balRowVer = null;
+    	    List<BigDecimal> balRowVers = bofc.createQuery("select bigvalue from dynamicstate where key='balRowver'").map(new BigDecimalMapper()).list();
     	    
+    	    if (balRowVers.isEmpty()) {
+    	    	bofc.execute("insert into dynamicstate (key, bigvalue) values('balRowver', 0)");
+    	    } else {
+    	    	balRowVer = balRowVers.get(0);
+    	    }
+
     	    BigDecimal invRowVer = null;
     	    List<BigDecimal> invRowVers = bofc.createQuery("select bigvalue from dynamicstate where key='invRowver'").map(new BigDecimalMapper()).list();
     	    
@@ -152,7 +161,9 @@ public class SyncTimer extends TimerTask {
 	    		ssg.delayedGatherData();
 	    		
 	    		// hole neue Abschlüsse
-	    		syncBalance.fetchNewBalances(lastSync);
+	    		balRowVer = syncBalance.fetchNewBalances(balRowVer);
+    	    	bofc.execute("update dynamicstate set bigvalue = ? where key = 'balRowver'", balRowVer);
+	    		
 	    		invRowVer = syncInvoice.fetchNewAndChangedInvoices(invRowVer);
     	    	bofc.execute("update dynamicstate set bigvalue = ? where key = 'invRowver'", invRowVer);
 	    		

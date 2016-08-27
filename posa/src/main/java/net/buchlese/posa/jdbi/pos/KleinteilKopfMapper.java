@@ -29,6 +29,7 @@ public class KleinteilKopfMapper implements ResultSetMapper<KleinteilKopf> {
 		vorg.setBrutto0(rs.getBigDecimal("RechnungBetragMwst_0"));
 		vorg.setBrutto7(rs.getBigDecimal("RechnungBetragMwst_7"));
 		vorg.setBrutto19(rs.getBigDecimal("RechnungBetragMwst_16"));
+		vorg.setArt(rs.getInt("art"));
 		vorg.setErfassungsDatum(new DateTime(rs.getTimestamp("ErfassungsDatum")));
 		vorg.setRechnungsDatum(new DateTime(rs.getTimestamp("RechungsDatum")));
 		vorg.setDruckDatum(new DateTime(rs.getTimestamp("Gedruckt_Am")));

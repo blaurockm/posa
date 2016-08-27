@@ -11,7 +11,10 @@ public class KleinteilElement {
 	@NotEmpty
 	@JsonProperty
 	private int rechnungsNummer;
-	
+
+	@JsonProperty
+	private int laufendeNummer;
+
 	@JsonProperty
 	private int positionsNummer;
 	@JsonProperty
@@ -156,6 +159,14 @@ public class KleinteilElement {
 
 	public void setRabattSatz(BigDecimal rabattSatz) {
 		this.rabattSatz = rabattSatz;
+	}
+
+	public int getLaufendeNummer() {
+		return laufendeNummer;
+	}
+
+	public void setLaufendeNummer(int laufendeNummer) {
+		this.laufendeNummer = laufendeNummer;
 	}
 
 

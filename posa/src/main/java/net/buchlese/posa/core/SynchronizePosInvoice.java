@@ -2,6 +2,7 @@ package net.buchlese.posa.core;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import net.buchlese.posa.PosAdapterApplication;
@@ -169,14 +170,21 @@ public class SynchronizePosInvoice extends AbstractSynchronizer {
 		updStr(inv::setCity, inv.getCity(), rech.getOrt());
 		
 		List<KleinteilElement> elems = rechnungsDAO.fetchElemente(rech.getId());
+		List<PosInvoiceDetail> details = inv.getDetails() != null ? inv.getDetails() : Collections.emptyList();
 		for (KleinteilElement e : elems) {
-			inv.addDetail(createInvoiceDetail(e));
+			java.util.Optional<PosInvoiceDetail> match = details.stream().filter(d -> d.getLfdNr() == e.getLaufendeNummer()).findAny();
+			if (match.isPresent()) {
+				updateInvoiceDetail(match.get(), e);
+			} else {
+				inv.addDetail(createInvoiceDetail(e));
+			}
 		}
+		// 1 = rechnung, 2 = lieferschein, 8= gutschrift, 10 = storno-rech, 12 = remission
+		updBool(inv::setCancelled, inv.getCancelled(), rech.getArt() != 1);
 		updMoney(inv::setAmount, inv.getAmount(), rech.getBrutto());
 		updMoney(inv::setAmountHalf, inv.getAmountHalf(), rech.getBrutto7());
 		updMoney(inv::setAmountFull, inv.getAmountFull(), rech.getBrutto19());
 		updMoney(inv::setAmountNone, inv.getAmountNone(), rech.getBrutto0());
-		
 		return inv;
 	}
 
@@ -200,11 +208,18 @@ public class SynchronizePosInvoice extends AbstractSynchronizer {
 		updStr(inv::setName3, inv.getName3(), rech.getName3());
 		updStr(inv::setStreet, inv.getStreet(), rech.getStrasse());
 		updStr(inv::setCity, inv.getCity(), rech.getOrt());
-		
+
 		List<KleinteilElement> elems = rechnungsDAO.fetchElemente(rech.getId());
+		List<PosInvoiceDetail> details = inv.getDetails() != null ? inv.getDetails() : Collections.emptyList();
 		for (KleinteilElement e : elems) {
-			inv.addDetail(createInvoiceDetail(e));
+			java.util.Optional<PosInvoiceDetail> match = details.stream().filter(d -> d.getLfdNr() == e.getLaufendeNummer()).findAny();
+			if (match.isPresent()) {
+				updateInvoiceDetail(match.get(), e);
+			} else {
+				inv.addDetail(createInvoiceDetail(e));
+			}
 		}
+
 		updMoney(inv::setAmount, inv.getAmount(), rech.getBrutto());
 		updMoney(inv::setAmountHalf, inv.getAmountHalf(), rech.getBrutto7());
 		updMoney(inv::setAmountFull, inv.getAmountFull(), rech.getBrutto19());
@@ -212,9 +227,14 @@ public class SynchronizePosInvoice extends AbstractSynchronizer {
 		
 		return inv;
 	}
-	
+
 	private PosInvoiceDetail createInvoiceDetail(KleinteilElement e) {
 		PosInvoiceDetail pd = new PosInvoiceDetail();
+		pd.setLfdNr(Long.valueOf(e.getLaufendeNummer()));
+		return updateInvoiceDetail(pd, e);
+	}
+	
+	private PosInvoiceDetail updateInvoiceDetail(PosInvoiceDetail pd, KleinteilElement e) {
 		if (e.getMenge() == null) {
 			pd.setText(e.getBezeichnung());
 			pd.setTextonly(true);
@@ -222,16 +242,16 @@ public class SynchronizePosInvoice extends AbstractSynchronizer {
 		}
 		switch (e.getKennziffer()) {
 		case "AP" : if (e.getBezeichnung() != null) { 
-			pd.setText(e.getBezeichnung());   
+			updStr(pd::setText, pd.getText(), e.getBezeichnung());   
 		} else {
-			pd.setText(e.getMatchCode());
+			updStr(pd::setText, pd.getText(), e.getMatchCode());
 		} 
 		break;
 		case "TB" : pd.setText(rechnungsDAO.getTextbaustein(e.getTextbaustein())); pd.setTextonly(true); return pd; 
 		case "LZ" : pd.setText("    "); pd.setTextonly(true); return pd;
 		default: pd.setText("unbekannte Kennziffer " + e.getKennziffer());  pd.setTextonly(true); return pd;
 		}
-		pd.setQuantity(e.getMenge().intValue());
+		updInt(pd::setQuantity, pd.getQuantity(), e.getMenge());
 		BigDecimal betrag = e.getBruttoEinzel();
 		if (betrag.intValue() == 0) {
 			betrag = e.getMenge(); // es handelt sich hierbei um eine freie preiseingabe
@@ -244,10 +264,9 @@ public class SynchronizePosInvoice extends AbstractSynchronizer {
 		}
 		updMoney(pd::setSinglePrice, pd.getSinglePrice(), betrag);
 		if (pd.getQuantity() > 0) {
-			pd.setAmount(pd.getSinglePrice() * pd.getQuantity());
-		} else {
-			pd.setAmount(pd.getSinglePrice());
+			betrag = betrag.multiply(new BigDecimal(pd.getQuantity()));
 		}
+		updLong(pd::setAmount, pd.getAmount(), betrag);
 		if (e.getRabattSatz() != null) {
 			updMoney(pd::setRebate, pd.getRebate(), e.getRabattSatz());
 		}

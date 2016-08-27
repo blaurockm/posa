@@ -2,6 +2,7 @@ package net.buchlese.posa.core;
 
 import io.dropwizard.jackson.Jackson;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -22,7 +23,6 @@ import net.buchlese.posa.jdbi.pos.KassenAbschlussDAO;
 import net.buchlese.posa.jdbi.pos.KassenBelegDAO;
 import net.buchlese.posa.jdbi.pos.KassenVorgangDAO;
 
-import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,15 +58,48 @@ public class SynchronizePosCashBalance extends AbstractSynchronizer implements C
 	 * 
 	 * @param syncStart
 	 */
-	public void fetchNewBalances(DateTime syncStart) {
+	public BigDecimal fetchNewBalances(BigDecimal rowver) {
+		BigDecimal res = rowver;
 		Optional<String> maxId = Optional.fromNullable(cashBalanceDAO.getMaxAbschlussId());
 
-		List<KassenAbschluss> belege = abschlussDao.fetchAllAfter(maxId.or(syncStart.toString("yyyyMMdd")));
-
-		// für jeden nicht vorhandenen neuen Abschluss eine CashBalance anlegen.
+		List<KassenAbschluss> belege = abschlussDao.fetchAllAfter(maxId.or("20160101"));
 		List<PosCashBalance> pcb = createNewBalances(belege);
 		cashBalanceDAO.insertAll(pcb.iterator());
 		PosAdapterApplication.homingQueue.addAll(pcb); // sync the new ones back home
+		if (belege.isEmpty() == false) {
+			res = belege.get(belege.size()-1).getZeitmarke();
+			if (rowver == null) {
+				rowver = res;
+			}
+		}
+		List<KassenAbschluss> belegeChg = abschlussDao.fetchAllChangedAfter(rowver);
+		if (belegeChg.isEmpty() == false) {
+			BigDecimal newRes = belegeChg.get(belegeChg.size()-1).getZeitmarke();
+			if (newRes.compareTo(res) > 0) {
+				res = newRes;
+			}
+		}
+		pcb = updateBalances(belegeChg);
+		PosAdapterApplication.homingQueue.addAll(pcb); // sync the new ones back home
+		
+		return res;
+	}
+
+	
+	
+	private List<PosCashBalance> updateBalances(List<KassenAbschluss> abschluesse) {
+		List<PosCashBalance> invs = new ArrayList<>();
+		for (KassenAbschluss abschluss : abschluesse) {
+			if (abschluss.getIst() != null && abschluss.getAbschlussid() != null) {
+				PosCashBalance bal = cashBalanceDAO.fetchForDate(abschluss.getAbschlussid());
+				if (bal != null) {
+					updateBalanceValues(abschluss, bal);
+					invs.add(bal);
+					cashBalanceDAO.update(bal);
+				}
+			}
+		}
+		return invs;
 	}
 
 	/**
