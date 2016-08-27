@@ -172,7 +172,7 @@ public class SynchronizePosInvoice extends AbstractSynchronizer {
 		List<KleinteilElement> elems = rechnungsDAO.fetchElemente(rech.getId());
 		List<PosInvoiceDetail> details = inv.getDetails() != null ? inv.getDetails() : Collections.emptyList();
 		for (KleinteilElement e : elems) {
-			java.util.Optional<PosInvoiceDetail> match = details.stream().filter(d -> d.getLfdNr() == e.getLaufendeNummer()).findAny();
+			java.util.Optional<PosInvoiceDetail> match = details.stream().filter(d -> d != null && d.getLfdNr() != null && d.getLfdNr().intValue() == e.getLaufendeNummer()).findAny();
 			if (match.isPresent()) {
 				updateInvoiceDetail(match.get(), e);
 			} else {
@@ -212,7 +212,7 @@ public class SynchronizePosInvoice extends AbstractSynchronizer {
 		List<KleinteilElement> elems = rechnungsDAO.fetchElemente(rech.getId());
 		List<PosInvoiceDetail> details = inv.getDetails() != null ? inv.getDetails() : Collections.emptyList();
 		for (KleinteilElement e : elems) {
-			java.util.Optional<PosInvoiceDetail> match = details.stream().filter(d -> d.getLfdNr() == e.getLaufendeNummer()).findAny();
+			java.util.Optional<PosInvoiceDetail> match = details.stream().filter(d -> d != null && d.getLfdNr() != null && d.getLfdNr().intValue() == e.getLaufendeNummer()).findAny();
 			if (match.isPresent()) {
 				updateInvoiceDetail(match.get(), e);
 			} else {

@@ -17,7 +17,7 @@ jpamysql:
   properties:
     charSet: UTF-8
     useSSL: false
-    hibernate.dialect: org.hibernate.dialect.MySQLDialect
+    hibernate.dialect: org.hibernate.dialect.MySQL5Dialect
     hibernate.hbm2ddl.auto: update
     hibernate.ejb.naming_strategy: org.hibernate.cfg.ImprovedNamingStrategy
 
@@ -48,3 +48,4 @@ logging:
     com.example.app: DEBUG
 
     org.hibernate.SQL: TRACE
+    org.hibernate.engine.internal.StatisticalLoggingSessionEventListener: ERROR

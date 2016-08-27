@@ -56,7 +56,7 @@ public interface PosInvoiceDAO {
 	DateTime getLastErfasst();
 
 	@SqlBatch("insert into posinvoice (number, customer, pointid, debitor, amount, amountFull, amountHalf, amountNone, invDate, creationtime, " +
-	" complJson, agrType, printed, temporary, exported, exportDate, " +
+	" complJson, agrType, printed, temporary_, exported, exportDate, " +
 	" printdate, name1, name2, name3,  street, city, payed, cancelled, actionum) " +
 	" values (:number, :customerId, :pointid, :debitorId, :amount, :amountFull, :amountHalf, :amountNone, :date,:creationTime, " + 
 	" :complJson, :type, :printed, :temporary, :exported, :exportDate, " +
@@ -66,7 +66,7 @@ public interface PosInvoiceDAO {
 
 	@GetGeneratedKeys
 	@SqlUpdate("insert into posinvoice (number, customer, pointid, debitor, amount, amountFull, amountHalf, amountNone, invDate, creationtime, " +
-	" complJson, agrType, printed, temporary, exported, exportDate, " +
+	" complJson, agrType, printed, temporary_, exported, exportDate, " +
 	" printdate, name1, name2, name3,  street, city, payed, cancelled, actionum) " +
 	" values (:number, :customerId, :pointid, :debitorId, :amount, :amountFull, :amountHalf, :amountNone, :date,:creationTime," +
 	" :complJson, :type, :printed, :temporary, :exported, :exportDate, " +
@@ -74,7 +74,7 @@ public interface PosInvoiceDAO {
 	long insert(@Valid @BindBean PosInvoice inv);
 
 	@SqlUpdate("update posinvoice set (customer, pointid, debitor, amount, amountFull, amountHalf, amountNone, invDate, creationtime, " +
-			" complJson, agrType, printed, temporary, exported, exportDate, " +
+			" complJson, agrType, printed, temporary_, exported, exportDate, " +
 			" printdate, name1, name2, name3,  street, city, payed, cancelled) " +
 			" = (:customerId, :pointid, :debitorId, :amount, :amountFull, :amountHalf, :amountNone, :date,:creationTime," +
 			" :complJson, :type, :printed, :temporary, :exported, :exportDate, " +

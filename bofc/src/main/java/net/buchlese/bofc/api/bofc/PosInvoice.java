@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
@@ -94,11 +95,11 @@ public class PosInvoice {
 	private String type;
 	
 	@JsonProperty
-	@OneToMany(mappedBy="invoice")
+	@OneToMany(mappedBy="invoice",cascade=CascadeType.ALL)
 	private List<PosInvoiceDetail> details;
 
 	@JsonProperty
-	@OneToMany(mappedBy="invoice")
+	@OneToMany(mappedBy="invoice",cascade=CascadeType.ALL)
 	private Set<InvoiceAgrDetail> agreementDetails;
 
 	@JsonProperty
@@ -295,6 +296,13 @@ public class PosInvoice {
 	}
 	public void setDetails(List<PosInvoiceDetail> details) {
 		this.details = details;
+		if (details != null) {
+			for (PosInvoiceDetail d : details) {
+				if (d.getInvoice() != this) {
+					d.setInvoice(this);
+				}
+			}
+		}
 	}
 
 	public Long getTax() {
@@ -351,6 +359,13 @@ public class PosInvoice {
 
 	public void setAgreementDetails(Set<InvoiceAgrDetail> agreementDetails) {
 		this.agreementDetails = agreementDetails;
+		if (agreementDetails != null) {
+			for (InvoiceAgrDetail d : agreementDetails) {
+				if (d.getInvoice() != this) {
+					d.setInvoice(this);
+				}
+			}
+		}
 	}
 
 	public LocalDate getDeliveryFrom() {

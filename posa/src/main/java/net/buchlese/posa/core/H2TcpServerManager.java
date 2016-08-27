@@ -15,7 +15,7 @@ public class H2TcpServerManager implements Managed {
 	 */
 	@Override
 	public void start() throws Exception {
-		server = Server.createTcpServer((String[])null).start();
+		server = Server.createTcpServer("-tcpPort", "9123").start();
 	}
 
 	@Override

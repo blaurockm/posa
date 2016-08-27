@@ -19,7 +19,7 @@ import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 @RegisterMapper(PosTxMapper.class)
 public interface PosTxDAO {
 
-	@SqlBatch("insert into postx (belegnr, belegidx, pointid, sellingprice, purchaseprice, articlegroupkey, articleid, articlekey, total, description, count, ean, isbn, matchcode,  tax, txtype, timest, tobeignored, tobecheckedagain) " +
+	@SqlBatch("insert into postx (belegnr, belegidx, pointid, sellingprice, purchaseprice, articlegroupkey, articleid, articlekey, total, description, count_, ean, isbn, matchcode,  tax, txtype, timest, tobeignored, tobecheckedagain) " +
 	" values (:belegNr, :belegIdx, :pointid, :sellingPrice, :purchasePrice, :articleGroupKey, :articleId, :articleKey, :total, :description, :count, :ean, :isbn, :matchCode, :tax, :type, :timestamp, :toBeIgnored, :toBeCheckedAgain)")
 	@BatchChunkSize(500)
 	void insertAll(@Valid @BindBean Iterator<PosTx> transactions);
@@ -39,7 +39,7 @@ public interface PosTxDAO {
 
 
 	@SqlUpdate("update postx set sellingprice = :sellingPrice, purchaseprice = :purchasePrice, articlegroupkey = :articleGroupKey, " +
-	 " articleid = :articleId, articlekey = :articleKey, total = :total, description = :description, count = :count, " +
+	 " articleid = :articleId, articlekey = :articleKey, total = :total, description = :description, count_ = :count, " +
 	 " ean = :ean, isbn = :isbn, matchcode = :matchCode,  tax = :tax, txtype = :type, pointid = :pointid, " + 
 	 " tobeignored = :toBeIgnored, tobecheckedagain = :toBeCheckedAgain where id = :id ")
 	void update(@Valid @BindBean PosTx checker);

@@ -74,13 +74,17 @@ public abstract class AbstractSynchronizer {
 		return false;
 	}
 
-	protected boolean updBool(Consumer<Boolean> c, boolean val1, Boolean val2) {
-		if (val2 == null && val1 == true) {
-			c.accept(false);
+	protected boolean updBool(Consumer<Boolean> c, Boolean val1, Boolean val2) {
+		if (val1 == null && val2 != null ) {
+			c.accept(val2);
 			return true;
 		}
-		if (val1 != val2.booleanValue()) {
-			c.accept(val2.booleanValue());
+		if (val1 != null && val2 == null ) {
+			c.accept(Boolean.FALSE);
+			return true;
+		}
+		if (val1 != null && val2 != null && val1.equals(val2) == false) {
+			c.accept(val2);
 			return true;
 		}
 		return false;

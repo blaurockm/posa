@@ -14,7 +14,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @Table( name = "posinvoice_detail")
 public class PosInvoiceDetail {
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@JsonProperty
 	private Long id;
 	@JsonProperty
@@ -184,6 +184,22 @@ public class PosInvoiceDetail {
 
 	public void setLfdNr(Long lfdNr) {
 		this.lfdNr = lfdNr;
+	}
+
+	public PosInvoice getInvoice() {
+		return invoice;
+	}
+
+	public void setInvoice(PosInvoice invoice) {
+		this.invoice = invoice;
+	}
+
+	public PosIssueSlip getIssueslip() {
+		return issueslip;
+	}
+
+	public void setIssueslip(PosIssueSlip issueslip) {
+		this.issueslip = issueslip;
 	}
 
 }

@@ -23,7 +23,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @Table(name="posinvoice_agrdetail")
 public class InvoiceAgrDetail {
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@JsonProperty
 	private Long id;
 	public enum TYPE { SUBSCR, ISSUESLIP };	
@@ -133,6 +133,14 @@ public class InvoiceAgrDetail {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public PosInvoice getInvoice() {
+		return invoice;
+	}
+
+	public void setInvoice(PosInvoice invoice) {
+		this.invoice = invoice;
 	}
 	
 }
