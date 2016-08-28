@@ -1,10 +1,5 @@
 package net.buchlese.bofc.resources;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -12,28 +7,23 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Collectors;
 
-import javax.ws.rs.FormParam;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.StreamingOutput;
 
 import net.buchlese.bofc.api.bofc.ArticleGroup;
+import net.buchlese.bofc.api.bofc.Command;
 import net.buchlese.bofc.api.cmd.AbstractBofcCommand;
 import net.buchlese.bofc.api.cmd.PayOffCoupon;
-import net.buchlese.bofc.api.cmd.PayOffInvoice;
 
 import com.google.common.base.Optional;
 import com.google.inject.Inject;
-import com.thetransactioncompany.jsonrpc2.JSONRPC2ParseException;
-import com.thetransactioncompany.jsonrpc2.JSONRPC2Request;
-import com.thetransactioncompany.jsonrpc2.JSONRPC2Response;
 
 @Path("/")
 public class CommandResource {
@@ -51,15 +41,18 @@ public class CommandResource {
 	@Path("/cmdstodo")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Collection<AbstractBofcCommand> fetchCmdToDo()  {
-		PayOffInvoice c = new PayOffInvoice();
-		c.setPointId(6);
-		c.setParams(new Object[] {"31602400"});
-		toBeSend.add(c);
-		PayOffCoupon c2 = new PayOffCoupon();
-		c2.setPointId(6);
-		c2.setParams(new Object[] {"31602400"});
-		toBeSend.add(c2);
 		return new ArrayList<AbstractBofcCommand>(toBeSend);
+	}
+
+	@GET
+	@Path("/createpayoffcoupon")
+	@Produces(MediaType.APPLICATION_JSON)
+	public PayOffCoupon createPayoffcoupon(@QueryParam("pos") Integer pos, @QueryParam("key") String gutsch)  {
+		PayOffCoupon c2 = new PayOffCoupon();
+		c2.setPointId(pos);
+		c2.setParams(new Object[] {gutsch});
+		toBeSend.add(c2);
+		return c2;
 	}
 
 	@GET
@@ -83,47 +76,21 @@ public class CommandResource {
 	@GET
 	@Path("/getcmds")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response sendCommands(@QueryParam("pos") Integer pos) {
+	public Collection<AbstractBofcCommand> sendCommands(@QueryParam("pos") Integer pos) {
 		final int pointId = pos.intValue();
-		StreamingOutput stream = new StreamingOutput() {
-			@Override
-			public void write(OutputStream os) throws IOException,  WebApplicationException {
-				AbstractBofcCommand doIt = null;
-				for (AbstractBofcCommand cmd : toBeSend) {
-					if (cmd.getPointId() == pointId) {
-						doIt = cmd;
-						break;
-					}
-				}
-				// Create a new JSON-RPC 2.0 request
-				if (doIt != null) {
-					Writer writer = new BufferedWriter(new OutputStreamWriter(os, "iso-8859-1"));
-					JSONRPC2Request reqOut = new JSONRPC2Request(doIt.getAction(), doIt.getParams() != null ? Arrays.asList(doIt.getParams()) : null, doIt.getId());
-	
-					// Serialise the request to a JSON-encoded string
-					writer.write(reqOut.toString());
-					writer.flush();
-					toBeSend.remove(doIt);
-					commands.put(doIt.getId(), doIt);
-				}
-			}
-		};
-		return Response.ok(stream).build();
+		List<AbstractBofcCommand> doIt = toBeSend.stream().filter(x -> x.getPointId() == pointId).collect(Collectors.toList());
+		toBeSend.removeAll(doIt);
+		doIt.forEach(x -> commands.put(String.valueOf(x.getId()), x));
+		return doIt;
 	}
 
 	@POST
 	@Path("/answercmds")
-	@Produces(MediaType.APPLICATION_JSON)
-	public void recvResponses(@FormParam("jsonAnswer") String jsonString ) {
-		JSONRPC2Response respIn = null;
-		try {
-			respIn = JSONRPC2Response.parse(jsonString);
-		} catch (JSONRPC2ParseException e) {
-			throw new WebApplicationException(e);
-		}
-		String id = (String) respIn.getID();
+	@Consumes(MediaType.APPLICATION_JSON)
+	public void recvResponses(Command respIn ) {
+		String id = (String) respIn.getId();
 		if (commands.containsKey(id)) {
-			commands.get(id).setResult(String.valueOf(respIn.getResult()));
+			commands.get(id).setResult(respIn.getResult());
 		}
 	}
 	

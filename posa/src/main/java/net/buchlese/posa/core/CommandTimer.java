@@ -2,15 +2,17 @@ package net.buchlese.posa.core;
 
 import java.io.IOException;
 import java.net.ConnectException;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.List;
 import java.util.TimerTask;
 
 import javax.ws.rs.core.MediaType;
 
 import net.buchlese.posa.PosAdapterApplication;
 import net.buchlese.posa.PosAdapterConfiguration;
-import net.buchlese.posa.core.cmd.AbstractCommand;
-import net.buchlese.posa.core.cmd.PayOffCouponCommand;
-import net.buchlese.posa.core.cmd.PayOffInvoiceCommand;
+import net.buchlese.posa.api.bofc.Command;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,64 +21,54 @@ import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 import com.google.inject.Inject;
 import com.jcraft.jsch.JSchException;
 import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.GenericType;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
-import com.thetransactioncompany.jsonrpc2.JSONRPC2ParseException;
-import com.thetransactioncompany.jsonrpc2.JSONRPC2Request;
 
 public class CommandTimer extends TimerTask {
 
-	private final static String homeResource = "getcmds";
+	private final String homeResource;
 
 	private final Logger logger;
 	private final PosAdapterConfiguration config;
-	private final String homeUrl;
-	private final AbstractCommand commandChain;
+	private final URL homeUrl;
 
 	public static long lastRun;
 
 	@Inject
-	public CommandTimer(PosAdapterConfiguration config) {
+	public CommandTimer(PosAdapterConfiguration config) throws MalformedURLException {
 		this.config = config;
-		this.homeUrl = config.getHomeUrl();
+		this.homeUrl = new URL(config.getCommandHomeUrl());
 		logger = LoggerFactory.getLogger(CommandTimer.class);
-		AbstractCommand chain = new PayOffCouponCommand(config);
-		commandChain = chain;
-		chain = chain.concat(new PayOffInvoiceCommand(config));
+		this.homeResource = config.getCommandGetResource();
 	}
 
 	@Override
 	public void run() {
-		if (homeUrl == null || homeUrl.isEmpty() || homeUrl.equals("homeless") ) {
+		if (homeUrl == null || homeUrl.equals("homeless") ) {
 			// do nothing;
 			return;
 		}
 
 		lastRun = System.currentTimeMillis();
-		JSONRPC2Request reqIn = null;
 		synchronized(PosAdapterApplication.homingQueue) {
 
-			try (CloudConnect cloud = new CloudConnect(config, logger)) {
+			try (CloudConnect cloud = new CloudConnect(homeUrl, config, logger)) {
 
 				ClientConfig clientConfig = new DefaultClientConfig();
 				clientConfig.getClasses().add(JacksonJsonProvider.class);
 				Client client = Client.create(clientConfig);
 
-				WebResource r = client.resource(homeUrl + homeResource);
+				WebResource r = client.resource(new URL(homeUrl, homeResource).toURI());
 				r = r.queryParam("pos", String.valueOf(config.getPointOfSaleId()));
 				
-				String jsonString = r.accept(MediaType.APPLICATION_JSON_TYPE).get(String.class);
+				List<Command> commands = r.accept(MediaType.APPLICATION_JSON_TYPE)
+						.get(new GenericType<List<Command>>() {});
 
-				try {
-					if (jsonString != null && jsonString.isEmpty() == false) {
-						reqIn = JSONRPC2Request.parse(jsonString);
-					}
-				} catch (JSONRPC2ParseException e) {
-					logger.error("problem parsing command", e);
-				}
+				commands.forEach(x -> PosAdapterApplication.commandQueue.add(x));
 				
-			} catch (ConnectException e) {
+			} catch (ConnectException | URISyntaxException e) {
 				// wir konnten keine Verbindung aufbauen.
 				// mark PosCashBalance for retry next hour
 				logger.warn("problem while connecting home", e);
@@ -88,8 +80,6 @@ public class CommandTimer extends TimerTask {
 				logger.error("problem closing session", e);
 			}
 		}
-		
-		commandChain.handle(reqIn);
 	}
 
 }

@@ -1,99 +1,52 @@
 package net.buchlese.posa.core.cmd;
 
-import java.io.IOException;
-import java.net.ConnectException;
-
-import javax.ws.rs.core.MediaType;
+import java.net.MalformedURLException;
+import java.util.function.Consumer;
 
 import net.buchlese.posa.PosAdapterApplication;
 import net.buchlese.posa.PosAdapterConfiguration;
-import net.buchlese.posa.core.CloudConnect;
-import net.buchlese.posa.core.CommandTimer;
+import net.buchlese.posa.api.bofc.Command;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
-import com.jcraft.jsch.JSchException;
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.api.client.config.ClientConfig;
-import com.sun.jersey.api.client.config.DefaultClientConfig;
-import com.sun.jersey.api.representation.Form;
-import com.thetransactioncompany.jsonrpc2.JSONRPC2Request;
-import com.thetransactioncompany.jsonrpc2.JSONRPC2Response;
-
-public abstract class AbstractCommand {
-	private final static String homeResource = "answercmds";
+public abstract class AbstractCommand implements Consumer<Command> {
 
 	private AbstractCommand successor;
-	private final Logger logger;
-	private final PosAdapterConfiguration config;
-	private final String homeUrl;
 	
-	public AbstractCommand(PosAdapterConfiguration config) {
+	public AbstractCommand(PosAdapterConfiguration config) throws MalformedURLException {
 		super();
-		this.config = config;
-		this.homeUrl = config.getHomeUrl();
-		logger = LoggerFactory.getLogger(CommandTimer.class);
 	}
-
-	public void handle(JSONRPC2Request req) {
+    
+	public void accept(Command req) {
 		if (req == null) {
 			return;
 		}
 		if (canHandle(req)) {
 			try {
-				sendBack(execute(req), req.getID());
+				PosAdapterApplication.homingQueue.add(doExecute(req));
 			} catch (Throwable t) {
-				sendBack("FATAL ERROR " + t.getMessage(), req.getID());
+				req.setResult("FATAL ERROR " + t.getMessage());
+				PosAdapterApplication.homingQueue.add(req);
 			}
 		} else {
 			if (successor != null) {
-				successor.handle(req);
+				successor.accept(req);
 			} else {
-				sendBack("unknownRequestMethod, end of chain", req.getID());
+				req.setResult("unknown RequestMethod, end of chain");
+				PosAdapterApplication.homingQueue.add(req);
 			}
 		}
 	}
 	
-	protected void sendBack(Object result, Object id) {
-		synchronized(PosAdapterApplication.homingQueue) {
-
-			try (CloudConnect cloud = new CloudConnect(config, logger)) {
-
-				ClientConfig clientConfig = new DefaultClientConfig();
-				clientConfig.getClasses().add(JacksonJsonProvider.class);
-				Client client = Client.create(clientConfig);
-
-				WebResource r = client.resource(homeUrl + homeResource);				
-				JSONRPC2Response respIn = new JSONRPC2Response(result, id );
-
-				Form f = new Form();
-				f.add("jsonAnswer", respIn.toString());
-
-				r.entity(f, MediaType.APPLICATION_FORM_URLENCODED_TYPE).post();
-				
-			} catch (ConnectException e) {
-				// wir konnten keine Verbindung aufbauen.
-				// mark PosCashBalance for retry next hour
-				logger.warn("problem while connecting home", e);
-			} catch (JSchException e1) {
-				// problem connecting to ssh-server
-				logger.error("problem connecting ssh-session", e1);
-			} catch (IOException e) {
-				// problem closing httpClient
-				logger.error("problem closing session", e);
-			}
-		}
-	
+	protected Command doExecute(final Command req) {
+		req.setResult(execute(req));
+		return req;
 	}
 	
-	public abstract boolean canHandle(JSONRPC2Request req);
-	public abstract Object execute(JSONRPC2Request req);
+	
+	public abstract boolean canHandle(Command req);
+	public abstract Object execute(Command req);
 	
 	public AbstractCommand concat(AbstractCommand succ) {
-		this.successor = succ;
+		succ.successor = this;
 		return succ;
 	}
 }

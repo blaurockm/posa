@@ -2,12 +2,11 @@ package net.buchlese.posa.core;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 
-import org.slf4j.Logger;
-
 import net.buchlese.posa.PosAdapterConfiguration;
+
+import org.slf4j.Logger;
 
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
@@ -19,16 +18,9 @@ public class CloudConnect implements Closeable {
 	private final String homeHost;
 	private final int localPort;
 
-	public CloudConnect(PosAdapterConfiguration config, Logger log) throws JSchException {
-		int lp = 8080;
-		try {
-			URL url = new URL(config.getHomeUrl());
-			lp = url.getPort();
-		} catch (MalformedURLException e) {
-			log.error("problem parsing homeUrl", e);
-		}
+	public CloudConnect(URL service, PosAdapterConfiguration config, Logger log) throws JSchException {
 		this.homeHost = config.getHomeHost();
-		this.localPort = lp;
+		this.localPort = service.getPort() > 0 ? service.getPort() : 8080;
 		if (config.isSshEnabled()) {
 			sshConnect();
 		}

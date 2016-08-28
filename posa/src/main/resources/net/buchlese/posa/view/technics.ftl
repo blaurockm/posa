@@ -27,6 +27,14 @@
 	 	   </ol>
     </p>
 	<p>
+	<h3>Command - Warteschlange</h3>
+	  <ol>
+	    <#list commandQueue as sy>
+	 	   <li>${sy}</li>
+	 	 </#list>
+	 	   </ol>
+    </p>
+	<p>
 	<h3>Homing - Warteschlange</h3>
   	  <ol>
      <#list homingQueue as ho>

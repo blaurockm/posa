@@ -3,22 +3,25 @@ package net.buchlese.bofc.api.cmd;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public abstract class AbstractBofcCommand {
-	private final long id;
+	@JsonProperty
+	private long id;
 	@JsonProperty
 	private final String action;
 	@JsonProperty
 	private int pointId;
 	@JsonProperty
-	private String result;
+	private Object result;
 	@JsonProperty
 	private Object[] params;
 	public AbstractBofcCommand(String action) {
 		super();
-		id = System.currentTimeMillis();
 		this.action = action;
 	}
-	public String getId() {
-		return String.valueOf(id);
+	public long getId() {
+		return id;
+	}
+	public void setId(long x) {
+		this.id = x;
 	}
 	public String getAction() {
 		return action;
@@ -59,10 +62,10 @@ public abstract class AbstractBofcCommand {
 			return false;
 		return true;
 	}
-	public String getResult() {
+	public Object getResult() {
 		return result;
 	}
-	public void setResult(String result) {
+	public void setResult(Object result) {
 		this.result = result;
 	}
 	public int getPointId() {

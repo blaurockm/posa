@@ -14,6 +14,7 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import net.buchlese.posa.api.bofc.ArticleGroup;
+import net.buchlese.posa.api.bofc.Command;
 import net.buchlese.posa.api.bofc.PosCashBalance;
 import net.buchlese.posa.api.bofc.SendableObject;
 import net.buchlese.posa.core.CommandTimer;
@@ -31,6 +32,8 @@ public class PosAdapterApplication extends Application<PosAdapterConfiguration> 
 	public static Queue<PosCashBalance> resyncQueue = new ConcurrentLinkedQueue<PosCashBalance>();
 
 	public static Queue<SendableObject> homingQueue = new ConcurrentLinkedQueue<SendableObject>();
+
+	public static Queue<Command> commandQueue = new ConcurrentLinkedQueue<Command>();
 
 	public static Queue<String> problemMessages = new ConcurrentLinkedQueue<String>();
 

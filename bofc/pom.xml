@@ -85,11 +85,6 @@
             </exclusion>
          </exclusions>
       </dependency>
-      <dependency>
-         <groupId>com.thetransactioncompany</groupId>
-         <artifactId>jsonrpc2-base</artifactId>
-         <version>1.38</version>
-      </dependency>
 		<!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
 		<dependency>
 		    <groupId>mysql</groupId>

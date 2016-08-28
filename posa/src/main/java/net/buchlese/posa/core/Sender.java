@@ -4,6 +4,9 @@ import io.dropwizard.jackson.Jackson;
 
 import java.io.IOException;
 import java.net.ConnectException;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.function.Consumer;
 
 import javax.ws.rs.core.MediaType;
@@ -25,7 +28,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public abstract class Sender<T extends SendableObject> implements Consumer<SendableObject> {
 	
-	private final String homeUrl;
+	private final URL homeUrl;
 	private final ObjectMapper om;
 	private final Logger log;
 	private final CloseableHttpClient httpClient;
@@ -34,7 +37,12 @@ public abstract class Sender<T extends SendableObject> implements Consumer<Senda
 	private Sender<?> succ;
 
 	public Sender(PosAdapterConfiguration config, Logger log, CloseableHttpClient client) {
-		this.homeUrl = config.getHomeUrl();
+		try {
+			this.homeUrl = new URL(config.getSendHomeUrl());
+		} catch (MalformedURLException e) {
+			log.error("problem creating HomeURL " + config.getSendHomeUrl(), e);
+			throw new IllegalArgumentException(e);
+		}
 		this.om = Jackson.newObjectMapper();
 		this.log = log;
 		this.httpClient = client;
@@ -42,15 +50,24 @@ public abstract class Sender<T extends SendableObject> implements Consumer<Senda
 	
 
 	public void send(T bal) {
-		if (homeUrl == null || homeUrl.isEmpty() || homeUrl.equals("homeless") ) {
+		if (homeUrl == null || homeUrl.equals("homeless") ) {
 			// do nothing;
 			return;
 		}
 
-		preSendHook(bal);
 		// Get target URL
+		HttpPost post;
+		try {
+			post = new HttpPost(new URL(this.homeUrl, getHomeResource()).toURI());
+		} catch (MalformedURLException e2) {
+			log.error("problem creating HomeResource " + getHomeResource(), e2);
+			throw new IllegalArgumentException(e2);
+		} catch (URISyntaxException e2) {
+			log.error("problem creating HomeResource " + getHomeResource(), e2);
+			throw new IllegalArgumentException(e2);
+		}
 
-		HttpPost post = new HttpPost(this.homeUrl + getHomeResource());
+		preSendHook(bal);
 		try {
 			StringEntity cashBalEntity = new StringEntity(om.writeValueAsString(bal), ContentType.create(MediaType.APPLICATION_JSON, "UTF8"));
 			post.setEntity(cashBalEntity);

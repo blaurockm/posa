@@ -44,6 +44,13 @@ public class PosAdapterConfiguration extends Configuration {
     private String homeUrl;
 
     @JsonProperty
+    private String commandHomeUrl;
+    @JsonProperty
+    private String syncHomeUrl;
+    @JsonProperty
+    private String sendHomeUrl;
+
+    @JsonProperty
     private String homeHost;
 
     @JsonProperty
@@ -69,6 +76,30 @@ public class PosAdapterConfiguration extends Configuration {
 
     @JsonProperty
     private int commandInterval = 10;
+
+    @JsonProperty
+    private String cashBalanceResource = "cashbalance/acceptBalance";
+    
+    @JsonProperty
+    private String invoiceResource = "invoice/acceptInvoice";
+
+    @JsonProperty
+    private String issueSlipResource = "invoice/acceptIssueSlip";
+
+    @JsonProperty
+    private String posStateResource = "posState/acceptState";
+
+    @JsonProperty
+    private String serverStateResource = "serverState/acceptState";
+
+    @JsonProperty
+    private String articleGroupResource = "articleGroup";
+
+    @JsonProperty
+    private String commandGetResource = "getcmds";
+
+    @JsonProperty
+    private String commandSendResource = "answercmds";
 
     @JsonProperty
     private boolean sshEnabled;
@@ -162,6 +193,50 @@ public class PosAdapterConfiguration extends Configuration {
 
 	public int getCommandInterval() {
 		return commandInterval;
+	}
+
+	public String getCommandHomeUrl() {
+		return commandHomeUrl != null ? commandHomeUrl : homeUrl;
+	}
+
+	public String getSyncHomeUrl() {
+		return syncHomeUrl != null ? syncHomeUrl : homeUrl;
+	}
+
+	public String getSendHomeUrl() {
+		return sendHomeUrl != null ? sendHomeUrl : homeUrl;
+	}
+
+	public String getCashBalanceResource() {
+		return cashBalanceResource;
+	}
+
+	public String getInvoiceResource() {
+		return invoiceResource;
+	}
+
+	public String getIssueSlipResource() {
+		return issueSlipResource;
+	}
+
+	public String getPosStateResource() {
+		return posStateResource;
+	}
+
+	public String getServerStateResource() {
+		return serverStateResource;
+	}
+
+	public String getArticleGroupResource() {
+		return articleGroupResource;
+	}
+
+	public String getCommandGetResource() {
+		return commandGetResource;
+	}
+
+	public String getCommandSendResource() {
+		return commandSendResource;
 	}
     
 }

@@ -60,6 +60,10 @@ public class TechnicsView extends View {
 		return PosAdapterApplication.resyncQueue.stream().map(Object::toString).collect(Collectors.toList());
 	}
 
+	public List<String> getCommandQueue() {
+		return PosAdapterApplication.commandQueue.stream().map(Object::toString).collect(Collectors.toList());
+	}
+
 	public List<String> getProblems() {
 		return PosAdapterApplication.problemMessages.stream().map(Object::toString).collect(Collectors.toList());
 	}

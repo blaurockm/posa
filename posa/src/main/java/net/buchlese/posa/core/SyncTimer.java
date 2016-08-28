@@ -3,12 +3,16 @@ package net.buchlese.posa.core;
 import io.dropwizard.jdbi.args.JodaDateTimeMapper;
 
 import java.math.BigDecimal;
+import java.net.MalformedURLException;
 import java.util.List;
 import java.util.TimerTask;
 import java.util.concurrent.locks.Lock;
 
 import net.buchlese.posa.PosAdapterApplication;
 import net.buchlese.posa.PosAdapterConfiguration;
+import net.buchlese.posa.core.cmd.AbstractCommand;
+import net.buchlese.posa.core.cmd.PayOffCouponCommand;
+import net.buchlese.posa.core.cmd.PayOffInvoiceCommand;
 import net.buchlese.posa.jdbi.bofc.PosCashBalanceDAO;
 import net.buchlese.posa.jdbi.bofc.PosInvoiceDAO;
 import net.buchlese.posa.jdbi.bofc.PosTicketDAO;
@@ -69,7 +73,6 @@ public class SyncTimer extends TimerTask {
 	private final PosStateGatherer psg;
 	private final ServerStateGatherer ssg;
 	private final PosAdapterConfiguration config;
-	
 	private volatile BulkLoadDetails bulkLoad; 
 	
 	public static long lastRun;
@@ -79,7 +82,7 @@ public class SyncTimer extends TimerTask {
 	@Inject
 	public SyncTimer(@Named("SyncLock") Lock l, @Named("bofcdb") DBI bofcDBI, 
 			@Named("posdb") DBI posDBI, PosStateGatherer psg, ServerStateGatherer ssg,
-			PosAdapterConfiguration config) {
+			PosAdapterConfiguration config) throws MalformedURLException {
 		this.syncLock = l;
 		this.bofcDBI = bofcDBI;
 		this.posDBI = posDBI;
@@ -180,6 +183,14 @@ public class SyncTimer extends TimerTask {
 	    		if (PosAdapterApplication.resyncQueue.isEmpty() == false) {
 	    			PosAdapterApplication.resyncQueue.forEach(syncBalance);
 	    			PosAdapterApplication.resyncQueue.clear();
+	    		}
+
+	    		AbstractCommand chain = new PayOffCouponCommand(config, pos);
+	    		chain = chain.concat(new PayOffInvoiceCommand(config, pos));
+
+	    		if (PosAdapterApplication.commandQueue.isEmpty() == false) {
+	    			PosAdapterApplication.commandQueue.forEach(chain);
+	    			PosAdapterApplication.commandQueue.clear();
 	    		}
 	    	}
 

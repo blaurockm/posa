@@ -2,6 +2,9 @@ package net.buchlese.posa.core;
 
 import java.io.IOException;
 import java.net.ConnectException;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,20 +34,20 @@ public class ConfigSyncTimer extends TimerTask {
 
 	private final Logger logger;
 	private final PosAdapterConfiguration config;
-	private final String homeUrl;
+	private final URL homeUrl;
 
 	public static long lastRun;
 
 	@Inject
-	public ConfigSyncTimer(PosAdapterConfiguration config) {
+	public ConfigSyncTimer(PosAdapterConfiguration config) throws MalformedURLException {
 		this.config = config;
-		this.homeUrl = config.getHomeUrl();
+		this.homeUrl = new URL(config.getSyncHomeUrl());
 		logger = LoggerFactory.getLogger(ConfigSyncTimer.class);
 	}
 
 	@Override
 	public void run() {
-		if (homeUrl == null || homeUrl.isEmpty() || homeUrl.equals("homeless") ) {
+		if (homeUrl == null || homeUrl.equals("homeless") ) {
 			// do nothing;
 			return;
 		}
@@ -52,13 +55,13 @@ public class ConfigSyncTimer extends TimerTask {
 		lastRun = System.currentTimeMillis();
 		synchronized(PosAdapterApplication.homingQueue) {
 
-			try (CloudConnect cloud = new CloudConnect(config, logger)) {
+			try (CloudConnect cloud = new CloudConnect(homeUrl,config, logger)) {
 
 				ClientConfig clientConfig = new DefaultClientConfig();
 				clientConfig.getClasses().add(JacksonJsonProvider.class);
 				Client client = Client.create(clientConfig);
 
-				WebResource r = client.resource(homeUrl + homeResource);
+				WebResource r = client.resource(new URL(homeUrl,homeResource).toURI());
 
 				List<ArticleGroup> articleGroups = r.accept(MediaType.APPLICATION_JSON_TYPE)
 						.get(new GenericType<List<ArticleGroup>>() {});
@@ -69,7 +72,7 @@ public class ConfigSyncTimer extends TimerTask {
 
 				ArticleGroup.injectMappings(newConf);
 
-			} catch (ConnectException e) {
+			} catch (ConnectException | URISyntaxException e) {
 				// wir konnten keine Verbindung aufbauen.
 				// mark PosCashBalance for retry next hour
 				logger.warn("problem while connecting home", e);
