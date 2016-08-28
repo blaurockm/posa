@@ -53,6 +53,24 @@ public class PosAdapterConfiguration extends Configuration {
     private int daysBack = 14;
 
     @JsonProperty
+    private int syncOffset = 5;
+
+    @JsonProperty
+    private int syncInterval = 15;
+    
+    @JsonProperty
+    private int sendOffset = 1;
+
+    @JsonProperty
+    private int sendInterval = 2;
+
+    @JsonProperty
+    private int commandOffset = 30;
+
+    @JsonProperty
+    private int commandInterval = 10;
+
+    @JsonProperty
     private boolean sshEnabled;
 
     public boolean isSshEnabled() {
@@ -120,6 +138,30 @@ public class PosAdapterConfiguration extends Configuration {
 
 	public int getDaysBack() {
 		return daysBack;
+	}
+
+	public int getSyncOffset() {
+		return syncOffset;
+	}
+
+	public int getSyncInterval() {
+		return syncInterval;
+	}
+
+	public int getSendOffset() {
+		return sendOffset;
+	}
+
+	public int getSendInterval() {
+		return sendInterval;
+	}
+
+	public int getCommandOffset() {
+		return commandOffset;
+	}
+
+	public int getCommandInterval() {
+		return commandInterval;
 	}
     
 }

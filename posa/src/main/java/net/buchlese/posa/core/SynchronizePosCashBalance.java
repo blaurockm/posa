@@ -40,14 +40,16 @@ public class SynchronizePosCashBalance extends AbstractSynchronizer implements C
 	private final KassenAbschlussDAO abschlussDao;
 	private final KassenBelegDAO belegDao;
 	private final KassenVorgangDAO vorgangDao;
+	private final Integer limit;
 
-	public SynchronizePosCashBalance(PosCashBalanceDAO cashBalanceDAO, PosTicketDAO ticketDAO, PosTxDAO txDAO, KassenAbschlussDAO abschlussDao, KassenBelegDAO belegDao, KassenVorgangDAO vorgangDao) {
+	public SynchronizePosCashBalance(PosCashBalanceDAO cashBalanceDAO, PosTicketDAO ticketDAO, PosTxDAO txDAO, KassenAbschlussDAO abschlussDao, KassenBelegDAO belegDao, KassenVorgangDAO vorgangDao, Integer limit) {
 		this.cashBalanceDAO = cashBalanceDAO;
 		this.ticketDAO = ticketDAO;
 		this.abschlussDao = abschlussDao;
 		this.belegDao = belegDao;
 		this.vorgangDao = vorgangDao;
 		this.txDAO = txDAO;
+		this.limit = limit;
 		this.om = Jackson.newObjectMapper();
 	}
 
@@ -62,7 +64,7 @@ public class SynchronizePosCashBalance extends AbstractSynchronizer implements C
 		BigDecimal res = rowver;
 		Optional<String> maxId = Optional.fromNullable(cashBalanceDAO.getMaxAbschlussId());
 
-		List<KassenAbschluss> belege = abschlussDao.fetchAllAfter(maxId.or("20160101"));
+		List<KassenAbschluss> belege = abschlussDao.fetchAllAfter(maxId.or("20080101"), limit);
 		List<PosCashBalance> pcb = createNewBalances(belege);
 		cashBalanceDAO.insertAll(pcb.iterator());
 		PosAdapterApplication.homingQueue.addAll(pcb); // sync the new ones back home

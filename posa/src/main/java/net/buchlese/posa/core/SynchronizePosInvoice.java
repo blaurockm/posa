@@ -21,10 +21,12 @@ public class SynchronizePosInvoice extends AbstractSynchronizer {
 	private final PosInvoiceDAO invDAO;
 
 	private final KleinteilDAO rechnungsDAO;
+	private final Integer limit;
 
-	public SynchronizePosInvoice(PosInvoiceDAO cashBalanceDAO, KleinteilDAO ticketDAO) {
+	public SynchronizePosInvoice(PosInvoiceDAO cashBalanceDAO, KleinteilDAO ticketDAO, Integer limit) {
 		this.invDAO = cashBalanceDAO;
 		this.rechnungsDAO = ticketDAO;
+		this.limit = limit;
 	}
 	
 	/**
@@ -38,7 +40,7 @@ public class SynchronizePosInvoice extends AbstractSynchronizer {
 		BigDecimal res = rowver;
 		Optional<Integer> maxId = Optional.fromNullable(invDAO.getLastErfasst());
 
-		List<KleinteilKopf> rechs = rechnungsDAO.fetchAllAfter(maxId.or(1160000));
+		List<KleinteilKopf> rechs = rechnungsDAO.fetchAllRechnungenAfter(maxId.or(1160000), limit);
 		createNewInvoices(rechs);
 		if (rechs.isEmpty() == false) {
 			res = rechs.get(rechs.size()-1).getZeitmarke();
@@ -69,7 +71,7 @@ public class SynchronizePosInvoice extends AbstractSynchronizer {
 		BigDecimal res = rowver;
 		Optional<Integer> maxId = Optional.fromNullable(invDAO.getLastErfasstLieferschein());
 
-		List<KleinteilKopf> isss = rechnungsDAO.fetchAllLieferscheinAfter(maxId.or(1160000));
+		List<KleinteilKopf> isss = rechnungsDAO.fetchAllLieferscheinAfter(maxId.or(1160000), limit);
 		createNewIssueSlips(isss);
 		if (isss.isEmpty() == false) {
 			res = isss.get(isss.size()-1).getZeitmarke();
@@ -256,17 +258,17 @@ public class SynchronizePosInvoice extends AbstractSynchronizer {
 		if (betrag.intValue() == 0) {
 			betrag = e.getMenge(); // es handelt sich hierbei um eine freie preiseingabe
 		}
+		updMoney(pd::setSinglePrice, pd.getSinglePrice(), betrag);
+		if (pd.getQuantity() > 0 && e.getBruttoEinzel().intValue() != 0) { // sonst wird menge mit menge multipliziert
+			betrag = betrag.multiply(new BigDecimal(pd.getQuantity()));
+		}
+		updMoney(pd::setAmount, pd.getAmount(), betrag);
 		switch (e.getMwstkz()) {
 		case '2' : updMoney(pd::setAmountHalf, pd.getAmountHalf(), betrag); break;
 		case '1' : updMoney(pd::setAmountFull, pd.getAmountFull(), betrag); break;
 		case '3' : updMoney(pd::setAmountNone, pd.getAmountNone(), betrag); break; 
 		default : betrag = new BigDecimal(0); pd.setAmountNone(0L);
 		}
-		updMoney(pd::setSinglePrice, pd.getSinglePrice(), betrag);
-		if (pd.getQuantity() > 0) {
-			betrag = betrag.multiply(new BigDecimal(pd.getQuantity()));
-		}
-		updLong(pd::setAmount, pd.getAmount(), betrag);
 		if (e.getRabattSatz() != null) {
 			updMoney(pd::setRebate, pd.getRebate(), e.getRabattSatz());
 		}

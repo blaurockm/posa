@@ -8,6 +8,7 @@ import java.util.TimerTask;
 import java.util.concurrent.locks.Lock;
 
 import net.buchlese.posa.PosAdapterApplication;
+import net.buchlese.posa.PosAdapterConfiguration;
 import net.buchlese.posa.jdbi.bofc.PosCashBalanceDAO;
 import net.buchlese.posa.jdbi.bofc.PosInvoiceDAO;
 import net.buchlese.posa.jdbi.bofc.PosTicketDAO;
@@ -67,6 +68,7 @@ public class SyncTimer extends TimerTask {
 	private final Lock syncLock;
 	private final PosStateGatherer psg;
 	private final ServerStateGatherer ssg;
+	private final PosAdapterConfiguration config;
 	
 	private volatile BulkLoadDetails bulkLoad; 
 	
@@ -75,12 +77,15 @@ public class SyncTimer extends TimerTask {
 	public static long maxDuration;
 	
 	@Inject
-	public SyncTimer(@Named("SyncLock") Lock l, @Named("bofcdb") DBI bofcDBI, @Named("posdb") DBI posDBI, PosStateGatherer psg, ServerStateGatherer ssg) {
+	public SyncTimer(@Named("SyncLock") Lock l, @Named("bofcdb") DBI bofcDBI, 
+			@Named("posdb") DBI posDBI, PosStateGatherer psg, ServerStateGatherer ssg,
+			PosAdapterConfiguration config) {
 		this.syncLock = l;
 		this.bofcDBI = bofcDBI;
 		this.posDBI = posDBI;
 		this.psg = psg;
 		this.ssg = ssg;
+		this.config = config;
 		logger = LoggerFactory.getLogger(SyncTimer.class);
 	}
 
@@ -148,8 +153,9 @@ public class SyncTimer extends TimerTask {
     	    	issRowVer = issRowVers.get(0);
     	    }
 
-	    	SynchronizePosCashBalance syncBalance = new SynchronizePosCashBalance(posCashBalanceDao, posTicketDao, posTxDao, abschlussDao, belegDao, vorgangDao);
-	    	SynchronizePosInvoice syncInvoice = new SynchronizePosInvoice(posInvoiceDao, kleinteilDao);
+    	    Integer limit = config.getDaysBack();
+	    	SynchronizePosCashBalance syncBalance = new SynchronizePosCashBalance(posCashBalanceDao, posTicketDao, posTxDao, abschlussDao, belegDao, vorgangDao, limit);
+	    	SynchronizePosInvoice syncInvoice = new SynchronizePosInvoice(posInvoiceDao, kleinteilDao, limit);
 	    	
 	    	if (bulkLoad != null) {
 	    		// wir wollen einen Haufen Daten rumschaufeln

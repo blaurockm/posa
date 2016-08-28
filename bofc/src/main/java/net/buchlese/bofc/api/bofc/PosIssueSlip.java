@@ -8,6 +8,7 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -76,7 +77,8 @@ public class PosIssueSlip {
 	private String type;
 	
 	@JsonProperty
-	@OneToMany(mappedBy="issueslip",cascade=CascadeType.ALL)
+	@OneToMany(cascade=CascadeType.ALL)
+	@JoinColumn(name="issueslip_id")
 	private List<PosInvoiceDetail> details;
 
 	@JsonProperty

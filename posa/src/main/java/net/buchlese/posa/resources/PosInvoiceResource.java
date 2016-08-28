@@ -52,7 +52,7 @@ public class PosInvoiceResource {
 	@Path("/resync/{nr}")
 	public List<PosInvoice> resyncInvoice(@PathParam("nr") String nr)  {
 		List<KleinteilKopf> kk = rechDao.fetch(nr);
-		SynchronizePosInvoice spi = new SynchronizePosInvoice(dao,  rechDao);
+		SynchronizePosInvoice spi = new SynchronizePosInvoice(dao,  rechDao, 28);
 		return spi.createNewInvoices(kk);
 	}
 

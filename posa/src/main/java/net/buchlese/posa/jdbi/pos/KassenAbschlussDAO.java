@@ -16,8 +16,8 @@ public interface KassenAbschlussDAO {
 	@SqlQuery("select *, convert(bigint, zeitmarke) as MyZeitmarke from [dbo].kasse_abschlussdaten where abschlussid = :date")
 	KassenAbschluss fetchForDate(@Bind("date") String date);  // format yyyyMMdd
 
-	@SqlQuery("select *, convert(bigint, zeitmarke) as MyZeitmarke from [dbo].kasse_abschlussdaten where abschlussid > :datum")
-	List<KassenAbschluss> fetchAllAfter(@Bind("datum") String datum);
+	@SqlQuery("select *, convert(bigint, zeitmarke) as MyZeitmarke from [dbo].kasse_abschlussdaten where abschlussid > :datum and bisdatum > current_timestamp - :lim")
+	List<KassenAbschluss> fetchAllAfter(@Bind("datum") String datum, @Bind("lim") Integer lim);
 
 	@SqlQuery("select *, convert(bigint, zeitmarke) as MyZeitmarke from [dbo].kasse_abschlussdaten where convert(bigint, zeitmarke) > :dat")
 	List<KassenAbschluss> fetchAllChangedAfter(@Bind("dat") BigDecimal d);

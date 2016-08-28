@@ -4,10 +4,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
@@ -48,14 +46,6 @@ public class PosInvoiceDetail {
 	
 	@JsonProperty
 	private boolean inclTax = true;
-	
-	@JsonIgnore
-	@ManyToOne
-	private PosInvoice invoice;
-
-	@JsonIgnore
-	@ManyToOne
-	private PosIssueSlip issueslip;
 
 	public Long getAmount() {
 		return amount;
@@ -184,22 +174,6 @@ public class PosInvoiceDetail {
 
 	public void setLfdNr(Long lfdNr) {
 		this.lfdNr = lfdNr;
-	}
-
-	public PosInvoice getInvoice() {
-		return invoice;
-	}
-
-	public void setInvoice(PosInvoice invoice) {
-		this.invoice = invoice;
-	}
-
-	public PosIssueSlip getIssueslip() {
-		return issueslip;
-	}
-
-	public void setIssueslip(PosIssueSlip issueslip) {
-		this.issueslip = issueslip;
 	}
 
 }

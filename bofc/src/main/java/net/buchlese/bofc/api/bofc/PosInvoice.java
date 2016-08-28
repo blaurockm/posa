@@ -10,6 +10,7 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -95,11 +96,13 @@ public class PosInvoice {
 	private String type;
 	
 	@JsonProperty
-	@OneToMany(mappedBy="invoice",cascade=CascadeType.ALL)
+	@OneToMany(cascade=CascadeType.ALL)
+	@JoinColumn(name="invoice_id")
 	private List<PosInvoiceDetail> details;
 
 	@JsonProperty
-	@OneToMany(mappedBy="invoice",cascade=CascadeType.ALL)
+	@OneToMany(cascade=CascadeType.ALL)
+	@JoinColumn(name="invoice_id",nullable=false)
 	private Set<InvoiceAgrDetail> agreementDetails;
 
 	@JsonProperty
@@ -296,13 +299,6 @@ public class PosInvoice {
 	}
 	public void setDetails(List<PosInvoiceDetail> details) {
 		this.details = details;
-		if (details != null) {
-			for (PosInvoiceDetail d : details) {
-				if (d.getInvoice() != this) {
-					d.setInvoice(this);
-				}
-			}
-		}
 	}
 
 	public Long getTax() {

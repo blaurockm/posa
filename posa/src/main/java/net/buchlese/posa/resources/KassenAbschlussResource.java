@@ -35,7 +35,7 @@ public class KassenAbschlussResource {
 			return Arrays.asList(dao.fetchForDate(date.get()));
 		}
 		// nur die der letzten 2 Monate
-		return dao.fetchAllAfter(new DateTime().minusMonths(2).toString("yyyyMMdd"));
+		return dao.fetchAllAfter(new DateTime().minusMonths(2).toString("yyyyMMdd"), 28);
 	}
 	
 	

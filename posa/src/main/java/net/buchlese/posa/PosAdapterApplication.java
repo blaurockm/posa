@@ -75,16 +75,16 @@ public class PosAdapterApplication extends Application<PosAdapterConfiguration> 
 
 	    syncTimer = new ScheduledThreadPoolExecutor(10);
 		SyncTimer syncTimerTask = guiceBundle.getInjector().getInstance(SyncTimer.class);
-		syncTimer.scheduleAtFixedRate(syncTimerTask, 1, 2, TimeUnit.MINUTES);
+		syncTimer.scheduleAtFixedRate(syncTimerTask, config.getSyncOffset(), config.getSyncInterval(), TimeUnit.MINUTES);
 
 		SendTimer senTimerTask = guiceBundle.getInjector().getInstance(SendTimer.class);
-		syncTimer.scheduleAtFixedRate(senTimerTask, 2, 2, TimeUnit.MINUTES);
+		syncTimer.scheduleAtFixedRate(senTimerTask, config.getSendOffset(), config.getSendInterval(), TimeUnit.MINUTES);
 		
 		ConfigSyncTimer configTimerTask = guiceBundle.getInjector().getInstance(ConfigSyncTimer.class);
 		syncTimer.scheduleAtFixedRate(configTimerTask, 3, 1440, TimeUnit.MINUTES);
 
 		CommandTimer commandTimerTask = guiceBundle.getInjector().getInstance(CommandTimer.class);
-		syncTimer.scheduleAtFixedRate(commandTimerTask, 30, 20, TimeUnit.SECONDS);
+		syncTimer.scheduleAtFixedRate(commandTimerTask, config.getCommandOffset(), config.getCommandInterval(), TimeUnit.MINUTES);
 
 	}
 
