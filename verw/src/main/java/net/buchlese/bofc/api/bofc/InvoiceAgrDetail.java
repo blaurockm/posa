@@ -9,13 +9,11 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import net.buchlese.bofc.api.subscr.PayIntervalType;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
@@ -47,10 +45,6 @@ public class InvoiceAgrDetail {
 	@JsonProperty
 	@Enumerated(EnumType.STRING)
 	private PayIntervalType payType;
-
-	@JsonIgnore
-	@ManyToOne
-	private PosInvoice invoice;
 
 	public long getAgreementId() {
 		return agreementId;
