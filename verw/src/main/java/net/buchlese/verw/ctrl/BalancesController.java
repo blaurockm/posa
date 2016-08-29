@@ -8,21 +8,15 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
-
-import net.buchlese.bofc.api.bofc.AccountingBalanceExport;
-import net.buchlese.bofc.api.bofc.PosCashBalance;
-import net.buchlese.verw.core.AccountingExportFile;
-import net.buchlese.verw.reports.ReportBalanceExportCreator;
-import net.buchlese.verw.reports.obj.ReportBalanceExport;
-import net.buchlese.verw.repos.BalanceExportRepository;
-import net.buchlese.verw.repos.BalanceRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.querydsl.binding.QuerydslPredicate;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageConversionException;
@@ -35,6 +29,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.querydsl.core.types.Predicate;
+
+import net.buchlese.bofc.api.bofc.AccountingBalanceExport;
+import net.buchlese.bofc.api.bofc.PosCashBalance;
+import net.buchlese.verw.core.AccountingExportFile;
+import net.buchlese.verw.reports.ReportBalanceExportCreator;
+import net.buchlese.verw.reports.obj.ReportBalanceExport;
+import net.buchlese.verw.repos.BalanceExportRepository;
+import net.buchlese.verw.repos.BalanceRepository;
 
 
 @RestController
@@ -68,13 +70,26 @@ public class BalancesController {
 	@ResponseBody
 	@RequestMapping(path="createExport", method = RequestMethod.GET)
 	@Transactional
-	public AccountingBalanceExport createBalanceExport(@RequestParam("pointid") Integer pointid) {
-		PosCashBalance firstUnexported = balanceRepository.findFirstByExportedAndPointidOrderByAbschlussIdAsc(false, pointid);
+	public ResponseEntity<AccountingBalanceExport> createBalanceExport(@RequestParam("pointid") Integer pointid, @RequestParam(name="exportLimit", required=false) Optional<String>  exportLimit) {
+		LocalDate tagGrenze = null;
+		if (exportLimit.isPresent() ) {
+			tagGrenze = LocalDate.parse(exportLimit.get(), DateTimeFormatter.ISO_DATE_TIME);
+		} else {
+			LocalDate ausgangsTag = LocalDate.now();
+			PosCashBalance firstUnexported = balanceRepository.findFirstByExportedAndPointidOrderByAbschlussIdAsc(false, pointid);
+			// Buchungsperiode es ersten Abschlusses ermitteln
+			if (firstUnexported != null) {
+				ausgangsTag = firstUnexported.getFirstCovered().toLocalDate();
+			}
+			tagGrenze = ausgangsTag.withDayOfMonth(ausgangsTag.lengthOfMonth());
+		}
 		// Buchungsperiode es ersten Abschlusses ermitteln
-		LocalDate tag = firstUnexported.getFirstCovered().toLocalDate();
-		String maxAbschlussId = tag.withDayOfMonth(tag.lengthOfMonth()).format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+		String maxAbschlussId = tagGrenze.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
 		List<PosCashBalance> balToExp = balanceRepository.findAllByExportedAndPointidAndAbschlussIdLessThanEqualOrderByAbschlussIdAsc(false, pointid, maxAbschlussId);
-		
+		if (balToExp.isEmpty()) {
+			return new ResponseEntity<AccountingBalanceExport>(HttpStatus.NO_CONTENT);
+		}
+
 		AccountingBalanceExport export = new AccountingBalanceExport();
 		export.setDescription("..asd.");
 		export.setExecDate(LocalDateTime.now());
@@ -83,7 +98,7 @@ public class BalancesController {
 		
 		exportRepository.saveAndFlush(export);
 		
-		return export;
+		return new ResponseEntity<AccountingBalanceExport>(export, HttpStatus.OK);
 	}
 	
 	

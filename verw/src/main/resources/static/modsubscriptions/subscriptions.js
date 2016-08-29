@@ -76,8 +76,7 @@
 	            };
 	            var sortingProp = Object.keys(params.sorting());
 	            if(sortingProp.length == 1){
-	                queryParams["sort"] = sortingProp[0];
-	                queryParams["sortDir"] = params.sorting()[sortingProp[0]];
+	                queryParams["sort"] = sortingProp[0] + ',' + params.sorting()[sortingProp[0]];
 	            }
 	            if (params.hasFilter()) {
 	            	angular.extend(queryParams, params.filter());

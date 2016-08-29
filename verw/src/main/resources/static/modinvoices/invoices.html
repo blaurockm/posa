@@ -1,41 +1,86 @@
-<div class="container">
-	<div class="page-header">
-		<h1>Ausgangsrechnungen</h1>
-	</div>
-    <div class="alert alert-danger" ng-show="error">Nicht gespeichert: Server meldet '{{error.data.exception}}'</div>
-    <div class="alert alert-success" ng-show="success">{{success.name}} erfolgreich gespeichert</div>
-	<div>
-	 <p>Suchkriterien</p>
-	 <div class="radio">
-	  <label><input type="radio" ng-model="pointofsale" value="1">Dornhan</label>
-	</div>
-	<div class="radio">
-	  <label><input type="radio" ng-model="pointofsale" value="2">Sulz</label>
-	</div>
-	<div class="radio">
-	  <label><input type="radio" ng-model="pointofsale" value="3">Schramberg</label>
-	</div>
-	 <label>  <input type="checkbox" ng-model="exported"> Exportiert?</label>
-	 <label>  <input type="checkbox" ng-model="mapped"> Gemappt?</label>
-	 <button ng-click="reloadData()">neu laden</button>
-	 <button ng-click="createInvoiceExport()">Neuer Ausgangsrechnungen-Export</button>
-	</div>
-	<hr>
-	<div>
-	 <p>Suchergebnis</p>	
-	<table ng-table="tableParams" class="table" show-filter="true">
+<div class="alert alert-danger" ng-show="error">Nicht gespeichert: Server meldet '{{error.data.exception}}'</div>
+<div class="alert alert-success" ng-show="success">{{success.name}} erfolgreich gespeichert</div>
+
+<div class="page-header">
+  <h1>Ausgangsrechnungen</h1>
+</div>
+<div class="row">
+  <div class="col-md-6">
+    <p>Suchkriterien</p>
+    <div class="radio-inline">
+      <label><input type="radio" ng-model="pointofsale" value="1">Dornhan</label>
+    </div>
+    <div class="radio-inline">
+      <label><input type="radio" ng-model="pointofsale" value="2">Sulz</label>
+    </div>
+    <div class="radio-inline">
+      <label><input type="radio" ng-model="pointofsale" value="3">Schramberg</label>
+    </div>
+    <p>
+      <label> <input type="checkbox" ng-model="exported" /> Exportiert?
+      </label> <label> <input type="checkbox" ng-model="mapped" /> Gemappt?
+      </label>
+    </p>
+    <p>
+      <div class="form-inline">
+      <label class="control-label">Re-Datum von</label>
+      <div class="input-group">
+         <input type="text" class="form-control" uib-datepicker-popup="dd.MM.yyyy" ng-model="reDatumVon" is-open="popup1.opened" datepicker-options="dateOptions1" />
+          <span class="input-group-btn">
+          <button type="button" class="btn btn-default" ng-click="open1()">
+            <i class="glyphicon glyphicon-calendar"></i>
+          </button>
+        </span>
+      </div>
+      </div>
+      <div class="form-inline">
+      <label class="control-label">Re-Datum bis</label>
+      <div class="input-group">
+         <input type="text" class="form-control" uib-datepicker-popup="dd.MM.yyyy" ng-model="reDatumBis" is-open="popup2.opened" datepicker-options="dateOptions1" />
+          <span class="input-group-btn">
+          <button type="button" class="btn btn-default" ng-click="open2()">
+            <i class="glyphicon glyphicon-calendar"></i>
+          </button>
+        </span>
+      </div>
+      </div>
+    </p>  
+    <p>
+      <button ng-click="reloadData()">neu laden</button>
+    </p>
+  </div>
+  <div class="col-md-6">
+    <p>RechnungsJournal</p>
+    <p>
+      <div class="form-inline">
+      <label class="control-label">Exportlimit</label>
+      <div class="input-group">
+         <input type="text" class="form-control" uib-datepicker-popup="dd.MM.yyyy" ng-model="exportLimit" is-open="popup3.opened" datepicker-options="dateOptions" />
+          <span class="input-group-btn">
+          <button type="button" class="btn btn-default" ng-click="open3()">
+            <i class="glyphicon glyphicon-calendar"></i>
+          </button>
+        </span>
+      </div>
+      </div>
+    </p>
+    <p>
+      <button ng-click="createInvoiceExport(pointofsale, exportLimit)">Neuer Ausgangsrechnungen-Export</button>
+    </p>
+  </div>
+</div>
+<hr>
+<div class="row">
+  <table ng-table="tableParams" class="table" show-filter="true">
     <tr ng-repeat="row in $data">
-        <td title="'Nummer'" filter="{number: 'text'}" sortable="'number'">
-        <a ng-click="showInvoice(row)"  class="cursor-pointer">{{row.number}}</a>
-        </td>
-        <td title="'Name'" filter="{name1: 'text'}" sortable="'name1'">{{row.name1}}</td>
-        <td title="'Debitor'" filter="{debitorId: 'number'}" sortable="'debitorId'"><a href="#" editable-text="row.debitorId" onaftersave="updateMapping(row)">{{ row.debitorId }}</a></td>
-        <td title="'Datum'" filter="{datum: 'text'}" sortable="'date'">{{row.date | localdate}}</td>
-        <td title="'Kasse'" filter="{pointid: 'number'}" sortable="'pointid'">{{row.pointid}}</td>
-        <td title="'Betrag'" sortable="'amount'" align="right">{{row.amount / 100 | currency}}</td>
-        <td title="'Exportiert'" sortable="'exported'">{{row.exported}}</td>
-        <td title="'Exportdatum'" filter="{exportDate: 'text'}" sortable="'exportDate'">{{row.exportDate | localdatetime }}</td>
+      <td title="'Nummer'" filter="{number: 'text'}" sortable="'number'"><a ng-click="showInvoice(row)" class="cursor-pointer">{{row.number}}</a></td>
+      <td title="'Name'" filter="{name1: 'text'}" sortable="'name1'">{{row.name1}}</td>
+      <td title="'Debitor'" filter="{debitorId: 'number'}" sortable="'debitorId'"><a href="#" editable-text="row.debitorId" onaftersave="updateMapping(row)">{{ row.debitorId }}</a></td>
+      <td title="'Datum'" filter="{datum: 'text'}" sortable="'date'">{{row.date | localdate}}</td>
+      <td title="'Kasse'" filter="{pointid: 'number'}" sortable="'pointid'">{{row.pointid}}</td>
+      <td title="'Betrag'" sortable="'amount'" align="right">{{row.amount / 100 | currency}}</td>
+      <td title="'Exportiert'" sortable="'exported'">{{row.exported}}</td>
+      <td title="'Exportdatum'" filter="{exportDate: 'text'}" sortable="'exportDate'">{{row.exportDate | localdatetime }}</td>
     </tr>
-    </table>
-	</div>
+  </table>
 </div>

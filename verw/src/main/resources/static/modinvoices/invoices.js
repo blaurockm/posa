@@ -10,18 +10,55 @@
 	    	      size: 'lg'
 	    	    });
 	    }
+	    
+	    $scope.dateOptions1 = {
+	    	    formatYear: 'yy',
+	    	    startingDay: 1
+	    };
+	    $scope.dateOptions = {
+	    	    formatYear: 'yy',
+	    	    maxDate: new Date()+30,
+	    	    minDate: new Date()-30,
+	    	    startingDay: 1
+	    };
+	    $scope.open1 = function() {
+	        $scope.popup1.opened = true;
+	      };
+	    $scope.popup1 = {
+    		opened: false
+	    };
+	    $scope.open2 = function() {
+	        $scope.popup2.opened = true;
+	      };
+	    $scope.popup2 = {
+    		opened: false
+	    };
+	    $scope.open3 = function() {
+	        $scope.popup3.opened = true;
+	      };
+	    $scope.popup3 = {
+    		opened: false
+	    };
 
-	    $scope.createInvoiceExport = function(pointOfSale) {
+	    $scope.createInvoiceExport = function(pointOfSale, expLim) {
 	    	if (!pointOfSale) {
 	    		pointOfSale = 1;
 	    		$scope.pointofsale = pointOfSale;
 	    	}
 	        var params = {pointid: pointOfSale};
+	    	if (expLim) {
+	    		params.exportLimit = expLim;
+	    	}
 	    	$http.get('/invoices/createExport', {params: params})
 	        .then(function(response) {
-	          alert("Rechnungsexport erzeugt" + response.data);
+	        	if (response.status == 200) {
+	        		$scope.success = response;
+	        	} else {
+	        		$scope.error = response;
+	        		$scope.error.data = { exception : "Keine Daten gefunden!" };
+	        	}
 	        }, function(response) {
-	          alert("Rechnungsexport konnte nicht erzeugt werden " + response.statusText);
+	          $scope.error = response;
 	        } );
 	    }
 
@@ -42,8 +79,7 @@
 	            };
 	            var sortingProp = Object.keys(params.sorting());
 	            if(sortingProp.length == 1){
-	                queryParams["sort"] = sortingProp[0];
-	                queryParams["sortDir"] = params.sorting()[sortingProp[0]];
+	                queryParams["sort"] = sortingProp[0] + ',' + params.sorting()[sortingProp[0]];
 	            }
 	            if (params.hasFilter()) {
 	            	angular.extend(queryParams, params.filter());
@@ -53,6 +89,17 @@
 	            }
 	            if ($scope.hasOwnProperty('exported')) {
 	            	queryParams['exported'] = $scope.exported;
+	            }
+	            if ($scope.hasOwnProperty('reDatumVon') || $scope.hasOwnProperty('reDatumBis')) {
+	            	queryParams['date'] = [];
+	            	if ($scope.hasOwnProperty('reDatumVon') && $scope.reDatumVon != '' && $scope.reDatumVon != null ) {
+	            		queryParams['date'].push(moment($scope.reDatumVon).format('DD.MM.YYYY'));
+//	            		queryParams['dateFrom'] = moment($scope.reDatumVon).format('DD.MM.YYYY');
+	            	} 
+	            	if ($scope.hasOwnProperty('reDatumBis') && $scope.reDatumBis != '' && $scope.reDatumBis != null ) {
+	            		queryParams['date'].push(moment($scope.reDatumBis).format('DD.MM.YYYY'));
+//	            		queryParams['dateTill'] = moment($scope.reDatumVon).format('DD.MM.YYYY');
+	            	} 
 	            }
 	            if ($scope.hasOwnProperty('mapped')) {
 	            	if ($scope.mapped == false) {
@@ -127,8 +174,7 @@
             };
             var sortingProp = Object.keys(params.sorting());
             if(sortingProp.length == 1){
-                queryParams["sort"] = sortingProp[0];
-                queryParams["sortDir"] = params.sorting()[sortingProp[0]];
+                queryParams["sort"] = sortingProp[0] + ',' + params.sorting()[sortingProp[0]];
             }
             if (params.hasFilter()) {
             	angular.extend(queryParams, params.filter());

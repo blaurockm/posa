@@ -6,19 +6,13 @@ import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-
-import net.buchlese.bofc.api.bofc.AccountingInvoiceExport;
-import net.buchlese.bofc.api.bofc.PosInvoice;
-import net.buchlese.verw.core.AccountingExportFile;
-import net.buchlese.verw.reports.ReportInvoiceExportCreator;
-import net.buchlese.verw.reports.obj.ReportInvoiceExport;
-import net.buchlese.verw.repos.InvoiceExportRepository;
-import net.buchlese.verw.repos.InvoiceRepository;
 
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
@@ -27,6 +21,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.querydsl.binding.QuerydslPredicate;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageConversionException;
@@ -39,6 +34,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.querydsl.core.types.Predicate;
+
+import net.buchlese.bofc.api.bofc.AccountingInvoiceExport;
+import net.buchlese.bofc.api.bofc.PosInvoice;
+import net.buchlese.verw.core.AccountingExportFile;
+import net.buchlese.verw.reports.ReportInvoiceExportCreator;
+import net.buchlese.verw.reports.obj.ReportInvoiceExport;
+import net.buchlese.verw.repos.InvoiceExportRepository;
+import net.buchlese.verw.repos.InvoiceRepository;
 
 
 @RestController
@@ -74,12 +77,24 @@ public class InvoicesController {
 	@ResponseBody
 	@RequestMapping(path="createExport", method = RequestMethod.GET)
 	@Transactional
-	public AccountingInvoiceExport createExport(@RequestParam("pointid") Integer pointid) {
-		PosInvoice firstUnexported = invoiceRepository.findFirstByExportedAndPointidOrderByDateAsc(false, pointid);
-		// Buchungsperiode es ersten Abschlusses ermitteln
-		LocalDate tag = firstUnexported.getDate().withDayOfMonth(firstUnexported.getDate().lengthOfMonth());
-		List<PosInvoice> balToExp = invoiceRepository.findAllByExportedAndPointidAndDateLessThanEqualOrderByDateAsc(false, pointid, tag);
+	public ResponseEntity<AccountingInvoiceExport> createExport(@RequestParam("pointid") Integer pointid, @RequestParam(name="exportLimit", required=false) Optional<String>  exportLimit) {
+		LocalDate tagGrenze = null;
+		if (exportLimit.isPresent() ) {
+			tagGrenze = LocalDate.parse(exportLimit.get(), DateTimeFormatter.ISO_DATE_TIME);
+		} else {
+			LocalDate ausgangsTag = LocalDate.now();
+			PosInvoice firstUnexported = invoiceRepository.findFirstByExportedAndPointidOrderByDateAsc(false, pointid);
+			// Buchungsperiode es ersten Abschlusses ermitteln
+			if (firstUnexported != null) {
+				ausgangsTag = firstUnexported.getDate();
+			}
+			tagGrenze = ausgangsTag.withDayOfMonth(ausgangsTag.lengthOfMonth());
+		}
+		List<PosInvoice> balToExp = invoiceRepository.findAllByExportedAndPointidAndDateLessThanEqualOrderByDateAsc(false, pointid, tagGrenze);
 		
+		if (balToExp.isEmpty()) {
+			return new ResponseEntity<AccountingInvoiceExport>(HttpStatus.NO_CONTENT);
+		}
 		AccountingInvoiceExport export = new AccountingInvoiceExport();
 		export.setDescription("..asd.");
 		export.setExecDate(LocalDateTime.now());
@@ -88,7 +103,7 @@ public class InvoicesController {
 		
 		exportRepository.saveAndFlush(export);
 		
-		return export;
+		return new ResponseEntity<AccountingInvoiceExport>(export, HttpStatus.OK);
 	}
 	
 	
