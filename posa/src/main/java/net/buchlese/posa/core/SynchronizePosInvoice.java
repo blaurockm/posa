@@ -218,6 +218,7 @@ public class SynchronizePosInvoice extends AbstractSynchronizer {
 			if (match.isPresent()) {
 				updateInvoiceDetail(match.get(), e);
 			} else {
+				if (e.getKennziffer().equals("AP") && e.getBruttoEinzel() == null)
 				inv.addDetail(createInvoiceDetail(e));
 			}
 		}
@@ -255,11 +256,11 @@ public class SynchronizePosInvoice extends AbstractSynchronizer {
 		}
 		updInt(pd::setQuantity, pd.getQuantity(), e.getMenge());
 		BigDecimal betrag = e.getBruttoEinzel();
-		if (betrag.intValue() == 0) {
+		if (betrag == null || betrag.intValue() == 0) {
 			betrag = e.getMenge(); // es handelt sich hierbei um eine freie preiseingabe
 		}
 		updMoney(pd::setSinglePrice, pd.getSinglePrice(), betrag);
-		if (pd.getQuantity() > 0 && e.getBruttoEinzel().intValue() != 0) { // sonst wird menge mit menge multipliziert
+		if (pd.getQuantity() > 0 && e.getBruttoEinzel() != null && e.getBruttoEinzel().intValue() != 0) { // sonst wird menge mit menge multipliziert
 			betrag = betrag.multiply(new BigDecimal(pd.getQuantity()));
 		}
 		updMoney(pd::setAmount, pd.getAmount(), betrag);

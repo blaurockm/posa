@@ -14,8 +14,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.springframework.format.annotation.DateTimeFormat;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -28,7 +26,7 @@ public class SubscrDelivery implements Comparable<SubscrDelivery> {
 	@JsonProperty
 	private long id;
 
-	@DateTimeFormat(pattern="dd.MM.yyyy")
+//	@DateTimeFormat(pattern="dd.MM.yyyy")
 	@JsonProperty
 	private LocalDate deliveryDate;
 	@JsonProperty

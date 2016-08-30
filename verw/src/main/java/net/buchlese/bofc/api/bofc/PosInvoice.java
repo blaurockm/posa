@@ -18,8 +18,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.springframework.format.annotation.DateTimeFormat;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -81,7 +79,7 @@ public class PosInvoice {
 	@JsonProperty
 	private LocalDateTime creationTime;
 	@JsonProperty
-	@DateTimeFormat(pattern="dd.MM.yyyy")
+//	@DateTimeFormat(pattern="dd.MM.yyyy")
 	private LocalDate date;
 	@JsonProperty
 	private LocalDateTime printTime;
