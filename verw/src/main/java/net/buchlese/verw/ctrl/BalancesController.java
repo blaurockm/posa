@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.querydsl.core.types.Predicate;
 
 import net.buchlese.bofc.api.bofc.AccountingBalanceExport;
@@ -52,6 +53,8 @@ public class BalancesController {
 	@Autowired AccountingExportFile exportFileCreator;
 
 	@Autowired ReportBalanceExportCreator reportBalanceExport;
+	
+	@Autowired ObjectMapper objectMapper;
 
 	@ResponseBody
 	@RequestMapping(path="balancesDyn", method = RequestMethod.GET)
@@ -146,6 +149,8 @@ public class BalancesController {
 	public ResponseEntity<?> acceptInvoice(@RequestBody PosCashBalance cashBalance)  {
 		try {
 			PosCashBalance old = balanceRepository.findOne(QPosCashBalance.posCashBalance.abschlussId.eq(cashBalance.getAbschlussId()).and(QPosCashBalance.posCashBalance.pointid.eq(cashBalance.getPointid())));
+			String ser = objectMapper.writeValueAsString(cashBalance);
+			cashBalance.setBalanceSheet(ser);
 			if (old == null) {
 				balanceRepository.saveAndFlush(cashBalance);
 			} else {

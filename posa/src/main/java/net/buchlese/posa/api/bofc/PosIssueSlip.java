@@ -1,6 +1,7 @@
 package net.buchlese.posa.api.bofc;
 
 import io.dropwizard.jackson.Jackson;
+import net.buchlese.posa.xml.LocalDateSerializer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +14,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 public class PosIssueSlip implements SendableObject {
 	@NotEmpty
@@ -54,6 +56,7 @@ public class PosIssueSlip implements SendableObject {
 	@JsonProperty
 	private DateTime creationTime;
 	@JsonProperty
+	@JsonSerialize(using=LocalDateSerializer.class)
 	private LocalDate date;
 	@JsonProperty
 	private DateTime printTime;
@@ -67,8 +70,10 @@ public class PosIssueSlip implements SendableObject {
 	private List<PosInvoiceDetail> details;
 
 	@JsonProperty
+	@JsonSerialize(using=LocalDateSerializer.class)
 	private LocalDate deliveryFrom;
 	@JsonProperty
+	@JsonSerialize(using=LocalDateSerializer.class)
 	private LocalDate deliveryTill;
 
 	

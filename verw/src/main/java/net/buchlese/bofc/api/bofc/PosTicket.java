@@ -7,19 +7,21 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 @Table( name = "posticket" )
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class PosTicket {
 	@Id
-//	@GeneratedValue(generator="increment")
-//	@GenericGenerator(name="increment", strategy = "increment")
-//	@NotEmpty
+	@GeneratedValue(strategy=GenerationType.AUTO)
 	@JsonProperty
 	private long id;
 
@@ -29,7 +31,6 @@ public class PosTicket {
 	@JsonProperty
 	private int pointid;
 
-//	@NotEmpty
 	@JsonProperty
 	private Long total;
 
@@ -39,19 +40,13 @@ public class PosTicket {
 	@JsonProperty
 	private boolean cancel;
 
-//	@NotEmpty
 	@JsonProperty
 	@Enumerated(EnumType.STRING)
 	private PaymentMethod paymentMethod;
 
-	//@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "belegdatum")
-//	@NotEmpty
 	@JsonProperty
 	private LocalDateTime timestamp;
-
-	@JsonProperty
-	private boolean toBeCheckedAgain;
 
 	@JsonProperty
 	@Transient
@@ -107,14 +102,6 @@ public class PosTicket {
 
 	public boolean isCancelled() {
 		return cancelled;
-	}
-
-	public boolean isToBeCheckedAgain() {
-		return toBeCheckedAgain;
-	}
-
-	public void setToBeCheckedAgain(boolean toBeCheckedAgain) {
-		this.toBeCheckedAgain = toBeCheckedAgain;
 	}
 
 	public void setCancelled(boolean cancelled) {

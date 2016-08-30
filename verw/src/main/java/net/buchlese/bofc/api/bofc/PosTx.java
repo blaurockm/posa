@@ -6,18 +6,23 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 @Table( name = "postx" )
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class PosTx {
 
 	@Id
 	@NotNull
+	@GeneratedValue(strategy=GenerationType.AUTO)
 	@JsonProperty
 	private long id;
 
@@ -87,8 +92,6 @@ public class PosTx {
 	@JsonProperty
 	private boolean toBeIgnored;
 
-	@JsonProperty
-	private boolean toBeCheckedAgain;
 
 	public long getId() {
 		return id;
@@ -200,12 +203,6 @@ public class PosTx {
 	}
 	public void setToBeIgnored(boolean toBeIgnored) {
 		this.toBeIgnored = toBeIgnored;
-	}
-	public boolean isToBeCheckedAgain() {
-		return toBeCheckedAgain;
-	}
-	public void setToBeCheckedAgain(boolean toBeCheckedAgain) {
-		this.toBeCheckedAgain = toBeCheckedAgain;
 	}
 	public void setIsbn(String isbn) {
 		this.isbn = isbn;
