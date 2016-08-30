@@ -8,11 +8,13 @@ import net.buchlese.posa.api.bofc.PosState;
 import net.buchlese.posa.api.bofc.SendableObject;
 
 public class SendPosState extends Sender<PosState> {
+	private final String homeResource;
 	private final int pointid;
 
 	public SendPosState(PosAdapterConfiguration config, Logger log, CloseableHttpClient httpClient) {
 		super(config, log, httpClient);
 		this.pointid = config.getPointOfSaleId();
+		this.homeResource = config.getPosStateResource();
 	}
 
 	@Override
@@ -22,7 +24,7 @@ public class SendPosState extends Sender<PosState> {
 
 	@Override
 	protected String getHomeResource() {
-		return "posState/acceptState";
+		return homeResource;
 	}
 
 	@Override

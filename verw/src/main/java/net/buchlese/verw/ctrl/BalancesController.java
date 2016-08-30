@@ -22,6 +22,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageConversionException;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -32,6 +33,7 @@ import com.querydsl.core.types.Predicate;
 
 import net.buchlese.bofc.api.bofc.AccountingBalanceExport;
 import net.buchlese.bofc.api.bofc.PosCashBalance;
+import net.buchlese.bofc.api.bofc.QPosCashBalance;
 import net.buchlese.verw.core.AccountingExportFile;
 import net.buchlese.verw.reports.ReportBalanceExportCreator;
 import net.buchlese.verw.reports.obj.ReportBalanceExport;
@@ -138,4 +140,22 @@ public class BalancesController {
 		AccountingBalanceExport export = exportRepository.findOne(id);
 		return reportBalanceExport.createReport(export);
 	}
+	
+	@RequestMapping(path="acceptBalance", method = RequestMethod.POST)
+	@Transactional
+	public ResponseEntity<?> acceptInvoice(@RequestBody PosCashBalance cashBalance)  {
+		try {
+			PosCashBalance old = balanceRepository.findOne(QPosCashBalance.posCashBalance.abschlussId.eq(cashBalance.getAbschlussId()).and(QPosCashBalance.posCashBalance.pointid.eq(cashBalance.getPointid())));
+			if (old == null) {
+				balanceRepository.saveAndFlush(cashBalance);
+			} else {
+				cashBalance.setId(old.getId()); // damit wird gezeigt, dass wir ein update sind
+				balanceRepository.saveAndFlush(cashBalance);
+			}
+			return ResponseEntity.ok().build();
+		} catch (Throwable t) {
+			return ResponseEntity.unprocessableEntity().body(t.getMessage());
+		}
+	}
+
 }

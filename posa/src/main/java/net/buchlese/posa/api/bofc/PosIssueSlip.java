@@ -176,7 +176,7 @@ public class PosIssueSlip implements SendableObject {
 	}
 
 	public String toString() {
-		return "PosInvoice " + number + " of " + String.valueOf(date) + (amount != null ? (" amount " + String.valueOf(amount / 100)) : "n.bek."); 
+		return "PosIssueSlip " + number + " of " + String.valueOf(date) + (amount != null ? (" amount " + String.valueOf(amount / 100)) : "n.bek."); 
 	}
 	public Boolean getCancelled() {
 		return cancelled;

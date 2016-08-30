@@ -43,7 +43,7 @@ public abstract class AbstractCommand implements Consumer<Command> {
 	
 	
 	public abstract boolean canHandle(Command req);
-	public abstract Object execute(Command req);
+	public abstract String execute(Command req);
 	
 	public AbstractCommand concat(AbstractCommand succ) {
 		succ.successor = this;

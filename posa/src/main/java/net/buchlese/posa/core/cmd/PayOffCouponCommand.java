@@ -25,11 +25,11 @@ public class PayOffCouponCommand extends AbstractCommand {
 	}
 
 	@Override
-	public Object execute(Command req) {
-		if (req.params == null || req.params.length != 1) {
+	public String execute(Command req) {
+		if (req.param1 == null) {
 			return "falsche Anzahl an Parametern. Erwartet: gutscheinnummer";
 		}
-		String gutsch = String.valueOf(req.getParams()[0]);
+		String gutsch = req.getParam1();
 	    Boolean bezahlt = posDb.createQuery("select erledigt from [dbo].kasse_gutschriften where gutschriftnr = '" + gutsch + "'").map(new BooleanMapper()).first();
 
 	    if (bezahlt == null) {

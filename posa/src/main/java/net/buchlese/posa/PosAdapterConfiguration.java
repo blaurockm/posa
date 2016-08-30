@@ -54,6 +54,9 @@ public class PosAdapterConfiguration extends Configuration {
     private String homeHost;
 
     @JsonProperty
+    private int homePort = 8080;
+
+    @JsonProperty
     private int pointOfSaleId;
 
     @JsonProperty
@@ -237,6 +240,10 @@ public class PosAdapterConfiguration extends Configuration {
 
 	public String getCommandSendResource() {
 		return commandSendResource;
+	}
+
+	public int getHomePort() {
+		return homePort;
 	}
     
 }

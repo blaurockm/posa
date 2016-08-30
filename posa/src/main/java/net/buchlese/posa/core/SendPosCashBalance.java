@@ -13,7 +13,7 @@ import org.slf4j.Logger;
 
 public class SendPosCashBalance extends Sender<PosCashBalance> {
 
-	private final static String homeResource = "cashbalance/acceptBalance";
+	private final String homeResource;
 	
 	private final int pointid;
 	private final PosCashBalanceDAO cashBalanceDAO;
@@ -22,6 +22,7 @@ public class SendPosCashBalance extends Sender<PosCashBalance> {
 		super(config, log, c);
 		this.pointid = config.getPointOfSaleId();
 		this.cashBalanceDAO = balDAO;
+		this.homeResource = config.getCashBalanceResource();
 	}
 
 	public void sendCashBalances(List<PosCashBalance> bals) {

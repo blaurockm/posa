@@ -27,6 +27,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageConversionException;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -37,6 +38,7 @@ import com.querydsl.core.types.Predicate;
 
 import net.buchlese.bofc.api.bofc.AccountingInvoiceExport;
 import net.buchlese.bofc.api.bofc.PosInvoice;
+import net.buchlese.bofc.api.bofc.QPosInvoice;
 import net.buchlese.verw.core.AccountingExportFile;
 import net.buchlese.verw.reports.ReportInvoiceExportCreator;
 import net.buchlese.verw.reports.obj.ReportInvoiceExport;
@@ -157,4 +159,24 @@ public class InvoicesController {
 		update.executeUpdate();
 	}
 
+	@RequestMapping(path="acceptInvoice", method = RequestMethod.POST)
+	@Transactional
+	public ResponseEntity<?> acceptInvoice(@RequestBody PosInvoice invoice)  {
+		try {
+			// mapping der Debitor-Nummer
+			Optional<Integer> debNo = invoiceRepository.mapDebitor(invoice.getPointid(), invoice.getCustomerId());
+			invoice.setDebitorId(debNo.orElse(Integer.valueOf(0)));
+			PosInvoice old = invoiceRepository.findOne(QPosInvoice.posInvoice.number.eq(invoice.getNumber()));
+			if (old == null) {
+				invoiceRepository.saveAndFlush(invoice);
+			} else {
+				invoice.setId(old.getId()); // damit wird gezeigt, dass wir ein update sind
+				invoiceRepository.saveAndFlush(invoice);
+			}
+			return ResponseEntity.ok().build();
+		} catch (Throwable t) {
+			return ResponseEntity.unprocessableEntity().body(t.getMessage());
+		}
+	}
+	
 }

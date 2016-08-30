@@ -12,7 +12,7 @@ import org.slf4j.Logger;
 
 public class SendPosIssueSlip extends Sender<PosIssueSlip> {
 
-	private final static String homeResource = "invoice/acceptIssueSlip";
+	private final String homeResource;
 	
 	private final int pointid;
 	private final PosInvoiceDAO invoiceDAO;
@@ -21,6 +21,7 @@ public class SendPosIssueSlip extends Sender<PosIssueSlip> {
 		super(config, log, c);
 		this.pointid = config.getPointOfSaleId();
 		this.invoiceDAO = balDAO;
+		this.homeResource = config.getIssueSlipResource();
 	}
 
 	public void sendCashBalances(List<PosIssueSlip> bals) {

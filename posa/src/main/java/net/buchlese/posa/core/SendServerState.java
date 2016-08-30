@@ -8,11 +8,13 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.slf4j.Logger;
 
 public class SendServerState extends Sender<ServerState> {
+	private final String homeResource;
 	private final int pointid;
 
 	public SendServerState(PosAdapterConfiguration config, Logger log, CloseableHttpClient httpClient) {
 		super(config, log, httpClient);
 		this.pointid = config.getPointOfSaleId();
+		this.homeResource = config.getServerStateResource();
 	}
 
 	@Override
@@ -22,7 +24,7 @@ public class SendServerState extends Sender<ServerState> {
 
 	@Override
 	protected String getHomeResource() {
-		return "serverState/acceptState";
+		return homeResource;
 	}
 
 	@Override

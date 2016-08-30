@@ -17,12 +17,12 @@ posDb:
   # the name of your JDBC driver
   driverClass: net.sourceforge.jtds.jdbc.Driver
 
-  # the username
-#  user: sa
-#  password: master
+  # the username 
+  user: sa
+  password: master
 
-  user: fibu
-  password: kasse2fibu
+#  user: fibu
+#  password: kasse2fibu
   
   # the JDBC URL
   #####  lokale datenbank
@@ -64,9 +64,17 @@ commandOffset: 1
 commandInterval: 1
 
 #homeUrl: http://localhost:7896/
-homeUrl: http://localhost:8080/
+homeUrl: http://localhost:8082/
 #homeHost: buchlese.selfhost.eu
 homeHost: 127.0.0.1
+
+cashBalanceResource: balances/acceptBalance
+invoiceResource: invoices/acceptInvoice
+issueSlipResource: issueslips/acceptIssueSlip
+posStateResource: state/acceptPosState
+serverStateResource: state/acceptServerState
+commandGetResource: commands/getCmds
+commandSendResource: commands/acceptCmdAnswer
 
 sshEnabled: false
 

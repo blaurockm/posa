@@ -64,7 +64,7 @@ public class SynchronizePosCashBalance extends AbstractSynchronizer implements C
 		BigDecimal res = rowver;
 		Optional<String> maxId = Optional.fromNullable(cashBalanceDAO.getMaxAbschlussId());
 
-		List<KassenAbschluss> belege = abschlussDao.fetchAllAfter(maxId.or("20080101"), limit);
+		List<KassenAbschluss> belege = abschlussDao.fetchAllAfter(maxId.or("20140101"), limit);
 		List<PosCashBalance> pcb = createNewBalances(belege);
 		cashBalanceDAO.insertAll(pcb.iterator());
 		PosAdapterApplication.homingQueue.addAll(pcb); // sync the new ones back home

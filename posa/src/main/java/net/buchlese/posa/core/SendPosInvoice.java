@@ -12,7 +12,7 @@ import org.slf4j.Logger;
 
 public class SendPosInvoice extends Sender<PosInvoice> {
 
-	private final static String homeResource = "invoice/acceptInvoice";
+	private final String homeResource ;
 	
 	private final int pointid;
 	private final PosInvoiceDAO invoiceDAO;
@@ -21,6 +21,7 @@ public class SendPosInvoice extends Sender<PosInvoice> {
 		super(config, log, c);
 		this.pointid = config.getPointOfSaleId();
 		this.invoiceDAO = balDAO;
+		this.homeResource = config.getInvoiceResource();
 	}
 
 	public void sendCashBalances(List<PosInvoice> bals) {

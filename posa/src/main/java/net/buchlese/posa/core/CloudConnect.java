@@ -17,9 +17,11 @@ public class CloudConnect implements Closeable {
 	private static final String sshUser = "posclient";
 	private final String homeHost;
 	private final int localPort;
+	private final int destPort;
 
 	public CloudConnect(URL service, PosAdapterConfiguration config, Logger log) throws JSchException {
 		this.homeHost = config.getHomeHost();
+		this.destPort = config.getHomePort();
 		this.localPort = service.getPort() > 0 ? service.getPort() : 8080;
 		if (config.isSshEnabled()) {
 			sshConnect();
@@ -41,7 +43,7 @@ public class CloudConnect implements Closeable {
 		 sshSession=jsch.getSession(sshUser, homeHost, 22);
 		 
 		 sshSession.connect();
-		 sshSession.setPortForwardingL(localPort, "localhost", 8080);
+		 sshSession.setPortForwardingL(localPort, "localhost", destPort);
 	}
 
 	@Override
