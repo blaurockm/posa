@@ -93,11 +93,11 @@
 	            if ($scope.hasOwnProperty('reDatumVon') || $scope.hasOwnProperty('reDatumBis')) {
 	            	queryParams['date'] = [];
 	            	if ($scope.hasOwnProperty('reDatumVon') && $scope.reDatumVon != '' && $scope.reDatumVon != null ) {
-	            		queryParams['date'].push(moment($scope.reDatumVon).format('DD.MM.YYYY'));
+	            		queryParams['date'].push(moment($scope.reDatumVon).format('DD.MM.YY'));
 //	            		queryParams['dateFrom'] = moment($scope.reDatumVon).format('DD.MM.YYYY');
 	            	} 
 	            	if ($scope.hasOwnProperty('reDatumBis') && $scope.reDatumBis != '' && $scope.reDatumBis != null ) {
-	            		queryParams['date'].push(moment($scope.reDatumBis).format('DD.MM.YYYY'));
+	            		queryParams['date'].push(moment($scope.reDatumBis).format('DD.MM.YY'));
 //	            		queryParams['dateTill'] = moment($scope.reDatumVon).format('DD.MM.YYYY');
 	            	} 
 	            }

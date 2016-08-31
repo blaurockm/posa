@@ -33,7 +33,7 @@
         </span>
       </div>
       </div>
-      <div class="form-inline">
+      <div class="form-inline" ng-show="reDatumVon">
       <label class="control-label">Re-Datum bis</label>
       <div class="input-group">
          <input type="text" class="form-control" uib-datepicker-popup="dd.MM.yyyy" ng-model="reDatumBis" is-open="popup2.opened" datepicker-options="dateOptions1" />
@@ -76,7 +76,7 @@
       <td title="'Nummer'" filter="{number: 'text'}" sortable="'number'"><a ng-click="showInvoice(row)" class="cursor-pointer">{{row.number}}</a></td>
       <td title="'Name'" filter="{name1: 'text'}" sortable="'name1'">{{row.name1}}</td>
       <td title="'Debitor'" filter="{debitorId: 'number'}" sortable="'debitorId'"><a href="#" editable-text="row.debitorId" onaftersave="updateMapping(row)">{{ row.debitorId }}</a></td>
-      <td title="'Datum'" filter="{datum: 'text'}" sortable="'date'">{{row.date | localdate}}</td>
+      <td title="'Datum'" sortable="'date'">{{row.date | localdate}}</td>
       <td title="'Kasse'" filter="{pointid: 'number'}" sortable="'pointid'">{{row.pointid}}</td>
       <td title="'Betrag'" sortable="'amount'" align="right">{{row.amount / 100 | currency}}</td>
       <td title="'Exportiert'" sortable="'exported'">{{row.exported}}</td>

@@ -1,10 +1,9 @@
 package net.buchlese.verw.repos;
 
+import java.time.LocalDateTime;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
-
-import net.buchlese.bofc.api.bofc.PosCashBalance;
-import net.buchlese.bofc.api.bofc.QPosCashBalance;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,6 +14,9 @@ import org.springframework.data.querydsl.binding.QuerydslBindings;
 import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.data.rest.core.annotation.RestResource;
+
+import net.buchlese.bofc.api.bofc.PosCashBalance;
+import net.buchlese.bofc.api.bofc.QPosCashBalance;
 
 @RepositoryRestResource(collectionResourceRel = "cashbalances", path = "cashbalance")
 public interface BalanceRepository extends JpaRepository<PosCashBalance, Long>, 
@@ -39,6 +41,16 @@ QueryDslPredicateExecutor<PosCashBalance>,QuerydslBinderCustomizer<QPosCashBalan
 	@Override
 	default public void customize(QuerydslBindings bindings, QPosCashBalance bal) {
 		bindings.bind(bal.abschlussId).first((path, value) -> path.likeIgnoreCase(value));
+		bindings.bind(bal.firstCovered).all((path, value) -> {
+			Iterator<? extends LocalDateTime> it = value.iterator();
+			LocalDateTime first = it.next();
+			if (it.hasNext()) {
+				LocalDateTime second = it.next();
+				return path.between(first, second);
+			} else {
+				return path.goe(first);
+			}
+		} );
 	}
 
 }

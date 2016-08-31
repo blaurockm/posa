@@ -10,6 +10,35 @@
 	    	      size: 'lg'
 	    	    });
 	    }
+	    
+	    $scope.dateOptions1 = {
+	    	    formatYear: 'yy',
+	    	    startingDay: 1
+	    };
+	    $scope.dateOptions = {
+	    	    formatYear: 'yy',
+	    	    maxDate: new Date()+30,
+	    	    minDate: new Date()-30,
+	    	    startingDay: 1
+	    };
+	    $scope.open1 = function() {
+	        $scope.popup1.opened = true;
+	      };
+	    $scope.popup1 = {
+    		opened: false
+	    };
+	    $scope.open2 = function() {
+	        $scope.popup2.opened = true;
+	      };
+	    $scope.popup2 = {
+    		opened: false
+	    };
+	    $scope.open3 = function() {
+	        $scope.popup3.opened = true;
+	      };
+	    $scope.popup3 = {
+    		opened: false
+	    };
 
 	    $scope.createBalanceExport = function(pointOfSale) {
 	    	if (!pointOfSale) {
@@ -19,9 +48,14 @@
 	        var params = {pointid: pointOfSale};
 	    	$http.get('/balances/createExport', {params: params})
 	        .then(function(response) {
-	          alert("Kassenberichtexport erzeugt" + response.data);
+	        	if (response.status == 200) {
+	        		$scope.success = response;
+	        	} else {
+	        		$scope.error = response;
+	        		$scope.error.data = { exception : "Keine Daten gefunden!" };
+	        	}
 	        }, function(response) {
-	          alert("Kassenberichtexport konnte nicht erzeugt werden " + response.statusText);
+	          $scope.error = response;
 	        } );
 	    }
 	    
@@ -47,6 +81,17 @@
 	            }
 	            if ($scope.hasOwnProperty('exported')) {
 	            	queryParams['exported'] = $scope.exported;
+	            }
+	            if ($scope.hasOwnProperty('reDatumVon') || $scope.hasOwnProperty('reDatumBis')) {
+	            	queryParams['firstCovered'] = [];
+	            	if ($scope.hasOwnProperty('reDatumVon') && $scope.reDatumVon != '' && $scope.reDatumVon != null ) {
+	            		queryParams['firstCovered'].push(moment($scope.reDatumVon).format('DD.MM.YY HH:mm'));
+//	            		queryParams['dateFrom'] = moment($scope.reDatumVon).format('DD.MM.YYYY');
+	            	} 
+	            	if ($scope.hasOwnProperty('reDatumBis') && $scope.reDatumBis != '' && $scope.reDatumBis != null ) {
+	            		queryParams['firstCovered'].push(moment($scope.reDatumBis).format('DD.MM.YY HH:mm'));
+//	            		queryParams['dateTill'] = moment($scope.reDatumVon).format('DD.MM.YYYY');
+	            	} 
 	            }
 	            BalanceDao.search(queryParams, function(data) {
 	                params.total(data.totalElements);

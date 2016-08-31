@@ -32,7 +32,7 @@ QuerydslBinderCustomizer<QPosInvoice>{
 
 	@Override
 	default public void customize(QuerydslBindings bindings, QPosInvoice inv) {
-		bindings.bind(inv.name1).first((path, value) -> path.likeIgnoreCase(value));
+		bindings.bind(inv.name1).first((path, value) -> path.containsIgnoreCase(value));
 		bindings.bind(inv.date).all((path, value) -> {
 			Iterator<? extends LocalDate> it = value.iterator();
 			LocalDate first = it.next();
@@ -40,7 +40,7 @@ QuerydslBinderCustomizer<QPosInvoice>{
 				LocalDate second = it.next();
 				return path.between(first, second);
 			} else {
-				return path.after(first);
+				return path.goe(first);
 			}
 		} );
 		

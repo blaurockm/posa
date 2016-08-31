@@ -34,7 +34,7 @@
 					<td>{{inv.date | localdate:'mediumDate'}}</td>
 					<td>{{inv.name1}} ({{inv.customerId}})</td>
 					<td align="right">{{inv.debitorId}}</td>
-					<td align="right">{{inv.payed }}</td>
+					<td align="center"><i class="fa fa-check" aria-hidden="true" ng-show="inv.payed"></i></td>
 					<td align="right">{{inv.amount / 100 | currency}}</td>
 				</tr>
 

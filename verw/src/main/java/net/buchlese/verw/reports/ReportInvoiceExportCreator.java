@@ -19,7 +19,7 @@ public class ReportInvoiceExportCreator {
 		rep.setDescription("Rechnungsausgangsjournal für " + rep.getPosname());
 		rep.setExportId(export.getId());
 		PosInvoice[] invs = export.getInvoices().toArray(new PosInvoice[]{});
-		Arrays.sort(invs, Comparator.comparing(PosInvoice::getDate));
+		Arrays.sort(invs, Comparator.comparing(PosInvoice::getDate).thenComparing(PosInvoice::getNumber));
 		rep.setFirstInvoice(invs[0]);
 		rep.setLastInvoice(invs[invs.length-1]);
 		rep.setInvoices(invs);

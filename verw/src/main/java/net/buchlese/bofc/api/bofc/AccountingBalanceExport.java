@@ -4,8 +4,9 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
-import java.util.Optional;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -60,10 +61,11 @@ public class AccountingBalanceExport {
 		if (coll == null || coll.isEmpty()) {
 			return;
 		}
-		Optional<PosCashBalance> first = coll.stream().min(Comparator.comparing(PosCashBalance::getFirstCovered));
-		Optional<PosCashBalance> last = coll.stream().max(Comparator.comparing(PosCashBalance::getLastCovered));
-		setFrom(first.get().getFirstCovered());
-		setTill(last.get().getLastCovered());
+		List<PosCashBalance> invSorted = coll.stream().sorted(Comparator.comparing(PosCashBalance::getFirstCovered)).collect(Collectors.toList());
+		PosCashBalance first = invSorted.get(0);
+		PosCashBalance last = invSorted.get(invSorted.size()-1);
+		setFrom(first.getFirstCovered());
+		setTill(last.getLastCovered());
 		setDatasize(coll.size());
 		coll.forEach(this::addBalance);
 	}

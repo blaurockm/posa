@@ -5,8 +5,9 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
-import java.util.Optional;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -91,20 +92,24 @@ public class AccountingInvoiceExport {
 		if (coll == null || coll.isEmpty()) {
 			return;
 		}
-		Optional<PosInvoice> first = coll.stream().min(Comparator.comparing(PosInvoice::getDate));
-		Optional<PosInvoice> last = coll.stream().max(Comparator.comparing(PosInvoice::getDate));
-		setFrom(first.get().getDate());
-		setTill(last.get().getDate());
+		List<PosInvoice> invSorted = coll.stream().sorted(Comparator.comparing(PosInvoice::getDate).thenComparing(PosInvoice::getNumber)).collect(Collectors.toList());
+		PosInvoice first = invSorted.get(0);
+		PosInvoice last = invSorted.get(invSorted.size()-1);
+		setFrom(first.getDate());
+		setTill(last.getDate());
 		setDatasize(coll.size());
 		coll.forEach(this::addInvoice);
 	}
 	
-	public void addInvoice(PosInvoice bal) {
+	public void addInvoice(PosInvoice inv) {
 		if (getInvoices() == null) {
 			setInvoices(new HashSet<PosInvoice>());
 		}
-		getInvoices().add(bal);
-		bal.export(this);
+		if (inv.getCancelled() != null && inv.getCancelled() == false) {
+			// die stornierten nicht mit zum export packen, aber als exportiert kennzeichen
+			getInvoices().add(inv);
+		}
+		inv.export(this);
 	}
 
 	public LocalDate getFrom() {

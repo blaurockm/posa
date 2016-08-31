@@ -22,7 +22,7 @@ QueryDslPredicateExecutor<Subscriber>,QuerydslBinderCustomizer<QSubscriber> {
 
     @Override
 	default public void customize(QuerydslBindings bindings, QSubscriber bal) {
-		bindings.bind(bal.name).first((path, value) -> path.likeIgnoreCase(value));
+		bindings.bind(bal.name).first((path, value) -> path.containsIgnoreCase(value));
 	}
 
 }
