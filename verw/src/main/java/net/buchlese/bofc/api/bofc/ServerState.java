@@ -1,5 +1,7 @@
 package net.buchlese.bofc.api.bofc;
 
+import java.time.LocalDateTime;
+
 import org.joda.time.Duration;
 import org.joda.time.Instant;
 
@@ -10,7 +12,7 @@ public class ServerState {
 	private int pointid;
 
 	@JsonProperty
-	private Instant timest;
+	private LocalDateTime timest;
 	
 	@JsonProperty
 	private boolean dbConnection;
@@ -73,11 +75,11 @@ public class ServerState {
 		this.lastWeek = lastWeek;
 	}
 
-	public Instant getTimest() {
+	public LocalDateTime getTimest() {
 		return timest;
 	}
 
-	public void setTimest(Instant timest) {
+	public void setTimest(LocalDateTime timest) {
 		this.timest = timest;
 	}
 

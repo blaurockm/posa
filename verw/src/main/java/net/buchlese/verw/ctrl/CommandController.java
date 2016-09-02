@@ -32,7 +32,7 @@ public class CommandController {
 
 	@ResponseBody
 	@RequestMapping(path="commandsDyn", method = RequestMethod.GET)
-	public Page<Command> invoicesDynamic(@QuerydslPredicate(root = PosIssueSlip.class) Predicate predicate,    
+	public Page<Command> commandsDynamic(@QuerydslPredicate(root = PosIssueSlip.class) Predicate predicate,    
 	          Pageable pageable, @RequestParam MultiValueMap<String, String> parameters) {
 
 		return commandRepository.findAll(predicate, pageable);
@@ -41,7 +41,7 @@ public class CommandController {
 	@ResponseBody
 	@RequestMapping(path="getCmds", method = RequestMethod.GET)
 	@Transactional
-	public List<Command>updateMapping(@RequestParam("pointid") Integer pointid) {
+	public List<Command> handoutCommands(@RequestParam("pointid") Integer pointid) {
 		List<Command> cmds = commandRepository.findAllByPointid(pointid);
 		return cmds;
 	}

@@ -2,15 +2,20 @@ package net.buchlese.posa.api.bofc;
 
 import org.joda.time.Duration;
 import org.joda.time.Instant;
+import org.joda.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
+import net.buchlese.posa.xml.LocalDateSerializer;
 
 public class ServerState implements SendableObject {
 	@JsonProperty
 	private int pointid;
 
 	@JsonProperty
-	private Instant timest;
+	@JsonSerialize(using=LocalDateSerializer.class)
+	private LocalDateTime timest;
 	
 	@JsonProperty
 	private boolean dbConnection;
@@ -73,11 +78,11 @@ public class ServerState implements SendableObject {
 		this.lastWeek = lastWeek;
 	}
 
-	public Instant getTimest() {
+	public LocalDateTime getTimest() {
 		return timest;
 	}
 
-	public void setTimest(Instant timest) {
+	public void setTimest(LocalDateTime timest) {
 		this.timest = timest;
 	}
 

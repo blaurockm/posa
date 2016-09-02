@@ -146,7 +146,7 @@ public class BalancesController {
 	
 	@RequestMapping(path="acceptBalance", method = RequestMethod.POST)
 	@Transactional
-	public ResponseEntity<?> acceptInvoice(@RequestBody PosCashBalance cashBalance)  {
+	public ResponseEntity<?> acceptBalance(@RequestBody PosCashBalance cashBalance)  {
 		try {
 			PosCashBalance old = balanceRepository.findOne(QPosCashBalance.posCashBalance.abschlussId.eq(cashBalance.getAbschlussId()).and(QPosCashBalance.posCashBalance.pointid.eq(cashBalance.getPointid())));
 			String ser = objectMapper.writeValueAsString(cashBalance);

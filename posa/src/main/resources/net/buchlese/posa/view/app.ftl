@@ -76,5 +76,27 @@
    </tbody>
    </table>
 
+   <p>Lieferscheine</p>
+   
+   <table border="1">
+   <thead>
+   <tr>
+     <th>Lieferschein Nr</th><th>Belegdatum</th><th>Kunde</th><th>Betrag</th>
+   </tr>
+   </thead>
+   <tbody>
+   <#list issueSlips as inv>
+     <tr>
+      <td>${inv.number}</td>
+      <td><#if inv.date??>${inv.date.toString("dd.MM.yyyy")}<#else> kein Datum?</#if>  </td> 
+      <td>${inv.name1}</td>
+      <td align="right" style="padding-left:10mm">${money(inv.amount)}</td>
+    <td align="center"><a href="/invoice/slip/${inv.number}" target="_new">view</a>
+      <a href="/invoice/slip/sendbof/${inv.number}" target="_new">send</a>
+   </tr>   
+   </#list>
+   </tbody>
+   </table>
+
 </body>
 </html>

@@ -12,6 +12,7 @@ import net.buchlese.posa.jdbi.bofc.PosCashBalanceDAO;
 import org.joda.time.Duration;
 import org.joda.time.Instant;
 import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -44,7 +45,7 @@ public class ServerStateGatherer extends AbstractGatherer {
 		lastServerState.setLastSyncRun(new Instant(SyncTimer.lastRunWithDbConnection));
 		lastServerState.setLastHomingRun(new Instant(SyncTimer.lastRunWithDbConnection));
 		lastServerState.setSyncDuration(new Duration(SyncTimer.lastRunWithDbConnection));
-		lastServerState.setTimest(Instant.now());
+		lastServerState.setTimest(LocalDateTime.now());
 		List<PosCashBalance> bals = cashbalDao.fetchAllAfter(LocalDate.now().minusDays(14).toString("yyyyMMdd"));
 		LocalDate thisWeekIter = LocalDate.now().withDayOfWeek(1);
 		LocalDate lastWeekIter = thisWeekIter.minusWeeks(1);

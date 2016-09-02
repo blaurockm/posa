@@ -13,7 +13,7 @@ import net.buchlese.bofc.api.bofc.ServerState;
 
 
 @RestController
-@RequestMapping(path="technical")
+@RequestMapping(path="state")
 public class StateController {
 
 	@RequestMapping(path="acceptPosState", method = RequestMethod.POST)

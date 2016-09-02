@@ -20,6 +20,7 @@ import io.dropwizard.views.View;
 import net.buchlese.posa.PosAdapterConfiguration;
 import net.buchlese.posa.api.bofc.PosCashBalance;
 import net.buchlese.posa.api.bofc.PosInvoice;
+import net.buchlese.posa.api.bofc.PosIssueSlip;
 import net.buchlese.posa.jdbi.bofc.PosCashBalanceDAO;
 import net.buchlese.posa.jdbi.bofc.PosInvoiceDAO;
 
@@ -58,6 +59,12 @@ public class AppView extends View {
 
 	public List<PosInvoice> getInvoices() {
 		List<PosInvoice> res = daoInv.fetchAllAfter(LocalDate.now().minusDays(cfg.getDaysBack()).toDateTimeAtStartOfDay().toDate());
+		Collections.reverse(res);
+		return res;
+	}
+
+	public List<PosIssueSlip> getIssueSlips() {
+		List<PosIssueSlip> res = daoInv.fetchAllIssueSlipsAfter(LocalDate.now().minusDays(cfg.getDaysBack()).toDateTimeAtStartOfDay().toDate());
 		Collections.reverse(res);
 		return res;
 	}

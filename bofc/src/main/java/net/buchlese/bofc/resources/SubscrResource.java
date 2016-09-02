@@ -46,6 +46,7 @@ import net.buchlese.bofc.core.reports.ReportDeliveryNoteCreator;
 import net.buchlese.bofc.core.reports.ReportDeliveryProtocolCreator;
 import net.buchlese.bofc.jdbi.bofc.PosInvoiceDAO;
 import net.buchlese.bofc.jdbi.bofc.SubscrDAO;
+import net.buchlese.bofc.jpa.JpaPosInvoiceDAO;
 import net.buchlese.bofc.jpa.JpaSubscrArticleDAO;
 import net.buchlese.bofc.jpa.JpaSubscrDeliveryDAO;
 import net.buchlese.bofc.jpa.JpaSubscrIntervalDAO;
@@ -106,6 +107,7 @@ public class SubscrResource {
 	private final SubscrDAO dao;
 	
 	private final PosInvoiceDAO invDao;
+	private final JpaPosInvoiceDAO jpaDao;
 
 	private final JpaSubscriberDAO jpaSubscriberDao;
 	private final JpaSubscriptionDAO jpaSubscriptionDao;
@@ -132,7 +134,7 @@ public class SubscrResource {
 	@Inject
 	public SubscrResource(PosInvoiceDAO invd, SubscrDAO sdao, NumberGenerator g,
 			JpaSubscriberDAO j1, JpaSubscriptionDAO j2, JpaSubscrProductDAO j3, JpaSubscrArticleDAO j4,
-			JpaSubscrDeliveryDAO j5, JpaSubscrIntervalDAO j6, JpaSubscrIntervalDeliveryDAO j7) {
+			JpaSubscrDeliveryDAO j5, JpaSubscrIntervalDAO j6, JpaSubscrIntervalDeliveryDAO j7, JpaPosInvoiceDAO j8) {
 		super();
 		this.invDao = invd;
 		this.dao = sdao;
@@ -144,7 +146,7 @@ public class SubscrResource {
 		this.jpaSubscrDeliveryDao = j5;
 		this.jpaSubscrIntervalDao = j6;
 		this.jpaSubscrIntervalDeliveryDao = j7;
-		
+		this.jpaDao = j8;
 	}
 
 	@GET
@@ -518,12 +520,17 @@ public class SubscrResource {
 	@GET
 	@Path("/invoiceRecord/{inv}")
 	@Produces({"text/html"})
+	@UnitOfWork
 	public View fakturiereInvoice(@PathParam("inv") String invNum) {
 		PosInvoice inv = dao.getTempInvoice(invNum);
 		if (inv == null) {
 			throw new WebApplicationException("unable to faktura, no temp invoice with this number " + invNum, 500);
 		}
 		SubscriptionInvoiceCreator.fakturiereInvoice(dao, invDao, inv);
+		Long k = inv.getId();
+		inv.setId(null);
+		jpaDao.create(inv);
+		inv.setId(k);
 		recordUserChange(dao, "master", inv.getId(), "invoice", null, null, "F");
 		return new InvoicesView(dao, invDao);
 	}
@@ -565,6 +572,7 @@ public class SubscrResource {
 	@GET
 	@Path("/invoiceCancel/{inv}")
 	@Produces({"text/html"})
+	@UnitOfWork
 	public View cancelInvoice(@PathParam("inv") String invNum) {
 		PosInvoice inv = dao.getTempInvoice(invNum);
 		if (inv != null) {
@@ -579,6 +587,16 @@ public class SubscrResource {
 			inv = invs.get(0);
 			inv.setCancelled(true);
 			invDao.updateInvoice(inv);
+			Long k = inv.getId();
+			List<PosInvoice> x = jpaDao.findByNumber(invNum);
+			if (x.isEmpty()) {
+				inv.setId(null);
+				jpaDao.create(inv);
+			} else {
+				inv.setId(x.get(0).getId());
+				jpaDao.update(inv);
+			}
+			inv.setId(k);
 		}
 		SubscriptionInvoiceCreator.cancelInvoice(dao, inv);
 		// TODO - stornorechnung erzeugen

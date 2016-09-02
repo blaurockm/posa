@@ -50,10 +50,6 @@ articleGroupMappings:
  
 name: Test-Kasse  
 
-idNumRangeStart: 7000
-
-syncStartDate: 2014-10-01
-
 pointOfSaleId: 6
 
 syncOffset: 2

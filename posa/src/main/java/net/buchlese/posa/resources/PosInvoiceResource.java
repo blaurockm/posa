@@ -8,14 +8,15 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import com.google.inject.Inject;
+
 import net.buchlese.posa.PosAdapterApplication;
 import net.buchlese.posa.api.bofc.PosInvoice;
+import net.buchlese.posa.api.bofc.PosIssueSlip;
 import net.buchlese.posa.api.pos.KleinteilKopf;
 import net.buchlese.posa.core.SynchronizePosInvoice;
 import net.buchlese.posa.jdbi.bofc.PosInvoiceDAO;
 import net.buchlese.posa.jdbi.pos.KleinteilDAO;
-
-import com.google.inject.Inject;
 
 @Path("/invoice")
 @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
@@ -41,6 +42,23 @@ public class PosInvoiceResource {
 	@Path("/sendbof/{nr}")
 	public PosInvoice sendAgainInvoice(@PathParam("nr") String nr)  {
 		List<PosInvoice> cb = dao.fetchInvoice(nr);
+		if (cb.isEmpty() == false) {
+			PosAdapterApplication.homingQueue.offer(cb.get(0));
+			return cb.get(0);
+		}
+		return null;
+	}
+
+	@GET
+	@Path("/slip/{nr}")
+	public List<PosIssueSlip> fetchSlip(@PathParam("nr") String nr)  {
+		return dao.fetchIssueSlip(nr);
+	}
+
+	@GET
+	@Path("/slip/sendbof/{nr}")
+	public PosIssueSlip sendAgainSlip(@PathParam("nr") String nr)  {
+		List<PosIssueSlip> cb = dao.fetchIssueSlip(nr);
 		if (cb.isEmpty() == false) {
 			PosAdapterApplication.homingQueue.offer(cb.get(0));
 			return cb.get(0);

@@ -91,6 +91,26 @@
 			  		}
 				} 
 		  }).
+		  state('issueslips', {
+			  url: "/issueslips",
+			  abstract : true,
+			  views :{
+				  "@" :  {
+					  templateUrl : 'modissueslips/start.html',
+					  controller: 'IssueslipMainController'	
+				  }
+			  } 
+		  }).
+		  state('commands', {
+				url: "/commands",
+				abstract : true,
+				views :{
+			  		"@" :  {
+			  			templateUrl : 'modcommands/start.html',
+			  			controller: 'CommandMainController'	
+			  		}
+				} 
+		  }).
 		  state('coupon', {
 			    url: "/coupon",
 			    views : {

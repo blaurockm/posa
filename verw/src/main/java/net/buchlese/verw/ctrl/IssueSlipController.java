@@ -48,7 +48,7 @@ public class IssueSlipController {
 		return issueSlipRepository.findAll(predicate, pageable);
 	}
 
-	@RequestMapping(path="updateMapping", method = RequestMethod.GET)
+	@RequestMapping(path="updateInclude", method = RequestMethod.GET)
 	@Transactional
 	public void updateMapping(@RequestParam("pointid") Integer pointid,@RequestParam("customerId") Integer customerId,@RequestParam("debitorId") Integer debitorId) {
 		Session s = em.unwrap(Session.class);
@@ -61,7 +61,7 @@ public class IssueSlipController {
 
 	@RequestMapping(path="acceptIssueSlip", method = RequestMethod.POST)
 	@Transactional
-	public ResponseEntity<?> acceptInvoice(@RequestBody PosIssueSlip issueSlip)  {
+	public ResponseEntity<?> acceptIssueSlip(@RequestBody PosIssueSlip issueSlip)  {
 		try {
 			// mapping der Debitor-Nummer
 			Optional<Integer> debNo = invoiceRepository.mapDebitor(issueSlip.getPointid(), issueSlip.getCustomerId());

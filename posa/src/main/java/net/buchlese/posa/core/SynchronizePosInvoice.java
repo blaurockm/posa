@@ -218,7 +218,6 @@ public class SynchronizePosInvoice extends AbstractSynchronizer {
 			if (match.isPresent()) {
 				updateInvoiceDetail(match.get(), e);
 			} else {
-				if (e.getKennziffer().equals("AP") && e.getBruttoEinzel() == null)
 				inv.addDetail(createInvoiceDetail(e));
 			}
 		}

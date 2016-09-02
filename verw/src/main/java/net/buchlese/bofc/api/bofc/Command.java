@@ -1,5 +1,7 @@
 package net.buchlese.bofc.api.bofc;
 
+import java.time.LocalDateTime;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -35,6 +37,15 @@ public class Command  {
 
 	@JsonProperty
 	public int pointid;
+
+	@JsonProperty
+	public boolean fetched;
+
+	@JsonProperty
+	private LocalDateTime creationtime;
+
+	@JsonProperty
+	private LocalDateTime executiontime;
 
 	
 	public Long getId() {

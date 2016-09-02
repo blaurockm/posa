@@ -29,7 +29,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class PosInvoice {
 	@Id
 	@JsonProperty
-	private long id;
+	private Long id;
 	@JsonProperty
 	private int pointid;
 	@JsonProperty
@@ -170,10 +170,10 @@ public class PosInvoice {
 		return Long.valueOf(a + b);
 	}
 	
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 	public int getPointid() {

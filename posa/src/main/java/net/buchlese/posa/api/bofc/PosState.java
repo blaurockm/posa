@@ -7,6 +7,9 @@ import org.joda.time.Instant;
 import org.joda.time.LocalDate;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
+import net.buchlese.posa.xml.LocalDateSerializer;
 
 public class PosState implements SendableObject {
 
@@ -17,6 +20,7 @@ public class PosState implements SendableObject {
 	private Instant timest;
 
 	@JsonProperty
+	@JsonSerialize(using=LocalDateSerializer.class)
 	private LocalDate stateDate;
 
 	@JsonProperty
