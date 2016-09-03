@@ -117,6 +117,30 @@ public class Command  {
 	public String toString() {
 		return "Command [id=" + id + ", param1=" + param1 + ", action=" + action + ", pointId=" + pointid + "]";
 	}
+
+	public boolean isFetched() {
+		return fetched;
+	}
+
+	public void setFetched(boolean fetched) {
+		this.fetched = fetched;
+	}
+
+	public LocalDateTime getCreationtime() {
+		return creationtime;
+	}
+
+	public void setCreationtime(LocalDateTime creationtime) {
+		this.creationtime = creationtime;
+	}
+
+	public LocalDateTime getExecutiontime() {
+		return executiontime;
+	}
+
+	public void setExecutiontime(LocalDateTime executiontime) {
+		this.executiontime = executiontime;
+	}
 	
 	
 }

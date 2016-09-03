@@ -17,8 +17,8 @@
 	    };
 	    $scope.dateOptions = {
 	    	    formatYear: 'yy',
-	    	    maxDate: new Date()+30,
-	    	    minDate: new Date()-30,
+//	    	    minDate: new Date()+30,
+//	    	    maxDate: new Date()-30,
 	    	    startingDay: 1
 	    };
 	    $scope.open1 = function() {
@@ -40,12 +40,15 @@
     		opened: false
 	    };
 
-	    $scope.createBalanceExport = function(pointOfSale) {
+	    $scope.createBalanceExport = function(pointOfSale, expLim) {
 	    	if (!pointOfSale) {
 	    		pointOfSale = 1;
 	    		$scope.pointofsale = pointOfSale;
 	    	}
 	        var params = {pointid: pointOfSale};
+	    	if (expLim) {
+	    		params.exportLimit = expLim;
+	    	}
 	    	$http.get('/balances/createExport', {params: params})
 	        .then(function(response) {
 	        	if (response.status == 200) {

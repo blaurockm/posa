@@ -17,8 +17,8 @@
 	    };
 	    $scope.dateOptions = {
 	    	    formatYear: 'yy',
-	    	    maxDate: new Date()+30,
-	    	    minDate: new Date()-30,
+	    	    minDate: new Date()+30,
+	    	    maxDate: new Date()-30,
 	    	    startingDay: 1
 	    };
 	    $scope.open1 = function() {
