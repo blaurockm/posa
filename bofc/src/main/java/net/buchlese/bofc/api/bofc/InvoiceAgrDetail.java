@@ -8,16 +8,14 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import net.buchlese.bofc.api.subscr.PayIntervalType;
-
 import org.joda.time.LocalDate;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import net.buchlese.bofc.api.subscr.PayIntervalType;
 
 @Entity
 @Table(name="posinvoice_agrdetail")
@@ -49,10 +47,6 @@ public class InvoiceAgrDetail {
 	@Enumerated(EnumType.STRING)
 	private PayIntervalType payType;
 
-	@JsonIgnore
-	@ManyToOne
-	private PosInvoice invoice;
-	
 	
 	public long getAgreementId() {
 		return agreementId;
@@ -133,14 +127,6 @@ public class InvoiceAgrDetail {
 
 	public void setId(Long id) {
 		this.id = id;
-	}
-
-	public PosInvoice getInvoice() {
-		return invoice;
-	}
-
-	public void setInvoice(PosInvoice invoice) {
-		this.invoice = invoice;
 	}
 	
 }

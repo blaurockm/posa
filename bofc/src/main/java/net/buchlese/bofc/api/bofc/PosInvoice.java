@@ -355,13 +355,6 @@ public class PosInvoice {
 
 	public void setAgreementDetails(Set<InvoiceAgrDetail> agreementDetails) {
 		this.agreementDetails = agreementDetails;
-		if (agreementDetails != null) {
-			for (InvoiceAgrDetail d : agreementDetails) {
-				if (d.getInvoice() != this) {
-					d.setInvoice(this);
-				}
-			}
-		}
 	}
 
 	public LocalDate getDeliveryFrom() {
