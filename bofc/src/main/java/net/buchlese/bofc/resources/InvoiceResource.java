@@ -127,7 +127,11 @@ public class InvoiceResource {
 	@Path("transferinv/{nr}")
 	@UnitOfWork
 	public PosInvoice transferInv(@PathParam("nr") String num)  {
-		PosInvoice inv = dao.fetchById(num);
+		List<PosInvoice> invs = dao.fetch(num);
+		if (invs.isEmpty()) {
+			return null;
+		}
+		PosInvoice inv = invs.get(0);
 		List<PosInvoice> x = jpaDao.findByNumber(num);
 		if (x.isEmpty()) {
 			jpaDao.create(inv);
