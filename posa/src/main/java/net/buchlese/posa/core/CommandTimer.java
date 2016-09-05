@@ -66,7 +66,10 @@ public class CommandTimer extends TimerTask {
 				List<Command> commands = r.accept(MediaType.APPLICATION_JSON_TYPE)
 						.get(new GenericType<List<Command>>() {});
 
-				commands.forEach(x -> PosAdapterApplication.commandQueue.add(x));
+				if (commands != null && commands.isEmpty() == false) {
+					logger.info("fetched " + commands.size() + " cmds from " + r.toString());
+					commands.forEach(x -> PosAdapterApplication.commandQueue.add(x));
+				}
 				
 			} catch (ConnectException | URISyntaxException e) {
 				// wir konnten keine Verbindung aufbauen.
