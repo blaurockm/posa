@@ -43,7 +43,7 @@ public class CommandController {
 	@RequestMapping(path="getCmds", method = RequestMethod.GET)
 	@Transactional
 	public List<Command> handoutCommands(@RequestParam("pointid") Integer pointid) {
-		List<Command> cmds = commandRepository.findAllByPointid(pointid);
+		List<Command> cmds = commandRepository.findAllByPointidAndFetched(pointid, false);
 		cmds.forEach(x -> x.setFetched(true));
 		commandRepository.save(cmds);
 		return cmds;

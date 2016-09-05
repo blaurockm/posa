@@ -21,6 +21,6 @@ public interface CommandRepository extends JpaRepository<Command, Long>,
 		bindings.bind(inv.action).first((path, value) -> path.containsIgnoreCase(value));
 	}
 
-	public List<Command> findAllByPointid(Integer pointid);
+	public List<Command> findAllByPointidAndFetched(Integer pointid, boolean fetched);
 
 }

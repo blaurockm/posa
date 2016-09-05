@@ -61,7 +61,7 @@ public class CommandTimer extends TimerTask {
 				Client client = Client.create(clientConfig);
 
 				WebResource r = client.resource(new URL(homeUrl, homeResource).toURI());
-				r = r.queryParam("pos", String.valueOf(config.getPointOfSaleId()));
+				r = r.queryParam("pointid", String.valueOf(config.getPointOfSaleId()));
 				
 				List<Command> commands = r.accept(MediaType.APPLICATION_JSON_TYPE)
 						.get(new GenericType<List<Command>>() {});
