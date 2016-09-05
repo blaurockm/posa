@@ -68,7 +68,8 @@
   		<tr><td>Sync-Max</td><td>${syncTimeMax}</td></tr>
   		<tr><td>letzter Homing-Lauf</td><td>${lastHomingRun}</td></tr>
   		<tr><td>letzter Sync-Lauf</td><td>${lastSyncRun}</td></tr>
-  		<tr><td>letzter Sync-Lauf mit DB-Verbindung</td><td>${lastSyncRunWithDbConnection}</td></tr>
+   		<tr><td>letzter Sync-Lauf mit DB-Verbindung</td><td>${lastSyncRunWithDbConnection}</td></tr>
+        <tr><td>letzter Command-Get-Lauf</td><td>${lastCommandRun}</td></tr>
   	</table>
 
   	<h3>Konfiguration</h3>

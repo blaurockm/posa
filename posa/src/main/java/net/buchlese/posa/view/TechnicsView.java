@@ -1,8 +1,5 @@
 package net.buchlese.posa.view;
 
-import io.dropwizard.setup.Environment;
-import io.dropwizard.views.View;
-
 import java.text.DecimalFormat;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -10,13 +7,16 @@ import java.util.stream.Collectors;
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
 
-import net.buchlese.posa.PosAdapterApplication;
-import net.buchlese.posa.PosAdapterConfiguration;
-import net.buchlese.posa.core.SendTimer;
-import net.buchlese.posa.core.SyncTimer;
-
 import com.codahale.metrics.Gauge;
 import com.codahale.metrics.Timer;
+
+import io.dropwizard.setup.Environment;
+import io.dropwizard.views.View;
+import net.buchlese.posa.PosAdapterApplication;
+import net.buchlese.posa.PosAdapterConfiguration;
+import net.buchlese.posa.core.CommandTimer;
+import net.buchlese.posa.core.SendTimer;
+import net.buchlese.posa.core.SyncTimer;
 
 public class TechnicsView extends View {
 
@@ -74,6 +74,10 @@ public class TechnicsView extends View {
 
 	public String getLastSyncRun() {
 		return new DateTime(SyncTimer.lastRun).toString();
+	}
+
+	public String getLastCommandRun() {
+		return new DateTime(CommandTimer.lastRun).toString();
 	}
 
 	public String getLastSyncRunWithDbConnection() {

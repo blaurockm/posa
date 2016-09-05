@@ -4,18 +4,16 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.List;
 
-import net.buchlese.posa.PosAdapterApplication;
-import net.buchlese.posa.api.bofc.PosCashBalance;
-import net.buchlese.posa.api.bofc.ServerState;
-import net.buchlese.posa.jdbi.bofc.PosCashBalanceDAO;
-
-import org.joda.time.Duration;
-import org.joda.time.Instant;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+
+import net.buchlese.posa.PosAdapterApplication;
+import net.buchlese.posa.api.bofc.PosCashBalance;
+import net.buchlese.posa.api.bofc.ServerState;
+import net.buchlese.posa.jdbi.bofc.PosCashBalanceDAO;
 
 @Singleton
 public class ServerStateGatherer extends AbstractGatherer {
@@ -41,10 +39,10 @@ public class ServerStateGatherer extends AbstractGatherer {
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		}
-		lastServerState.setLastDbConnection(new Instant(SyncTimer.lastRunWithDbConnection));
-		lastServerState.setLastSyncRun(new Instant(SyncTimer.lastRunWithDbConnection));
-		lastServerState.setLastHomingRun(new Instant(SyncTimer.lastRunWithDbConnection));
-		lastServerState.setSyncDuration(new Duration(SyncTimer.lastRunWithDbConnection));
+		lastServerState.setLastDbConnection(new LocalDateTime(SyncTimer.lastRunWithDbConnection));
+		lastServerState.setLastSyncRun(new LocalDateTime(SyncTimer.lastRunWithDbConnection));
+		lastServerState.setLastHomingRun(new LocalDateTime(SyncTimer.lastRunWithDbConnection));
+		lastServerState.setSyncDuration(SyncTimer.lastRunWithDbConnection);
 		lastServerState.setTimest(LocalDateTime.now());
 		List<PosCashBalance> bals = cashbalDao.fetchAllAfter(LocalDate.now().minusDays(14).toString("yyyyMMdd"));
 		LocalDate thisWeekIter = LocalDate.now().withDayOfWeek(1);

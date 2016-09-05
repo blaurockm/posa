@@ -1,20 +1,18 @@
 package net.buchlese.posa.api.bofc;
 
-import org.joda.time.Duration;
-import org.joda.time.Instant;
 import org.joda.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
-import net.buchlese.posa.xml.LocalDateSerializer;
+import net.buchlese.posa.xml.LocalDateTimeSerializer;
 
 public class ServerState implements SendableObject {
 	@JsonProperty
 	private int pointid;
 
 	@JsonProperty
-	@JsonSerialize(using=LocalDateSerializer.class)
+	@JsonSerialize(using=LocalDateTimeSerializer.class)
 	private LocalDateTime timest;
 	
 	@JsonProperty
@@ -24,35 +22,38 @@ public class ServerState implements SendableObject {
 	private String ipAddress;
 	
 	@JsonProperty
-	private Instant lastDbConnection;
+	@JsonSerialize(using=LocalDateTimeSerializer.class)
+	private LocalDateTime lastDbConnection;
 	@JsonProperty
-	private Instant lastSyncRun;
+	@JsonSerialize(using=LocalDateTimeSerializer.class)
+	private LocalDateTime lastSyncRun;
 	@JsonProperty
-	private Duration syncDuration;
+	private long syncDuration;
 	@JsonProperty
-	private Instant lastHomingRun;
+	@JsonSerialize(using=LocalDateTimeSerializer.class)
+	private LocalDateTime lastHomingRun;
 
-	public Instant getLastSyncRun() {
+	public LocalDateTime getLastSyncRun() {
 		return lastSyncRun;
 	}
 
-	public void setLastSyncRun(Instant lastSyncRun) {
+	public void setLastSyncRun(LocalDateTime lastSyncRun) {
 		this.lastSyncRun = lastSyncRun;
 	}
 
-	public Duration getSyncDuration() {
+	public long getSyncDuration() {
 		return syncDuration;
 	}
 
-	public void setSyncDuration(Duration syncDuration) {
+	public void setSyncDuration(long syncDuration) {
 		this.syncDuration = syncDuration;
 	}
 
-	public Instant getLastHomingRun() {
+	public LocalDateTime getLastHomingRun() {
 		return lastHomingRun;
 	}
 
-	public void setLastHomingRun(Instant lastHomingRunc) {
+	public void setLastHomingRun(LocalDateTime lastHomingRunc) {
 		this.lastHomingRun = lastHomingRunc;
 	}
 
@@ -102,11 +103,11 @@ public class ServerState implements SendableObject {
 		this.ipAddress = ipAddress;
 	}
 
-	public Instant getLastDbConnection() {
+	public LocalDateTime getLastDbConnection() {
 		return lastDbConnection;
 	}
 
-	public void setLastDbConnection(Instant lastDbConnection) {
+	public void setLastDbConnection(LocalDateTime lastDbConnection) {
 		this.lastDbConnection = lastDbConnection;
 	}
 
