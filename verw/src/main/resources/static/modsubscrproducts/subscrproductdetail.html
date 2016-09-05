@@ -3,7 +3,7 @@
 		<div class="page-header">
 			<h1>
 				Abonnement <span editable-text="cust.name" e-name="name" e-required>{{ cust.name|| '--' }}</span>
- <a ui-sref="subscrproducts.dispo({id: cust._links.self.id})" class="btn btn-info pull-right">Dispo</a>
+ <a ui-sref="subscrproducts.charge({id: cust.id})" class="btn btn-info pull-right">Berechnen</a>
 			</h1>
 		</div>
 		<h3>

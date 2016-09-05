@@ -1,0 +1,76 @@
+<div class="container">
+	<div class="page-header">
+<h1>Disposition {{cust.name}} </h1>
+	</div>
+
+<div class="row">
+<div class="col-md-6">von {{cust.publisher}}</div>
+</div>
+<div class="row">
+<div class="col-md-6">Bestellte Menge {{cust.quantity}}</div>
+</div>
+
+<div class="row">
+
+<div class="col-md-8">
+  <div class="panel panel-info">
+    <div class="panel-heading">
+    nächster Ausgabe {{ nextArticleName(cust) }} <a class="btn btn-primary" ng-click="createNextArticle(cust)">anlegen</a>
+    </div>
+    <div class="panel-body">
+    	<table ng-table="tableParams" class="table table-condensed">
+			<tr ng-repeat="row in $data">
+				<td title="'Name'" sortable="'name'"><a href="" ng-click="selectArticle(row)">{{row.name}}</a></td>
+				<td title="'Zähler'" sortable="'issueNo'">{{row.issueNo }}</td>
+				<td title="'Preis'" sortable="'brutto'">{{row.brutto / 100 | currency}}</td>
+			</tr>
+		</table>
+    </div>
+   </div> 
+</div>
+
+<div class="col-md-4">
+  <div class="panel panel-info">
+    <div class="panel-heading"><a href="#" editable-text="article.name" onaftersave="updateArticle()">{{article.name}}</a></div>
+    <div class="panel-body">
+    <dl class="dl-horizontal">
+      <dt>Gesamt Brutto</dt><dd> <a href="#" editable-text="article.brutto" onaftersave="updateBrutto($data)">{{article.brutto / 100 | currency}}</a></dd>
+      <dt>7% Brutto</dt><dd> <a href="#" editable-text="article.brutto_half" onaftersave="updateBruttoHalf($data)">{{article.brutto_half / 100 | currency}}</a></dd> 
+      <dt>Print-Anteil</dt><dd> {{article.halfPercentage * 100 | number:1}} %</dd>
+      <dt>19% Brutto</dt><dd><a href="#" editable-text="article.brutto_full" onaftersave="updateBruttoFull($data)">{{article.brutto_full/ 100 | currency}}</a> </dd>
+	</dl>
+	</div>
+   </div>
+</div>
+
+</div>
+
+
+<h2>betroffene Abos {{article.name}}</h2>
+
+<table class="table table-striped">
+	<thead>
+		<tr>
+			<th>Abonnent</th>
+			<th>Menge</th>
+			<th>Versandart</th>
+			<th>Zahlweise</th>
+			<th></th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr ng-repeat="sub in subscriptions">
+			<td>{{sub.subscriberId}}</td>
+			<td>{{sub.quantity}}</td>
+			<td>{{sub.shipmentType}}</td>
+			<td>{{sub.paymentType}}</td>
+			<td ng-show="deliveries">
+			<span ng-show="isDelivered(sub)">zugeordnet</span>
+			<span ng-hide="isDelivered(sub)">nicht zug. : <a ng-click="createArticleDelivery(sub)" class="btn-sm btn-info">do it!</a></span>
+			</td>
+			
+		</tr>
+	</tbody>
+</table>
+</div>
+</div>

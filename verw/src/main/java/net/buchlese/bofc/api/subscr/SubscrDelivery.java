@@ -11,6 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.PostLoad;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -88,6 +89,11 @@ public class SubscrDelivery implements Comparable<SubscrDelivery> {
 		return subscriberName;
 	}
 	
+	@PostLoad
+	public void initDelivery() {
+		setSubscriberId(subscriber.getId());
+		setSubscriptionId(subscription.getId());
+	}
 
 	@JsonIgnore
 	public void updateBrutto(long br, double halfPercentage) {

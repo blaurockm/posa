@@ -41,7 +41,7 @@
 	  }
   };
 
-  var SubscrProductDispoController = function($scope, $stateParams, $http, SubscrProductDao, NgTableParams, $filter ) {
+  var SubscrProductChargeController = function($scope, $stateParams, $http, SubscrProductDao, NgTableParams, $filter ) {
 	  SubscrProductDao.get({id : $stateParams.id}, function(data) { 
 	    $scope.cust = data
 	    $http.get(data._links.subscriptions.href).
@@ -200,7 +200,7 @@
 
   SubscrProductController.$inject = ['$scope', '$http', 'SubscrProductDAO', 'NgTableParams'];
   SubscrProductDetailController.$inject = ['$scope', '$stateParams', '$http', 'SubscrProductDAO'];
-  SubscrProductDispoController.$inject = ['$scope', '$stateParams', '$http', 'SubscrProductDAO',
+  SubscrProductChargeController.$inject = ['$scope', '$stateParams', '$http', 'SubscrProductDAO',
                                           'NgTableParams', '$filter'];
 
   var SubscrProductFactory = function($resource) {
@@ -216,7 +216,7 @@
    factory("SubscrProductDAO", SubscrProductFactory).
    controller("SubscrProductController", SubscrProductController).
    controller("SubscrProductDetailController", SubscrProductDetailController).
-   controller("SubscrProductDispoController", SubscrProductDispoController).
+   controller("SubscrProductChargeController", SubscrProductChargeController).
    config(['$stateProvider', 'eehNavigationProvider', function ($stateProvider, eehNavigationProvider) {
     $stateProvider.
 		state('subscrproducts.subscrproducts', {
@@ -224,10 +224,10 @@
 			templateUrl: "modsubscrproducts/subscrproducts.html",
 			controller: 'SubscrProductController'	
 		}).
-		state('subscrproducts.dispo', {
-			url: "/subscrproductdispo/{id:int}",
-			templateUrl: "modsubscrproducts/dispo.html",
-			controller: 'SubscrProductDispoController'	
+		state('subscrproducts.charge', {
+			url: "/subscrproductcharge/{id:int}",
+			templateUrl: "modsubscrproducts/charge.html",
+			controller: 'SubscrProductChargeController'	
 		}).
 		state('subscrproducts.subscrproductdetail', {
 			url: "/subscrproductdetail/{id:int}",

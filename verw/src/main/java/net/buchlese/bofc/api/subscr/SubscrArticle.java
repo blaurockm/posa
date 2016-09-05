@@ -3,6 +3,7 @@ package net.buchlese.bofc.api.subscr;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -11,6 +12,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -52,6 +54,10 @@ public class SubscrArticle implements Comparable<SubscrArticle> {
 	@JsonIgnore
 	@ManyToOne
 	private SubscrProduct product;
+
+	@JsonIgnore
+	@OneToMany(mappedBy="article")
+	private Set<SubscrDelivery> deliveries;
 
 
 	@JsonIgnore

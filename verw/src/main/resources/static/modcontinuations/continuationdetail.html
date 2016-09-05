@@ -1,15 +1,16 @@
+<div class="alert alert-danger" ng-show="error">Nicht gespeichert: Server meldet '{{error.data.exception}}'</div>
+<div class="alert alert-success" ng-show="success">{{success.name}} erfolgreich gespeichert</div>
 <div class="container">
-	<div class="alert alert-danger" ng-show="error">Nicht gespeichert: Server meldet '{{error.data.exception}}'</div>
-	<div class="alert alert-success" ng-show="success">{{success.name}} erfolgreich gespeichert</div>
 	<form editable-form name="editableForm" onaftersave="updateContinuation(cust)">
 		<div class="page-header">
 			<h1>
 				Fortsetzung <span editable-text="cust.name" e-name="name" e-required>{{ cust.name|| '--' }}</span>
+ <a ui-sref="continuations.dispo({id: cust.id})" class="btn btn-info pull-right">Disponieren</a>
 			</h1>
 		</div>
 		<h3>
 			von <span editable-text="cust.publisher" e-name="publisher">{{cust.publisher}}</span>
-		</h3>
+ 		</h3>
 		<div class="row">
 			<div class="col-md-2">Abkürzung</div>
 			<div class="col-md-2">
@@ -38,10 +39,10 @@
 		<p></p>
 
 		<div class="row">
-			<div class="col-md-4">
+			<div class="col-md-6">
 				<div class="panel panel-info">
 					<div class="panel-heading">
-						Lieferinformationen <a href="#subscrDispo/${p.id?c}" class="btn btn-info text-right">Dispo</a>
+						Lieferinformationen 
 					</div>
 					<div class="panel-body">Einstellungen für die Lieferscheine an unsere Kunden</div>
 					<dl class="dl-horizontal">
@@ -62,35 +63,7 @@
 				</div>
 			</div>
 
-			<div class="col-md-4">
-				<div class="panel panel-info">
-					<div class="panel-heading">
-						Weiterberechnung <a href="#subscrIntervalDispo/${p.id?c}" class="btn btn-info text-right">Abrechnen</a>
-					</div>
-					<div class="panel-body">Einstellungen für die Weiterberechnung an unsere Kunden</div>
-					<dl class="dl-horizontal">
-						<dt>Intervall Namensmuster</dt>
-						<dd>
-							<span editable-text="cust.intervalPattern" e-name="intervalPattern">{{cust.intervalPattern}}</span>
-						</dd>
-						<dt>Rechnungstellung</dt>
-						<dd>
-							<span editable-select="cust.paytype" e-name="paytype" e-ng-options="s.value as s.text for s in zahlintervalle"> {{ (zahlintervalle | filter:{value: cust.paytype})[0].text || 'Nicht gesetzt' }} </span>
-						</dd>
-						<dt>Rechnung bis</dt>
-						<dd>
-							<span editable-bsdate="cust.lastInterval" e-name="lastInterval">{{cust.lastInterval}}</span>
-						</dd>
-						<dt>Proz Print-Anteil</dt>
-						<dd>
-							<span editable-text="cust.halfPercentage" e-name="halfPercentage">{{cust.halfPercentage || '1'}}</span>
-						</dd>
-					</dl>
-					<div class="panel-footer">Letzte Zahlzeit ${(lastInterval.name)!}</div>
-				</div>
-			</div>
-
-			<div class="col-md-4">
+			<div class="col-md-6">
 				<div class="panel panel-info">
 					<div class="panel-heading">Buchleseabo</div>
 					<div class="panel-body">Infos über das Abo bei unserem Lieferanten</div>

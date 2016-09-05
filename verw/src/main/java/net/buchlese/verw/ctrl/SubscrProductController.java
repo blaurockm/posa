@@ -6,6 +6,8 @@ import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 
 import net.buchlese.bofc.api.subscr.QSubscrProduct;
+import net.buchlese.bofc.api.subscr.SubscrArticle;
+import net.buchlese.bofc.api.subscr.SubscrDelivery;
 import net.buchlese.bofc.api.subscr.SubscrInterval;
 import net.buchlese.bofc.api.subscr.SubscrIntervalDelivery;
 import net.buchlese.bofc.api.subscr.SubscrProduct;
@@ -75,6 +77,29 @@ public class SubscrProductController {
 		intvldeliv.setInterval(intvl);
 		em.persist(intvldeliv);
 	}
+
+	@ResponseBody
+	@RequestMapping(path="createarticle", method = RequestMethod.POST)
+	@Transactional
+	public void createSubscrArticle(@RequestBody SubscrArticle intvl) {
+		SubscrProduct p = em.find(SubscrProduct.class, intvl.getProductId());
+		intvl.setProduct(p);
+		em.persist(intvl);
+	}
+
+	@ResponseBody
+	@RequestMapping(path="createarticledelivery", method = RequestMethod.POST)
+	@Transactional
+	public void createSubscrArticleDelivery(@RequestBody SubscrDelivery intvldeliv) {
+		Subscription s = em.find(Subscription.class, intvldeliv.getSubscriptionId());
+		Subscriber sub = em.find(Subscriber.class, intvldeliv.getSubscriberId());
+		SubscrArticle intvl = em.find(SubscrArticle.class, intvldeliv.getArticleId());
+		intvldeliv.setSubscription(s);
+		intvldeliv.setSubscriber(sub);
+		intvldeliv.setArticle(intvl);
+		em.persist(intvldeliv);
+	}
+
 
 	
 }
