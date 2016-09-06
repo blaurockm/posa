@@ -439,7 +439,6 @@ public class SubscrResource {
 	public PosInvoice createInvoice(@PathParam("sub") String subIdP) {
 		long subId = Long.parseLong(subIdP);
 		PosInvoice inv =  SubscriptionInvoiceCreator.createSubscription(dao, dao.getSubscription(subId), numGen);
-		recordUserChange(dao, "master", inv.getId(), "invoice " + inv.getNumber(), null, null, "N");
 		return inv;
 	}
 
