@@ -1,4 +1,4 @@
-package net.buchlese.bofc.api.bofc;
+package net.buchlese.bofc.api.sys;
 
 import java.time.LocalDateTime;
 

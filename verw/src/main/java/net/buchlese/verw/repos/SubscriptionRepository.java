@@ -3,6 +3,8 @@ package net.buchlese.verw.repos;
 import net.buchlese.bofc.api.subscr.QSubscription;
 import net.buchlese.bofc.api.subscr.Subscription;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.querydsl.QueryDslPredicateExecutor;
 import org.springframework.data.querydsl.binding.QuerydslBinderCustomizer;
@@ -18,5 +20,7 @@ QueryDslPredicateExecutor<Subscription>,QuerydslBinderCustomizer<QSubscription> 
 		bindings.bind(bal.subscriber().name).first((path, value) -> path.likeIgnoreCase(value));
 		bindings.bind(bal.product().name).first((path, value) -> path.likeIgnoreCase(value));
 	}
+
+	public List<Subscription> findBySubscriberId(long id);
 
 }

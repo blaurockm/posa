@@ -2,33 +2,24 @@ package net.buchlese.verw.repos;
 
 import java.time.LocalDate;
 import java.util.Iterator;
-import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.querydsl.QueryDslPredicateExecutor;
 import org.springframework.data.querydsl.binding.QuerydslBinderCustomizer;
 import org.springframework.data.querydsl.binding.QuerydslBindings;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
-import org.springframework.data.rest.core.annotation.RestResource;
 
-import net.buchlese.bofc.api.bofc.PosIssueSlip;
-import net.buchlese.bofc.api.bofc.QPosIssueSlip;
+import net.buchlese.bofc.api.bofc.QSettlement;
+import net.buchlese.bofc.api.bofc.Settlement;
 
-@RepositoryRestResource(collectionResourceRel = "issueslips", path = "issueslip")
-public interface IssueSlipRepository extends JpaRepository<PosIssueSlip, Long>, 
-	QueryDslPredicateExecutor<PosIssueSlip>,
-	QuerydslBinderCustomizer<QPosIssueSlip>{
-
-	@Override
-	@RestResource(exported = false)
-	void delete(Long id);
+@RepositoryRestResource(path = "settlement")
+public interface SettlementRepository extends JpaRepository<Settlement, Long>,
+QueryDslPredicateExecutor<Settlement>,
+QuerydslBinderCustomizer<QSettlement>{
+	
 
 	@Override
-	@RestResource(exported = false)
-	void delete(PosIssueSlip entity);
-
-	@Override
-	default public void customize(QuerydslBindings bindings, QPosIssueSlip inv) {
+	default public void customize(QuerydslBindings bindings, QSettlement inv) {
 		bindings.bind(inv.name1).first((path, value) -> path.containsIgnoreCase(value));
 		bindings.bind(inv.date).all((path, value) -> {
 			Iterator<? extends LocalDate> it = value.iterator();
@@ -37,12 +28,10 @@ public interface IssueSlipRepository extends JpaRepository<PosIssueSlip, Long>,
 				LocalDate second = it.next();
 				return path.between(first, second);
 			} else {
-				return path.after(first);
+				return path.goe(first);
 			}
 		} );
 		
 	}
-
-	List<PosIssueSlip> findByDebitorIdAndPayed(int debitorId, boolean payed);
 
 }
