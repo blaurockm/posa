@@ -155,6 +155,8 @@ public class BalancesController {
 				balanceRepository.saveAndFlush(cashBalance);
 			} else {
 				cashBalance.setId(old.getId()); // damit wird gezeigt, dass wir ein update sind
+				cashBalance.setExported(old.isExported());
+				cashBalance.setExportDate(old.getExportDate());
 				balanceRepository.saveAndFlush(cashBalance);
 			}
 			return ResponseEntity.ok().build();

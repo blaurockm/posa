@@ -171,6 +171,8 @@ public class InvoicesController {
 				invoiceRepository.saveAndFlush(invoice);
 			} else {
 				invoice.setId(old.getId()); // damit wird gezeigt, dass wir ein update sind
+				invoice.setExported(old.isExported());
+				invoice.setExportDate(old.getExportDate());
 				invoiceRepository.saveAndFlush(invoice);
 			}
 			return ResponseEntity.ok().build();
