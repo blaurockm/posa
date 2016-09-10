@@ -9,6 +9,8 @@ import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
@@ -29,6 +31,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class PosInvoice {
 	@Id
 	@JsonProperty
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
 	@JsonProperty
 	private int pointid;
