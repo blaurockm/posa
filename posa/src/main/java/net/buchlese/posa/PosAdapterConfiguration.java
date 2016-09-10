@@ -60,7 +60,10 @@ public class PosAdapterConfiguration extends Configuration {
     private int pointOfSaleId;
 
     @JsonProperty
-    private int daysBack = 14;
+    private int daysBack = 365;
+
+    @JsonProperty
+    private int guiDaysBack = 14;
 
     @JsonProperty
     private int syncOffset = 5;
@@ -244,6 +247,10 @@ public class PosAdapterConfiguration extends Configuration {
 
 	public int getHomePort() {
 		return homePort;
+	}
+
+	public int getGuiDaysBack() {
+		return guiDaysBack;
 	}
     
 }

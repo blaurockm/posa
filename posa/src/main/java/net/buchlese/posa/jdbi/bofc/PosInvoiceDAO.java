@@ -34,10 +34,10 @@ public interface PosInvoiceDAO {
 	@SqlQuery("select * from posissueslip where invDate > :date")
 	List<PosIssueSlip> fetchAllIssueSlipsAfter(@Bind("date") java.util.Date num);
 
-	@SqlQuery("select max(actionum) from posinvoice")
+	@SqlQuery("select max(actionum) from posinvoice where invDate > sysdate - 50")
 	Integer getLastErfasst();
 
-	@SqlQuery("select max(actionum) from posissueslip")
+	@SqlQuery("select max(actionum) from posissueslip where invDate > sysdate - 50")
 	Integer getLastErfasstLieferschein();
 
 	@SqlBatch("insert into posinvoice (number, customer, debitor, amount, amountFull, amountHalf, amountNone, "

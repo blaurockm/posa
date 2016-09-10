@@ -51,20 +51,20 @@ public class AppView extends View {
 	public List<LocalDate> getFortnight() {
 		List<LocalDate> res = new ArrayList<LocalDate>();
 		LocalDate now = LocalDate.now();
-		for (int i = 0; i < cfg.getDaysBack(); i++) {
+		for (int i = 0; i < cfg.getGuiDaysBack(); i++) {
 			res.add(now.minusDays(i));
 		}
 		return res;
 	}
 
 	public List<PosInvoice> getInvoices() {
-		List<PosInvoice> res = daoInv.fetchAllAfter(LocalDate.now().minusDays(cfg.getDaysBack()).toDateTimeAtStartOfDay().toDate());
+		List<PosInvoice> res = daoInv.fetchAllAfter(LocalDate.now().minusDays(cfg.getGuiDaysBack()).toDateTimeAtStartOfDay().toDate());
 		Collections.reverse(res);
 		return res;
 	}
 
 	public List<PosIssueSlip> getIssueSlips() {
-		List<PosIssueSlip> res = daoInv.fetchAllIssueSlipsAfter(LocalDate.now().minusDays(cfg.getDaysBack()).toDateTimeAtStartOfDay().toDate());
+		List<PosIssueSlip> res = daoInv.fetchAllIssueSlipsAfter(LocalDate.now().minusDays(cfg.getGuiDaysBack()).toDateTimeAtStartOfDay().toDate());
 		Collections.reverse(res);
 		return res;
 	}
