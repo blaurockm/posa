@@ -53,15 +53,15 @@ public class VerwaltungsApp extends RepositoryRestConfigurerAdapter {
         return objectMapper;
     }
 
-	@Bean
-	public Jackson2RepositoryPopulatorFactoryBean repositoryPopulator() {
-
-		Resource sourceData = new ClassPathResource("defaultArticleGroups.json");
-
-		Jackson2RepositoryPopulatorFactoryBean factory = new Jackson2RepositoryPopulatorFactoryBean();
-		factory.setResources(new Resource[] { sourceData });
-		return factory;
-	}
+//	@Bean
+//	public Jackson2RepositoryPopulatorFactoryBean repositoryPopulator() {
+//
+//		Resource sourceData = new ClassPathResource("defaultArticleGroups.json");
+//
+//		Jackson2RepositoryPopulatorFactoryBean factory = new Jackson2RepositoryPopulatorFactoryBean();
+//		factory.setResources(new Resource[] { sourceData });
+//		return factory;
+//	}
 	  
 	public static void main(String[] args) {
 		SpringApplication.run(VerwaltungsApp.class, args);

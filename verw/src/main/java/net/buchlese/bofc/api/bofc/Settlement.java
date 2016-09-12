@@ -85,12 +85,12 @@ public class Settlement {
 	
 	@JsonProperty
 	@OneToMany(cascade=CascadeType.ALL)
-	@JoinColumn(name="invoice_id")
+	@JoinColumn(name="settlement_id")
 	private List<PosInvoiceDetail> details;
 
 	@JsonProperty
 	@OneToMany(cascade=CascadeType.ALL)
-	@JoinColumn(name="invoice_id")
+	@JoinColumn(name="settlement_id")
 	private Set<InvoiceAgrDetail> agreementDetails;
 
 	@JsonProperty

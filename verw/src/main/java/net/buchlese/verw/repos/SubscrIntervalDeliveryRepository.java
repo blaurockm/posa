@@ -10,6 +10,5 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 @RepositoryRestResource(path = "subscrintervaldelivery")
 public interface SubscrIntervalDeliveryRepository extends JpaRepository<SubscrIntervalDelivery, Long> {
 
-	List<SubscrIntervalDelivery> findBySubscriptionIdAndPayed(long id, boolean b);
 
 }

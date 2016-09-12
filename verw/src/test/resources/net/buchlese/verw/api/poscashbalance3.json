@@ -1,0 +1,123 @@
+{
+	"id": 750,
+	"pointid": 0,
+	"abschlussId": "20160907",
+	"taxBalance": {
+		"FULL": 9287,
+		"HALF": 14996
+	},
+	"articleGroupBalance": {
+		"n.m.": -6687,
+		"nonbook": 885,
+		"book": 26602,
+		"schreibw": 3483
+	},
+	"goodsOut": 24283,
+	"paymentMethodBalance": {
+		"CASH": 24283,
+		"TELE": 5310
+	},
+	"newCoupon": {
+		"n.m.": 1000
+	},
+	"oldCoupon": {
+		"n.m.": -1000
+	},
+	"couponTradeIn": -1000,
+	"couponTradeOut": 1000,
+	"payedInvoices": {
+		"Rg:1160084": 5310
+	},
+	"createdInvoices": null,
+	"payedInvoicesSum": 5310,
+	"createdInvoicesSum": null,
+	"cashIn": {
+		
+	},
+	"cashOut": {
+		
+	},
+	"cashInSum": 0,
+	"cashOutSum": 0,
+	"absorption": 24000,
+	"cashStart": 41603,
+	"cashEnd": 41899,
+	"cashDiff": 13,
+	"cash": 65899,
+	"revenue": 29593,
+	"profit": 8422,
+	"ticketCount": 19,
+	"cancelledticketCount": 51,
+	"firstTimestamp": 1473231254000,
+	"firstBelegNr": 11509937,
+	"lastBelegNr": 11509955,
+	"lastTimestamp": 1473242593000,
+	"creationtime": 1473244089484,
+	"origAbschluss": "{\"id\":3214,\"kasse\":1,\"abschlussnr\":2386,\"abschlussid\":\"20160907\",\"bar\":658.99,\"telecashIst\":53.1,\"anfang\":416.03,\"ist\":712.09,\"soll\":711.96,\"differenz\":0.13,\"abschoepfung\":240.0,\"einzahlungen\":0.0,\"auszahlungen\":0.0,\"gutscheine\":10.0,\"gutschriften\":-10.0,\"umsatzVoll\":92.87,\"umsatzHalb\":149.96,\"umsatzOhne\":0.0,\"bezahlteRechnungen\":53.1,\"anzahlKunden\":19,\"ladenUmsatz\":62.8,\"besorgungsUmsatz\":180.03,\"vonDatum\":1473199201000,\"bisDatum\":1473285540000,\"auszahlungenVoll\":0.0,\"auszahlungenHalb\":0.0,\"auszahlungenOhne\":0.0,\"zeitmarke\":12857903}",
+	"exported": true,
+	"exportDate": 1473244215149,
+	"firstCovered": 1473199201000,
+	"lastCovered": 1473285540000,
+	"tickets": [
+		{
+			"id": 0,
+			"belegNr": 11509937,
+			"pointid": 0,
+			"total": 2958,
+			"cancelled": false,
+			"cancel": false,
+			"paymentMethod": "CASH",
+			"timestamp": 1473231246000,
+			"toBeCheckedAgain": false,
+			"txs": [
+				{
+					"id": 0,
+					"belegNr": 11509937,
+					"pointid": 0,
+					"belegIdx": 1,
+					"articleId": 101116,
+					"articleKey": "A00025YD",
+					"articleGroupKey": "book",
+					"ean": null,
+					"isbn": "9783894254452",
+					"matchCode": "Schweres; Die Abtaucher",
+					"description": "Die Abtaucher",
+					"count": 1,
+					"sellingPrice": 799,
+					"purchasePrice": null,
+					"rebate": 0.0,
+					"total": 799,
+					"tax": "HALF",
+					"type": "SELL",
+					"timestamp": 1473231254000,
+					"toBeIgnored": false,
+					"toBeCheckedAgain": false
+				},
+				{
+					"id": 0,
+					"belegNr": 11509937,
+					"pointid": 0,
+					"belegIdx": 2,
+					"articleId": 100456,
+					"articleKey": "A00025G5",
+					"articleGroupKey": "book",
+					"ean": null,
+					"isbn": "9783898799614",
+					"matchCode": "Steinmetz; Der reichste Mann der Weltgeschichte",
+					"description": "Der reichste Mann der Weltgeschichte",
+					"count": 1,
+					"sellingPrice": 2159,
+					"purchasePrice": null,
+					"rebate": 0.0,
+					"total": 2159,
+					"tax": "HALF",
+					"type": "SELL",
+					"timestamp": 1473231256000,
+					"toBeIgnored": false,
+					"toBeCheckedAgain": false
+				}
+			]
+		}
+	],
+	"checked": false		
+}

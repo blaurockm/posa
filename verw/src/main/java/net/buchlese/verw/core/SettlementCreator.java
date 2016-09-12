@@ -3,18 +3,17 @@ package net.buchlese.verw.core;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import net.buchlese.bofc.api.bofc.InvoiceAgrDetail;
-import net.buchlese.bofc.api.bofc.PosInvoice;
 import net.buchlese.bofc.api.bofc.PosInvoiceDetail;
 import net.buchlese.bofc.api.bofc.PosIssueSlip;
 import net.buchlese.bofc.api.bofc.Settlement;
@@ -80,7 +79,7 @@ public class SettlementCreator {
 	 */
 	public Settlement createCollectiveSubscription(Subscriber subscriber) {
 		List<PosIssueSlip> issueSlips = issueSlipRepository.findByDebitorIdAndPayed(subscriber.getDebitorId(), false);
-		List<Subscription> subscriptions = subscriptionRepository.findBySubscriberId(subscriber.getId());
+		List<Subscription> subscriptions = subscriber.getSubscriptions();
 		Settlement inv = createTemporaryInvoice(subscriber, subscriptions, issueSlips);
 		inv.setCollective(true);
 		return inv;
@@ -162,10 +161,12 @@ public class SettlementCreator {
 		String lastDetailInfo = null;
 		for(Subscription sub : subs) {
 			if (PayIntervalType.EACHDELIVERY.equals(sub.getPaymentType())) {
-				List<SubscrDelivery> deliveries = subscrDeliveryRepository.findBySubscriptionIdAndPayed(sub.getId(), false);
+				List<SubscrDelivery> deliveries = new ArrayList<>(sub.getArticleDeliveries()); 
+// TODO payed = false						subscrDeliveryRepository.findBySubscriptionIdAndPayed(sub.getId(), false);
 				lastDetailInfo = addDeliveriesToInvoice(sub, inv, deliveries, lastDetailInfo);
 			} else {
-				List<SubscrIntervalDelivery> intdeliveries = subscrIntervalDeliveryRepository.findBySubscriptionIdAndPayed(sub.getId(), false);
+				List<SubscrIntervalDelivery> intdeliveries = new ArrayList<>(sub.getIntervalDeliveries()); 
+// TODO payed = false						subscrIntervalDeliveryRepository.findBySubscriptionIdAndPayed(sub.getId(), false);
 				lastDetailInfo = addIntervalDeliveriesToInvoice(sub, inv, intdeliveries, lastDetailInfo);
 			}
 		}

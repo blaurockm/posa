@@ -25,6 +25,4 @@ QueryDslPredicateExecutor<SubscrDelivery>,QuerydslBinderCustomizer<QSubscrDelive
 		bindings.bind(bal.article().issueNo).first((path, value) -> path.eq(value));
 	}
 
-	List<SubscrDelivery> findBySubscriptionIdAndPayed(long id, boolean b);
-
 }
