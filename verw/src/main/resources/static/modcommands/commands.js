@@ -1,21 +1,28 @@
 (function(angular) {
   var CommandController = function($scope, $http, CommandDao, NgTableParams, $uibModal) {
+	  $scope.cmdfilter = {pointid : '1' };
+	  
 	  $scope.deleteCommand = function (oldCmd) {
 	      $scope.error = "";
 	      $scope.success = "";
 	      new CommandDao(oldCmd).$remove().then(function(req) { $scope.tableParams.reload(); })
 	      .catch(function(req) { $scope.error = req; });
 	  }
-	  
+
+	  var initNewCommand = function(oldCmd) {
+		  $scope.newcommand.param1 = null;
+	  }
+
 	  $scope.addCommand = function (newCmd) {
 	      $scope.error = "";
 	      $scope.success = "";
+	      newCmd.pointid = $scope.cmdfilter.pointid;
 	      newCmd.creationtime = new Date();
-	      new CommandDao(newCmd).$save().then(function(req) {$scope.tableParams.reload(); $scope.success = req; })
+	      new CommandDao(newCmd).$save().then(function(req) {$scope.tableParams.reload(); $scope.success = req; initNewCommand($scope.newcommand); })
 	      .catch(function(req) { $scope.error = req; });
 	  }
 	  
-	    $scope.tableParams = new NgTableParams({ count: 10 }, {
+	    $scope.tableParams = new NgTableParams({ count: 10, sorting : { creationtime : 'desc' }, filter : $scope.cmdfilter }, {
 	        getData: function($defer, params) {
 	            var queryParams = {
 	                page:params.page() - 1, 
@@ -87,5 +94,28 @@
 
   CommandController.$inject = ['$scope', '$http', 'CommandDAO', 'NgTableParams', '$uibModal'];
   CommandFactory.$inject = ['$resource'];
+
+  angular.module("verwApp.commands").
+  filter('localdatetime', function($filter) {
+	    return function(input, optional) {
+	    	if (input == null) {
+	    		return "";
+	    	}
+	        var d = new Date(input);
+	        return $filter('date')(d,(optional ? optional : 'medium'));
+	    };
+	}).
+  filter('localdate', function($filter) {
+	    return function(input, optional) {
+	    	if (input == null) {
+	    		return "";
+	    	}
+	        var d = new Date(input);
+	        return $filter('date')(d, (optional ? optional : 'fullDate'));
+	    };
+	}).
+	run(function (amMoment, editableOptions) {
+		amMoment.changeLocale('de');
+	});
 
 }(angular));

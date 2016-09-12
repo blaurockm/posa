@@ -4,20 +4,16 @@
 <div class="page-header">
   <h1>Ausgangsrechnungen</h1>
 </div>
+    <div class="input-group">
+        <label class="radio-inline"><input type="radio" ng-model="pfilter.pointid" ng-value="1"/> Dornhan</label> 
+        <label class="radio-inline"><input type="radio" ng-model="pfilter.pointid" ng-value="2"/> Sulz</label> 
+        <label class="radio-inline"><input type="radio" ng-model="pfilter.pointid" ng-value="3"/> Schramberg</label>
+    </div>
+    <hr/>
 <div class="row">
   <div class="col-md-6">
     <p>Suchkriterien</p>
-    <div class="radio-inline">
-      <label><input type="radio" ng-model="pointofsale" value="1">Dornhan</label>
-    </div>
-    <div class="radio-inline">
-      <label><input type="radio" ng-model="pointofsale" value="2">Sulz</label>
-    </div>
-    <div class="radio-inline">
-      <label><input type="radio" ng-model="pointofsale" value="3">Schramberg</label>
-    </div>
-    <p>
-      <label> <input type="checkbox" ng-model="exported" /> Exportiert?
+      <label> <input type="checkbox" ng-model="pfilter.exported" /> Exportiert?
       </label> <label> <input type="checkbox" ng-model="mapped" /> Gemappt?
       </label>
     </p>
@@ -76,11 +72,12 @@
       <td title="'Nummer'" filter="{number: 'text'}" sortable="'number'"><a ng-click="showInvoice(row)" class="cursor-pointer">{{row.number}}</a></td>
       <td title="'Name'" filter="{name1: 'text'}" sortable="'name1'">{{row.name1}}</td>
       <td title="'Debitor'" filter="{debitorId: 'number'}" sortable="'debitorId'"><a href="#" editable-text="row.debitorId" onaftersave="updateMapping(row)">{{ row.debitorId }}</a></td>
-      <td title="'Datum'" sortable="'date'">{{row.date | localdate}}</td>
-      <td title="'Kasse'" filter="{pointid: 'number'}" sortable="'pointid'">{{row.pointid}}</td>
+      <td title="'Datum'" sortable="'date'">{{row.date | localdate:'mediumDate'}}</td>
+      <td title="'Kasse'" sortable="'pointid'">{{row.pointid}}</td>
       <td title="'Betrag'" sortable="'amount'" align="right">{{row.amount / 100 | currency}}</td>
-      <td title="'Exportiert'" sortable="'exported'">{{row.exported}}</td>
-      <td title="'Exportdatum'" filter="{exportDate: 'text'}" sortable="'exportDate'">{{row.exportDate | localdatetime }}</td>
+      <td title="'Storniert'" >{{row.cancelled }}</td>
+      <td title="'Exportiert'" >{{row.exported}}</td>
+      <td title="'Exportdatum'" sortable="'exportDate'">{{row.exportDate | localdatetime }}</td>
     </tr>
   </table>
 </div>

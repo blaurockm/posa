@@ -1,5 +1,6 @@
 (function(angular) {
   var BalanceController = function($scope, $http, BalanceDao, NgTableParams, $uibModal) {
+   	    $scope.pfilter = {pointid : '1' };
 	    $scope.showBalance = function (bal) {
 	    	$uibModal.open({
 	    	      animation: true,
@@ -40,12 +41,8 @@
     		opened: false
 	    };
 
-	    $scope.createBalanceExport = function(pointOfSale, expLim) {
-	    	if (!pointOfSale) {
-	    		pointOfSale = 1;
-	    		$scope.pointofsale = pointOfSale;
-	    	}
-	        var params = {pointid: pointOfSale};
+	    $scope.createBalanceExport = function(expLim) {
+	        var params = {pointid: $scope.pfilter.pointid};
 	    	if (expLim) {
 	    		params.exportLimit = expLim;
 	    	}
@@ -66,7 +63,7 @@
 	    	$scope.tableParams.reload();
 	    }
 
-	    $scope.tableParams = new NgTableParams({ count: 7 }, {
+	    $scope.tableParams = new NgTableParams({ count: 7, filter: $scope.pfilter, sorting : { abschlussId : 'desc' } }, {
 	        getData: function($defer, params) {
 	            var queryParams = {
 	                page:params.page() - 1, 
@@ -78,9 +75,6 @@
 	            }
 	            if (params.hasFilter()) {
 	            	angular.extend(queryParams, params.filter());
-	            }
-	            if ($scope.hasOwnProperty('pointofsale')) {
-	            	queryParams['pointid'] = $scope.pointofsale;
 	            }
 	            if ($scope.hasOwnProperty('exported')) {
 	            	queryParams['exported'] = $scope.exported;
@@ -105,6 +99,8 @@
   };
 
   var BalancesExportController = function($scope, $http, ExportDao, NgTableParams, $uibModal, $window) {
+ 	    $scope.pfilter = {pointId : '1' };
+ 	    
 	$scope.deleteExport = function(expId) {
 		ExportDao.delete({id : expId }, function () {
 	    	$scope.tableParams.reload();
@@ -151,7 +147,7 @@
     	    });
     }
     
-    $scope.tableParams = new NgTableParams({ count: 10 }, {
+    $scope.tableParams = new NgTableParams({ count: 10, filter: $scope.pfilter, sorting : { till : 'desc' } }, {
         getData: function($defer, params) {
             var queryParams = {
                 page:params.page() - 1, 

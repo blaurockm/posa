@@ -4,10 +4,6 @@ package net.buchlese.verw.ctrl;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import net.buchlese.bofc.api.bofc.Command;
-import net.buchlese.bofc.api.bofc.PosIssueSlip;
-import net.buchlese.verw.repos.CommandRepository;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,6 +20,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.querydsl.core.types.Predicate;
 
+import net.buchlese.bofc.api.bofc.Command;
+import net.buchlese.verw.repos.CommandRepository;
+
 
 @RestController
 @RequestMapping(path="commands")
@@ -33,7 +32,7 @@ public class CommandController {
 
 	@ResponseBody
 	@RequestMapping(path="commandsDyn", method = RequestMethod.GET)
-	public Page<Command> commandsDynamic(@QuerydslPredicate(root = PosIssueSlip.class) Predicate predicate,    
+	public Page<Command> commandsDynamic(@QuerydslPredicate(root = Command.class) Predicate predicate,    
 	          Pageable pageable, @RequestParam MultiValueMap<String, String> parameters) {
 
 		return commandRepository.findAll(predicate, pageable);

@@ -4,12 +4,14 @@
 	<div class="page-header">
 		<h1>Commands</h1>
 	</div>
-    
-	<form class="form" ng-submit="addCommand(newcommand)">
 		<div class="input-group">
-		  		<label class="radio-inline"><input type="radio" ng-model="newcommand.pointid" ng-value="1" ng-init="newcommand.pointid = 1"/> Dornhan</label> 
-				<label class="radio-inline"><input type="radio" ng-model="newcommand.pointid" ng-value="2"/> Sulz</label> 
-				<label class="radio-inline"><input type="radio" ng-model="newcommand.pointid" ng-value="3"/> Schramberg</label>
+		  		<label class="radio-inline"><input type="radio" ng-model="cmdfilter.pointid" ng-value="1"/> Dornhan</label> 
+				<label class="radio-inline"><input type="radio" ng-model="cmdfilter.pointid" ng-value="2"/> Sulz</label> 
+				<label class="radio-inline"><input type="radio" ng-model="cmdfilter.pointid" ng-value="3"/> Schramberg</label>
+        </div>
+        <hr/>
+	<form class="form" ng-submit="addCommand(newcommand)">
+        <div class="input-group">
         <p>
             <label for="singleSelect">Command: </label>
               <select id="singleSelect" ng-model="newcommand.action" ng-init="newcommand.action = 'payoffcoupon'">
@@ -26,18 +28,18 @@
 				</button>
 			</span>
 		</div>
-        <pre>newcommand = {{newcommand | json}}</pre>
 		<hr/>
 <div class="row">
   <div class="col-lg-12">
-    <table ng-table="tableParams" class="table" show-filter="true">
+    <table ng-table="tableParams" class="table table-condensed" show-filter="true">
       <tr ng-repeat="row in $data">
         <td title="'Kasse'" sortable="'pointid'" align="center">{{row.pointid}}</td>
         <td title="'Action'" filter="{action: 'text'}" sortable="'action'">{{row.action}}</td>
         <td title="'Param1'" filter="{param1: 'text'}" sortable="'param1'">{{row.param1}}</td>
         <td title="'Param2'" filter="{param2: 'text'}" sortable="'param2'">{{row.param2}}</td>
+        <td title="'creationtime'" sortable="'creationtime'">{{row.creationtime | localdatetime}}</td>
         <td title="'abgeholt'" sortable="'fetched'">{{row.fetched && 'abge.' }}</td>
-        <td title="'executiontime'" sortable="'executiontime'">{{row.executiontime}}</td>
+        <td title="'executiontime'" sortable="'executiontime'">{{row.executiontime | localdatetime}}</td>
         <td title="'Result'" filter="{result: 'text'}" sortable="'result'">{{row.result}}</td>
         <td>
         <button ng-hide="row.fetched" class="pull-right btn btn-danger" type="button" title="Delete" ng-click="deleteCommand(row)" confirm="Bitte das Löschen bestätigen!">

@@ -4,18 +4,14 @@
 <div class="page-header">
   <h1>Kassenberichte</h1>
 </div>
+<div class="input-group">
+    <label class="radio-inline"><input type="radio" ng-model="pfilter.pointid" ng-value="1"/> Dornhan</label> 
+    <label class="radio-inline"><input type="radio" ng-model="pfilter.pointid" ng-value="2"/> Sulz</label> 
+    <label class="radio-inline"><input type="radio" ng-model="pfilter.pointid" ng-value="3"/> Schramberg</label>
+</div>
+<hr/>
 <div class="row">
   <div class="col-md-6">
-    <p>Suchkriterien</p>
-    <div class="radio-inline">
-      <label><input type="radio" ng-model="pointofsale" value="1">Dornhan</label>
-    </div>
-    <div class="radio-inline">
-      <label><input type="radio" ng-model="pointofsale" value="2">Sulz</label>
-    </div>
-    <div class="radio-inline">
-      <label><input type="radio" ng-model="pointofsale" value="3">Schramberg</label>
-    </div>
     <p>
       <label> <input type="checkbox" ng-model="exported" /> Exportiert?
       </label>
@@ -64,13 +60,13 @@
     </div>
     </p>
     <p>
-      <button ng-click="createBalanceExport(pointofsale, exportLimit)">Neuer KassenBericht-Export</button>
+      <button ng-click="createBalanceExport(exportLimit)">Neuer KassenBericht-Export</button>
     </p>
   </div>
 </div>
 <hr>
 <div class="row">
-  <table ng-table="tableParams" class="table">
+  <table ng-table="tableParams" class="table table-condensed">
     <tr ng-repeat="row in $data">
       <td title="'AbschlussID'" sortable="'abschlussId'"><a ng-click="showBalance(row)" class="cursor-pointer">{{row.abschlussId}}</a></td>
       <td title="'Datum'" sortable="'abschlussId'" align="right">{{row.abschlussId | abschlussdate}}</td>

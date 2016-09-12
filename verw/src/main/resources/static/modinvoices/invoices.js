@@ -1,5 +1,6 @@
 (function(angular) {
   var InvoiceController = function($scope, $http, InvoiceDao, NgTableParams, $uibModal) {
+ 	    $scope.pfilter = {pointid : '1', exported : false };
 	    $scope.showInvoice = function (i) {
 	    	$uibModal.open({
 	    	      animation: true,
@@ -40,12 +41,8 @@
     		opened: false
 	    };
 
-	    $scope.createInvoiceExport = function(pointOfSale, expLim) {
-	    	if (!pointOfSale) {
-	    		pointOfSale = 1;
-	    		$scope.pointofsale = pointOfSale;
-	    	}
-	        var params = {pointid: pointOfSale};
+	    $scope.createInvoiceExport = function(expLim) {
+	        var params = {pointid: $scope.pfilter.pointid};
 	    	if (expLim) {
 	    		params.exportLimit = expLim;
 	    	}
@@ -71,7 +68,7 @@
 	    	$http.get('/invoices/updateMapping', {params: params});
 	    }
 
-	    $scope.tableParams = new NgTableParams({ count: 10 }, {
+	    $scope.tableParams = new NgTableParams({ count: 10, filter:$scope.pfilter, sorting : { date : 'desc'} }, {
 	        getData: function($defer, params) {
 	            var queryParams = {
 	                page:params.page() - 1, 
@@ -83,9 +80,6 @@
 	            }
 	            if (params.hasFilter()) {
 	            	angular.extend(queryParams, params.filter());
-	            }
-	            if ($scope.hasOwnProperty('pointofsale')) {
-	            	queryParams['pointid'] = $scope.pointofsale;
 	            }
 	            if ($scope.hasOwnProperty('exported')) {
 	            	queryParams['exported'] = $scope.exported;
@@ -115,6 +109,7 @@
   };
 
   var InvoicesExportController = function($scope, $http, ExportDao, NgTableParams, $uibModal, $window) {
+ 	    $scope.pfilter = {pointId : '1' };
 	$scope.deleteExport = function(expId) {
 		ExportDao.delete({id : expId }, function () {
 	    	$scope.tableParams.reload();
@@ -166,7 +161,7 @@
     	    });
     }
     
-    $scope.tableParams = new NgTableParams({ count: 10 }, {
+    $scope.tableParams = new NgTableParams({ count: 10, filter: $scope.pfilter, sorting : { till : 'desc' } }, {
         getData: function($defer, params) {
             var queryParams = {
                 page:params.page() - 1, 
