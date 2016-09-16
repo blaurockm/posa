@@ -13,7 +13,10 @@ import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.transform.TransformerException;
 
+import org.apache.fop.apps.FOPException;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +44,7 @@ import net.buchlese.bofc.api.bofc.PosInvoice;
 import net.buchlese.bofc.api.bofc.QPosInvoice;
 import net.buchlese.verw.core.AccountingExportFile;
 import net.buchlese.verw.reports.ReportInvoiceExportCreator;
+import net.buchlese.verw.reports.ReportPdfCreator;
 import net.buchlese.verw.reports.obj.ReportInvoiceExport;
 import net.buchlese.verw.repos.InvoiceExportRepository;
 import net.buchlese.verw.repos.InvoiceRepository;
@@ -57,6 +61,8 @@ public class InvoicesController {
 	@Autowired AccountingExportFile exportFileCreator;
 
 	@Autowired ReportInvoiceExportCreator reportInvoiceExport;
+
+	@Autowired ReportPdfCreator reportPdf;
 
 	@PersistenceContext	EntityManager em;
 	
@@ -146,6 +152,26 @@ public class InvoicesController {
 	public ReportInvoiceExport getExportReport(@RequestParam("id") Long id) {
 		AccountingInvoiceExport export = exportRepository.findOne(id);
 		return reportInvoiceExport.createReport(export);
+	}
+
+	@RequestMapping(path="view", method = RequestMethod.GET)
+	@Transactional
+	public ResponseEntity<?> getInvoicePDF(@RequestParam("id") Long id) throws Exception {
+		PosInvoice inv = invoiceRepository.findOne(id);
+		
+		byte[] pdf;
+		try {
+			pdf = reportPdf.createReport(inv,"static/templates/report/invoice.xsl", null);
+			HttpHeaders respHeaders = new HttpHeaders();
+			respHeaders.setContentType(MediaType.APPLICATION_PDF);
+			respHeaders.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=Ausgangsrechnung"+inv.getNumber()+".pdf");
+			
+			return ResponseEntity.ok().headers(respHeaders).body(pdf);
+		} catch (FOPException | JAXBException | TransformerException e) {
+			e.printStackTrace();
+			throw e;
+		}
+		
 	}
 
 	@RequestMapping(path="updateMapping", method = RequestMethod.GET)

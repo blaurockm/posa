@@ -348,7 +348,7 @@
      <fo:block>
         <fo:external-graphic content-width="170mm">
           <xsl:attribute name="src">
-           <xsl:value-of select="concat('/images/header', pointid, '.jpg')" />
+           <xsl:value-of select="concat('classpath:/static/images/header', pointid, '.svg')" />
           </xsl:attribute>
         </fo:external-graphic>
      </fo:block>
@@ -376,7 +376,7 @@
 
    <xsl:template name="brieffuss">
       <fo:block>
-        <fo:external-graphic src="url(/images/footer.jpg)"  content-width="170mm"/>
+        <fo:external-graphic src="url(classpath:/static/images/footer.svg)"  content-width="170mm"/>
       </fo:block>
    </xsl:template>
 
