@@ -69,14 +69,19 @@
 <div class="row">
   <table ng-table="tableParams" class="table" show-filter="true">
     <tr ng-repeat="row in $data">
-      <td title="'Nummer'" filter="{number: 'text'}" sortable="'number'"><a ng-click="showInvoice(row)" class="cursor-pointer">{{row.number}}</a></td>
+      <td title="'Nummer'" filter="{number: 'text'}" sortable="'number'"><a ng-click="showInvoice(row)" class="cursor-pointer">{{row.number}}</a>
+         <button type="button" class="btn-xs btn-default" ng-click="showInvoicePdf(row.id)">
+            <i class="fa fa-file-pdf-o"></i>
+          </button>
+      </td>
       <td title="'Name'" filter="{name1: 'text'}" sortable="'name1'">{{row.name1}}</td>
       <td title="'Debitor'" filter="{debitorId: 'number'}" sortable="'debitorId'"><a href="#" editable-text="row.debitorId" onaftersave="updateMapping(row)">{{ row.debitorId }}</a></td>
       <td title="'Datum'" sortable="'date'">{{row.date | localdate:'mediumDate'}}</td>
       <td title="'Kasse'" sortable="'pointid'">{{row.pointid}}</td>
       <td title="'Betrag'" sortable="'amount'" align="right">{{row.amount / 100 | currency}}</td>
-      <td title="'Storniert'" >{{row.cancelled }}</td>
-      <td title="'Exportiert'" >{{row.exported}}</td>
+      <td title="'S'" ><i class="fa fa-ban text-danger" ng-show="row.cancelled"></i></td>
+      <td title="'B'" ><i class="fa fa-eur text-success" ng-show="row.payed"></i></td>
+      <td title="'E'" ><i class="fa fa-share" ng-show="row.exported"></i></td>
       <td title="'Exportdatum'" sortable="'exportDate'">{{row.exportDate | localdatetime }}</td>
     </tr>
   </table>

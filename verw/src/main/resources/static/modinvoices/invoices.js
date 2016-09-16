@@ -11,7 +11,11 @@
 	    	      size: 'lg'
 	    	    });
 	    }
-	    
+
+	    $scope.showInvoicePdf = function (invId) {
+			window.open("/invoices/view?id="+invId);
+	    }
+
 	    $scope.dateOptions1 = {
 	    	    formatYear: 'yy',
 	    	    startingDay: 1
