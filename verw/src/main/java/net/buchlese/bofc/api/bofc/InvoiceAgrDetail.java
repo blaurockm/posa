@@ -9,15 +9,17 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 import net.buchlese.bofc.api.subscr.PayIntervalType;
 import net.buchlese.bofc.api.subscr.SubscrDelivery;
 import net.buchlese.bofc.api.subscr.SubscrIntervalDelivery;
+import net.buchlese.bofc.api.subscr.Subscription;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 @Table(name="posinvoice_agrdetail")
@@ -28,9 +30,12 @@ public class InvoiceAgrDetail {
 	@JsonProperty
 	private Long id;
 
-	@JsonProperty
-	private long agreementId;
-
+	@ManyToOne
+	private Subscription settledAgreement;
+	
+	@ManyToOne 
+	private PosIssueSlip settledDeliveryNote;
+	
 	@JsonProperty
 	private LocalDate deliveryFrom;
 
@@ -53,13 +58,6 @@ public class InvoiceAgrDetail {
 	@Enumerated(EnumType.STRING)
 	private PayIntervalType payType;
 
-	public long getAgreementId() {
-		return agreementId;
-	}
-
-	public void setAgreementId(long agreementId) {
-		this.agreementId = agreementId;
-	}
 
 	public LocalDate getDeliveryFrom() {
 		return deliveryFrom;
@@ -140,6 +138,22 @@ public class InvoiceAgrDetail {
 
 	public void setIntervalDeliveries(Set<SubscrIntervalDelivery> intervalDeliveries) {
 		this.intervalDeliveries = intervalDeliveries;
+	}
+
+	public Subscription getSettledAgreement() {
+		return settledAgreement;
+	}
+
+	public void setSettledAgreement(Subscription settledAgreement) {
+		this.settledAgreement = settledAgreement;
+	}
+
+	public PosIssueSlip getSettledDeliveryNote() {
+		return settledDeliveryNote;
+	}
+
+	public void setSettledDeliveryNote(PosIssueSlip settledDeliveryNote) {
+		this.settledDeliveryNote = settledDeliveryNote;
 	}
 	
 }

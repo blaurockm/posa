@@ -105,7 +105,7 @@ public class SettlementCreator {
 	private void recordInvoiceOnAgreements(Settlement inv) {
 		for (InvoiceAgrDetail iad : inv.getAgreementDetails()) {
 			if (InvoiceAgrDetail.TYPE.SUBSCR.equals(iad.getType())) {
-				Subscription sub = subscriptionRepository.findOne(iad.getAgreementId());
+				Subscription sub = iad.getSettledAgreement();
 				sub.setPayedUntil(iad.getDeliveryTill());
 				if (iad.getPayType() != null && iad.getPayType().equals(PayIntervalType.EACHDELIVERY)) {
 					
@@ -116,7 +116,7 @@ public class SettlementCreator {
 				}
 				subscriptionRepository.save(sub);
 			} else {
-				PosIssueSlip slip = issueSlipRepository.findOne(iad.getAgreementId());
+				PosIssueSlip slip = iad.getSettledDeliveryNote();
 				slip.setPayed(Boolean.TRUE);
 				issueSlipRepository.save(slip);
 			}
@@ -125,7 +125,7 @@ public class SettlementCreator {
 	public void unrecordInvoiceOnAgreements(Settlement inv) {
 		for (InvoiceAgrDetail iad : inv.getAgreementDetails()) {
 			if (InvoiceAgrDetail.TYPE.SUBSCR.equals(iad.getType())) {
-				Subscription sub = subscriptionRepository.findOne(iad.getAgreementId());
+				Subscription sub = iad.getSettledAgreement();
 				sub.setPayedUntil(iad.getDeliveryFrom().minusDays(1));
 				if (iad.getPayType() != null && iad.getPayType().equals(PayIntervalType.EACHDELIVERY)) {
 					
@@ -135,7 +135,7 @@ public class SettlementCreator {
 				}
 				subscriptionRepository.save(sub);
 			} else {
-				PosIssueSlip slip = issueSlipRepository.findOne(iad.getAgreementId());
+				PosIssueSlip slip = iad.getSettledDeliveryNote();
 				slip.setPayed(Boolean.FALSE);
 				issueSlipRepository.save(slip); // TODO wir sollten den auch im Libras als unbezahlt markieren
 			}
@@ -209,7 +209,7 @@ public class SettlementCreator {
 			return null;
 		}
 		InvoiceAgrDetail iad = new InvoiceAgrDetail();
-		iad.setAgreementId(slip.getId());
+		iad.setSettledDeliveryNote(slip);
 		iad.setType(InvoiceAgrDetail.TYPE.ISSUESLIP);
 		addTextDetail(inv, "Artikel des Lieferscheins " + slip.getNumber() + " vom " + slip.getDate().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
 		for (PosInvoiceDetail detail : slip.getDetails()) {
@@ -243,7 +243,7 @@ public class SettlementCreator {
 			addTextDetail(inv, sub.getDeliveryInfo2());
 		}
 		InvoiceAgrDetail iad = new InvoiceAgrDetail();
-		iad.setAgreementId(sub.getId());
+		iad.setSettledAgreement(sub);
 		iad.setPayType(sub.getPaymentType());
 
 		LocalDate from = null;
@@ -292,7 +292,7 @@ public class SettlementCreator {
 			addTextDetail(inv, sub.getDeliveryInfo2());
 		}
 		InvoiceAgrDetail iad = new InvoiceAgrDetail();
-		iad.setAgreementId(sub.getId());
+		iad.setSettledAgreement(sub);
 		iad.setPayType(sub.getPaymentType());
 		LocalDate from = null;
 		LocalDate till = null;

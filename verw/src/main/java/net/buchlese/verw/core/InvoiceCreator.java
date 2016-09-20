@@ -102,7 +102,7 @@ public class InvoiceCreator {
 	public void unrecordInvoiceOnAgreements(PosInvoice inv) {
 		for (InvoiceAgrDetail iad : inv.getAgreementDetails()) {
 			if (InvoiceAgrDetail.TYPE.SUBSCR.equals(iad.getType())) {
-				Subscription sub = subscriptionRepository.findOne(iad.getAgreementId());
+				Subscription sub = iad.getSettledAgreement();
 				sub.setPayedUntil(iad.getDeliveryFrom().minusDays(1));
 				if (iad.getPayType() != null && iad.getPayType().equals(PayIntervalType.EACHDELIVERY)) {
 					
@@ -112,7 +112,7 @@ public class InvoiceCreator {
 				}
 				subscriptionRepository.save(sub);
 			} else {
-				PosIssueSlip slip = issueSlipRepository.findOne(iad.getAgreementId());
+				PosIssueSlip slip = iad.getSettledDeliveryNote();
 				slip.setPayed(Boolean.FALSE);
 				issueSlipRepository.save(slip); // TODO wir sollten den auch im Libras als unbezahlt markieren
 			}
@@ -128,7 +128,7 @@ public class InvoiceCreator {
 	private void recordInvoiceOnAgreements(PosInvoice inv) {
 		for (InvoiceAgrDetail iad : inv.getAgreementDetails()) {
 			if (InvoiceAgrDetail.TYPE.SUBSCR.equals(iad.getType())) {
-				Subscription sub = subscriptionRepository.findOne(iad.getAgreementId());
+				Subscription sub = iad.getSettledAgreement();
 				sub.setPayedUntil(iad.getDeliveryTill());
 				if (iad.getPayType() != null && iad.getPayType().equals(PayIntervalType.EACHDELIVERY)) {
 //	TODO				dao.recordDetailsOnInvoice(iad.getDeliveryIds(), inv.getNumber());
@@ -137,7 +137,7 @@ public class InvoiceCreator {
 				}
 				subscriptionRepository.save(sub);
 			} else {
-				PosIssueSlip slip = issueSlipRepository.findOne(iad.getAgreementId());
+				PosIssueSlip slip = iad.getSettledDeliveryNote();
 				slip.setPayed(Boolean.TRUE);
 				issueSlipRepository.save(slip);
 			}

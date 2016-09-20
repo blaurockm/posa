@@ -295,7 +295,7 @@ public class SubscrDelivery implements Comparable<SubscrDelivery> {
 
 	public void setSettDetail(InvoiceAgrDetail settDetail) {
 		this.settDetail = settDetail;
-		this.payed = true;
+		this.payed = settDetail != null;
 	}
 
 
