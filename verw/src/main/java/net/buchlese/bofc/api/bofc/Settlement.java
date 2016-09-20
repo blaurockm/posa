@@ -249,7 +249,7 @@ public class Settlement {
 	}
 
 	public String toString() {
-		return "PosInvoice " + number + " of " + String.valueOf(date) + (amount != null ? (" amount " + String.valueOf(amount / 100)) : "n.bek."); 
+		return "Settlement from " + String.valueOf(date) + (amount != null ? (" amount " + String.valueOf(amount / 100)) : "n.bek."); 
 	}
 	public List<PosInvoiceDetail> getDetails() {
 		return details;

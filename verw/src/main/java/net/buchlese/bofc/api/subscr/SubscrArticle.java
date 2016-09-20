@@ -25,7 +25,7 @@ public class SubscrArticle implements Comparable<SubscrArticle> {
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	@Id
 	@JsonProperty
-	private long id;
+	private Long id;
 
 	@JsonProperty
 	private String name;
@@ -104,11 +104,11 @@ public class SubscrArticle implements Comparable<SubscrArticle> {
 	}
 
 
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 

@@ -18,6 +18,8 @@ import javax.persistence.Transient;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import net.buchlese.bofc.api.bofc.InvoiceAgrDetail;
+
 
 @Entity
 @Table( name = "subscrdelivery" )
@@ -25,7 +27,7 @@ public class SubscrDelivery implements Comparable<SubscrDelivery> {
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	@Id
 	@JsonProperty
-	private long id;
+	private Long id;
 
 //	@DateTimeFormat(pattern="dd.MM.yyyy")
 	@JsonProperty
@@ -65,7 +67,13 @@ public class SubscrDelivery implements Comparable<SubscrDelivery> {
 	@JsonIgnore
 	public String subscriberName;
 
-	@ManyToOne
+	@ManyToOne(fetch=FetchType.LAZY)
+	@JoinColumn(name = "settdetail_id",
+	foreignKey = @ForeignKey(name = "SETTDETAIL1_ID_FK")
+)
+	private InvoiceAgrDetail settDetail;
+	
+	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name = "article_id",
 	foreignKey = @ForeignKey(name = "ARTICLE_ID_FK")
 )
@@ -114,10 +122,10 @@ public class SubscrDelivery implements Comparable<SubscrDelivery> {
 		totalHalf = total - totalFull;
 	}
 
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 	public LocalDate getDeliveryDate() {
@@ -256,15 +264,13 @@ public class SubscrDelivery implements Comparable<SubscrDelivery> {
 		this.subscriberName = subscriberName;
 	}
 
-
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + (int) (id ^ (id >>> 32));
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		return result;
 	}
-
 
 	@Override
 	public boolean equals(Object obj) {
@@ -275,9 +281,23 @@ public class SubscrDelivery implements Comparable<SubscrDelivery> {
 		if (getClass() != obj.getClass())
 			return false;
 		SubscrDelivery other = (SubscrDelivery) obj;
-		if (id != other.id)
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
 			return false;
 		return true;
 	}
+
+	public InvoiceAgrDetail getSettDetail() {
+		return settDetail;
+	}
+
+	public void setSettDetail(InvoiceAgrDetail settDetail) {
+		this.settDetail = settDetail;
+		this.payed = true;
+	}
+
+
 	
 }

@@ -23,7 +23,7 @@ public class Subscriber {
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	@JsonProperty
-	private long id;
+	private Long id;
 	@JsonProperty
 	private int pointid;
 
@@ -69,10 +69,10 @@ public class Subscriber {
 		return null;
 	}
 
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 	public int getPointid() {

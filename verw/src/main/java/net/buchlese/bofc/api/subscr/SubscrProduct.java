@@ -26,7 +26,7 @@ public class SubscrProduct {
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	@JsonProperty
-	private long id;
+	private Long id;
 
 	@JsonProperty
 	private String abbrev;
@@ -132,10 +132,10 @@ public class SubscrProduct {
 	}
 	
 
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 	public String getAbbrev() {

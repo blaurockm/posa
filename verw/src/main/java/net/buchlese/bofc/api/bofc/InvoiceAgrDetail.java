@@ -1,7 +1,7 @@
 package net.buchlese.bofc.api.bofc;
 
 import java.time.LocalDate;
-import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -9,12 +9,15 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Transient;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import net.buchlese.bofc.api.subscr.PayIntervalType;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
+import net.buchlese.bofc.api.subscr.SubscrDelivery;
+import net.buchlese.bofc.api.subscr.SubscrIntervalDelivery;
 
 @Entity
 @Table(name="posinvoice_agrdetail")
@@ -34,9 +37,13 @@ public class InvoiceAgrDetail {
 	@JsonProperty
 	private LocalDate deliveryTill;
 
-	@JsonProperty
-	@Transient
-	private List<Long> deliveryIds;
+	@JsonIgnore
+	@OneToMany(mappedBy="settDetail")
+	private Set<SubscrDelivery> deliveries;
+
+	@JsonIgnore
+	@OneToMany(mappedBy="settDetail")
+	private Set<SubscrIntervalDelivery> intervalDeliveries;
 
 	@JsonProperty
 	@Enumerated(EnumType.STRING)
@@ -68,14 +75,6 @@ public class InvoiceAgrDetail {
 
 	public void setDeliveryTill(LocalDate deliveryTill) {
 		this.deliveryTill = deliveryTill;
-	}
-
-	public List<Long> getDeliveryIds() {
-		return deliveryIds;
-	}
-
-	public void setDeliveryIds(List<Long> deliveryIds) {
-		this.deliveryIds = deliveryIds;
 	}
 
 	public TYPE getType() {
@@ -125,6 +124,22 @@ public class InvoiceAgrDetail {
 		} else if (!id.equals(other.id))
 			return false;
 		return true;
+	}
+
+	public Set<SubscrDelivery> getDeliveries() {
+		return deliveries;
+	}
+
+	public void setDeliveries(Set<SubscrDelivery> deliveries) {
+		this.deliveries = deliveries;
+	}
+
+	public Set<SubscrIntervalDelivery> getIntervalDeliveries() {
+		return intervalDeliveries;
+	}
+
+	public void setIntervalDeliveries(Set<SubscrIntervalDelivery> intervalDeliveries) {
+		this.intervalDeliveries = intervalDeliveries;
 	}
 	
 }

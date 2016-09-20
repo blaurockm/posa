@@ -242,11 +242,15 @@ public class SettlementCreator {
 			addTextDetail(inv, sub.getDeliveryInfo1());
 			addTextDetail(inv, sub.getDeliveryInfo2());
 		}
+		InvoiceAgrDetail iad = new InvoiceAgrDetail();
+		iad.setAgreementId(sub.getId());
+		iad.setPayType(sub.getPaymentType());
+
 		LocalDate from = null;
 		LocalDate till = null;
 		// details per Delivery;
 		for (SubscrDelivery deliv : deliveries) {
-			SubscrArticle art = subscrArticleRepository.findOne(deliv.getArticleId());
+			SubscrArticle art = deliv.getArticle();
 			inv.addInvoiceDetail(createInvoiceDetailForDelivery(deliv,art));
 			// Versandkosten
 			if (deliv.getShipmentCost() > 0) {
@@ -258,13 +262,10 @@ public class SettlementCreator {
 			if (till == null || deliv.getDeliveryDate().isAfter(till)) {
 				till = deliv.getDeliveryDate();
 			}
+			deliv.setSettDetail(iad);
 		}
-		InvoiceAgrDetail iad = new InvoiceAgrDetail();
-		iad.setAgreementId(sub.getId());
-		iad.setPayType(sub.getPaymentType());
 		iad.setDeliveryFrom(from);
 		iad.setDeliveryTill(till.withDayOfMonth(till.lengthOfMonth()));  // immer der letzte des Monats
-		//TODO iad.setDeliveryIds(deliveries.stream().mapToLong(SubscrDelivery::getId).boxed().collect(Collectors.toList()));
 		inv.addAgreementDetail(iad);
 		return newDetail;
 	}
@@ -290,11 +291,14 @@ public class SettlementCreator {
 			addTextDetail(inv, sub.getDeliveryInfo1());
 			addTextDetail(inv, sub.getDeliveryInfo2());
 		}
+		InvoiceAgrDetail iad = new InvoiceAgrDetail();
+		iad.setAgreementId(sub.getId());
+		iad.setPayType(sub.getPaymentType());
 		LocalDate from = null;
 		LocalDate till = null;
 		// details per Delivery;
 		for (SubscrIntervalDelivery deliv : deliveries) {
-			SubscrInterval interval = subscrIntervalRepository.findOne(deliv.getIntervalId());
+			SubscrInterval interval = deliv.getInterval();
 			inv.addInvoiceDetail(createInvoiceDetailForInterval(deliv, interval));
 			// Versandkosten
 			if (deliv.getShipmentCost() > 0) {
@@ -306,15 +310,12 @@ public class SettlementCreator {
 			if (till == null || interval.getEndDate().isAfter(till)) {
 				till = interval.getEndDate();
 			}
+			deliv.setSettDetail(iad);
 		}
 		sub.setPayedUntil(till);
 		
-		InvoiceAgrDetail iad = new InvoiceAgrDetail();
-		iad.setAgreementId(sub.getId());
-		iad.setPayType(sub.getPaymentType());
 		iad.setDeliveryFrom(from);
 		iad.setDeliveryTill(till.withDayOfMonth(till.lengthOfMonth()));  // immer der letzte des Monats
-//		TODO iad.setDeliveryIds(deliveries.stream().mapToLong(SubscrIntervalDelivery::getId).boxed().collect(Collectors.toList()));
 		inv.addAgreementDetail(iad);
 		return newDetail;
 	}

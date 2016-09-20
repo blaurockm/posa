@@ -31,7 +31,7 @@ public class ReportDeliveryProtocolCreator {
 		List<ReportDeliveryProtocol.ProtocolDetail> dets = new ArrayList<>();
 		for (SubscrDelivery del : delivRepo.findByDeliveryDate(date)) {
 			ReportDeliveryProtocol.ProtocolDetail det = new ReportDeliveryProtocol.ProtocolDetail();
-			det.article = articleRepo.findOne(del.getArticleId());
+			det.article = del.getArticle();
 			Subscription sub = subscrRepo.findOne(del.getSubscriptionId());
 			Subscriber s = custRepo.findOne(del.getSubscriberId());
 			if (sub.getDeliveryAddress() != null) {

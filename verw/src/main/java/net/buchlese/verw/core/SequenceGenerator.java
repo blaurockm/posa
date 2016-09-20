@@ -55,7 +55,7 @@ public class SequenceGenerator {
 	
 	
 	private SequenceGen getCurrentActiveSequence(String key) {
-		List<SequenceGen> res = em.createQuery("select * from SequenceGen where seqKey = ?",SequenceGen.class).setParameter(1, key).getResultList();
+		List<SequenceGen> res = em.createQuery("from SequenceGen where seqKey = ?",SequenceGen.class).setParameter(1, key).getResultList();
 		if (res.isEmpty() == false) {
 			return res.get(0);
 		}

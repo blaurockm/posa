@@ -16,7 +16,7 @@ public class Publisher {
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	@JsonProperty
-	private long id;
+	private Long id;
 
 	@JsonProperty
 	private int creditorId;
@@ -49,10 +49,10 @@ public class Publisher {
 		return null;
 	}
 
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 	public int getCustomerId() {
