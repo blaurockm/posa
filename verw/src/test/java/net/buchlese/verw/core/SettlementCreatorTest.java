@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.time.LocalDate;
 import java.util.List;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +14,8 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import net.buchlese.bofc.api.bofc.InvoiceAgrDetail;
+import net.buchlese.bofc.api.bofc.PosInvoiceDetail;
 import net.buchlese.bofc.api.bofc.Settlement;
 import net.buchlese.bofc.api.subscr.Address;
 import net.buchlese.bofc.api.subscr.PayIntervalType;
@@ -87,7 +88,7 @@ public class SettlementCreatorTest {
     	
     	entityManager.flush();
     	
-    	Settlement sett = settCreator.createSubscription(sub);
+    	Settlement sett = settCreator.createSettlement(sub);
     	
     	assertThat(sett).isNotNull();
     	assertThat(sett.getDetails()).isNotEmpty();
@@ -103,6 +104,19 @@ public class SettlementCreatorTest {
     	List<Settlement> psett = settRepository.findAll();
     	
     	assertThat(psett).hasSize(1);
+    	
+    	// jetzt noch das löschen von Abrechnungen testen
+    	settCreator.deleteSettlement(psett.get(0));
+
+    	List<InvoiceAgrDetail> pinvAgrDet = entityManager.getEntityManager().createQuery("from InvoiceAgrDetail", InvoiceAgrDetail.class).getResultList();
+    	assertThat(pinvAgrDet).isEmpty();
+
+    	List<PosInvoiceDetail> pinvDet = entityManager.getEntityManager().createQuery("from PosInvoiceDetail", PosInvoiceDetail.class).getResultList();
+    	assertThat(pinvDet).isEmpty();
+
+    	List<Settlement> psett2 = settRepository.findAll();
+    	
+    	assertThat(psett2).isEmpty();
     }
 
     @Test
@@ -144,7 +158,7 @@ public class SettlementCreatorTest {
     	
     	entityManager.flush();
     	
-    	Settlement sett = settCreator.createSubscription(sub);
+    	Settlement sett = settCreator.createSettlement(sub);
     	
     	assertThat(sett).isNotNull();
     	assertThat(sett.getDetails()).isNotEmpty();
@@ -162,6 +176,6 @@ public class SettlementCreatorTest {
     	assertThat(psett).hasSize(1);
     }
 
-    
+    // TODO sammelrechnungen prüfen
     
 }

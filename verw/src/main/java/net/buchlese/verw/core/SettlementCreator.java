@@ -3,7 +3,6 @@ package net.buchlese.verw.core;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
@@ -73,33 +72,42 @@ public class SettlementCreator {
 	
 	/**
 	 * Sammelrechnung für einen Abonnenten
-	 * @param dao
 	 * @param subscriber
 	 * @return
 	 */
-	public Settlement createCollectiveSubscription(Subscriber subscriber) {
+	public Settlement createCollectiveSettlement(Subscriber subscriber) {
 		List<PosIssueSlip> issueSlips = issueSlipRepository.findByDebitorIdAndPayed(subscriber.getDebitorId(), false);
 		List<Subscription> subscriptions = subscriber.getSubscriptions();
-		Settlement inv = createTemporaryInvoice(subscriber, subscriptions, issueSlips);
-		inv.setCollective(true);
-		return inv;
+		Settlement sett = createTemporaryInvoice(subscriber, subscriptions, issueSlips);
+		sett.setCollective(true);
+		return sett;
 	}
 
 	/**
 	 * Einzelrechnung für ein Abo 
-	 * @param dao
 	 * @param sub
 	 * @return
 	 */
-	public Settlement createSubscription(Subscription sub) {
-		Subscriber cust = customerRepository.findOne(sub.getSubscriberId());
-		return createTemporaryInvoice(cust, Arrays.asList(sub), null);
+	public Settlement createSettlement(Subscription sub) {
+		return createTemporaryInvoice(sub.getSubscriber(), Arrays.asList(sub), null);
 	}
 
 	/**
-	 * festschreiben einer Rechnung bei den Abos die dvon der Rechnung betroffen sind.
+	 * Einzelrechnung wieder löschen, als ob nichts gewesen wäre.
+	 * @param sett
+	 */
+	public void deleteSettlement(Settlement sett) {
+		if (sett == null || sett.isMerged()) {
+			return;
+		}
+		unrecordInvoiceOnAgreements(sett);
+		settlementRepository.delete(sett);
+	}
+	
+	
+	/**
+	 * die Abrechnung b
 	 * Die Rechnung selbst wird nicht angefasst
-	 * @param dao
 	 * @param inv
 	 */
 	private void recordInvoiceOnAgreements(Settlement inv) {
@@ -107,31 +115,23 @@ public class SettlementCreator {
 			if (InvoiceAgrDetail.TYPE.SUBSCR.equals(iad.getType())) {
 				Subscription sub = iad.getSettledAgreement();
 				sub.setPayedUntil(iad.getDeliveryTill());
-				if (iad.getPayType() != null && iad.getPayType().equals(PayIntervalType.EACHDELIVERY)) {
-					
-//					SubscrDelivery del = subscrDeliveryRepository.findOne(arg0)
-//	TODO				dao.recordDetailsOnInvoice(iad.getDeliveryIds(), inv.getNumber());
-				} else {
-//	TODO				dao.recordIntervalDetailsOnInvoice(iad.getDeliveryIds(), inv.getNumber());
-				}
 				subscriptionRepository.save(sub);
 			} else {
 				PosIssueSlip slip = iad.getSettledDeliveryNote();
 				slip.setPayed(Boolean.TRUE);
-				issueSlipRepository.save(slip);
+				issueSlipRepository.save(slip); // TODO wir sollten den auch im Libras als unbezahlt markieren
 			}
 		}
 	}
-	public void unrecordInvoiceOnAgreements(Settlement inv) {
+	private void unrecordInvoiceOnAgreements(Settlement inv) {
 		for (InvoiceAgrDetail iad : inv.getAgreementDetails()) {
 			if (InvoiceAgrDetail.TYPE.SUBSCR.equals(iad.getType())) {
 				Subscription sub = iad.getSettledAgreement();
 				sub.setPayedUntil(iad.getDeliveryFrom().minusDays(1));
 				if (iad.getPayType() != null && iad.getPayType().equals(PayIntervalType.EACHDELIVERY)) {
-					
-//	TODO				dao.resetDetailsOfInvoice(iad.getDeliveryIds());
+					iad.getDeliveries().forEach(x -> x.setSettDetail(null));
 				} else {
-//	TODO				dao.resetIntervalDetailsOfInvoice(iad.getDeliveryIds());
+					iad.getIntervalDeliveries().forEach(x -> x.setSettDetail(null));
 				}
 				subscriptionRepository.save(sub);
 			} else {
@@ -154,19 +154,17 @@ public class SettlementCreator {
 	 * @return
 	 */
 	private Settlement createTemporaryInvoice(Subscriber subscriber, List<Subscription> subs, List<PosIssueSlip> issueSlips) {
-		final Settlement inv = createInvoiceSkeleton(subscriber);
+		final Settlement inv = createSettlementSkeleton(subscriber);
 		// die Abos nach den Lieferhinweisen sortieren
 		Collections.sort(subs, new InvoiceSubComparator());
 		// details
 		String lastDetailInfo = null;
 		for(Subscription sub : subs) {
 			if (PayIntervalType.EACHDELIVERY.equals(sub.getPaymentType())) {
-				List<SubscrDelivery> deliveries = new ArrayList<>(sub.getArticleDeliveries()); 
-// TODO payed = false						subscrDeliveryRepository.findBySubscriptionIdAndPayed(sub.getId(), false);
+				List<SubscrDelivery> deliveries = subscrDeliveryRepository.findBySubscriptionAndPayed(sub, false);
 				lastDetailInfo = addDeliveriesToInvoice(sub, inv, deliveries, lastDetailInfo);
 			} else {
-				List<SubscrIntervalDelivery> intdeliveries = new ArrayList<>(sub.getIntervalDeliveries()); 
-// TODO payed = false						subscrIntervalDeliveryRepository.findBySubscriptionIdAndPayed(sub.getId(), false);
+				List<SubscrIntervalDelivery> intdeliveries = subscrIntervalDeliveryRepository.findBySubscriptionAndPayed(sub, false);
 				lastDetailInfo = addIntervalDeliveriesToInvoice(sub, inv, intdeliveries, lastDetailInfo);
 			}
 		}
@@ -186,7 +184,7 @@ public class SettlementCreator {
 	 * errechnet die Steuerbeträge
 	 * @param inv
 	 */
-	private static void updateTaxValues(Settlement inv) {
+	private void updateTaxValues(Settlement inv) {
 		inv.setNettoHalf((long) (inv.getAmountHalf() / 1.07));
 		inv.setTaxHalf(inv.getAmountHalf() - inv.getNettoHalf());
 		inv.setTax(inv.getTaxHalf());
@@ -320,7 +318,7 @@ public class SettlementCreator {
 		return newDetail;
 	}
 
-	private  Settlement createInvoiceSkeleton(Subscriber subscri) {
+	private  Settlement createSettlementSkeleton(Subscriber subscri) {
 		Settlement inv = new Settlement();
 		
 		// formalia
@@ -334,6 +332,7 @@ public class SettlementCreator {
 		inv.setAmountHalf(0L);
 		inv.setAmountNone(0L);
 		inv.setCollective(false);
+		inv.setMerged(false);
 		inv.setType("subscr");
 		
 		// Rechnungsadresse

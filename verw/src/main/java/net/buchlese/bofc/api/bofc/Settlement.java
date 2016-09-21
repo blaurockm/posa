@@ -75,7 +75,7 @@ public class Settlement {
 	@JsonProperty
 	private LocalDate date;
 	@JsonProperty
-	private LocalDateTime printTime;
+	private boolean merged;
 
 	@JsonProperty
 	private boolean collective;
@@ -235,12 +235,6 @@ public class Settlement {
 	public void setDate(LocalDate date) {
 		this.date = date;
 	}
-	public LocalDateTime getPrintTime() {
-		return printTime;
-	}
-	public void setPrintTime(LocalDateTime printTime) {
-		this.printTime = printTime;
-	}
 	public String getNumber() {
 		return number;
 	}
@@ -344,6 +338,14 @@ public class Settlement {
 
 	public void setType(String type) {
 		this.type = type;
+	}
+
+	public boolean isMerged() {
+		return merged;
+	}
+
+	public void setMerged(boolean merged) {
+		this.merged = merged;
 	}
 
 }

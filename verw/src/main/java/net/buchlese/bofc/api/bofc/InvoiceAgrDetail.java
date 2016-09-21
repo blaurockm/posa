@@ -1,6 +1,7 @@
 package net.buchlese.bofc.api.bofc;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.Entity;
@@ -128,6 +129,20 @@ public class InvoiceAgrDetail {
 		return deliveries;
 	}
 
+	public void addSubscrDelivery(SubscrDelivery d) {
+		if (deliveries == null) {
+			deliveries = new HashSet<>();
+		}
+		deliveries.add(d);
+	}
+
+	public void removeSubscrDelivery(SubscrDelivery d) {
+		if (deliveries == null) {
+			deliveries = new HashSet<>();
+		}
+		deliveries.remove(d);
+	}
+
 	public void setDeliveries(Set<SubscrDelivery> deliveries) {
 		this.deliveries = deliveries;
 	}
@@ -138,6 +153,20 @@ public class InvoiceAgrDetail {
 
 	public void setIntervalDeliveries(Set<SubscrIntervalDelivery> intervalDeliveries) {
 		this.intervalDeliveries = intervalDeliveries;
+	}
+
+	public void addIntervalDelivery(SubscrIntervalDelivery d) {
+		if (intervalDeliveries == null) {
+			intervalDeliveries = new HashSet<>();
+		}
+		intervalDeliveries.add(d);
+	}
+
+	public void removeIntervalDelivery(SubscrIntervalDelivery d) {
+		if (intervalDeliveries == null) {
+			intervalDeliveries = new HashSet<>();
+		}
+		intervalDeliveries.remove(d);
 	}
 
 	public Subscription getSettledAgreement() {

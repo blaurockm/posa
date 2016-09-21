@@ -245,6 +245,13 @@ public class SubscrIntervalDelivery implements Comparable<SubscrIntervalDelivery
 	}
 
 	public void setSettDetail(InvoiceAgrDetail settDetail) {
+		if (settDetail != null) {
+			settDetail.addIntervalDelivery(this);
+		} else {
+			if (this.settDetail != null) {
+				this.settDetail.removeIntervalDelivery(this);
+			}
+		}
 		this.settDetail = settDetail;
 		this.payed = settDetail != null;
 	}

@@ -1,5 +1,8 @@
 package net.buchlese.verw.core;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +42,13 @@ public class InvoiceCreator {
 	@Transactional
 	public PosInvoice fakturiereSettlement(Settlement sett) {
 		PosInvoice inv = new PosInvoice();
-		inv.setNumber(String.valueOf(numgen.getNextNumber("invoice" + inv.getPointid())));
+		
+		String nummernkreis = "invoice" + sett.getPointid();
+		Long nextNumber = numgen.getNextNumber(nummernkreis);
+		if (nextNumber == null) {
+			throw new IllegalAccessError("Nummernkreis " + nummernkreis + " ist nicht verfügbar");
+		}
+		inv.setNumber(String.valueOf(nextNumber));
 		// formalia
 		inv.setDate(sett.getDate()); 
 		inv.setCreationTime(sett.getCreationTime());
@@ -73,14 +82,15 @@ public class InvoiceCreator {
 		inv.setPayed(false);
 		inv.setCancelled(false);
 		
-		inv.setDetails(sett.getDetails());
-		inv.setAgreementDetails(sett.getAgreementDetails());
+		inv.setDetails(new ArrayList<>(sett.getDetails()));
+		inv.setAgreementDetails(new HashSet<>(sett.getAgreementDetails()));
 		
 		inv.setPointid(sett.getPointid());
 		
-		
+		recordInvoiceOnAgreements(inv);
 		invoiceRepository.save(inv);
-		settlementRepository.delete(sett);
+		sett.setMerged(true);
+		settlementRepository.save(sett);
 		return inv;
 	}
 
@@ -99,16 +109,15 @@ public class InvoiceCreator {
 		invoiceRepository.save(inv);
 	}
 	
-	public void unrecordInvoiceOnAgreements(PosInvoice inv) {
+	private void unrecordInvoiceOnAgreements(PosInvoice inv) {
 		for (InvoiceAgrDetail iad : inv.getAgreementDetails()) {
 			if (InvoiceAgrDetail.TYPE.SUBSCR.equals(iad.getType())) {
 				Subscription sub = iad.getSettledAgreement();
 				sub.setPayedUntil(iad.getDeliveryFrom().minusDays(1));
 				if (iad.getPayType() != null && iad.getPayType().equals(PayIntervalType.EACHDELIVERY)) {
-					
-//	TODO				dao.resetDetailsOfInvoice(iad.getDeliveryIds());
+					iad.getDeliveries().forEach(x -> { x.setSettDetail(null); x.setInvoiceNumber(null); });
 				} else {
-//	TODO				dao.resetIntervalDetailsOfInvoice(iad.getDeliveryIds());
+					iad.getIntervalDeliveries().forEach(x -> {x.setSettDetail(null); x.setInvoiceNumber(null); });
 				}
 				subscriptionRepository.save(sub);
 			} else {
@@ -131,15 +140,15 @@ public class InvoiceCreator {
 				Subscription sub = iad.getSettledAgreement();
 				sub.setPayedUntil(iad.getDeliveryTill());
 				if (iad.getPayType() != null && iad.getPayType().equals(PayIntervalType.EACHDELIVERY)) {
-//	TODO				dao.recordDetailsOnInvoice(iad.getDeliveryIds(), inv.getNumber());
+					iad.getDeliveries().forEach(x -> x.setInvoiceNumber(inv.getNumber()));
 				} else {
-//	TODO				dao.recordIntervalDetailsOnInvoice(iad.getDeliveryIds(), inv.getNumber());
+					iad.getIntervalDeliveries().forEach(x -> x.setInvoiceNumber(inv.getNumber()));
 				}
 				subscriptionRepository.save(sub);
 			} else {
 				PosIssueSlip slip = iad.getSettledDeliveryNote();
 				slip.setPayed(Boolean.TRUE);
-				issueSlipRepository.save(slip);
+				issueSlipRepository.save(slip);  // TODO wir sollten den auch im Libras als unbezahlt markieren
 			}
 		}
 	}
