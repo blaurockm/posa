@@ -190,7 +190,7 @@ public class InvoicesController {
 	public ResponseEntity<?> acceptInvoice(@RequestBody PosInvoice invoice)  {
 		try {
 			// mapping der Debitor-Nummer
-			Optional<Integer> debNo = invoiceRepository.mapDebitor(invoice.getPointid(), invoice.getCustomerId());
+			Optional<Integer> debNo = invoiceRepository.mapDebitor(invoice.getCustomerId(), invoice.getPointid());
 			invoice.setDebitorId(debNo.orElse(Integer.valueOf(0)));
 			PosInvoice old = invoiceRepository.findOne(QPosInvoice.posInvoice.number.eq(invoice.getNumber()));
 			if (old == null) {
