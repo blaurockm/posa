@@ -15,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Scope(value="singleton")
-@Profile("integrationtest")
 public class SequenceGenerator {
 
 	@PersistenceContext	EntityManager em;
