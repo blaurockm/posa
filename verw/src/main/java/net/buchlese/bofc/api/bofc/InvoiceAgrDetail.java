@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -44,11 +45,11 @@ public class InvoiceAgrDetail {
 	private LocalDate deliveryTill;
 
 	@JsonIgnore
-	@OneToMany(mappedBy="settDetail")
+	@OneToMany(mappedBy="settDetail",cascade = CascadeType.ALL)
 	private Set<SubscrDelivery> deliveries;
 
 	@JsonIgnore
-	@OneToMany(mappedBy="settDetail")
+	@OneToMany(mappedBy="settDetail",cascade = CascadeType.ALL )
 	private Set<SubscrIntervalDelivery> intervalDeliveries;
 
 	@JsonProperty

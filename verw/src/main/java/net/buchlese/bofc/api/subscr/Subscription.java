@@ -63,6 +63,13 @@ public class Subscription {
 		return subscriber;
 	}
 	public void setSubscriber(Subscriber s) {
+		if (s != null) {
+			s.addSubscription(this);
+		} else {
+			if (this.subscriber != null) {
+			 this.subscriber.removeSubscription(this);
+			}
+		}
 		this.subscriber = s;
 	}
 

@@ -73,13 +73,16 @@ public class InvoiceCreatorTest {
     	assertThat(inv.getDetails().get(0).getAmount()).isEqualTo(12000L);
     	assertThat(inv.getAgreementDetails()).isNotEmpty();
     	
-    	
     	List<PosInvoice> pinv = invRepository.findAll();
     	
     	assertThat(pinv).hasSize(1);
+    	
+    	
+    	invCreator.cancelInvoice(inv);
+    	
+    	
+    	
+    	
     }
-
-    // TODO cancelInvoice testen
-    
     
 }

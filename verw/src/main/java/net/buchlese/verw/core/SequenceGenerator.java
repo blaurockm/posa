@@ -6,12 +6,11 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import net.buchlese.bofc.api.sys.SequenceGen;
-
-import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import net.buchlese.bofc.api.sys.SequenceGen;
 
 @Service
 @Scope(value="singleton")

@@ -3,10 +3,13 @@ package net.buchlese.verw.core;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -77,7 +80,7 @@ public class SettlementCreator {
 	 */
 	public Settlement createCollectiveSettlement(Subscriber subscriber) {
 		List<PosIssueSlip> issueSlips = issueSlipRepository.findByDebitorIdAndPayed(subscriber.getDebitorId(), false);
-		List<Subscription> subscriptions = subscriber.getSubscriptions();
+		Set<Subscription> subscriptions = subscriber.getSubscriptions();
 		Settlement sett = createTemporaryInvoice(subscriber, subscriptions, issueSlips);
 		sett.setCollective(true);
 		return sett;
@@ -153,10 +156,11 @@ public class SettlementCreator {
 	 * @param numgen
 	 * @return
 	 */
-	private Settlement createTemporaryInvoice(Subscriber subscriber, List<Subscription> subs, List<PosIssueSlip> issueSlips) {
+	private Settlement createTemporaryInvoice(Subscriber subscriber, Collection<Subscription> subs, List<PosIssueSlip> issueSlips) {
 		final Settlement inv = createSettlementSkeleton(subscriber);
 		// die Abos nach den Lieferhinweisen sortieren
-		Collections.sort(subs, new InvoiceSubComparator());
+		List<Subscription> sortedSubs = new ArrayList<>(subs);
+		Collections.sort(sortedSubs, new InvoiceSubComparator());
 		// details
 		String lastDetailInfo = null;
 		for(Subscription sub : subs) {

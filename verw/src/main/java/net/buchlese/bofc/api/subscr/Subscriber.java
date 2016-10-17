@@ -1,8 +1,8 @@
 package net.buchlese.bofc.api.subscr;
 
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -49,8 +49,8 @@ public class Subscriber {
 	private ShipType shipmentType;
 
 	@JsonIgnore
-	@OneToMany(mappedBy = "subscriber", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<Subscription> subscriptions;
+	@OneToMany(mappedBy = "subscriber", orphanRemoval = true)
+	private Set<Subscription> subscriptions;
 	
 	
 	@JsonIgnore
@@ -136,11 +136,11 @@ public class Subscriber {
 		this.email = email;
 	}
 
-	public List<Subscription> getSubscriptions() {
+	public Set<Subscription> getSubscriptions() {
 		return subscriptions;
 	}
 
-	public void setSubscriptions(List<Subscription> subscriptions) {
+	public void setSubscriptions(Set<Subscription> subscriptions) {
 		this.subscriptions = subscriptions;
 	}
 
@@ -164,6 +164,20 @@ public class Subscriber {
 		if (id != other.id)
 			return false;
 		return true;
+	}
+
+	public void addSubscription(Subscription sub) {
+		if (subscriptions == null) {
+			subscriptions = new HashSet<>();
+		}
+		subscriptions.add(sub);
+	}
+
+	public void removeSubscription(Subscription sub) {
+		if (subscriptions == null) {
+			subscriptions = new HashSet<>();
+		}
+		subscriptions.add(sub);
 	}
 
 }

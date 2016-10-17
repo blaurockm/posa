@@ -3,6 +3,7 @@ package net.buchlese.bofc.api.subscr;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
@@ -67,7 +68,7 @@ public class SubscrDelivery implements Comparable<SubscrDelivery> {
 	@JsonIgnore
 	public String subscriberName;
 
-	@ManyToOne(fetch=FetchType.LAZY)
+	@ManyToOne(fetch=FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name = "settdetail_id",
 	foreignKey = @ForeignKey(name = "SETTDETAIL1_ID_FK")
 )

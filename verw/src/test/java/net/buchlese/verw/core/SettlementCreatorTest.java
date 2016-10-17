@@ -51,131 +51,256 @@ public class SettlementCreatorTest {
     @Autowired 
     private SettlementCreator settCreator;
     
-    @Test
-    public void testCreateSettlementDeliv() throws Exception {
-    	SubscrProduct product = new SubscrProduct();
-    	product.setName("testproduct");
+    private void checkCleanTables() {
+		List<InvoiceAgrDetail> pinvAgrDet = entityManager.getEntityManager().createQuery("from InvoiceAgrDetail", InvoiceAgrDetail.class).getResultList();
+    	assertThat(pinvAgrDet).isEmpty();
 
-    	SubscrArticle article = new SubscrArticle();
+    	List<PosInvoiceDetail> pinvDet = entityManager.getEntityManager().createQuery("from PosInvoiceDetail", PosInvoiceDetail.class).getResultList();
+    	assertThat(pinvDet).isEmpty();
+	}
+
+	private void checkDeliveryFree(SubscrDelivery pdeliv) {
+    	assertThat(pdeliv.isPayed()).isFalse();
+	}
+
+	private void checkDeliveryFree(SubscrIntervalDelivery pdeliv) {
+    	assertThat(pdeliv.isPayed()).isFalse();
+	}
+
+	private void checkDeliveryGood(Settlement sett, SubscrDelivery pdeliv) {
+    	assertThat(pdeliv.isPayed()).isTrue();
+    	assertThat(sett.getAgreementDetails()).contains(pdeliv.getSettDetail());
+	}
+
+	private void checkDeliveryGood(Settlement sett, SubscrIntervalDelivery pdeliv) {
+    	assertThat(pdeliv.isPayed()).isTrue();
+    	assertThat(sett.getAgreementDetails()).contains(pdeliv.getSettDetail());
+	}
+
+	private void checkSettlement(Settlement sett, long amount) throws Exception {
+    	assertThat(sett).isNotNull();
+    	assertThat(sett.getDetails()).isNotEmpty();
+    	assertThat(sett.getAmount()).isEqualTo(amount);
+    	assertThat(sett.getAgreementDetails()).isNotEmpty();
+    }
+
+	private void checkSettlementLine(PosInvoiceDetail detail, long amount, String text) throws Exception {
+    	assertThat(detail.getAmount()).isEqualTo(amount);
+    	assertThat(detail.getText()).isEqualTo(text);
+    }
+
+	private SubscrArticle createArticle(SubscrProduct product) {
+		SubscrArticle article = new SubscrArticle();
     	article.setName("artikel 1");
     	article.setProduct(product);
-    	
-    	Subscriber subscri = new Subscriber();
-    	subscri.setName("testkunde");
-    	subscri.setInvoiceAddress(new Address().setName1("testkundeAdrLine1"));
-
-    	Subscription sub = new Subscription();
-    	sub.setSubscriber(subscri);
-    	sub.setProduct(product);
-    	
-    	sub.setPaymentType(PayIntervalType.EACHDELIVERY);
-    	
-    	entityManager.persist(product);
     	entityManager.persist(article);
-    	entityManager.persist(subscri);
-    	sub = entityManager.persistFlushFind(sub);
+		return article;
+	}
 
-    	SubscrDelivery deliv = new SubscrDelivery();
+	private SubscrDelivery createArticleDelivery(SubscrArticle article, Subscription sub) {
+		SubscrDelivery deliv = new SubscrDelivery();
     	deliv.setArticle(article);
     	deliv.setTotal(12000);
     	deliv.setQuantity(3);
     	deliv.setDeliveryDate(LocalDate.now());
     	deliv.setSubscription(sub);
-
     	entityManager.persist(deliv);
-    	
-    	entityManager.merge(sub);
-    	
-    	entityManager.flush();
-    	
-    	Settlement sett = settCreator.createSettlement(sub);
-    	
-    	assertThat(sett).isNotNull();
-    	assertThat(sett.getDetails()).isNotEmpty();
-    	assertThat(sett.getDetails().get(0).getAmount()).isEqualTo(12000L);
-    	assertThat(sett.getAgreementDetails()).isNotEmpty();
-    	
-    	List<SubscrDelivery> pdeliv = delivRepository.findAll();
-    	
-    	assertThat(pdeliv).hasSize(1);
-    	assertThat(pdeliv.get(0).isPayed()).isTrue();
-    	assertThat(pdeliv.get(0).getSettDetail()).isEqualTo(sett.getAgreementDetails().iterator().next());
-    	
-    	List<Settlement> psett = settRepository.findAll();
-    	
-    	assertThat(psett).hasSize(1);
-    	
-    	// jetzt noch das löschen von Abrechnungen testen
-    	settCreator.deleteSettlement(psett.get(0));
+    	return deliv;
+	}
 
-    	List<InvoiceAgrDetail> pinvAgrDet = entityManager.getEntityManager().createQuery("from InvoiceAgrDetail", InvoiceAgrDetail.class).getResultList();
-    	assertThat(pinvAgrDet).isEmpty();
-
-    	List<PosInvoiceDetail> pinvDet = entityManager.getEntityManager().createQuery("from PosInvoiceDetail", PosInvoiceDetail.class).getResultList();
-    	assertThat(pinvDet).isEmpty();
-
-    	List<Settlement> psett2 = settRepository.findAll();
-    	
-    	assertThat(psett2).isEmpty();
-    }
-
-    @Test
-    public void testCreateSettlementInterval() throws Exception {
-    	SubscrProduct product = new SubscrProduct();
-    	product.setName("testproduct");
-
-    	SubscrInterval intvl = new SubscrInterval();
+	private SubscrInterval createInterval(SubscrProduct product) {
+		if (product.isPayPerDelivery()) {
+			throw new IllegalArgumentException("product is pay per Delivery, no interval possible");
+		}
+		SubscrInterval intvl = new SubscrInterval();
     	intvl.setName("Interval 1");
     	intvl.setStartDate(LocalDate.now().minusMonths(1));
     	intvl.setEndDate(LocalDate.now());
     	intvl.setProduct(product);
-    	
-    	Subscriber subscri = new Subscriber();
-    	subscri.setName("testkunde");
-    	subscri.setInvoiceAddress(new Address().setName1("testkundeAdrLine1"));
-
-    	Subscription sub = new Subscription();
-    	sub.setSubscriber(subscri);
-    	sub.setProduct(product);
-    	
-    	sub.setPaymentType(PayIntervalType.MONTHLY);
-    	
-    	entityManager.persist(product);
     	entityManager.persist(intvl);
-    	entityManager.persist(subscri);
-    	sub = entityManager.persistFlushFind(sub);
+		return intvl;
+	}
 
-    	SubscrIntervalDelivery deliv = new SubscrIntervalDelivery();
+	private SubscrIntervalDelivery createIntervalDelivery(SubscrInterval intvl, Subscription sub) {
+		SubscrIntervalDelivery deliv = new SubscrIntervalDelivery();
     	deliv.setInterval(intvl);
     	deliv.setTotal(12600);
     	deliv.setQuantity(3);
     	deliv.setDeliveryDate(LocalDate.now());
     	deliv.setSubscription(sub);
-
     	entityManager.persist(deliv);
+    	return deliv;
+	}
+
+    private SubscrProduct createIntervalProduct() {
+		SubscrProduct product = new SubscrProduct();
+    	product.setName("testintervalproduct");
+    	product.setPayPerDelivery(false);
+    	entityManager.persist(product);
+		return product;
+	}
+
+	private SubscrProduct createProduct() {
+		SubscrProduct product = new SubscrProduct();
+    	product.setName("testproduct");
+    	product.setPayPerDelivery(true);
+    	entityManager.persist(product);
+		return product;
+	}
+
+	private Subscriber createSubscriber() {
+		Subscriber subscri = new Subscriber();
+    	subscri.setName("testkunde");
+    	subscri.setInvoiceAddress(new Address().setName1("testkundeAdrLine1"));
+    	entityManager.persist(subscri);
+		return subscri;
+	}
+
+	private Subscription createSubscription(SubscrProduct product, Subscriber subscri) {
+		Subscription sub = new Subscription();
+    	sub.setSubscriber(subscri);
+    	sub.setProduct(product);
+    	if (product.isPayPerDelivery()) {
+    		sub.setPaymentType(PayIntervalType.EACHDELIVERY);
+    	} else {
+    		sub.setPaymentType(PayIntervalType.MONTHLY);
+    	}
+    	entityManager.persist(sub);
+		return sub;
+	}
+
+	@Test
+    public void testCreateHomogenCollectiveSettlementDeliv() throws Exception {
+    	SubscrProduct product = createProduct();
+    	SubscrArticle article = createArticle(product);
+    	SubscrProduct product2 = createProduct();
+    	SubscrArticle article2 = createArticle(product2);
+    	Subscriber subscri = createSubscriber();
+    	entityManager.flush();
+
+    	Subscription sub = createSubscription(product, subscri);
+    	Subscription sub2 = createSubscription(product2, subscri);
+
+    	assertThat(subscri.getSubscriptions()).hasSize(2);
     	
-    	entityManager.merge(sub);
+    	SubscrDelivery deli1 = createArticleDelivery(article, sub);
+    	SubscrDelivery deli2 = createArticleDelivery(article2, sub2);
+    	
+    	entityManager.flush();
+    	
+    	Settlement sett = settCreator.createCollectiveSettlement(subscri);
+    	
+    	checkSettlement(sett, 24000L);
+    	checkSettlementLine(sett.getDetails().get(0), 12000L, article.getName());
+    	checkSettlementLine(sett.getDetails().get(1), 12000L, article2.getName());
+    	assertThat(sett.getAgreementDetails()).hasSize(2);
+    	
+    	checkDeliveryGood(sett, deli1);
+    	checkDeliveryGood(sett, deli2);
+    	
+    	assertThat(delivRepository.findAll()).hasSize(2);
+    	assertThat(settRepository.findAll()).hasSize(1);
+    	
+    	// jetzt noch das löschen von Abrechnungen testen
+    	settCreator.deleteSettlement(sett);
+
+    	checkCleanTables();
+   	
+    	assertThat(settRepository.findAll()).isEmpty();
+    }
+	
+	
+    @Test
+    public void testCreateMixedCollectiveSettlementDeliv() throws Exception {
+    	SubscrProduct product = createProduct();
+    	SubscrArticle article = createArticle(product);
+
+    	SubscrProduct product2 = createIntervalProduct();
+    	SubscrInterval intvl = createInterval(product2);
+
+    	Subscriber subscri = createSubscriber();
+
+    	entityManager.flush();
+
+    	Subscription sub = createSubscription(product, subscri);
+    	Subscription sub2 = createSubscription(product2, subscri);
+
+    	assertThat(subscri.getSubscriptions()).hasSize(2);
+    	
+    	SubscrDelivery deli1 = createArticleDelivery(article, sub);
+    	SubscrIntervalDelivery deli2 = createIntervalDelivery(intvl, sub2); 
+    	
+    	entityManager.flush();
+    	
+    	Settlement sett = settCreator.createCollectiveSettlement(subscri);
+    	
+    	checkSettlement(sett, 24600L);
+    	checkSettlementLine(sett.getDetails().get(0), 12000L, article.getName());
+    	checkSettlementLine(sett.getDetails().get(1), 12600L, intvl.getName());
+    	assertThat(sett.getAgreementDetails()).hasSize(2);
+    	assertThat(delivRepository.findAll()).hasSize(1);
+    	assertThat(intdelivRepository.findAll()).hasSize(1);
+    	assertThat(settRepository.findAll()).hasSize(1);
+    	
+    	checkDeliveryGood(sett, deli1);
+    	checkDeliveryGood(sett, deli2);
+    	
+    	// jetzt noch das löschen von Abrechnungen testen
+    	settCreator.deleteSettlement(sett);
+
+    	checkCleanTables();
+
+    	assertThat(settRepository.findAll()).isEmpty();
+
+    	checkDeliveryFree(deli1);
+    	checkDeliveryFree(deli2);
+    }
+
+    @Test
+    public void testCreateSettlementDeliv() throws Exception {
+    	SubscrProduct product = createProduct();
+    	SubscrArticle article = createArticle(product);
+    	Subscriber subscri = createSubscriber();
+    	Subscription sub = createSubscription(product, subscri);
+    	SubscrDelivery deliv = createArticleDelivery(article, sub);
     	
     	entityManager.flush();
     	
     	Settlement sett = settCreator.createSettlement(sub);
     	
-    	assertThat(sett).isNotNull();
-    	assertThat(sett.getDetails()).isNotEmpty();
-    	assertThat(sett.getDetails().get(0).getAmount()).isEqualTo(12600L);
-    	assertThat(sett.getAgreementDetails()).isNotEmpty();
+    	checkSettlement(sett, 12000L);
+    	checkSettlementLine(sett.getDetails().get(0), 12000L, article.getName());
     	
-    	List<SubscrIntervalDelivery> pdeliv = intdelivRepository.findAll();
+    	checkDeliveryGood(sett, deliv);
     	
-    	assertThat(pdeliv).hasSize(1);
-    	assertThat(pdeliv.get(0).isPayed()).isTrue();
-    	assertThat(pdeliv.get(0).getSettDetail()).isEqualTo(sett.getAgreementDetails().iterator().next());
+    	assertThat(settRepository.findAll()).hasSize(1);
     	
-    	List<Settlement> psett = settRepository.findAll();
-    	
-    	assertThat(psett).hasSize(1);
+    	// jetzt noch das löschen von Abrechnungen testen
+    	settCreator.deleteSettlement(sett);
+
+    	assertThat(settRepository.findAll()).isEmpty();
+    	checkCleanTables();
     }
 
-    // TODO sammelrechnungen prüfen
+    
+    @Test
+    public void testCreateSettlementInterval() throws Exception {
+    	SubscrProduct product = createIntervalProduct();
+    	SubscrInterval intvl = createInterval(product);
+    	Subscriber subscri = createSubscriber();
+    	Subscription sub = createSubscription(product, subscri);
+    	SubscrIntervalDelivery deliv = createIntervalDelivery(intvl, sub);
+    	
+    	entityManager.flush();
+    	
+    	Settlement sett = settCreator.createSettlement(sub);
+    	
+    	checkSettlement(sett, 12600L);
+    	checkSettlementLine(sett.getDetails().get(0), 12600L, intvl.getName());
+
+    	checkDeliveryGood(sett, deliv);
+    	
+    	assertThat(settRepository.findAll()).hasSize(1);
+    }
     
 }
