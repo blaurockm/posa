@@ -350,7 +350,7 @@ public class SubscrResource {
 	public PosInvoice createCollInvoice(@PathParam("sub") String subIdP) {
 		long subId = Long.parseLong(subIdP);
 		PosInvoice inv = SubscriptionInvoiceCreator.createCollectiveSubscription(dao, dao.getSubscriber(subId), numGen);
-		recordUserChange(dao, "master", inv.getId(), "collInvoice " + inv.getNumber(), null, null, "N");
+//		recordUserChange(dao, "master", inv.getId(), "collInvoice " + inv.getNumber(), null, null, "N");
 		return inv;
 	}
 
@@ -530,7 +530,7 @@ public class SubscrResource {
 		inv.setId(null);
 		jpaDao.create(inv);
 		inv.setId(k);
-		recordUserChange(dao, "master", inv.getId(), "invoice", null, null, "F");
+//		recordUserChange(dao, "master", inv.getId(), "invoice", null, null, "F");
 		return new InvoicesView(dao, invDao);
 	}
 

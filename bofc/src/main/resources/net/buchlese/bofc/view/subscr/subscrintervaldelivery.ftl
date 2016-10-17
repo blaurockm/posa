@@ -69,7 +69,7 @@ bezahlt
 </div>
 <div class="row">
    <div class="col-md-5">
-     Versandkosten <a href="#" class="editablemoney" data-type="text"  data-name="delivery.shipmentCost"  data-title="Gesamtbetrag">${d.shipmentCost?c}</a>
+     Versandkosten <a href="#" class="editablemoney" data-type="text"  data-name="intervalDelivery.shipmentCost"  data-title="Gesamtbetrag">${d.shipmentCost?c}</a>
    </div>
 </div>
 
