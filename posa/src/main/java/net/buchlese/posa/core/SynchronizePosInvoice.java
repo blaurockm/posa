@@ -181,8 +181,8 @@ public class SynchronizePosInvoice extends AbstractSynchronizer {
 				inv.addDetail(createInvoiceDetail(e));
 			}
 		}
-		// 1 = rechnung, 2 = lieferschein, 8= gutschrift, 10 = storno-rech, 12 = remission
-		updBool(inv::setCancelled, inv.getCancelled(), rech.getArt() != 1);
+		// 1 = rechnung, 2 = lieferschein, 8= gutschrift, 10 = storno-rech, 12 = remission,  3 = sammelrechnung (!)
+		updBool(inv::setCancelled, inv.getCancelled(), rech.getArt() != 1 && rech.getArt() != 3);
 		updMoney(inv::setAmount, inv.getAmount(), rech.getBrutto());
 		updMoney(inv::setAmountHalf, inv.getAmountHalf(), rech.getBrutto7());
 		updMoney(inv::setAmountFull, inv.getAmountFull(), rech.getBrutto19());
