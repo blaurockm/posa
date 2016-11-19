@@ -18,7 +18,7 @@
 	<link href='https://fonts.googleapis.com/css?family=Roboto:700' rel='stylesheet' type='text/css'>
 
     <!--  rout definitions -->
-	<script type="text/javascript" src="https://raw.github.com/mtrpcic/pathjs/master/path.js"></script>
+	<script type="text/javascript" src="/assets/bofc/path.min.js"></script>
 
 	<!--  in place editing -->
 	<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.1/bootstrap3-editable/css/bootstrap-editable.css"/>

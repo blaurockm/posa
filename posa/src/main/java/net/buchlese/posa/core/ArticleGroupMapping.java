@@ -10,7 +10,7 @@ public class ArticleGroupMapping {
 
 	public static ArticleGroup mappingFrom(KassenVorgang vorg) {
 		for (ArticleGroup grp : ArticleGroup.getArticleGroups().values()) {
-			if (grp.getWargrindex().contains(vorg.getWarGrIndex().toString())) {
+			if (grp.getWargrindex() != null && grp.getWargrindex().contains(vorg.getWarGrIndex().toString())) {
 				return grp;
 			}
 		}
