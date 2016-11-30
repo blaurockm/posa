@@ -67,6 +67,7 @@ public class SendTimer extends TimerTask {
 					log.error("problem closing cloud", e);
 				} catch (Throwable t) {
 					log.error("komisches problem", t);
+					EmailNotification.sendAdminMail("komisches Problem SendTime", t);
 				}
 
 			}

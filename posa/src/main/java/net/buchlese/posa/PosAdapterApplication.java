@@ -19,6 +19,7 @@ import net.buchlese.posa.api.bofc.PosCashBalance;
 import net.buchlese.posa.api.bofc.SendableObject;
 import net.buchlese.posa.core.CommandTimer;
 import net.buchlese.posa.core.ConfigSyncTimer;
+import net.buchlese.posa.core.EmailNotification;
 import net.buchlese.posa.core.SendTimer;
 import net.buchlese.posa.core.SyncTimer;
 
@@ -75,7 +76,8 @@ public class PosAdapterApplication extends Application<PosAdapterConfiguration> 
 	public void run(PosAdapterConfiguration config, Environment environment) throws Exception {
 		ArticleGroup.injectMappings(config.getArticleGroupMappings());
 		posName = config.getName();
-
+		EmailNotification.herkunft = posName;
+		
 	    syncTimer = new ScheduledThreadPoolExecutor(10);
 		SyncTimer syncTimerTask = guiceBundle.getInjector().getInstance(SyncTimer.class);
 		syncTimer.scheduleAtFixedRate(syncTimerTask, config.getSyncOffset(), config.getSyncInterval(), TimeUnit.MINUTES);

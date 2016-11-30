@@ -2,6 +2,7 @@ package net.buchlese.posa.core;
 
 import java.util.List;
 
+import net.buchlese.posa.PosAdapterApplication;
 import net.buchlese.posa.PosAdapterConfiguration;
 import net.buchlese.posa.api.bofc.PosCashBalance;
 import net.buchlese.posa.api.bofc.SendableObject;
@@ -38,6 +39,10 @@ public class SendPosCashBalance extends Sender<PosCashBalance> {
 		cashBalanceDAO.markAsExported(bal);
 	}
 
+	protected void postUnSuccessfulSendHook(PosCashBalance bal) {
+		PosAdapterApplication.homingQueue.offer(bal);
+	}
+	
 	protected void preSendHook(PosCashBalance bal) {
 		bal.setPointid(pointid);
 		if (bal.getTickets() != null) {

@@ -2,13 +2,14 @@ package net.buchlese.posa.core;
 
 import java.util.List;
 
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.slf4j.Logger;
+
+import net.buchlese.posa.PosAdapterApplication;
 import net.buchlese.posa.PosAdapterConfiguration;
 import net.buchlese.posa.api.bofc.PosInvoice;
 import net.buchlese.posa.api.bofc.SendableObject;
 import net.buchlese.posa.jdbi.bofc.PosInvoiceDAO;
-
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.slf4j.Logger;
 
 public class SendPosInvoice extends Sender<PosInvoice> {
 
@@ -33,6 +34,10 @@ public class SendPosInvoice extends Sender<PosInvoice> {
 
 	protected void postSuccessfulSendHook(PosInvoice bal) {
 		invoiceDAO.getClass();
+	}
+
+	protected void postUnSuccessfulSendHook(PosInvoice bal) {
+		PosAdapterApplication.homingQueue.offer(bal);
 	}
 
 	protected void preSendHook(PosInvoice bal) {

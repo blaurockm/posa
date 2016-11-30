@@ -33,6 +33,11 @@ public class SendServerState extends Sender<ServerState> {
 	}
 
 	@Override
+	protected void postUnSuccessfulSendHook(ServerState bal) {
+
+	}
+
+	@Override
 	protected void preSendHook(ServerState bal) {
 		bal.setPointid(pointid);
 	}

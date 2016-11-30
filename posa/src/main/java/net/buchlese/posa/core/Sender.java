@@ -1,19 +1,13 @@
 package net.buchlese.posa.core;
 
-import io.dropwizard.jackson.Jackson;
-
 import java.io.IOException;
-import java.net.ConnectException;
 import java.net.MalformedURLException;
+import java.net.SocketException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.function.Consumer;
 
 import javax.ws.rs.core.MediaType;
-
-import net.buchlese.posa.PosAdapterApplication;
-import net.buchlese.posa.PosAdapterConfiguration;
-import net.buchlese.posa.api.bofc.SendableObject;
 
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -25,6 +19,10 @@ import org.slf4j.Logger;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import io.dropwizard.jackson.Jackson;
+import net.buchlese.posa.PosAdapterConfiguration;
+import net.buchlese.posa.api.bofc.SendableObject;
 
 public abstract class Sender<T extends SendableObject> implements Consumer<SendableObject> {
 	
@@ -80,12 +78,14 @@ public abstract class Sender<T extends SendableObject> implements Consumer<Senda
 			log.info("Sending " + bal + " with " + post + " :: " + statusLine);
 			if (statusLine.getStatusCode() == 200) {
 				postSuccessfulSendHook(bal);
+			} else {
+				postUnSuccessfulSendHook(bal);
 			}
-		} catch (ConnectException e) {
-			// wir konnten keine Verbindung aufbauen.
-			// mark PosCashBalance for retry next hour
-			log.warn("problem while connecting home, mark for retry " + bal);
-			PosAdapterApplication.homingQueue.offer(bal);
+		} catch (SocketException e ) {
+			// wir konnten keine Verbindung aufbauen, bzw. es ging was schief beim senden (endpunkt läuft net o.ä.)
+			log.warn("problem while connecting home, evtly mark for retry " + bal);
+			postUnSuccessfulSendHook(bal);
+			// hier sollte wir auch jemanden informieren, am besten per mail..
 		} catch (IOException e) {
 			log.error("problem while sending " + bal, e);
 		}
@@ -113,7 +113,9 @@ public abstract class Sender<T extends SendableObject> implements Consumer<Senda
 	protected abstract String getHomeResource();
 	
 	protected abstract void postSuccessfulSendHook(T bal);
-	
+
+	protected abstract void postUnSuccessfulSendHook(T bal);
+
 	protected abstract void preSendHook(T bal);
 
 

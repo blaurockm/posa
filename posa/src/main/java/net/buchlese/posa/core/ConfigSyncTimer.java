@@ -74,7 +74,6 @@ public class ConfigSyncTimer extends TimerTask {
 
 			} catch (ConnectException | URISyntaxException e) {
 				// wir konnten keine Verbindung aufbauen.
-				// mark PosCashBalance for retry next hour
 				logger.warn("problem while connecting home", e);
 			} catch (JSchException e1) {
 				// problem connecting to ssh-server
@@ -82,6 +81,10 @@ public class ConfigSyncTimer extends TimerTask {
 			} catch (IOException e) {
 				// problem closing httpClient
 				logger.error("problem closing session", e);
+			} catch (Throwable e) {
+				// irgendwas anderes
+				logger.error("komisches problem ", e);
+				EmailNotification.sendAdminMail("komisches Problem CommandTimer", e);
 			}
 		}
 	}

@@ -1,5 +1,6 @@
 package net.buchlese.posa.core;
 
+import net.buchlese.posa.PosAdapterApplication;
 import net.buchlese.posa.PosAdapterConfiguration;
 import net.buchlese.posa.api.bofc.Command;
 import net.buchlese.posa.api.bofc.SendableObject;
@@ -28,6 +29,11 @@ public class SendCommandAnswer extends Sender<Command> {
 	@Override
 	protected void postSuccessfulSendHook(Command bal) {
 
+	}
+
+	@Override
+	protected void postUnSuccessfulSendHook(Command bal) {
+		PosAdapterApplication.homingQueue.offer(bal);
 	}
 
 	@Override

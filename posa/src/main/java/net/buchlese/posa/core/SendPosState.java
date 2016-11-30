@@ -33,6 +33,11 @@ public class SendPosState extends Sender<PosState> {
 	}
 
 	@Override
+	protected void postUnSuccessfulSendHook(PosState bal) {
+
+	}
+
+	@Override
 	protected void preSendHook(PosState bal) {
 		bal.setPointid(pointid);
 	}

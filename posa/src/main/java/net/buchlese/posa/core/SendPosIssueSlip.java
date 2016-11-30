@@ -2,13 +2,14 @@ package net.buchlese.posa.core;
 
 import java.util.List;
 
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.slf4j.Logger;
+
+import net.buchlese.posa.PosAdapterApplication;
 import net.buchlese.posa.PosAdapterConfiguration;
 import net.buchlese.posa.api.bofc.PosIssueSlip;
 import net.buchlese.posa.api.bofc.SendableObject;
 import net.buchlese.posa.jdbi.bofc.PosInvoiceDAO;
-
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.slf4j.Logger;
 
 public class SendPosIssueSlip extends Sender<PosIssueSlip> {
 
@@ -33,6 +34,10 @@ public class SendPosIssueSlip extends Sender<PosIssueSlip> {
 
 	protected void postSuccessfulSendHook(PosIssueSlip bal) {
 		invoiceDAO.getClass();
+	}
+
+	protected void postUnSuccessfulSendHook(PosIssueSlip bal) {
+		PosAdapterApplication.homingQueue.offer(bal);
 	}
 
 	protected void preSendHook(PosIssueSlip bal) {
