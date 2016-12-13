@@ -78,6 +78,8 @@
 	            }
 	            if ($scope.hasOwnProperty('exported')) {
 	            	queryParams['exported'] = $scope.exported;
+	            } else {
+	            	queryParams['exported'] = false;
 	            }
 	            if ($scope.hasOwnProperty('reDatumVon') || $scope.hasOwnProperty('reDatumBis')) {
 	            	queryParams['firstCovered'] = [];

@@ -49,3 +49,8 @@ logging:
 
     org.hibernate.SQL: TRACE
     org.hibernate.engine.internal.StatisticalLoggingSessionEventListener: ERROR
+
+server:
+  applicationConnectors:
+    - type: http
+      port: 9000
