@@ -62,13 +62,9 @@
 		    });
 	  };
 
-	  $scope.createNextArticle = function(cust) {
+	  $scope.createNextArticle = function(sprod) {
 		  var nextIntvl = {};
-		  var pattern = cust.namePattern;
-		  nextIntvl.productId=cust.id;
-		  // create next Interval Name
-		  nextIntvl.name = pattern.replace('#', $scope.nextArticleName(cust));
-		  nextIntvl.issueNo = cust.count +1;
+		  nextIntvl.productId=sprod.id;
 		  if ($scope.article != null) {
 			  nextIntvl.halfPercentage = $scope.article.halfPercentage;
 			  nextIntvl.bruttoFull = $scope.article.bruttoFull;
@@ -76,13 +72,11 @@
 			  nextIntvl.brutto = $scope.article.brutto;
 		  }
 		  $http.post('/subscrproducts/createarticle', nextIntvl).then( function() {
-			  $http.get(cust._links.articles.href).
+			  $http.get(sprod._links.articles.href).
 			  then(function(data3) { 
 				  $scope.tableParams = new NgTableParams({sorting: { startDate: "asc" }},{counts:[],dataset:data3.data._embedded.subscrArticles});
 			  });
 		  });
-		  cust.count = cust.count +1;
-		  $scope.updateContinuation(cust);
 	  }
 
 	  $scope.createArticleDelivery = function(subscription) {
@@ -90,26 +84,12 @@
 		  intvlDeliv.subscriptionId=subscription.id; 
 		  intvlDeliv.subscriberId=subscription.subscriberId; 
 		  intvlDeliv.articleId=$scope.article.id; 
-		  intvlDeliv.deliveryDate=moment().valueOf();
-		  intvlDeliv.quantity=subscription.quantity;
-		  intvlDeliv.articleName=$scope.article.name;
-		  intvlDeliv.total=$scope.article.brutto;
-		  intvlDeliv.totalFull=$scope.article.brutto_full;
-		  intvlDeliv.totalHalf=$scope.article.brutto_half;
-		  intvlDeliv.shipmentCost=0;
-		  intvlDeliv.creationDate=moment().valueOf();
 		  $http.post('/subscrproducts/createarticledelivery', intvlDeliv).then( function() {
 			  $http.get($scope.interval._links.deliveries.href).
 			    then(function(data2) { 
 			    	$scope.deliveries = data2.data._embedded.subscrDeliveries; 
 			    });
 		  });
-	  }
-	  
-	  $scope.nextArticleName = function(cust) {
-		  if (!cust) return "--";
-		  var nLief = cust.count +1;
-		  return nLief +". Lieferung";
 	  }
 
 	  $scope.isDelivered = function(subscription) {
@@ -141,20 +121,11 @@
 	      $http.put($scope.article._links.self.href,$scope.article).then(function(req) { $scope.success = req; })
 	      .catch(function(req) { $scope.error = req; });
 	  }
-	  
-	  $scope.updateContinuation = function(cust) {
-	      $scope.error = "";
-	      $scope.success = "";
-	      $http.put(cust._links.self.href,cust).then(function(req) { $scope.success = req; })
-	      .catch(function(req) { $scope.error = req; });
-	  }
-
   };
   
   ContinuationController.$inject = ['$scope', '$http', 'ContinuationDAO', 'NgTableParams'];
   ContinuationDetailController.$inject = ['$scope', '$stateParams', '$http', 'ContinuationDAO'];
-  ContinuationDispoController.$inject = ['$scope', '$stateParams', '$http', 'ContinuationDAO',
-                                           'NgTableParams', '$filter'];
+  ContinuationDispoController.$inject = ['$scope', '$stateParams', '$http', 'ContinuationDAO', 'NgTableParams', '$filter'];
 
   var ContinuationFactory = function($resource) {
     return $resource('/api/subscrproduct/:id', { id: '@id' },

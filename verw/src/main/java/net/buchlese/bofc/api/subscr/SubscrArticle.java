@@ -202,7 +202,7 @@ public class SubscrArticle implements Comparable<SubscrArticle> {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + (int) (id ^ (id >>> 32));
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		return result;
 	}
 
@@ -215,10 +215,13 @@ public class SubscrArticle implements Comparable<SubscrArticle> {
 		if (getClass() != obj.getClass())
 			return false;
 		SubscrArticle other = (SubscrArticle) obj;
-		if (id != other.id)
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
 			return false;
 		return true;
 	}
 
-	
+
 }

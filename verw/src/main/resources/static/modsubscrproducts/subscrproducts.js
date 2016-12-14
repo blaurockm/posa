@@ -62,34 +62,22 @@
 		    });
 	  };
 
-	  $scope.createNextInterval = function(cust) {
+	  $scope.createNextInterval = function(sprod) {
 		  var nextIntvl = {};
-		  var pattern = cust.intervalPattern ? cust.intervalPattern : cust.namePattern;
-		  var beginMom = moment(cust.lastInterval).add(1,'d')
-		  var beginStr = beginMom.format("MM/YYYY");
-		  nextIntvl.startDate = beginMom.valueOf();
-		  
-		  var endMom = $scope.computeIntervalEndmom(cust, beginMom);
-		  var endStr = endMom.format("MM/YYYY");
-		  nextIntvl.endDate = endMom.valueOf();
-		  nextIntvl.productId=cust.id;
-		  // create next Interval Name
-		  nextIntvl.name = pattern.replace('#', $scope.nextIntervalName(cust));
-		  nextIntvl.intervalType = cust.intervalType;
+		  nextIntvl.productId=sprod.id;
 		  if ($scope.interval != null) {
 			  nextIntvl.halfPercentage = $scope.interval.halfPercentage;
 			  nextIntvl.bruttoFull = $scope.interval.bruttoFull;
 			  nextIntvl.bruttoHalf = $scope.interval.bruttoHalf;
 			  nextIntvl.brutto = $scope.interval.brutto;
 		  }
-		  $http.post('/subscrproducts/createinterval', nextIntvl).then( function() {
-			  $http.get(cust._links.intervals.href).
+		  $http.post('/subscrproducts/createinterval', nextIntvl).then( function(intvlRet) {
+			  sprod.lastInterval = intvl.endDate; // seiteneffekt. das Endedatum wurde ggf. neu berechnet
+			  $http.get(sprod._links.intervals.href).
 			  then(function(data3) { 
 				  $scope.tableParams = new NgTableParams({sorting: { startDate: "asc" }},{counts:[],dataset:data3.data._embedded.subscrIntervals});
 			  });
 		  });
-		  cust.lastInterval = endMom.format("YYYY-MM-DD");
-		  $scope.updateSubscrProduct();
 	  }
 
 	  $scope.createIntervalDelivery = function(subscription) {
@@ -97,14 +85,6 @@
 		  intvlDeliv.subscriptionId=subscription.id; 
 		  intvlDeliv.subscriberId=subscription.subscriberId; 
 		  intvlDeliv.intervalId=$scope.interval.id; 
-		  intvlDeliv.deliveryDate=moment().valueOf();
-		  intvlDeliv.quantity=subscription.quantity;
-		  intvlDeliv.intervalName=$scope.interval.name;
-		  intvlDeliv.total=$scope.interval.brutto;
-		  intvlDeliv.totalFull=$scope.interval.brutto_full;
-		  intvlDeliv.totalHalf=$scope.interval.brutto_half;
-		  intvlDeliv.shipmentCost=0;
-		  intvlDeliv.creationDate=moment().valueOf();
 		  $http.post('/subscrproducts/createintervaldelivery', intvlDeliv).then( function() {
 			  $http.get($scope.interval._links.deliveries.href).
 			    then(function(data2) { 
@@ -112,57 +92,10 @@
 			    });
 		  });
 	  }
-	  
-	  $scope.nextIntervalName = function(cust) {
-		  if (!cust) return "--";
-		  var beginMom = moment(cust.lastInterval).add(1,'d')
-		  var beginStr = beginMom.format("MM/YYYY");
-		  var endMom = $scope.computeIntervalEndmom(cust, beginMom);
-		  var endStr = endMom.format("MM/YYYY");
-		  return beginStr +"-" + endStr;
-//			String beginStr = startDate.format(DateTimeFormatter.ofPattern("MM/yyyy"));
-//			String endStr = endDate.format(DateTimeFormatter.ofPattern("MM/yyyy"));
-//			String intervalStr = beginStr + "-" + endStr;
-//			String name = namePattern.replace("#", intervalStr);
-//			name = name.replace("{start}", beginStr);
-//			name = name.replace("{end}", endStr);
-//			name = name.replace("{interval}", intervalStr);
-//			switch (intervalType) {
-//			case YEARLY : name = name.replace("{type}", "Jahr"); break;
-//			case HALFYEARLY : name = name.replace("{type}", "Halbjahr"); break;
-//			case MONTHLY : name = name.replace("{type}", "Monat"); break;
-//			default: name = name.replace("{type}", ""); break;
-//			}
-//			name = name.replace("{type}", intervalStr);
-//			String dp = "\\{date:(.+)\\}";
-//			Pattern p = Pattern.compile(dp);
-//			Matcher m = p.matcher(name);
-//			if (m.find()) {
-//				String datePattern = m.group(1);
-//				String dateString = startDate.format(DateTimeFormatter.ofPattern(datePattern));
-//				name = name.replaceFirst(dp, dateString);
-//				dateString = endDate.format(DateTimeFormatter.ofPattern(datePattern));
-//				name = name.replaceFirst(dp, dateString);
-//			}
-//			return name;
-	  }
 
 	  $scope.isDelivered = function(subscription) {
 		  return $scope.deliveries != null && $filter('filter')($scope.deliveries, {subscriberId: subscription.subscriberId}).length > 0;
 	  }
-	  
-	  $scope.computeIntervalEndmom = function(cust, startMom) {
-		  var endMom = null;
-			switch (cust.intervalType) {
-			case 'YEARLY': endMom = startMom.add(1,'y').subtract(1,'d'); break;
-			case 'HALFYEARLY': endMom = startMom.add(6,'M').subtract(1,'d'); break;
-			case 'QUARTERLY': endMom = startMom.add(3,'M').subtract(1,'d'); break;
-			case 'MONTHLY': endMom = startMom.add(1,'M').subtract(1,'d'); break;
-			default: endMom = startMom.add(1,'d');
-			}
-		  return endMom;	
-	  }
-	  
 	  
 	  $scope.updateBrutto = function(newVal) {
 		  $scope.interval.brutto  = newVal;
@@ -189,19 +122,12 @@
 	      $http.put($scope.interval._links.self.href,$scope.interval).then(function(req) { $scope.success = req; })
 	      .catch(function(req) { $scope.error = req; });
 	  }
-	  $scope.updateSubscrProduct = function(cust) {
-	      $scope.error = "";
-	      $scope.success = "";
-	      $http.put(cust._links.self.href,cust).then(function(req) { $scope.success = req; })
-	      .catch(function(req) { $scope.error = req; });
-	  }
 
   };
 
   SubscrProductController.$inject = ['$scope', '$http', 'SubscrProductDAO', 'NgTableParams'];
   SubscrProductDetailController.$inject = ['$scope', '$stateParams', '$http', 'SubscrProductDAO'];
-  SubscrProductChargeController.$inject = ['$scope', '$stateParams', '$http', 'SubscrProductDAO',
-                                          'NgTableParams', '$filter'];
+  SubscrProductChargeController.$inject = ['$scope', '$stateParams', '$http', 'SubscrProductDAO','NgTableParams', '$filter'];
 
   var SubscrProductFactory = function($resource) {
     return $resource('/api/subscrproduct/:id', { id: '@id' },

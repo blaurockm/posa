@@ -250,7 +250,7 @@ public class SubscrInterval implements Comparable<SubscrInterval> {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + (int) (id ^ (id >>> 32));
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		return result;
 	}
 
@@ -263,10 +263,14 @@ public class SubscrInterval implements Comparable<SubscrInterval> {
 		if (getClass() != obj.getClass())
 			return false;
 		SubscrInterval other = (SubscrInterval) obj;
-		if (id != other.id)
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
 			return false;
 		return true;
 	}
+
 
 	
 }
