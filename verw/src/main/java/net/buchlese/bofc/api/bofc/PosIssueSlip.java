@@ -21,7 +21,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 @Table( name = "posissueslip" )
-@XmlRootElement(name = "issueslip")
+@XmlRootElement(name = "deliverynote")
 public class PosIssueSlip {
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)

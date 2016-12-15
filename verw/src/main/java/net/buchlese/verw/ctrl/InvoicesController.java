@@ -164,12 +164,11 @@ public class InvoicesController {
 			pdf = reportPdf.createReport(inv,"static/templates/report/invoice.xsl", null);
 			HttpHeaders respHeaders = new HttpHeaders();
 			respHeaders.setContentType(MediaType.APPLICATION_PDF);
-			respHeaders.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=Ausgangsrechnung"+inv.getNumber()+".pdf");
+			respHeaders.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=Rechnung_"+inv.getNumber()+".pdf");
 			
 			return ResponseEntity.ok().headers(respHeaders).body(pdf);
 		} catch (FOPException | JAXBException | TransformerException e) {
-			e.printStackTrace();
-			throw e;
+			return ResponseEntity.unprocessableEntity().body(e.getMessage());
 		}
 		
 	}

@@ -77,12 +77,7 @@ public class InvoiceCreatorTest {
     	
     	assertThat(pinv).hasSize(1);
     	
-    	
     	invCreator.cancelInvoice(inv);
-    	
-    	
-    	
-    	
     }
     
 }

@@ -65,8 +65,6 @@ public class SubscrDelivery implements Comparable<SubscrDelivery> {
 	@JsonProperty
 	private long shipmentCost;
 
-	@JsonIgnore
-	public String subscriberName;
 
 	@ManyToOne(fetch=FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name = "settdetail_id",
@@ -92,11 +90,6 @@ public class SubscrDelivery implements Comparable<SubscrDelivery> {
     			foreignKey = @ForeignKey(name = "SUBSCRIPTION_ID_FK")
     )
 	private Subscription subscription;
-
-	@JsonIgnore
-	public String getSubscriberName() {
-		return subscriberName;
-	}
 	
 	@PostLoad
 	public void initDelivery() {
@@ -258,11 +251,6 @@ public class SubscrDelivery implements Comparable<SubscrDelivery> {
 
 	public void setSubscription(Subscription subscription) {
 		this.subscription = subscription;
-	}
-
-
-	public void setSubscriberName(String subscriberName) {
-		this.subscriberName = subscriberName;
 	}
 
 	@Override

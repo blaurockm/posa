@@ -5,13 +5,18 @@ import java.util.Optional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.transform.TransformerException;
 
+import org.apache.fop.apps.FOPException;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.querydsl.binding.QuerydslPredicate;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.MultiValueMap;
@@ -26,6 +31,7 @@ import com.querydsl.core.types.Predicate;
 
 import net.buchlese.bofc.api.bofc.PosIssueSlip;
 import net.buchlese.bofc.api.bofc.QPosIssueSlip;
+import net.buchlese.verw.reports.ReportPdfCreator;
 import net.buchlese.verw.repos.InvoiceRepository;
 import net.buchlese.verw.repos.IssueSlipRepository;
 
@@ -37,6 +43,8 @@ public class IssueSlipController {
 	@Autowired IssueSlipRepository issueSlipRepository;
 
 	@Autowired InvoiceRepository invoiceRepository;
+
+	@Autowired ReportPdfCreator reportPdf;
 
 	@PersistenceContext	EntityManager em;
 	
@@ -57,6 +65,25 @@ public class IssueSlipController {
 		update.setInteger(1, pointid);
 		update.setInteger(2, customerId);
 		update.executeUpdate();
+	}
+
+	@RequestMapping(path="view", method = RequestMethod.GET)
+	@Transactional
+	public ResponseEntity<?> getInvoicePDF(@RequestParam("id") Long id) throws Exception {
+		PosIssueSlip note = issueSlipRepository.findOne(id);
+		
+		byte[] pdf;
+		try {
+			pdf = reportPdf.createReport(note,"static/templates/report/deliveryNote.xsl", null);
+			HttpHeaders respHeaders = new HttpHeaders();
+			respHeaders.setContentType(MediaType.APPLICATION_PDF);
+			respHeaders.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=Lieferschein_"+note.getNumber()+".pdf");
+			
+			return ResponseEntity.ok().headers(respHeaders).body(pdf);
+		} catch (FOPException | JAXBException | TransformerException e) {
+			return ResponseEntity.unprocessableEntity().body(e.getMessage());
+		}
+		
 	}
 
 	@RequestMapping(path="acceptIssueSlip", method = RequestMethod.POST)
