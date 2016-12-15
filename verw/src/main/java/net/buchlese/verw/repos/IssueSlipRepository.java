@@ -43,6 +43,8 @@ public interface IssueSlipRepository extends JpaRepository<PosIssueSlip, Long>,
 		
 	}
 
+	List<PosIssueSlip> findAllByPrintedOrderByDateAscNumberAsc(boolean b);
+	
 	List<PosIssueSlip> findByDebitorIdAndPayed(int debitorId, boolean payed);
 
 }

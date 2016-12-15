@@ -17,10 +17,13 @@ QuerydslBinderCustomizer<QSubscrIntervalDelivery> {
 
 	List<SubscrIntervalDelivery> findBySubscriptionAndPayed(Subscription sub, boolean b);
 
+	List<SubscrIntervalDelivery> findByPayed(boolean b);
+	
     @Override
 	default public void customize(QuerydslBindings bindings, QSubscrIntervalDelivery bal) {
 		bindings.bind(bal.subscriber().name).first((path, value) -> path.likeIgnoreCase(value));
 		bindings.bind(bal.interval().name).first((path, value) -> path.likeIgnoreCase(value));
 	}
+
 
 }

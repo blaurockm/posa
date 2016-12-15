@@ -9,14 +9,13 @@ import org.springframework.stereotype.Component;
 
 import net.buchlese.bofc.api.bofc.PosInvoiceDetail;
 import net.buchlese.bofc.api.bofc.PosIssueSlip;
+import net.buchlese.bofc.api.bofc.PosIssueSlipDetail;
 import net.buchlese.bofc.api.subscr.Address;
 import net.buchlese.bofc.api.subscr.SubscrDelivery;
 import net.buchlese.bofc.api.subscr.Subscriber;
 import net.buchlese.bofc.api.subscr.Subscription;
-import net.buchlese.verw.repos.CustomerRepository;
 import net.buchlese.verw.repos.IssueSlipRepository;
 import net.buchlese.verw.repos.SubscrDeliveryRepository;
-import net.buchlese.verw.repos.SubscriptionRepository;
 
 @Component
 @Scope(value="singleton")
@@ -24,15 +23,14 @@ public class DeliveryNoteCreator {
 
 	@Autowired SequenceGenerator numgen;
 	@Autowired IssueSlipRepository issueSlipRepository;
-	@Autowired CustomerRepository customerRepository;
-	@Autowired SubscriptionRepository subscriptionRepository;
 	@Autowired SubscrDeliveryRepository subscrDeliveryRepository;
 
 	public PosIssueSlip createDeliveryNote(SubscrDelivery fdeli) {
 		PosIssueSlip rep = new PosIssueSlip();
-		Subscriber s = customerRepository.findOne(fdeli.getSubscriberId());
-		Subscription sub1 = subscriptionRepository.findOne(fdeli.getSubscriptionId());
+		Subscriber s = fdeli.getSubscriber();
+		Subscription sub1 = fdeli.getSubscription();
 		rep.setCustomerId(s.getCustomerId());
+		rep.setDeliveryDetails(new ArrayList<PosIssueSlipDetail>());
 		rep.setDetails(new ArrayList<PosInvoiceDetail>());
 		Address addr = sub1.getDeliveryAddress() != null ? sub1.getDeliveryAddress() : s.getInvoiceAddress();
 		rep.setName1(addr.getName1());
@@ -52,15 +50,15 @@ public class DeliveryNoteCreator {
 		rep.setCreationTime(LocalDateTime.now());
 		// alle Lieferungen für diesen Tag
 		for (SubscrDelivery deli : subscrDeliveryRepository.findByDeliveryDate(fdeli.getDeliveryDate())) {
-			if (deli.getSubscriberId() == fdeli.getSubscriberId()) {
-				Subscription sub = subscriptionRepository.findOne(deli.getSubscriptionId());
-				if (sub.getDeliveryInfo1() != null & sub.getDeliveryInfo1().isEmpty() == false) {
+			if (deli.getSubscriber().equals(fdeli.getSubscriber())) {
+				Subscription sub = deli.getSubscription();
+				if (sub.getDeliveryInfo1() != null && sub.getDeliveryInfo1().isEmpty() == false) {
 					PosInvoiceDetail det = new  PosInvoiceDetail();
 					det.setTextonly(true);
 					det.setText(sub.getDeliveryInfo1());
 					rep.getDetails().add(det);
 				}
-				if (sub.getDeliveryInfo2() != null & sub.getDeliveryInfo2().isEmpty() == false) {
+				if (sub.getDeliveryInfo2() != null && sub.getDeliveryInfo2().isEmpty() == false) {
 					PosInvoiceDetail det = new  PosInvoiceDetail();
 					det.setTextonly(true);
 					det.setText(sub.getDeliveryInfo2());
@@ -70,11 +68,32 @@ public class DeliveryNoteCreator {
 				det.setTextonly(false);
 				det.setQuantity(deli.getQuantity());
 				det.setText(deli.getArticleName());
-				// weight would be interesting
 				rep.getDetails().add(det);
+				PosIssueSlipDetail pisd = new PosIssueSlipDetail();
+				pisd.setDelivery(deli);
+				pisd.setWeight(0.1);
+				pisd.setQuantity(deli.getQuantity());
+				rep.getDeliveryDetails().add(pisd);
 			}
 		}
+		recordDeliveryNoteOnDeliveries(rep);
+		issueSlipRepository.save(rep);
 		return rep;
 	}
-	
+
+	/**
+	 * festschreiben einer Rechnung bei den Abos die dvon der Rechnung betroffen sind.
+	 * Die Rechnung selbst wird nicht angefasst
+	 * @param dao
+	 * @param inv
+	 */
+	private void recordDeliveryNoteOnDeliveries(PosIssueSlip inv) {
+		for (PosIssueSlipDetail pisd : inv.getDeliveryDetails()) {
+			SubscrDelivery deli = pisd.getDelivery();
+			deli.setSlipped(true);
+			deli.setSlipNumber(inv.getNumber());
+			subscrDeliveryRepository.save(deli);
+		}
+	}
+
 }

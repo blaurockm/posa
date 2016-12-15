@@ -46,6 +46,8 @@ QuerydslBinderCustomizer<QPosInvoice>{
 		
 	}
 
+	List<PosInvoice> findAllByPrintedOrderByDateAscNumberAsc(boolean b);
+
 	PosInvoice findFirstByExportedAndPointidOrderByDateAsc(boolean b, Integer pointid);
 
 	List<PosInvoice> findAllByExportedAndPointidAndDateLessThanEqualOrderByDateAsc(boolean b, Integer pointid, LocalDate maxTag);

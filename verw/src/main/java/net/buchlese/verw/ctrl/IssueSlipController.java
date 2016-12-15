@@ -1,7 +1,14 @@
 package net.buchlese.verw.ctrl;
 
 
+import java.io.ByteArrayOutputStream;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Optional;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -69,7 +76,7 @@ public class IssueSlipController {
 
 	@RequestMapping(path="view", method = RequestMethod.GET)
 	@Transactional
-	public ResponseEntity<?> getInvoicePDF(@RequestParam("id") Long id) throws Exception {
+	public ResponseEntity<?> getDeliveryNotePDF(@RequestParam("id") Long id) throws Exception {
 		PosIssueSlip note = issueSlipRepository.findOne(id);
 		
 		byte[] pdf;
@@ -86,6 +93,60 @@ public class IssueSlipController {
 		
 	}
 
+	@RequestMapping(path="unprinted", method = RequestMethod.GET)
+	@Transactional
+	public ResponseEntity<?> getUnprintedInvoicePDFs() throws Exception {
+		List<PosIssueSlip> invs = issueSlipRepository.findAllByPrintedOrderByDateAscNumberAsc(false);
+		
+		try {
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			ZipOutputStream zos = new ZipOutputStream(baos);
+			HttpHeaders respHeaders = new HttpHeaders();
+			respHeaders.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+			respHeaders.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=ungedruckte_Lieferscheine_"+LocalDate.now().format(DateTimeFormatter.BASIC_ISO_DATE)+".zip");
+			for (PosIssueSlip inv : invs) {
+				ZipEntry zipEntry = new ZipEntry("Rechnung_" + inv.getNumber() + ".pdf");
+				zos.putNextEntry(zipEntry);
+				byte[] pdf = reportPdf.createReport(inv,"static/templates/report/invoice.xsl", null);
+				zos.write(pdf, 0, pdf.length);
+				zos.closeEntry();
+			}
+			zos.close();
+			return ResponseEntity.ok().headers(respHeaders).body(baos.toByteArray());
+		} catch (FOPException | JAXBException | TransformerException e) {
+			return ResponseEntity.unprocessableEntity().body(e.getMessage());
+		}
+	}
+
+	@RequestMapping(path="markunprinted", method = RequestMethod.GET)
+	@Transactional
+	public ResponseEntity<?> markUnprintedInvoicesAsPrinted() throws Exception {
+		List<PosIssueSlip> notes = issueSlipRepository.findAllByPrintedOrderByDateAscNumberAsc(false);
+		
+		try {
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			ZipOutputStream zos = new ZipOutputStream(baos);
+			HttpHeaders respHeaders = new HttpHeaders();
+			respHeaders.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+			respHeaders.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=ungedruckte_Lieferscheine_"+LocalDate.now().format(DateTimeFormatter.BASIC_ISO_DATE)+".zip");
+			for (PosIssueSlip note : notes) {
+				ZipEntry zipEntry = new ZipEntry("Lieferschein_" + note.getNumber() + ".pdf");
+				zos.putNextEntry(zipEntry);
+				byte[] pdf = reportPdf.createReport(note,"static/templates/report/deliveryNote.xsl", null);
+				zos.write(pdf, 0, pdf.length);
+				zos.closeEntry();
+				note.setPrinted(true);
+				note.setPrintTime(LocalDateTime.now());
+				issueSlipRepository.save(note);
+			}
+			zos.close();
+			return ResponseEntity.ok().headers(respHeaders).body(baos.toByteArray());
+		} catch (FOPException | JAXBException | TransformerException e) {
+			return ResponseEntity.unprocessableEntity().body(e.getMessage());
+		}
+	}
+	
+	
 	@RequestMapping(path="acceptIssueSlip", method = RequestMethod.POST)
 	@Transactional
 	public ResponseEntity<?> acceptIssueSlip(@RequestBody PosIssueSlip issueSlip)  {

@@ -1,6 +1,7 @@
 package net.buchlese.verw.ctrl;
 
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
@@ -10,6 +11,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -173,6 +176,59 @@ public class InvoicesController {
 		
 	}
 
+	@RequestMapping(path="unprinted", method = RequestMethod.GET)
+	@Transactional
+	public ResponseEntity<?> getUnprintedInvoicePDFs() throws Exception {
+		List<PosInvoice> invs = invoiceRepository.findAllByPrintedOrderByDateAscNumberAsc(false);
+		
+		try {
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			ZipOutputStream zos = new ZipOutputStream(baos);
+			HttpHeaders respHeaders = new HttpHeaders();
+			respHeaders.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+			respHeaders.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=ungedruckte_Rechnungen_"+LocalDate.now().format(DateTimeFormatter.BASIC_ISO_DATE)+".zip");
+			for (PosInvoice inv : invs) {
+				ZipEntry zipEntry = new ZipEntry("Rechnung_" + inv.getNumber() + ".pdf");
+				zos.putNextEntry(zipEntry);
+				byte[] pdf = reportPdf.createReport(inv,"static/templates/report/invoice.xsl", null);
+				zos.write(pdf, 0, pdf.length);
+				zos.closeEntry();
+			}
+			zos.close();
+			return ResponseEntity.ok().headers(respHeaders).body(baos.toByteArray());
+		} catch (FOPException | JAXBException | TransformerException e) {
+			return ResponseEntity.unprocessableEntity().body(e.getMessage());
+		}
+	}
+
+	@RequestMapping(path="markunprinted", method = RequestMethod.GET)
+	@Transactional
+	public ResponseEntity<?> markUnprintedInvoicesAsPrinted() throws Exception {
+		List<PosInvoice> invs = invoiceRepository.findAllByPrintedOrderByDateAscNumberAsc(false);
+		
+		try {
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			ZipOutputStream zos = new ZipOutputStream(baos);
+			HttpHeaders respHeaders = new HttpHeaders();
+			respHeaders.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+			respHeaders.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=ungedruckte_Rechnungen_"+LocalDate.now().format(DateTimeFormatter.BASIC_ISO_DATE)+".zip");
+			for (PosInvoice inv : invs) {
+				ZipEntry zipEntry = new ZipEntry("Rechnung_" + inv.getNumber() + ".pdf");
+				zos.putNextEntry(zipEntry);
+				byte[] pdf = reportPdf.createReport(inv,"static/templates/report/invoice.xsl", null);
+				zos.write(pdf, 0, pdf.length);
+				zos.closeEntry();
+				inv.setPrinted(true);
+				inv.setPrintTime(LocalDateTime.now());
+				invoiceRepository.save(inv);
+			}
+			zos.close();
+			return ResponseEntity.ok().headers(respHeaders).body(baos.toByteArray());
+		} catch (FOPException | JAXBException | TransformerException e) {
+			return ResponseEntity.unprocessableEntity().body(e.getMessage());
+		}
+	}
+	
 	@RequestMapping(path="updateMapping", method = RequestMethod.GET)
 	@Transactional
 	public void updateMapping(@RequestParam("pointid") Integer pointid,@RequestParam("customerId") Integer customerId,@RequestParam("debitorId") Integer debitorId) {
@@ -184,6 +240,7 @@ public class InvoicesController {
 		update.executeUpdate();
 	}
 
+	
 	@RequestMapping(path="acceptInvoice", method = RequestMethod.POST)
 	@Transactional
 	public ResponseEntity<?> acceptInvoice(@RequestBody PosInvoice invoice)  {

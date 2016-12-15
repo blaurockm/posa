@@ -81,6 +81,11 @@ public class PosIssueSlip {
 	private List<PosInvoiceDetail> details;
 
 	@JsonProperty
+	@OneToMany(cascade=CascadeType.ALL)
+	@JoinColumn(name="issueslip_id")
+	private List<PosIssueSlipDetail> deliveryDetails;
+
+	@JsonProperty
 	private LocalDate deliveryFrom;
 	@JsonProperty
 	private LocalDate deliveryTill;
@@ -190,7 +195,7 @@ public class PosIssueSlip {
 	}
 
 	public String toString() {
-		return "PosInvoice " + number + " of " + String.valueOf(date) + (amount != null ? (" amount " + String.valueOf(amount / 100)) : "n.bek."); 
+		return "PosIssueSlip " + number + " of " + String.valueOf(date) + (amount != null ? (" amount " + String.valueOf(amount / 100)) : "n.bek."); 
 	}
 	public Boolean getCancelled() {
 		return cancelled;
@@ -228,6 +233,12 @@ public class PosIssueSlip {
 	public void setDetails(List<PosInvoiceDetail> details) {
 		this.details = details;
 	}
+	public List<PosIssueSlipDetail> getDeliveryDetails() {
+		return deliveryDetails;
+	}
+	public void setDeliveryDetails(List<PosIssueSlipDetail> details) {
+		this.deliveryDetails = details;
+	}
 	public LocalDate getDeliveryFrom() {
 		return deliveryFrom;
 	}
@@ -251,6 +262,17 @@ public class PosIssueSlip {
 		setAmount(safeAdd(getAmount(),detail.getAmount()));
 		setAmountFull(safeAdd(getAmountFull(), detail.getAmountFull()));
 		setAmountHalf(safeAdd(getAmountHalf(), detail.getAmountHalf()));
+		return detail;
+	}
+
+	public PosIssueSlipDetail addDetail(PosIssueSlipDetail detail) {
+		if (detail == null) {
+			return null;
+		}
+		if (getDeliveryDetails() == null) {
+			setDeliveryDetails(new ArrayList<PosIssueSlipDetail>());
+		}
+		getDeliveryDetails().add(detail);
 		return detail;
 	}
 

@@ -21,6 +21,10 @@ QueryDslPredicateExecutor<SubscrDelivery>,QuerydslBinderCustomizer<QSubscrDelive
 
 	List<SubscrDelivery> findBySubscriptionAndPayed(Subscription sub, boolean payed);
 
+	List<SubscrDelivery> findByPayed(boolean payed);
+
+	List<SubscrDelivery> findBySlipped(boolean slipped);
+
     @Override
 	default public void customize(QuerydslBindings bindings, QSubscrDelivery bal) {
 		bindings.bind(bal.subscriber().name).first((path, value) -> path.likeIgnoreCase(value));
