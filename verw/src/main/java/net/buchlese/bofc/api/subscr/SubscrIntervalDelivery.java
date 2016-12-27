@@ -1,7 +1,6 @@
 package net.buchlese.bofc.api.subscr;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -30,7 +29,7 @@ public class SubscrIntervalDelivery implements Comparable<SubscrIntervalDelivery
 	private Long id;
 
 	@JsonProperty
-	private LocalDate deliveryDate;
+	private java.sql.Date deliveryDate;
 	@JsonProperty
 	private int quantity;
 	@JsonProperty
@@ -55,7 +54,7 @@ public class SubscrIntervalDelivery implements Comparable<SubscrIntervalDelivery
 	@JsonProperty
 	private String invoiceNumber;
 	@JsonProperty
-	private LocalDateTime creationDate;
+	private java.sql.Timestamp creationDate;
 	@JsonProperty
 	private long shipmentCost;
 
@@ -126,12 +125,6 @@ public class SubscrIntervalDelivery implements Comparable<SubscrIntervalDelivery
 	public void setId(Long id) {
 		this.id = id;
 	}
-	public LocalDate getDeliveryDate() {
-		return deliveryDate;
-	}
-	public void setDeliveryDate(LocalDate deliveryDate) {
-		this.deliveryDate = deliveryDate;
-	}
 	public int getQuantity() {
 		return quantity;
 	}
@@ -150,10 +143,10 @@ public class SubscrIntervalDelivery implements Comparable<SubscrIntervalDelivery
 	public void setPayed(boolean payed) {
 		this.payed = payed;
 	}
-	public LocalDateTime getCreationDate() {
+	public Timestamp getCreationDate() {
 		return creationDate;
 	}
-	public void setCreationDate(LocalDateTime creationDate) {
+	public void setCreationDate(Timestamp creationDate) {
 		this.creationDate = creationDate;
 	}
 	public void setSubscriptionId(long subcriptionId) {
@@ -279,6 +272,14 @@ public class SubscrIntervalDelivery implements Comparable<SubscrIntervalDelivery
 		} else if (!id.equals(other.id))
 			return false;
 		return true;
+	}
+
+	public java.sql.Date getDeliveryDate() {
+		return deliveryDate;
+	}
+
+	public void setDeliveryDate(java.sql.Date deliveryDate) {
+		this.deliveryDate = deliveryDate;
 	}
 	
 }

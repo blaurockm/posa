@@ -1,7 +1,7 @@
 package net.buchlese.bofc.api.bofc;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -37,23 +37,23 @@ public class AccountingInvoiceExport {
 	@JsonIgnore
 	private String description;
 	@JsonProperty
-	private LocalDateTime execDate;
+	private Timestamp execDate;
 	@JsonProperty
 	@Column(name="fromDate")
-	private LocalDate from;
+	private Date from;
 	@JsonProperty
 	@Column(name="tillDate")
-	private LocalDate till;
+	private Date till;
 	
 	@JsonIgnore
 	@OneToMany
 	@JoinColumn(name = "EXPORT_ID")
 	private Set<PosInvoice> invoices;
 
-	public LocalDateTime getExecDate() {
+	public Timestamp getExecDate() {
 		return execDate;
 	}
-	public void setExecDate(LocalDateTime execDate) {
+	public void setExecDate(Timestamp execDate) {
 		this.execDate = execDate;
 	}
 	public int getPointId() {
@@ -112,19 +112,19 @@ public class AccountingInvoiceExport {
 		inv.export(this);
 	}
 
-	public LocalDate getFrom() {
+	public Date getFrom() {
 		return from;
 	}
 
-	public void setFrom(LocalDate from) {
+	public void setFrom(Date from) {
 		this.from = from;
 	}
 
-	public LocalDate getTill() {
+	public Date getTill() {
 		return till;
 	}
 
-	public void setTill(LocalDate till) {
+	public void setTill(Date till) {
 		this.till = till;
 	}
 

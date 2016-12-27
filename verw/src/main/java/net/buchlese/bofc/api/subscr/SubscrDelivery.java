@@ -1,7 +1,5 @@
 package net.buchlese.bofc.api.subscr;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -32,7 +30,7 @@ public class SubscrDelivery implements Comparable<SubscrDelivery> {
 
 //	@DateTimeFormat(pattern="dd.MM.yyyy")
 	@JsonProperty
-	private LocalDate deliveryDate;
+	private java.sql.Date deliveryDate;
 	@JsonProperty
 	private int quantity;
 	@JsonProperty
@@ -61,7 +59,7 @@ public class SubscrDelivery implements Comparable<SubscrDelivery> {
 	@JsonProperty
 	private String slipNumber;
 	@JsonProperty
-	private LocalDateTime creationDate;
+	private java.sql.Timestamp creationDate;
 	@JsonProperty
 	private long shipmentCost;
 
@@ -122,12 +120,10 @@ public class SubscrDelivery implements Comparable<SubscrDelivery> {
 	public void setId(Long id) {
 		this.id = id;
 	}
-	public LocalDate getDeliveryDate() {
+	public java.sql.Date getDeliveryDate() {
 		return deliveryDate;
 	}
-	public void setDeliveryDate(LocalDate deliveryDate) {
-		this.deliveryDate = deliveryDate;
-	}
+	
 	public int getQuantity() {
 		return quantity;
 	}
@@ -152,10 +148,10 @@ public class SubscrDelivery implements Comparable<SubscrDelivery> {
 	public void setPayed(boolean payed) {
 		this.payed = payed;
 	}
-	public LocalDateTime getCreationDate() {
+	public java.sql.Timestamp getCreationDate() {
 		return creationDate;
 	}
-	public void setCreationDate(LocalDateTime creationDate) {
+	public void setCreationDate(java.sql.Timestamp creationDate) {
 		this.creationDate = creationDate;
 	}
 	public void setSubscriptionId(long subcriptionId) {
@@ -292,6 +288,10 @@ public class SubscrDelivery implements Comparable<SubscrDelivery> {
 		}
 		this.settDetail = settDetail;
 		this.payed = settDetail != null;
+	}
+
+	public void setDeliveryDate(java.sql.Date deliveryDate) {
+		this.deliveryDate = deliveryDate;
 	}
 
 

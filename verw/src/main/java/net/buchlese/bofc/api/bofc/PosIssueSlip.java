@@ -1,8 +1,8 @@
 package net.buchlese.bofc.api.bofc;
 
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,11 +61,11 @@ public class PosIssueSlip {
 	@JsonProperty
 	private Boolean cancelled;
 	@JsonProperty
-	private LocalDateTime creationTime;
+	private java.sql.Timestamp creationTime;
 	@JsonProperty
-	private LocalDate date;
+	private java.sql.Date date;
 	@JsonProperty
-	private LocalDateTime printTime;
+	private java.sql.Timestamp printTime;
 	@JsonProperty
 	private boolean printed;
 
@@ -86,9 +86,9 @@ public class PosIssueSlip {
 	private List<PosIssueSlipDetail> deliveryDetails;
 
 	@JsonProperty
-	private LocalDate deliveryFrom;
+	private Date deliveryFrom;
 	@JsonProperty
-	private LocalDate deliveryTill;
+	private Date deliveryTill;
 
 	
 	public Long getId() {
@@ -169,22 +169,17 @@ public class PosIssueSlip {
 	public void setAmountNone(Long amountNone) {
 		this.amountNone = amountNone;
 	}
-	public LocalDateTime getCreationTime() {
+	public Timestamp getCreationTime() {
 		return creationTime;
 	}
-	public void setCreationTime(LocalDateTime creationTime) {
+	public void setCreationTime(Timestamp creationTime) {
 		this.creationTime = creationTime;
 	}
-	public LocalDate getDate() {
-		return date;
-	}
-	public void setDate(LocalDate date) {
-		this.date = date;
-	}
-	public LocalDateTime getPrintTime() {
+	
+	public Timestamp getPrintTime() {
 		return printTime;
 	}
-	public void setPrintTime(LocalDateTime printTime) {
+	public void setPrintTime(Timestamp printTime) {
 		this.printTime = printTime;
 	}
 	public String getNumber() {
@@ -239,16 +234,16 @@ public class PosIssueSlip {
 	public void setDeliveryDetails(List<PosIssueSlipDetail> details) {
 		this.deliveryDetails = details;
 	}
-	public LocalDate getDeliveryFrom() {
+	public Date getDeliveryFrom() {
 		return deliveryFrom;
 	}
-	public void setDeliveryFrom(LocalDate deliveryFrom) {
+	public void setDeliveryFrom(Date deliveryFrom) {
 		this.deliveryFrom = deliveryFrom;
 	}
-	public LocalDate getDeliveryTill() {
+	public Date getDeliveryTill() {
 		return deliveryTill;
 	}
-	public void setDeliveryTill(LocalDate deliveryTill) {
+	public void setDeliveryTill(Date deliveryTill) {
 		this.deliveryTill = deliveryTill;
 	}
 	public PosInvoiceDetail addDetail(PosInvoiceDetail detail) {
@@ -295,6 +290,12 @@ public class PosIssueSlip {
 	}
 	public void setIncludeOnInvoice(boolean includeOnInvoice) {
 		this.includeOnInvoice = includeOnInvoice;
+	}
+	public java.sql.Date getDate() {
+		return date;
+	}
+	public void setDate(java.sql.Date date) {
+		this.date = date;
 	}
 
 }

@@ -1,10 +1,5 @@
 package net.buchlese.bofc.api.bofc;
 
-import java.time.LocalDateTime;
-
-import org.joda.time.Duration;
-import org.joda.time.Instant;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ServerState {
@@ -12,7 +7,7 @@ public class ServerState {
 	private int pointid;
 
 	@JsonProperty
-	private LocalDateTime timest;
+	private java.sql.Timestamp timest;
 	
 	@JsonProperty
 	private boolean dbConnection;
@@ -21,35 +16,35 @@ public class ServerState {
 	private String ipAddress;
 	
 	@JsonProperty
-	private Instant lastDbConnection;
+	private java.sql.Timestamp lastDbConnection;
 	@JsonProperty
-	private Instant lastSyncRun;
+	private java.sql.Timestamp lastSyncRun;
 	@JsonProperty
-	private Duration syncDuration;
+	private long syncDuration;
 	@JsonProperty
-	private Instant lastHomingRun;
+	private java.sql.Timestamp lastHomingRun;
 
-	public Instant getLastSyncRun() {
+	public java.sql.Timestamp getLastSyncRun() {
 		return lastSyncRun;
 	}
 
-	public void setLastSyncRun(Instant lastSyncRun) {
+	public void setLastSyncRun(java.sql.Timestamp lastSyncRun) {
 		this.lastSyncRun = lastSyncRun;
 	}
 
-	public Duration getSyncDuration() {
+	public long getSyncDuration() {
 		return syncDuration;
 	}
 
-	public void setSyncDuration(Duration syncDuration) {
+	public void setSyncDuration(long syncDuration) {
 		this.syncDuration = syncDuration;
 	}
 
-	public Instant getLastHomingRun() {
+	public java.sql.Timestamp getLastHomingRun() {
 		return lastHomingRun;
 	}
 
-	public void setLastHomingRun(Instant lastHomingRunc) {
+	public void setLastHomingRun(java.sql.Timestamp lastHomingRunc) {
 		this.lastHomingRun = lastHomingRunc;
 	}
 
@@ -75,11 +70,11 @@ public class ServerState {
 		this.lastWeek = lastWeek;
 	}
 
-	public LocalDateTime getTimest() {
+	public java.sql.Timestamp getTimest() {
 		return timest;
 	}
 
-	public void setTimest(LocalDateTime timest) {
+	public void setTimest(java.sql.Timestamp timest) {
 		this.timest = timest;
 	}
 
@@ -99,11 +94,11 @@ public class ServerState {
 		this.ipAddress = ipAddress;
 	}
 
-	public Instant getLastDbConnection() {
+	public java.sql.Timestamp getLastDbConnection() {
 		return lastDbConnection;
 	}
 
-	public void setLastDbConnection(Instant lastDbConnection) {
+	public void setLastDbConnection(java.sql.Timestamp lastDbConnection) {
 		this.lastDbConnection = lastDbConnection;
 	}
 

@@ -1,6 +1,6 @@
 package net.buchlese.bofc.api.bofc;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -87,7 +88,7 @@ public class PosTx {
 	@NotNull
 	@JsonProperty
 	@Column(name = "belegdatum")
-	private LocalDateTime timestamp;
+	private java.sql.Timestamp timestamp;
 
 	@JsonProperty
 	private boolean toBeIgnored;
@@ -165,10 +166,10 @@ public class PosTx {
 	public void setTax(Tax tax) {
 		this.tax = tax;
 	}
-	public LocalDateTime getTimestamp() {
+	public java.sql.Timestamp getTimestamp() {
 		return timestamp;
 	}
-	public void setTimestamp(LocalDateTime timestamp) {
+	public void setTimestamp(java.sql.Timestamp timestamp) {
 		this.timestamp = timestamp;
 	}
 	public int getBelegIdx() {
@@ -214,6 +215,10 @@ public class PosTx {
 
 	public void setPointid(int pointid) {
 		this.pointid = pointid;
+	}
+	@JsonIgnore
+	public LocalDate getTimestampAsLocalDate() {
+		return timestamp.toLocalDateTime().toLocalDate();
 	}
 	
 }

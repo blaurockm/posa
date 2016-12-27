@@ -112,7 +112,7 @@ public class SubscrProductControllerTest {
 		SubscrProduct sp = new SubscrProduct();
 		sp.setAbbrev("abbr");
 		sp.setHalfPercentage(0.5d);
-		sp.setEndDate(LocalDate.now());
+		sp.setEndDate(new java.sql.Date(System.currentTimeMillis()));
 		given(this.subscrProductRepo.findAll(org.mockito.Matchers.any(Predicate.class), org.mockito.Matchers.any(Pageable.class)))
 		.willReturn(new PageImpl<>(Arrays.asList(sp)));
 
@@ -126,7 +126,7 @@ public class SubscrProductControllerTest {
 		SubscrProduct sp = new SubscrProduct();
 		sp.setId(312L);
 		sp.setPayPerDelivery(false); // important
-		sp.setLastInterval(LocalDate.now());
+		sp.setLastInterval(new java.sql.Date(System.currentTimeMillis()));
 		sp.setIntervalType(PayIntervalType.MONTHLY);
 		sp.setIntervalPattern("hallo #");
 
@@ -152,7 +152,7 @@ public class SubscrProductControllerTest {
 //		System.out.println(res.getResponse().getContentAsString());
 		assertThat(siRet.getProductId()).isEqualTo(312L);
 		assertThat(siRet.getName()).isNotEmpty();
-		assertThat(siRet.getStartDate()).isEqualTo(LocalDate.now().plusDays(1));
+		assertThat(siRet.getStartDate().toLocalDate()).isEqualTo(LocalDate.now().plusDays(1));
 	}
 
 	/**
@@ -164,7 +164,7 @@ public class SubscrProductControllerTest {
 		SubscrProduct sp = new SubscrProduct();
 		sp.setId(312L);
 		sp.setPayPerDelivery(true);
-		sp.setLastInterval(LocalDate.now());
+		sp.setLastInterval(new java.sql.Date(System.currentTimeMillis()));
 		sp.setIntervalType(PayIntervalType.MONTHLY);
 		sp.setIntervalPattern("hallo #");
 
@@ -217,7 +217,7 @@ public class SubscrProductControllerTest {
 
 //		System.out.println(res.getResponse().getContentAsString());
 		assertThat(sidRet.isPayed()).isFalse();
-		assertThat(sidRet.getDeliveryDate()).isEqualTo(LocalDate.now());
+		assertThat(sidRet.getDeliveryDate().toLocalDate()).isEqualTo(LocalDate.now());
 	}
 
 
@@ -294,7 +294,7 @@ public class SubscrProductControllerTest {
 //		System.out.println(res.getResponse().getContentAsString());
 		assertThat(sidRet.isPayed()).isFalse();
 		assertThat(sidRet.isSlipped()).isTrue();
-		assertThat(sidRet.getDeliveryDate()).isEqualTo(LocalDate.now());
+		assertThat(sidRet.getDeliveryDate().toLocalDate()).isEqualTo(LocalDate.now());
 	}
 
 

@@ -57,7 +57,7 @@ public class DeliveryNoteCreatorTest {
     	deli.setQuantity(1);
     	deli.setArticle(art);
     	deli.setArticleName(art.getName());
-    	deli.setDeliveryDate(LocalDate.now());
+    	deli.setDeliveryDate(new java.sql.Date(System.currentTimeMillis()));
     	
     	entityManager.persist(sub);
     	entityManager.persist(subscr);

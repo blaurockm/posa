@@ -1,9 +1,6 @@
 package net.buchlese.verw.ctrl;
 
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,7 +82,7 @@ public class SubscrProductController {
 		}
 		intvl.setProduct(p);
 		intvl.setIntervalType(p.getIntervalType());
-		intvl.setStartDate(p.getLastInterval().plusDays(1));
+		intvl.setStartDate(java.sql.Date.valueOf(p.getLastInterval().toLocalDate().plusDays(1)));
 		intvl.updateEndDate();
 		intvl.setName(intvl.initializeName(p.getIntervalPattern() != null ? p.getIntervalPattern() : p.getNamePattern()));
 		p.setLastInterval(intvl.getEndDate());
@@ -104,8 +101,8 @@ public class SubscrProductController {
 		intvldeliv.setSubscription(s);
 		intvldeliv.setSubscriber(sub);
 		intvldeliv.setInterval(intvl);
-		intvldeliv.setDeliveryDate(LocalDate.now());
-		intvldeliv.setCreationDate(LocalDateTime.now());
+		intvldeliv.setDeliveryDate(new java.sql.Date(System.currentTimeMillis()));
+		intvldeliv.setCreationDate(new java.sql.Timestamp(System.currentTimeMillis()));
 		intvldeliv.setQuantity(s.getQuantity());
 		intvldeliv.setIntervalName(intvl.getName());
 		intvldeliv.setTotal(intvl.getBrutto());
@@ -142,8 +139,8 @@ public class SubscrProductController {
 		deliv.setSubscription(s);
 		deliv.setSubscriber(sub);
 		deliv.setArticle(art);
-		deliv.setDeliveryDate(LocalDate.now());
-		deliv.setCreationDate(LocalDateTime.now());
+		deliv.setDeliveryDate(new java.sql.Date(System.currentTimeMillis()));
+		deliv.setCreationDate(new java.sql.Timestamp(System.currentTimeMillis()));
 		deliv.setQuantity(s.getQuantity());
 		deliv.setArticleName(art.getName());
 		deliv.setTotal(art.getBrutto());

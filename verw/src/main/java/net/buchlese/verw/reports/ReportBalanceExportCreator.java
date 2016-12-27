@@ -22,7 +22,7 @@ public class ReportBalanceExportCreator {
 
 	public ReportBalanceExport createReport(AccountingBalanceExport export) {
 		ReportBalanceExport rep = new ReportBalanceExport();
-		rep.setExecDate(export.getExecDate());
+		rep.setExecDate(export.getExecDate().toLocalDateTime());
 		rep.setPosname(decodePos(export.getPointId()));
 		rep.setDescription("Kassenberichtsexport für " + rep.getPosname());
 		rep.setExportId(export.getId());
@@ -88,7 +88,7 @@ public class ReportBalanceExportCreator {
 		ExtraPay p = new ExtraPay();
 		p.setAmount(tx.getTotal());
 		p.setText(tx.getMatchCode());
-		p.setPayDate(tx.getTimestamp().toLocalDate());
+		p.setPayDate(tx.getTimestampAsLocalDate());
 		return p;
 	}
 	

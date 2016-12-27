@@ -1,7 +1,6 @@
 package net.buchlese.verw.ctrl;
 
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,7 +54,7 @@ public class CommandController {
 			Command old = commandRepository.findOne(cmd.getId());
 			if (old != null) {
 				old.setResult(cmd.getResult());
-				old.setExecutiontime(LocalDateTime.now());
+				old.setExecutiontime(new java.sql.Timestamp(System.currentTimeMillis()));
 				commandRepository.save(old);
 			}
 			return ResponseEntity.ok().build();

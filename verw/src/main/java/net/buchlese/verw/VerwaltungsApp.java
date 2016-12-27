@@ -2,6 +2,8 @@ package net.buchlese.verw;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 
 import net.buchlese.bofc.api.subscr.SubscrArticle;
 import net.buchlese.bofc.api.subscr.SubscrInterval;
@@ -13,9 +15,11 @@ import net.buchlese.verw.util.LocalDateSerializer;
 import net.buchlese.verw.util.LocalDateTimeDeserializer;
 import net.buchlese.verw.util.LocalDateTimeSerializer;
 
+import org.apache.cxf.jaxrs.servlet.CXFNonSpringJaxrsServlet;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.rest.core.config.RepositoryRestConfiguration;
@@ -49,6 +53,16 @@ public class VerwaltungsApp extends RepositoryRestConfigurerAdapter {
         objectMapper.registerModule(javaTimeModule);
         return objectMapper;
     }
+	
+	@Bean
+	public ServletRegistrationBean getODataServletRegistrationBean() {
+		ServletRegistrationBean odataServletRegistrationBean = new ServletRegistrationBean(new CXFNonSpringJaxrsServlet(), "/odata.svc/*");
+		Map<String, String> initParameters = new HashMap<String, String>();
+		initParameters.put("javax.ws.rs.Application", "org.apache.olingo.odata2.core.rest.app.ODataApplication");
+		initParameters.put("org.apache.olingo.odata2.service.factory", "net.buchlese.verw.util.JPAServiceFactory");
+		odataServletRegistrationBean.setInitParameters(initParameters);
+		return odataServletRegistrationBean;
+	}
 
 //	@Bean
 //	public Jackson2RepositoryPopulatorFactoryBean repositoryPopulator() {

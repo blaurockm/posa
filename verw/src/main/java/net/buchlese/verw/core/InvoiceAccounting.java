@@ -25,13 +25,13 @@ public class InvoiceAccounting {
 		LedgerEntry entry = new LedgerEntry();
 		entry.setSoll(true);
 		entry.setNumber(inv.getNumber());
-		entry.setDate(inv.getDate());
+		entry.setDate(inv.getDate().toLocalDate());
 
 		Booking soll = new Booking();
 		soll.setAccount(getDebitAccount(inv)); // das debitorenkonto
 		soll.setBetrag(inv.getAmount());
 		soll.setText("Rg " + inv.getNumber() + "("+ inv.getCustomerId() + "," +inv.getName1()+")");
-		soll.setDate(inv.getDate());
+		soll.setDate(inv.getDate().toLocalDate());
 		entry.add(soll);
 		if (inv.getAmountNone() != null && inv.getAmountNone().longValue() != 0L) {
 			Booking haben = new Booking();

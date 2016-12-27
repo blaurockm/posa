@@ -1,7 +1,5 @@
 package net.buchlese.bofc.api.sys;
 
-import java.time.LocalDateTime;
-
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -17,7 +15,7 @@ public class EventLog {
 	@NotEmpty
 	private String seqKey;
 
-	private LocalDateTime eventDate;
+	private java.sql.Timestamp eventDate;
 	
 	private String eventMsg;
 
@@ -37,11 +35,11 @@ public class EventLog {
 		this.seqKey = seqKey;
 	}
 
-	public LocalDateTime getEventDate() {
+	public java.sql.Timestamp getEventDate() {
 		return eventDate;
 	}
 
-	public void setEventDate(LocalDateTime eventDate) {
+	public void setEventDate(java.sql.Timestamp eventDate) {
 		this.eventDate = eventDate;
 	}
 

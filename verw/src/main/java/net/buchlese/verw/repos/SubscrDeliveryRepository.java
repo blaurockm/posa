@@ -1,6 +1,5 @@
 package net.buchlese.verw.repos;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,7 +16,7 @@ import net.buchlese.bofc.api.subscr.Subscription;
 public interface SubscrDeliveryRepository extends JpaRepository<SubscrDelivery, Long>,
 QueryDslPredicateExecutor<SubscrDelivery>,QuerydslBinderCustomizer<QSubscrDelivery> {
 
-	List<SubscrDelivery> findByDeliveryDate(LocalDate date);
+	List<SubscrDelivery> findByDeliveryDate(java.sql.Date date);
 
 	List<SubscrDelivery> findBySubscriptionAndPayed(Subscription sub, boolean payed);
 

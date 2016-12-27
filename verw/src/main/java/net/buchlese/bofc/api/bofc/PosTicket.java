@@ -1,6 +1,5 @@
 package net.buchlese.bofc.api.bofc;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -46,7 +45,7 @@ public class PosTicket {
 
 	@Column(name = "belegdatum")
 	@JsonProperty
-	private LocalDateTime timestamp;
+	private java.sql.Timestamp timestamp;
 
 	@JsonProperty
 	@Transient
@@ -84,11 +83,11 @@ public class PosTicket {
 		this.paymentMethod = paymentMethod;
 	}
 
-	public LocalDateTime getTimestamp() {
+	public java.sql.Timestamp getTimestamp() {
 		return timestamp;
 	}
 
-	public void setTimestamp(LocalDateTime timestamp) {
+	public void setTimestamp(java.sql.Timestamp timestamp) {
 		this.timestamp = timestamp;
 	}
 

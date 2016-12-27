@@ -1,7 +1,5 @@
 package net.buchlese.bofc.api.sys;
 
-import java.time.LocalDateTime;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -37,7 +35,7 @@ public class UserChange {
 	private String action;
 
 	@JsonProperty
-	private LocalDateTime modDate;
+	private java.sql.Timestamp modDate;
 
 	public long getId() {
 		return id;
@@ -95,11 +93,11 @@ public class UserChange {
 		this.action = action;
 	}
 
-	public LocalDateTime getModDate() {
+	public java.sql.Timestamp getModDate() {
 		return modDate;
 	}
 
-	public void setModDate(LocalDateTime modDate) {
+	public void setModDate(java.sql.Timestamp modDate) {
 		this.modDate = modDate;
 	}
 	

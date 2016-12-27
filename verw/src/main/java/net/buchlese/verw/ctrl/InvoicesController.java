@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
@@ -89,17 +88,17 @@ public class InvoicesController {
 	@RequestMapping(path="createExport", method = RequestMethod.GET)
 	@Transactional
 	public ResponseEntity<AccountingInvoiceExport> createExport(@RequestParam("pointid") Integer pointid, @RequestParam(name="exportLimit", required=false) Optional<String>  exportLimit) {
-		LocalDate tagGrenze = null;
+		java.sql.Date tagGrenze = null;
 		if (exportLimit.isPresent() ) {
-			tagGrenze = LocalDate.parse(exportLimit.get(), DateTimeFormatter.ISO_DATE_TIME);
+			tagGrenze = java.sql.Date.valueOf(LocalDate.parse(exportLimit.get(), DateTimeFormatter.ISO_DATE_TIME));
 		} else {
-			LocalDate ausgangsTag = LocalDate.now();
+			java.sql.Date ausgangsTag = new java.sql.Date(System.currentTimeMillis());
 			PosInvoice firstUnexported = invoiceRepository.findFirstByExportedAndPointidOrderByDateAsc(false, pointid);
 			// Buchungsperiode es ersten Abschlusses ermitteln
 			if (firstUnexported != null) {
 				ausgangsTag = firstUnexported.getDate();
 			}
-			tagGrenze = ausgangsTag.withDayOfMonth(ausgangsTag.lengthOfMonth());
+			tagGrenze = java.sql.Date.valueOf(ausgangsTag.toLocalDate().withDayOfMonth(ausgangsTag.toLocalDate().lengthOfMonth()));
 		}
 		List<PosInvoice> balToExp = invoiceRepository.findAllByExportedAndPointidAndDateLessThanEqualOrderByDateAsc(false, pointid, tagGrenze);
 		
@@ -108,7 +107,7 @@ public class InvoicesController {
 		}
 		AccountingInvoiceExport export = new AccountingInvoiceExport();
 		export.setDescription("..asd.");
-		export.setExecDate(LocalDateTime.now());
+		export.setExecDate(new java.sql.Timestamp(System.currentTimeMillis()));
 		export.setPointId(pointid);
 		export.setInvoices(balToExp); // seiteneffekt: ändert die Balances auf "exported"
 		
@@ -219,7 +218,7 @@ public class InvoicesController {
 				zos.write(pdf, 0, pdf.length);
 				zos.closeEntry();
 				inv.setPrinted(true);
-				inv.setPrintTime(LocalDateTime.now());
+				inv.setPrintTime(new java.sql.Timestamp(System.currentTimeMillis()));
 				invoiceRepository.save(inv);
 			}
 			zos.close();

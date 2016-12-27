@@ -1,7 +1,6 @@
 package net.buchlese.bofc.api.bofc;
 
 
-import java.time.LocalDateTime;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -95,23 +94,23 @@ public class PosCashBalance {
 	@JsonProperty
 	private int cancelledticketCount;
 	@JsonProperty
-	private LocalDateTime firstTimestamp;
+	private java.sql.Timestamp firstTimestamp;
 	@JsonProperty
 	private long firstBelegNr;
 	@JsonProperty
 	private long lastBelegNr; 
 	@JsonProperty
-	private LocalDateTime lastTimestamp;
+	private java.sql.Timestamp lastTimestamp;
 	@JsonProperty
-	private LocalDateTime creationtime;
+	private java.sql.Timestamp creationtime;
 	@JsonProperty
 	private boolean exported;
 	@JsonProperty
-	private LocalDateTime exportDate;
+	private java.sql.Timestamp exportDate;
 	@JsonProperty
-	private LocalDateTime firstCovered;
+	private java.sql.Timestamp firstCovered;
 	@JsonProperty
-	private LocalDateTime lastCovered;
+	private java.sql.Timestamp lastCovered;
 
 	@JsonProperty
 	@Column
@@ -332,10 +331,10 @@ public class PosCashBalance {
 	public void setCancelledticketCount(int cancelledticketCount) {
 		this.cancelledticketCount = cancelledticketCount;
 	}
-	public LocalDateTime getFirstTimestamp() {
+	public java.sql.Timestamp getFirstTimestamp() {
 		return firstTimestamp;
 	}
-	public void setFirstTimestamp(LocalDateTime firstTimestamp) {
+	public void setFirstTimestamp(java.sql.Timestamp firstTimestamp) {
 		this.firstTimestamp = firstTimestamp;
 	}
 	public long getFirstBelegNr() {
@@ -350,16 +349,16 @@ public class PosCashBalance {
 	public void setLastBelegNr(long lastBelegNr) {
 		this.lastBelegNr = lastBelegNr;
 	}
-	public LocalDateTime getLastTimestamp() {
+	public java.sql.Timestamp getLastTimestamp() {
 		return lastTimestamp;
 	}
-	public void setLastTimestamp(LocalDateTime lastTimestamp) {
+	public void setLastTimestamp(java.sql.Timestamp lastTimestamp) {
 		this.lastTimestamp = lastTimestamp;
 	}
-	public LocalDateTime getCreationtime() {
+	public java.sql.Timestamp getCreationtime() {
 		return creationtime;
 	}
-	public void setCreationtime(LocalDateTime creationtime) {
+	public void setCreationtime(java.sql.Timestamp creationtime) {
 		this.creationtime = creationtime;
 	}
 	public String getOrigAbschluss() {
@@ -374,19 +373,19 @@ public class PosCashBalance {
 	public void setExported(boolean exported) {
 		this.exported = exported;
 	}
-	public LocalDateTime getExportDate() {
+	public java.sql.Timestamp getExportDate() {
 		return exportDate;
 	}
-	public LocalDateTime getFirstCovered() {
+	public java.sql.Timestamp getFirstCovered() {
 		return firstCovered;
 	}
-	public void setFirstCovered(LocalDateTime firstCovered) {
+	public void setFirstCovered(java.sql.Timestamp firstCovered) {
 		this.firstCovered = firstCovered;
 	}
-	public LocalDateTime getLastCovered() {
+	public java.sql.Timestamp getLastCovered() {
 		return lastCovered;
 	}
-	public void setLastCovered(LocalDateTime lastCovered) {
+	public void setLastCovered(java.sql.Timestamp lastCovered) {
 		this.lastCovered = lastCovered;
 	}
 	public Long getCouponTradeIn() {
@@ -405,7 +404,7 @@ public class PosCashBalance {
 		this.couponTradeOut = couponTradeOut;
 	}
 
-	public void setExportDate(LocalDateTime exportDate) {
+	public void setExportDate(java.sql.Timestamp exportDate) {
 		this.exportDate = exportDate;
 	}
 

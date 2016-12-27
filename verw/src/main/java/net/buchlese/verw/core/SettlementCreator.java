@@ -1,7 +1,6 @@
 package net.buchlese.verw.core;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.sql.Date;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -130,7 +129,7 @@ public class SettlementCreator {
 		for (InvoiceAgrDetail iad : inv.getAgreementDetails()) {
 			if (InvoiceAgrDetail.TYPE.SUBSCR.equals(iad.getType())) {
 				Subscription sub = iad.getSettledAgreement();
-				sub.setPayedUntil(iad.getDeliveryFrom().minusDays(1));
+				sub.setPayedUntil(java.sql.Date.valueOf(iad.getDeliveryFrom().toLocalDate().minusDays(1)));
 				if (iad.getPayType() != null && iad.getPayType().equals(PayIntervalType.EACHDELIVERY)) {
 					iad.getDeliveries().forEach(x -> x.setSettDetail(null));
 				} else {
@@ -213,7 +212,7 @@ public class SettlementCreator {
 		InvoiceAgrDetail iad = new InvoiceAgrDetail();
 		iad.setSettledDeliveryNote(slip);
 		iad.setType(InvoiceAgrDetail.TYPE.ISSUESLIP);
-		addTextDetail(inv, "Artikel des Lieferscheins " + slip.getNumber() + " vom " + slip.getDate().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
+		addTextDetail(inv, "Artikel des Lieferscheins " + slip.getNumber() + " vom " + slip.getDate().toLocalDate().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
 		for (PosInvoiceDetail detail : slip.getDetails()) {
 			inv.addInvoiceDetail(detail);
 		}
@@ -248,8 +247,8 @@ public class SettlementCreator {
 		iad.setSettledAgreement(sub);
 		iad.setPayType(sub.getPaymentType());
 
-		LocalDate from = null;
-		LocalDate till = null;
+		java.sql.Date from = null;
+		java.sql.Date till = null;
 		// details per Delivery;
 		for (SubscrDelivery deliv : deliveries) {
 			SubscrArticle art = deliv.getArticle();
@@ -258,16 +257,16 @@ public class SettlementCreator {
 			if (deliv.getShipmentCost() > 0) {
 				addShipmentCostDetail(inv, deliv.getShipmentCost());
 			}
-			if (from == null || deliv.getDeliveryDate().isBefore(from)) {
+			if (from == null || deliv.getDeliveryDate().before(from)) {
 				from = deliv.getDeliveryDate();
 			}
-			if (till == null || deliv.getDeliveryDate().isAfter(till)) {
+			if (till == null || deliv.getDeliveryDate().after(till)) {
 				till = deliv.getDeliveryDate();
 			}
 			deliv.setSettDetail(iad);
 		}
 		iad.setDeliveryFrom(from);
-		iad.setDeliveryTill(till.withDayOfMonth(till.lengthOfMonth()));  // immer der letzte des Monats
+		iad.setDeliveryTill(java.sql.Date.valueOf(till.toLocalDate().withDayOfMonth(till.toLocalDate().lengthOfMonth())));  // immer der letzte des Monats
 		inv.addAgreementDetail(iad);
 		return newDetail;
 	}
@@ -296,8 +295,8 @@ public class SettlementCreator {
 		InvoiceAgrDetail iad = new InvoiceAgrDetail();
 		iad.setSettledAgreement(sub);
 		iad.setPayType(sub.getPaymentType());
-		LocalDate from = null;
-		LocalDate till = null;
+		Date from = null;
+		Date till = null;
 		// details per Delivery;
 		for (SubscrIntervalDelivery deliv : deliveries) {
 			SubscrInterval interval = deliv.getInterval();
@@ -306,10 +305,10 @@ public class SettlementCreator {
 			if (deliv.getShipmentCost() > 0) {
 				addShipmentCostDetail(inv, deliv.getShipmentCost());
 			}
-			if (from == null || interval.getStartDate().isBefore(from)) {
+			if (from == null || interval.getStartDate().before(from)) {
 				from = interval.getStartDate();
 			}
-			if (till == null || interval.getEndDate().isAfter(till)) {
+			if (till == null || interval.getEndDate().after(till)) {
 				till = interval.getEndDate();
 			}
 			deliv.setSettDetail(iad);
@@ -317,7 +316,7 @@ public class SettlementCreator {
 		sub.setPayedUntil(till);
 		
 		iad.setDeliveryFrom(from);
-		iad.setDeliveryTill(till.withDayOfMonth(till.lengthOfMonth()));  // immer der letzte des Monats
+		iad.setDeliveryTill(java.sql.Date.valueOf(till.toLocalDate().withDayOfMonth(till.toLocalDate().lengthOfMonth())));  // immer der letzte des Monats
 		inv.addAgreementDetail(iad);
 		return newDetail;
 	}
@@ -326,8 +325,8 @@ public class SettlementCreator {
 		Settlement inv = new Settlement();
 		
 		// formalia
-		inv.setDate(LocalDate.now());
-		inv.setCreationTime(LocalDateTime.now());
+		inv.setDate(new java.sql.Date(System.currentTimeMillis()));
+		inv.setCreationTime(new java.sql.Timestamp(System.currentTimeMillis()));
 		inv.setCustomerId(subscri.getCustomerId());
 		inv.setDebitorId(subscri.getDebitorId());
 		inv.setPointid(subscri.getPointid());

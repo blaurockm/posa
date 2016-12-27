@@ -3,8 +3,6 @@ package net.buchlese.verw.api;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.InputStreamReader;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -46,7 +44,7 @@ public class PosCashBalanceJsonTest {
     	taxMap.put(Tax.HALF, 14996L);
     	bal.setTaxBalance(taxMap);
     	bal.setCashIn(Collections.emptyMap());
-    	bal.setFirstTimestamp(LocalDateTime.ofInstant(new java.util.Date(1473231254000L).toInstant(), ZoneId.systemDefault()));
+    	bal.setFirstTimestamp(new java.sql.Timestamp(1473231254000L));
     	bal.setOrigAbschluss("{\"id\":3214,\"kasse\":1,\"abschlussnr\":2386,\"abschlussid\":\"20160907\",\"bar\":658.99,\"telecashIst\":53.1,\"anfang\":416.03,\"ist\":712.09,\"soll\":711.96,\"differenz\":0.13,\"abschoepfung\":240.0,\"einzahlungen\":0.0,\"auszahlungen\":0.0,\"gutscheine\":10.0,\"gutschriften\":-10.0,\"umsatzVoll\":92.87,\"umsatzHalb\":149.96,\"umsatzOhne\":0.0,\"bezahlteRechnungen\":53.1,\"anzahlKunden\":19,\"ladenUmsatz\":62.8,\"besorgungsUmsatz\":180.03,\"vonDatum\":1473199201000,\"bisDatum\":1473285540000,\"auszahlungenVoll\":0.0,\"auszahlungenHalb\":0.0,\"auszahlungenOhne\":0.0,\"zeitmarke\":12857903}");
     	bal.setExported(true);
     	List<PosTicket> tickets = new ArrayList<>();
@@ -55,7 +53,7 @@ public class PosCashBalanceJsonTest {
     	t.setPointid(0);
     	t.setPaymentMethod(PaymentMethod.CASH);
     	t.setTotal(2958L);
-    	t.setTimestamp(LocalDateTime.ofInstant(new java.util.Date(1473231246000L).toInstant(), ZoneId.systemDefault()));
+    	t.setTimestamp(new java.sql.Timestamp(1473231246000L));
     	List<PosTx> txs = new ArrayList<>();
     	PosTx tx = new PosTx();
     	tx.setArticleId(101116);
@@ -69,7 +67,7 @@ public class PosCashBalanceJsonTest {
     	tx.setEan(null);
     	tx.setTax(Tax.HALF);
     	tx.setType(TxType.SELL);
-    	tx.setTimestamp(LocalDateTime.ofInstant(new java.util.Date(1473231254000L).toInstant(), ZoneId.systemDefault()));
+    	tx.setTimestamp(new java.sql.Timestamp(1473231254000L));
     	txs.add(tx);
     	t.setTxs(txs);
     	tickets.add(t);

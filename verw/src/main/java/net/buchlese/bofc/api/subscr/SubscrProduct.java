@@ -1,6 +1,7 @@
 package net.buchlese.bofc.api.subscr;
 
 
+import java.sql.Date;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.Set;
@@ -46,13 +47,13 @@ public class SubscrProduct {
 	@Transient
 	private Period period;
 	@JsonProperty
-	private LocalDate lastDelivery;
+	private Date lastDelivery;
 	@JsonProperty
-	private LocalDate nextDelivery;
+	private Date nextDelivery;
 	@JsonProperty
-	private LocalDate startDate;
+	private Date startDate;
 	@JsonProperty
-	private LocalDate endDate;
+	private Date endDate;
 	@JsonProperty
 	private int quantity;
 	@JsonProperty
@@ -71,7 +72,7 @@ public class SubscrProduct {
 	private boolean payPerDelivery; // vorausbezahlt: bei Abos, Fortsetzungen bezahlt pro Lieferung
 
 	@JsonProperty
-	private LocalDate lastInterval;
+	private Date lastInterval;
 
 	@JsonProperty
 	@Enumerated(EnumType.STRING)
@@ -99,7 +100,7 @@ public class SubscrProduct {
 			na.setHalfPercentage(halfPercentage);
 		}
 		na.updateBrutto(baseBrutto);
-		na.setErschTag(LocalDate.now());
+		na.setErschTag(new java.sql.Date(System.currentTimeMillis()));
 		na.setIssueNo(++count);
 		na.setName(na.initializeName(namePattern));
 		return na;
@@ -121,9 +122,9 @@ public class SubscrProduct {
 		}
 		na.updateBrutto(baseBrutto);
 		if (getLastInterval() != null) {
-			na.setStartDate(getLastInterval().plusDays(1));
+			na.setStartDate(java.sql.Date.valueOf(getLastInterval().toLocalDate().plusDays(1)));
 		} else {
-			na.setStartDate(erschTag);
+			na.setStartDate(java.sql.Date.valueOf(erschTag));
 		}
 		na.updateEndDate();
 		setLastInterval(na.getEndDate());
@@ -161,24 +162,6 @@ public class SubscrProduct {
 	}
 	public void setPeriod(Period period) {
 		this.period = period;
-	}
-	public LocalDate getLastDelivery() {
-		return lastDelivery;
-	}
-	public void setLastDelivery(LocalDate lastDelivery) {
-		this.lastDelivery = lastDelivery;
-	}
-	public LocalDate getNextDelivery() {
-		return nextDelivery;
-	}
-	public void setNextDelivery(LocalDate nextDelivery) {
-		this.nextDelivery = nextDelivery;
-	}
-	public LocalDate getStartDate() {
-		return startDate;
-	}
-	public void setStartDate(LocalDate startDate) {
-		this.startDate = startDate;
 	}
 	public int getQuantity() {
 		return quantity;
@@ -221,14 +204,6 @@ public class SubscrProduct {
 		this.baseBrutto = baseBrutto;
 	}
 
-	public LocalDate getEndDate() {
-		return endDate;
-	}
-
-	public void setEndDate(LocalDate endDate) {
-		this.endDate = endDate;
-	}
-
 	public boolean isPayPerDelivery() {
 		return payPerDelivery;
 	}
@@ -243,14 +218,6 @@ public class SubscrProduct {
 
 	public void setPublisherId(long publisherId) {
 		this.publisherId = publisherId;
-	}
-
-	public LocalDate getLastInterval() {
-		return lastInterval;
-	}
-
-	public void setLastInterval(LocalDate lastInterval) {
-		this.lastInterval = lastInterval;
 	}
 
 	public PayIntervalType getIntervalType() {
@@ -340,6 +307,46 @@ public class SubscrProduct {
 		} else if (!id.equals(other.id))
 			return false;
 		return true;
+	}
+
+	public Date getLastDelivery() {
+		return lastDelivery;
+	}
+
+	public void setLastDelivery(Date lastDelivery) {
+		this.lastDelivery = lastDelivery;
+	}
+
+	public Date getNextDelivery() {
+		return nextDelivery;
+	}
+
+	public void setNextDelivery(Date nextDelivery) {
+		this.nextDelivery = nextDelivery;
+	}
+
+	public Date getStartDate() {
+		return startDate;
+	}
+
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
+	}
+
+	public Date getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
+	}
+
+	public Date getLastInterval() {
+		return lastInterval;
+	}
+
+	public void setLastInterval(Date lastInterval) {
+		this.lastInterval = lastInterval;
 	}
 
 

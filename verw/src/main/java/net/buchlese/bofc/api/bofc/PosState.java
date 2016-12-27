@@ -3,9 +3,6 @@ package net.buchlese.bofc.api.bofc;
 import java.util.EnumMap;
 import java.util.Map;
 
-import org.joda.time.Instant;
-import org.joda.time.LocalDate;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class PosState  {
@@ -14,10 +11,10 @@ public class PosState  {
 	private int pointid;
 
 	@JsonProperty
-	private Instant timest;
+	private java.sql.Timestamp timest;
 
 	@JsonProperty
-	private LocalDate stateDate;
+	private java.sql.Date stateDate;
 
 	@JsonProperty
 	private Long revenue;     // Umsatz
@@ -28,19 +25,19 @@ public class PosState  {
 	@JsonProperty
 	private Map<PaymentMethod, Long> paymentMethodBalance = new EnumMap<PaymentMethod, Long>(PaymentMethod.class);
 
-	public Instant getTimest() {
+	public java.sql.Timestamp getTimest() {
 		return timest;
 	}
 
-	public void setTimest(Instant timest) {
+	public void setTimest(java.sql.Timestamp timest) {
 		this.timest = timest;
 	}
 
-	public LocalDate getStateDate() {
+	public java.sql.Date getStateDate() {
 		return stateDate;
 	}
 
-	public void setStateDate(LocalDate stateDate) {
+	public void setStateDate(java.sql.Date stateDate) {
 		this.stateDate = stateDate;
 	}
 

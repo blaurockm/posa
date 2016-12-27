@@ -7,7 +7,6 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -48,12 +47,12 @@ public class SubscrInterval implements Comparable<SubscrInterval> {
 	private double halfPercentage =1d; // prozentuale Anteil am Gesamtpreis , halber Steuersatz, 0 < x < 1
 	
 	@JsonProperty
-	private LocalDate startDate;
+	private java.sql.Date startDate;
 	@JsonProperty
-	private LocalDate endDate;
+	private java.sql.Date endDate;
 
 	@JsonProperty
-	@Column(name =" interval_")
+	@Transient
 	private Period interval;
 
 	@JsonProperty
@@ -70,8 +69,8 @@ public class SubscrInterval implements Comparable<SubscrInterval> {
 
 	@JsonIgnore
 	public String initializeName(String namePattern) {
-		String beginStr = startDate.format(DateTimeFormatter.ofPattern("MM/yyyy"));
-		String endStr = endDate.format(DateTimeFormatter.ofPattern("MM/yyyy"));
+		String beginStr = startDate.toLocalDate().format(DateTimeFormatter.ofPattern("MM/yyyy"));
+		String endStr = endDate.toLocalDate().format(DateTimeFormatter.ofPattern("MM/yyyy"));
 		String intervalStr = beginStr + "-" + endStr;
 		String name = namePattern.replace("#", intervalStr);
 		name = name.replace("{start}", beginStr);
@@ -89,9 +88,9 @@ public class SubscrInterval implements Comparable<SubscrInterval> {
 		Matcher m = p.matcher(name);
 		if (m.find()) {
 			String datePattern = m.group(1);
-			String dateString = startDate.format(DateTimeFormatter.ofPattern(datePattern));
+			String dateString = startDate.toLocalDate().format(DateTimeFormatter.ofPattern(datePattern));
 			name = name.replaceFirst(dp, dateString);
-			dateString = endDate.format(DateTimeFormatter.ofPattern(datePattern));
+			dateString = endDate.toLocalDate().format(DateTimeFormatter.ofPattern(datePattern));
 			name = name.replaceFirst(dp, dateString);
 		}
 		return name;
@@ -99,12 +98,15 @@ public class SubscrInterval implements Comparable<SubscrInterval> {
 	
 	@JsonIgnore
 	public void updateEndDate() {
+		LocalDate endDate = null;
+		LocalDate startDate = getStartDate().toLocalDate();
 		switch (getIntervalType()) {
-		case YEARLY: setEndDate(getStartDate().plusYears(1).minusDays(1)); break;
-		case HALFYEARLY: setEndDate(getStartDate().plusMonths(6).minusDays(1)); break;
-		case MONTHLY: setEndDate(getStartDate().plusMonths(1).minusDays(1)); break;
-		default: setEndDate(getStartDate().plusDays(1));
+		case YEARLY: endDate = startDate.plusYears(1).minusDays(1); break;
+		case HALFYEARLY: endDate = startDate.plusMonths(6).minusDays(1); break;
+		case MONTHLY: endDate = startDate.plusMonths(1).minusDays(1); break;
+		default: endDate = startDate.plusDays(1);
 		}
+		setEndDate(java.sql.Date.valueOf(endDate));
 	}
 
 	@JsonIgnore
@@ -206,22 +208,6 @@ public class SubscrInterval implements Comparable<SubscrInterval> {
 		this.interval = interval;
 	}
 
-	public LocalDate getStartDate() {
-		return startDate;
-	}
-
-	public void setStartDate(LocalDate startDate) {
-		this.startDate = startDate;
-	}
-
-	public LocalDate getEndDate() {
-		return endDate;
-	}
-
-	public void setEndDate(LocalDate endDate) {
-		this.endDate = endDate;
-	}
-
 	public PayIntervalType getIntervalType() {
 		return intervalType;
 	}
@@ -269,6 +255,22 @@ public class SubscrInterval implements Comparable<SubscrInterval> {
 		} else if (!id.equals(other.id))
 			return false;
 		return true;
+	}
+
+	public void setStartDate(java.sql.Date startDate) {
+		this.startDate = startDate;
+	}
+
+	public void setEndDate(java.sql.Date endDate) {
+		this.endDate = endDate;
+	}
+
+	public java.sql.Date getStartDate() {
+		return startDate;
+	}
+
+	public java.sql.Date getEndDate() {
+		return endDate;
 	}
 
 

@@ -1,7 +1,6 @@
 package net.buchlese.verw.reports;
 
 import java.io.File;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
 
@@ -44,7 +43,7 @@ public class ReportPdfCreatorTest {
     	
     	InvoiceAgrDetail iad = new InvoiceAgrDetail();
     	iad.setSettledAgreement(sub);
-    	iad.setDeliveryTill(LocalDate.now());
+    	iad.setDeliveryTill(new java.sql.Date(System.currentTimeMillis()));
     	iad.setPayType(PayIntervalType.EACHDELIVERY);
     	iad.setDeliveries(new HashSet<>());
     	
@@ -113,7 +112,7 @@ public class ReportPdfCreatorTest {
     	
     	InvoiceAgrDetail iad = new InvoiceAgrDetail();
     	iad.setSettledAgreement(sub);
-    	iad.setDeliveryTill(LocalDate.now());
+    	iad.setDeliveryTill(new java.sql.Date(System.currentTimeMillis()));
     	iad.setPayType(PayIntervalType.EACHDELIVERY);
     	iad.setDeliveries(new HashSet<>());
     	

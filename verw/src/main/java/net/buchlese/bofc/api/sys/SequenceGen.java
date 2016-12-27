@@ -23,9 +23,9 @@ public class SequenceGen {
 	
 	private long start;
 	
-	private LocalDate validFrom;
+	private java.sql.Date validFrom;
 	
-	private LocalDate validTill;
+	private java.sql.Date validTill;
 
 	public Long getId() {
 		return id;
@@ -59,19 +59,35 @@ public class SequenceGen {
 		this.start = start;
 	}
 
-	public LocalDate getValidFrom() {
-		return validFrom;
+	public LocalDate getValidFromasLocalDate() {
+		return validFrom.toLocalDate();
 	}
 
 	public void setValidFrom(LocalDate validFrom) {
-		this.validFrom = validFrom;
+		this.validFrom = java.sql.Date.valueOf(validFrom);
 	}
 
-	public LocalDate getValidTill() {
-		return validTill;
+	public LocalDate getValidTillasLocalDate() {
+		return validTill.toLocalDate();
 	}
 
 	public void setValidTill(LocalDate validTill) {
+		this.validTill =  java.sql.Date.valueOf(validTill);
+	}
+
+	public java.sql.Date getValidFrom() {
+		return validFrom;
+	}
+
+	public void setValidFrom(java.sql.Date validFrom) {
+		this.validFrom = validFrom;
+	}
+
+	public java.sql.Date getValidTill() {
+		return validTill;
+	}
+
+	public void setValidTill(java.sql.Date validTill) {
 		this.validTill = validTill;
 	}
 	

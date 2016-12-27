@@ -1,7 +1,5 @@
 package net.buchlese.bofc.api.coupon;
 
-import java.time.LocalDate;
-
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -28,7 +26,7 @@ public class Coupon {
 	@JsonProperty
 	private String pupilclass;
 	@JsonProperty
-	private LocalDate acceptDate;
+	private java.sql.Date acceptDate;
 	@JsonProperty
 	private long amount;
 	@JsonProperty
@@ -85,11 +83,11 @@ public class Coupon {
 		this.pupilclass = pupilclass;
 	}
 
-	public LocalDate getAcceptDate() {
+	public java.sql.Date getAcceptDate() {
 		return acceptDate;
 	}
 
-	public void setAcceptDate(LocalDate acceptDate) {
+	public void setAcceptDate(java.sql.Date acceptDate) {
 		this.acceptDate = acceptDate;
 	}
 

@@ -50,7 +50,7 @@ public class InvoiceCreatorTest {
     	
     	InvoiceAgrDetail iad = new InvoiceAgrDetail();
     	iad.setSettledAgreement(sub);
-    	iad.setDeliveryTill(LocalDate.now());
+    	iad.setDeliveryTill(new java.sql.Date(System.currentTimeMillis()));
     	iad.setPayType(PayIntervalType.EACHDELIVERY);
     	iad.setDeliveries(new HashSet<>());
     	

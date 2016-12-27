@@ -1,6 +1,6 @@
 package net.buchlese.verw.repos;
 
-import java.time.LocalDate;
+import java.sql.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -34,10 +34,10 @@ QuerydslBinderCustomizer<QPosInvoice>{
 	default public void customize(QuerydslBindings bindings, QPosInvoice inv) {
 		bindings.bind(inv.name1).first((path, value) -> path.containsIgnoreCase(value));
 		bindings.bind(inv.date).all((path, value) -> {
-			Iterator<? extends LocalDate> it = value.iterator();
-			LocalDate first = it.next();
+			Iterator<? extends Date> it = value.iterator();
+			Date first = it.next();
 			if (it.hasNext()) {
-				LocalDate second = it.next();
+				Date second = it.next();
 				return path.between(first, second);
 			} else {
 				return path.goe(first);
@@ -50,7 +50,7 @@ QuerydslBinderCustomizer<QPosInvoice>{
 
 	PosInvoice findFirstByExportedAndPointidOrderByDateAsc(boolean b, Integer pointid);
 
-	List<PosInvoice> findAllByExportedAndPointidAndDateLessThanEqualOrderByDateAsc(boolean b, Integer pointid, LocalDate maxTag);
+	List<PosInvoice> findAllByExportedAndPointidAndDateLessThanEqualOrderByDateAsc(boolean b, Integer pointid, java.sql.Date maxTag);
 	
 	@Query("select debitorId from PosInvoice where customerId = :cust and pointid = :pi")
 	Optional<Integer> mapDebitor(@Param("cust") Integer customerId, @Param("pi") Integer pointid);

@@ -114,7 +114,7 @@ public class InvoiceCreator {
 			if (InvoiceAgrDetail.TYPE.SUBSCR.equals(iad.getType())) {
 				Subscription sub = iad.getSettledAgreement();
 				if (iad.getDeliveryFrom() != null) {
-					sub.setPayedUntil(iad.getDeliveryFrom().minusDays(1));
+					sub.setPayedUntil(java.sql.Date.valueOf(iad.getDeliveryFrom().toLocalDate().minusDays(1)));
 				}
 				if (iad.getPayType() != null && iad.getPayType().equals(PayIntervalType.EACHDELIVERY)) {
 					iad.getDeliveries().forEach(x -> { x.setSettDetail(null); x.setInvoiceNumber(null); });

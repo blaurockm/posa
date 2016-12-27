@@ -1,8 +1,8 @@
 package net.buchlese.bofc.api.bofc;
 
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -71,9 +71,9 @@ public class Settlement {
 	private Long nettoFull;     // Nettobetrag vollem MwSt-Satz
 
 	@JsonProperty
-	private LocalDateTime creationTime;
+	private Timestamp creationTime;
 	@JsonProperty
-	private LocalDate date;
+	private Date date;
 	@JsonProperty
 	private boolean merged;
 
@@ -94,9 +94,9 @@ public class Settlement {
 	private Set<InvoiceAgrDetail> agreementDetails;
 
 	@JsonProperty
-	private LocalDate deliveryFrom;
+	private java.sql.Date deliveryFrom;
 	@JsonProperty
-	private LocalDate deliveryTill;
+	private java.sql.Date deliveryTill;
 
 	@JsonIgnore
 	public PosInvoiceDetail addInvoiceDetail(PosInvoiceDetail detail) {
@@ -122,10 +122,10 @@ public class Settlement {
 			setAgreementDetails(new HashSet<InvoiceAgrDetail>());
 		}
 		getAgreementDetails().add(detail);
-		if (deliveryFrom == null || deliveryFrom.isAfter(detail.getDeliveryFrom())) {
+		if (deliveryFrom == null || deliveryFrom.after(detail.getDeliveryFrom())) {
 			setDeliveryFrom(detail.getDeliveryFrom());
 		}
-		if (deliveryTill == null || deliveryTill.isBefore(detail.getDeliveryTill())) {
+		if (deliveryTill == null || deliveryTill.before(detail.getDeliveryTill())) {
 			setDeliveryTill(detail.getDeliveryTill());
 		}
 		return detail;
@@ -223,17 +223,11 @@ public class Settlement {
 	public void setAmountNone(Long amountNone) {
 		this.amountNone = amountNone;
 	}
-	public LocalDateTime getCreationTime() {
+	public Timestamp getCreationTime() {
 		return creationTime;
 	}
-	public void setCreationTime(LocalDateTime creationTime) {
+	public void setCreationTime(Timestamp creationTime) {
 		this.creationTime = creationTime;
-	}
-	public LocalDate getDate() {
-		return date;
-	}
-	public void setDate(LocalDate date) {
-		this.date = date;
 	}
 	public String getNumber() {
 		return number;
@@ -308,19 +302,19 @@ public class Settlement {
 		this.agreementDetails = agreementDetails;
 	}
 
-	public LocalDate getDeliveryFrom() {
+	public java.sql.Date getDeliveryFrom() {
 		return deliveryFrom;
 	}
 
-	public void setDeliveryFrom(LocalDate deliveryFrom) {
+	public void setDeliveryFrom(java.sql.Date deliveryFrom) {
 		this.deliveryFrom = deliveryFrom;
 	}
 
-	public LocalDate getDeliveryTill() {
+	public java.sql.Date getDeliveryTill() {
 		return deliveryTill;
 	}
 
-	public void setDeliveryTill(LocalDate deliveryTill) {
+	public void setDeliveryTill(java.sql.Date deliveryTill) {
 		this.deliveryTill = deliveryTill;
 	}
 
@@ -346,6 +340,14 @@ public class Settlement {
 
 	public void setMerged(boolean merged) {
 		this.merged = merged;
+	}
+
+	public void setDate(Date date) {
+		this.date = date;
+	}
+
+	public Date getDate() {
+		return date;
 	}
 
 }

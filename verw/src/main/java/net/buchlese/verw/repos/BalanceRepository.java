@@ -1,6 +1,6 @@
 package net.buchlese.verw.repos;
 
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -42,10 +42,10 @@ QueryDslPredicateExecutor<PosCashBalance>,QuerydslBinderCustomizer<QPosCashBalan
 	default public void customize(QuerydslBindings bindings, QPosCashBalance bal) {
 		bindings.bind(bal.abschlussId).first((path, value) -> path.likeIgnoreCase(value));
 		bindings.bind(bal.firstCovered).all((path, value) -> {
-			Iterator<? extends LocalDateTime> it = value.iterator();
-			LocalDateTime first = it.next();
+			Iterator<? extends Timestamp> it = value.iterator();
+			Timestamp first = it.next();
 			if (it.hasNext()) {
-				LocalDateTime second = it.next();
+				Timestamp second = it.next();
 				return path.between(first, second);
 			} else {
 				return path.goe(first);

@@ -3,7 +3,6 @@ package net.buchlese.verw.ctrl;
 
 import java.io.ByteArrayOutputStream;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
@@ -136,7 +135,7 @@ public class IssueSlipController {
 				zos.write(pdf, 0, pdf.length);
 				zos.closeEntry();
 				note.setPrinted(true);
-				note.setPrintTime(LocalDateTime.now());
+				note.setPrintTime(new java.sql.Timestamp(System.currentTimeMillis()));
 				issueSlipRepository.save(note);
 			}
 			zos.close();

@@ -1,6 +1,6 @@
 package net.buchlese.verw.repos;
 
-import java.time.LocalDate;
+import java.sql.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -31,10 +31,10 @@ public interface IssueSlipRepository extends JpaRepository<PosIssueSlip, Long>,
 	default public void customize(QuerydslBindings bindings, QPosIssueSlip inv) {
 		bindings.bind(inv.name1).first((path, value) -> path.containsIgnoreCase(value));
 		bindings.bind(inv.date).all((path, value) -> {
-			Iterator<? extends LocalDate> it = value.iterator();
-			LocalDate first = it.next();
+			Iterator<? extends Date> it = value.iterator();
+			Date first = it.next();
 			if (it.hasNext()) {
-				LocalDate second = it.next();
+				Date second = it.next();
 				return path.between(first, second);
 			} else {
 				return path.after(first);

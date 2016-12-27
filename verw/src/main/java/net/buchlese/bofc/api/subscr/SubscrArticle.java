@@ -1,7 +1,6 @@
 package net.buchlese.bofc.api.subscr;
 
 
-import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -46,7 +45,7 @@ public class SubscrArticle implements Comparable<SubscrArticle> {
 	private double halfPercentage =1d; // prozentuale Anteil am Gesamtpreis , halber Steuersatz, 0 < x < 1
 	
 	@JsonProperty
-	private LocalDate erschTag;
+	private java.sql.Date erschTag;
 	
 	@JsonProperty
 	private int issueNo =1;
@@ -69,7 +68,7 @@ public class SubscrArticle implements Comparable<SubscrArticle> {
 		Matcher m = p.matcher(name);
 		if (m.find() && erschTag != null) {
 			String datePattern = m.group(1);
-			String dateString = erschTag.format(DateTimeFormatter.ofPattern(datePattern));
+			String dateString = erschTag.toLocalDate().format(DateTimeFormatter.ofPattern(datePattern));
 			name = name.replaceFirst(dp, dateString);
 		}
 		return name;
@@ -174,14 +173,6 @@ public class SubscrArticle implements Comparable<SubscrArticle> {
 		this.productId = productId;
 	}
 
-	public LocalDate getErschTag() {
-		return erschTag;
-	}
-
-	public void setErschTag(LocalDate erschTag) {
-		this.erschTag = erschTag;
-	}
-
 	public int getIssueNo() {
 		return issueNo;
 	}
@@ -221,6 +212,14 @@ public class SubscrArticle implements Comparable<SubscrArticle> {
 		} else if (!id.equals(other.id))
 			return false;
 		return true;
+	}
+
+	public java.sql.Date getErschTag() {
+		return erschTag;
+	}
+
+	public void setErschTag(java.sql.Date erschTag) {
+		this.erschTag = erschTag;
 	}
 
 

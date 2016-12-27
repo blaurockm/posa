@@ -1,8 +1,8 @@
 package net.buchlese.bofc.api.bofc;
 
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -77,12 +77,12 @@ public class PosInvoice {
 	@JsonProperty
 	private Boolean cancelled;
 	@JsonProperty
-	private LocalDateTime creationTime;
+	private Timestamp creationTime;
 	@JsonProperty
 //	@DateTimeFormat(pattern="dd.MM.yyyy")
-	private LocalDate date;
+	private Date date;
 	@JsonProperty
-	private LocalDateTime printTime;
+	private Timestamp printTime;
 
 	@JsonProperty
 	private boolean printed;
@@ -106,12 +106,12 @@ public class PosInvoice {
 	private Set<InvoiceAgrDetail> agreementDetails;
 
 	@JsonProperty
-	private LocalDate deliveryFrom;
+	private java.sql.Date deliveryFrom;
 	@JsonProperty
-	private LocalDate deliveryTill;
+	private java.sql.Date deliveryTill;
 
 	@JsonProperty
-	private LocalDateTime exportDate;
+	private java.sql.Timestamp exportDate;
 
 	@JsonProperty
 	private boolean exported;
@@ -158,10 +158,10 @@ public class PosInvoice {
 			setAgreementDetails(new HashSet<InvoiceAgrDetail>());
 		}
 		getAgreementDetails().add(detail);
-		if (deliveryFrom == null || deliveryFrom.isAfter(detail.getDeliveryFrom())) {
+		if (deliveryFrom == null || deliveryFrom.after(detail.getDeliveryFrom())) {
 			setDeliveryFrom(detail.getDeliveryFrom());
 		}
-		if (deliveryTill == null || deliveryTill.isBefore(detail.getDeliveryTill())) {
+		if (deliveryTill == null || deliveryTill.before(detail.getDeliveryTill())) {
 			setDeliveryTill(detail.getDeliveryTill());
 		}
 		return detail;
@@ -259,24 +259,6 @@ public class PosInvoice {
 	public void setAmountNone(Long amountNone) {
 		this.amountNone = amountNone;
 	}
-	public LocalDateTime getCreationTime() {
-		return creationTime;
-	}
-	public void setCreationTime(LocalDateTime creationTime) {
-		this.creationTime = creationTime;
-	}
-	public LocalDate getDate() {
-		return date;
-	}
-	public void setDate(LocalDate date) {
-		this.date = date;
-	}
-	public LocalDateTime getPrintTime() {
-		return printTime;
-	}
-	public void setPrintTime(LocalDateTime printTime) {
-		this.printTime = printTime;
-	}
 	public String getNumber() {
 		return number;
 	}
@@ -368,19 +350,19 @@ public class PosInvoice {
 		this.agreementDetails = agreementDetails;
 	}
 
-	public LocalDate getDeliveryFrom() {
+	public Date getDeliveryFrom() {
 		return deliveryFrom;
 	}
 
-	public void setDeliveryFrom(LocalDate deliveryFrom) {
+	public void setDeliveryFrom(Date deliveryFrom) {
 		this.deliveryFrom = deliveryFrom;
 	}
 
-	public LocalDate getDeliveryTill() {
+	public Date getDeliveryTill() {
 		return deliveryTill;
 	}
 
-	public void setDeliveryTill(LocalDate deliveryTill) {
+	public void setDeliveryTill(Date deliveryTill) {
 		this.deliveryTill = deliveryTill;
 	}
 
@@ -416,11 +398,11 @@ public class PosInvoice {
 		this.type = type;
 	}
 
-	public LocalDateTime getExportDate() {
+	public Timestamp getExportDate() {
 		return exportDate;
 	}
 
-	public void setExportDate(LocalDateTime exportDate) {
+	public void setExportDate(Timestamp exportDate) {
 		this.exportDate = exportDate;
 	}
 
@@ -430,6 +412,30 @@ public class PosInvoice {
 
 	public void setExported(boolean exported) {
 		this.exported = exported;
+	}
+
+	public void setCreationTime(Timestamp creationTime) {
+		this.creationTime = creationTime;
+	}
+
+	public void setDate(Date date) {
+		this.date = date;
+	}
+
+	public Timestamp getPrintTime() {
+		return printTime;
+	}
+
+	public void setPrintTime(Timestamp printTime) {
+		this.printTime = printTime;
+	}
+
+	public Timestamp getCreationTime() {
+		return creationTime;
+	}
+
+	public Date getDate() {
+		return date;
 	}
 
 }

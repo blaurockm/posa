@@ -1,6 +1,6 @@
 package net.buchlese.bofc.api.bofc;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -36,13 +36,13 @@ public class AccountingBalanceExport {
 	@JsonIgnore
 	private String description;
 	@JsonProperty
-	private LocalDateTime execDate;
+	private java.sql.Timestamp execDate;
 	@JsonProperty
 	@Column(name="fromDate")
-	private LocalDateTime from;
+	private java.sql.Date from;
 	@JsonProperty
 	@Column(name="tillDate")
-	private LocalDateTime till;
+	private java.sql.Date till;
 
 	@JsonIgnore
 	@OneToMany
@@ -64,16 +64,16 @@ public class AccountingBalanceExport {
 		List<PosCashBalance> invSorted = coll.stream().sorted(Comparator.comparing(PosCashBalance::getFirstCovered)).collect(Collectors.toList());
 		PosCashBalance first = invSorted.get(0);
 		PosCashBalance last = invSorted.get(invSorted.size()-1);
-		setFrom(first.getFirstCovered());
-		setTill(last.getLastCovered());
+		setFrom(new java.sql.Date(first.getFirstCovered().getTime()));
+		setTill(new java.sql.Date(last.getLastCovered().getTime()));
 		setDatasize(coll.size());
 		coll.forEach(this::addBalance);
 	}
 
-	public LocalDateTime getExecDate() {
+	public java.sql.Timestamp getExecDate() {
 		return execDate;
 	}
-	public void setExecDate(LocalDateTime execDate) {
+	public void setExecDate(java.sql.Timestamp execDate) {
 		this.execDate = execDate;
 	}
 	public int getPointId() {
@@ -107,21 +107,14 @@ public class AccountingBalanceExport {
 		this.balances = balances;
 	}
 
-	public LocalDateTime getFrom() {
-		return from;
+	public LocalDate getFromAsLocalDate() {
+		return from.toLocalDate();
 	}
 
-	public void setFrom(LocalDateTime from) {
-		this.from = from;
+	public LocalDate getTillAsLocalDate() {
+		return till.toLocalDate();
 	}
 
-	public LocalDateTime getTill() {
-		return till;
-	}
-
-	public void setTill(LocalDateTime till) {
-		this.till = till;
-	}
 
 	public int getDatasize() {
 		return datasize;
@@ -130,5 +123,22 @@ public class AccountingBalanceExport {
 	public void setDatasize(int datasize) {
 		this.datasize = datasize;
 	}
-	
+
+	public java.sql.Date getFrom() {
+		return from;
+	}
+
+	public void setFrom(java.sql.Date from) {
+		this.from = from;
+	}
+
+	public java.sql.Date getTill() {
+		return till;
+	}
+
+	public void setTill(java.sql.Date till) {
+		this.till = till;
+	}
+
+
 }

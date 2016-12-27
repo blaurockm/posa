@@ -102,7 +102,7 @@ public class SettlementCreatorTest {
     	deliv.setArticle(article);
     	deliv.setTotal(12000);
     	deliv.setQuantity(3);
-    	deliv.setDeliveryDate(LocalDate.now());
+    	deliv.setDeliveryDate(new java.sql.Date(System.currentTimeMillis()));
     	deliv.setSubscription(sub);
     	entityManager.persist(deliv);
     	return deliv;
@@ -114,8 +114,8 @@ public class SettlementCreatorTest {
 		}
 		SubscrInterval intvl = new SubscrInterval();
     	intvl.setName("Interval 1");
-    	intvl.setStartDate(LocalDate.now().minusMonths(1));
-    	intvl.setEndDate(LocalDate.now());
+    	intvl.setStartDate(java.sql.Date.valueOf(LocalDate.now().minusMonths(1)));
+    	intvl.setEndDate(java.sql.Date.valueOf(LocalDate.now()));
     	intvl.setProduct(product);
     	entityManager.persist(intvl);
 		return intvl;
@@ -126,7 +126,7 @@ public class SettlementCreatorTest {
     	deliv.setInterval(intvl);
     	deliv.setTotal(12600);
     	deliv.setQuantity(3);
-    	deliv.setDeliveryDate(LocalDate.now());
+    	deliv.setDeliveryDate(new java.sql.Date(System.currentTimeMillis()));
     	deliv.setSubscription(sub);
     	entityManager.persist(deliv);
     	return deliv;

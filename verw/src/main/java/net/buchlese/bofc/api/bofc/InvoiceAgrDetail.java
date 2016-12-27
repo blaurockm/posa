@@ -1,6 +1,5 @@
 package net.buchlese.bofc.api.bofc;
 
-import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -15,13 +14,13 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import net.buchlese.bofc.api.subscr.PayIntervalType;
 import net.buchlese.bofc.api.subscr.SubscrDelivery;
 import net.buchlese.bofc.api.subscr.SubscrIntervalDelivery;
 import net.buchlese.bofc.api.subscr.Subscription;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 @Table(name="posinvoice_agrdetail")
@@ -39,10 +38,10 @@ public class InvoiceAgrDetail {
 	private PosIssueSlip settledDeliveryNote;
 	
 	@JsonProperty
-	private LocalDate deliveryFrom;
+	private java.sql.Date deliveryFrom;
 
 	@JsonProperty
-	private LocalDate deliveryTill;
+	private java.sql.Date deliveryTill;
 
 	@JsonIgnore
 	@OneToMany(mappedBy="settDetail",cascade = CascadeType.ALL)
@@ -60,22 +59,6 @@ public class InvoiceAgrDetail {
 	@Enumerated(EnumType.STRING)
 	private PayIntervalType payType;
 
-
-	public LocalDate getDeliveryFrom() {
-		return deliveryFrom;
-	}
-
-	public void setDeliveryFrom(LocalDate deliveryFrom) {
-		this.deliveryFrom = deliveryFrom;
-	}
-
-	public LocalDate getDeliveryTill() {
-		return deliveryTill;
-	}
-
-	public void setDeliveryTill(LocalDate deliveryTill) {
-		this.deliveryTill = deliveryTill;
-	}
 
 	public TYPE getType() {
 		return type;
@@ -184,6 +167,22 @@ public class InvoiceAgrDetail {
 
 	public void setSettledDeliveryNote(PosIssueSlip settledDeliveryNote) {
 		this.settledDeliveryNote = settledDeliveryNote;
+	}
+
+	public java.sql.Date getDeliveryFrom() {
+		return deliveryFrom;
+	}
+
+	public void setDeliveryFrom(java.sql.Date deliveryFrom) {
+		this.deliveryFrom = deliveryFrom;
+	}
+
+	public java.sql.Date getDeliveryTill() {
+		return deliveryTill;
+	}
+
+	public void setDeliveryTill(java.sql.Date deliveryTill) {
+		this.deliveryTill = deliveryTill;
 	}
 	
 }

@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
@@ -84,7 +83,7 @@ public class BalancesController {
 			PosCashBalance firstUnexported = balanceRepository.findFirstByExportedAndPointidOrderByAbschlussIdAsc(false, pointid);
 			// Buchungsperiode es ersten Abschlusses ermitteln
 			if (firstUnexported != null) {
-				ausgangsTag = firstUnexported.getFirstCovered().toLocalDate();
+				ausgangsTag = firstUnexported.getFirstCovered().toLocalDateTime().toLocalDate();
 			}
 			tagGrenze = ausgangsTag.withDayOfMonth(ausgangsTag.lengthOfMonth());
 		}
@@ -97,7 +96,7 @@ public class BalancesController {
 
 		AccountingBalanceExport export = new AccountingBalanceExport();
 		export.setDescription("..asd.");
-		export.setExecDate(LocalDateTime.now());
+		export.setExecDate(new java.sql.Timestamp(System.currentTimeMillis()));
 		export.setPointId(pointid);
 		export.setBalances(balToExp); // seiteneffekt: ändert die Balances auf "exported"
 		

@@ -14,7 +14,7 @@ public class ReportInvoiceExportCreator {
 
 	public ReportInvoiceExport createReport(AccountingInvoiceExport export) {
 		ReportInvoiceExport rep = new ReportInvoiceExport();
-		rep.setExecDate(export.getExecDate());
+		rep.setExecDate(export.getExecDate().toLocalDateTime());
 		rep.setPosname(decodePos(export.getPointId()));
 		rep.setDescription("Rechnungsausgangsjournal für " + rep.getPosname());
 		rep.setExportId(export.getId());

@@ -36,8 +36,8 @@ public class BalanceAccounting {
 	public List<LedgerEntry> convertBalanceToLedger(PosCashBalance bal) {
 		List<LedgerEntry> res = new ArrayList<LedgerEntry>();
 		// den Datumstring...
-		String dateShort = bal.getLastCovered().format(DateTimeFormatter.ofPattern("dd.MM."));
-		String entryNum = String.valueOf(bal.getPointid()) + "-" + bal.getLastCovered().format(DateTimeFormatter.ofPattern("yyMMdd")) +".";
+		String dateShort = bal.getLastCovered().toLocalDateTime().format(DateTimeFormatter.ofPattern("dd.MM."));
+		String entryNum = String.valueOf(bal.getPointid()) + "-" + bal.getLastCovered().toLocalDateTime().format(DateTimeFormatter.ofPattern("yyMMdd")) +".";
 		
 		
 		// zuerst die Einnahmen
@@ -68,10 +68,10 @@ public class BalanceAccounting {
 	private LedgerEntry createKassDiffEntry(PosCashBalance bal, String dateShort) {
 		LedgerEntry kassdiff = new LedgerEntry();
 		kassdiff.setSoll(true);
-		kassdiff.setDate(bal.getLastCovered().toLocalDate());
+		kassdiff.setDate(bal.getLastCovered().toLocalDateTime().toLocalDate());
 		Booking soll = new Booking();
 		soll.setAccount(getKassenkonto(bal));
-		soll.setDate(bal.getLastCovered().toLocalDate());
+		soll.setDate(bal.getLastCovered().toLocalDateTime().toLocalDate());
 		soll.setText("Kassendifferenz " + dateShort);
 		soll.setBetrag(bal.getCashDiff());
 		soll.setCode(null);
@@ -86,12 +86,12 @@ public class BalanceAccounting {
 	private  LedgerEntry createAusgabenEntry(PosCashBalance bal,	String dateShort) {
 		LedgerEntry ausgaben = new LedgerEntry();
 		ausgaben.setSoll(false);
-		ausgaben.setDate(bal.getLastCovered().toLocalDate());
+		ausgaben.setDate(bal.getLastCovered().toLocalDateTime().toLocalDate());
 		long ges = 0;
 		
 		Booking soll = new Booking();
 		soll.setAccount(getKassenkonto(bal));
-		soll.setDate(bal.getLastCovered().toLocalDate());
+		soll.setDate(bal.getLastCovered().toLocalDateTime().toLocalDate());
 		soll.setText("Kassenausgang " + dateShort);
 		soll.setBetrag(bal.getGoodsOut());
 		soll.setCode(null);
@@ -135,10 +135,10 @@ public class BalanceAccounting {
 		LedgerEntry ausgaben = new LedgerEntry();
 		ausgaben.setSoll(false);
 		ausgaben.setNumber("KA"+String.valueOf(cashOutTx.getBelegNr()));
-		ausgaben.setDate(cashOutTx.getTimestamp().toLocalDate());
+		ausgaben.setDate(cashOutTx.getTimestampAsLocalDate());
 		Booking soll = new Booking();
 		soll.setAccount(getKassenkonto(cashOutTx.getPointid()));
-		soll.setDate(cashOutTx.getTimestamp().toLocalDate());
+		soll.setDate(cashOutTx.getTimestampAsLocalDate());
 		soll.setText(cashOutTx.getMatchCode());
 		soll.setBetrag(-cashOutTx.getTotal());
 		soll.setCode(null);
@@ -154,10 +154,10 @@ public class BalanceAccounting {
 		LedgerEntry einnahme = new LedgerEntry();
 		einnahme.setSoll(true);
 		einnahme.setNumber("KA"+String.valueOf(payedInvoTx.getBelegNr()));
-		einnahme.setDate(payedInvoTx.getTimestamp().toLocalDate());
+		einnahme.setDate(payedInvoTx.getTimestampAsLocalDate());
 		Booking soll = new Booking();
 		soll.setAccount(getKassenkonto(payedInvoTx.getPointid()));
-		soll.setDate(payedInvoTx.getTimestamp().toLocalDate());
+		soll.setDate(payedInvoTx.getTimestampAsLocalDate());
 		soll.setText("bar bezahlt:" + payedInvoTx.getMatchCode());
 		soll.setBetrag(payedInvoTx.getTotal());
 		soll.setCode(null);
@@ -174,12 +174,12 @@ public class BalanceAccounting {
 	private  LedgerEntry createEinnahmenEntry(PosCashBalance bal,	String dateShort) {
 		LedgerEntry einnahmen = new LedgerEntry(); 
 		einnahmen.setSoll(true);
-		einnahmen.setDate(bal.getLastCovered().toLocalDate());
+		einnahmen.setDate(bal.getLastCovered().toLocalDateTime().toLocalDate());
 		long ges = 0;
 		
 		Booking soll = new Booking();
 		soll.setAccount(getKassenkonto(bal));
-		soll.setDate(bal.getLastCovered().toLocalDate());
+		soll.setDate(bal.getLastCovered().toLocalDateTime().toLocalDate());
 		soll.setText("Einnahmen " + dateShort);
 		soll.setBetrag(bal.getGoodsOut());
 		soll.setCode(null);

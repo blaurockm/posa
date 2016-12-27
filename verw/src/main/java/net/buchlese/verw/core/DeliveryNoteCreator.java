@@ -1,6 +1,5 @@
 package net.buchlese.verw.core;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +46,7 @@ public class DeliveryNoteCreator {
 			throw new IllegalAccessError("Nummernkreis " + nummernkreis + " ist nicht verfügbar");
 		}
 		rep.setNumber(String.valueOf(nextNumber));
-		rep.setCreationTime(LocalDateTime.now());
+		rep.setCreationTime(new java.sql.Timestamp(System.currentTimeMillis()));
 		// alle Lieferungen für diesen Tag
 		for (SubscrDelivery deli : subscrDeliveryRepository.findByDeliveryDate(fdeli.getDeliveryDate())) {
 			if (deli.getSubscriber().equals(fdeli.getSubscriber())) {

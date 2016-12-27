@@ -1,7 +1,5 @@
 package net.buchlese.bofc.api.bofc;
 
-import java.time.LocalDateTime;
-
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -42,10 +40,10 @@ public class Command  {
 	public boolean fetched;
 
 	@JsonProperty
-	private LocalDateTime creationtime;
+	private java.sql.Timestamp creationtime;
 
 	@JsonProperty
-	private LocalDateTime executiontime;
+	private java.sql.Timestamp executiontime;
 
 	
 	public Long getId() {
@@ -126,19 +124,19 @@ public class Command  {
 		this.fetched = fetched;
 	}
 
-	public LocalDateTime getCreationtime() {
+	public java.sql.Timestamp getCreationtime() {
 		return creationtime;
 	}
 
-	public void setCreationtime(LocalDateTime creationtime) {
+	public void setCreationtime(java.sql.Timestamp creationtime) {
 		this.creationtime = creationtime;
 	}
 
-	public LocalDateTime getExecutiontime() {
+	public java.sql.Timestamp getExecutiontime() {
 		return executiontime;
 	}
 
-	public void setExecutiontime(LocalDateTime executiontime) {
+	public void setExecutiontime(java.sql.Timestamp executiontime) {
 		this.executiontime = executiontime;
 	}
 	

@@ -1,8 +1,10 @@
 package net.buchlese.verw.reports;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import net.buchlese.bofc.api.subscr.PayIntervalType;
 import net.buchlese.bofc.api.subscr.SubscrDelivery;
@@ -14,9 +16,6 @@ import net.buchlese.verw.repos.SubscrArticleRepository;
 import net.buchlese.verw.repos.SubscrDeliveryRepository;
 import net.buchlese.verw.repos.SubscriptionRepository;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 @Component
 public class ReportDeliveryProtocolCreator {
 
@@ -25,9 +24,9 @@ public class ReportDeliveryProtocolCreator {
 	@Autowired SubscrDeliveryRepository delivRepo;
 	@Autowired SubscrArticleRepository articleRepo;
 	
-	public ReportDeliveryProtocol create(LocalDate date) {
+	public ReportDeliveryProtocol create(java.sql.Date date) {
 		ReportDeliveryProtocol rep = new ReportDeliveryProtocol();
-		rep.protocolDate = date;
+		rep.protocolDate = date.toLocalDate();
 		List<ReportDeliveryProtocol.ProtocolDetail> dets = new ArrayList<>();
 		for (SubscrDelivery del : delivRepo.findByDeliveryDate(date)) {
 			ReportDeliveryProtocol.ProtocolDetail det = new ReportDeliveryProtocol.ProtocolDetail();
