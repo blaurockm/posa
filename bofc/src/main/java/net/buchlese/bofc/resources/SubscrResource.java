@@ -593,15 +593,11 @@ public class SubscrResource {
 			inv.setCancelled(true);
 			invDao.updateInvoice(inv);
 			SubscriptionInvoiceCreator.cancelInvoice(dao, inv);
-//			Long k = inv.getId();
 			List<PosInvoice> x = jpaDao.findByNumber(invNum);
-			if (x.isEmpty()) {
-				jpaDao.create(inv);
-			} else {
-				inv.setId(x.get(0).getId());
-				jpaDao.update(inv);
+			if (x.isEmpty() == false ) {
+				x.get(0).setCancelled(true);
+				jpaDao.update(x.get(0));
 			}
-//			inv.setId(k);
 		}
 		// TODO - stornorechnung erzeugen
 //		recordUserChange(dao, "master", inv.getId(), "invoice", null, null, "C");
