@@ -526,7 +526,7 @@ public class SubscrResource {
 			throw new WebApplicationException("unable to faktura, no temp invoice with this number " + invNum, 500);
 		}
 		SubscriptionInvoiceCreator.fakturiereInvoice(dao, invDao, inv);
-		Long k = inv.getId();
+//		Long k = inv.getId();
 		List<PosInvoice> x = jpaDao.findByNumber(inv.getNumber());
 		if (x.isEmpty()) {
 			jpaDao.create(inv);
@@ -534,7 +534,7 @@ public class SubscrResource {
 			inv.setId(x.get(0).getId());
 			jpaDao.update(inv);
 		}
-		inv.setId(k);
+//		inv.setId(k);
 //		recordUserChange(dao, "master", inv.getId(), "invoice", null, null, "F");
 		return new InvoicesView(dao, invDao);
 	}
@@ -582,6 +582,7 @@ public class SubscrResource {
 		if (inv != null) {
 			// es ist noch eine temporäre, einfach löschen
 			dao.deleteTempInvoice(invNum);
+			SubscriptionInvoiceCreator.cancelInvoice(dao, inv);
 		} else {
 			// es ist eine permanente, auf gecanncelled setzen
 			List<PosInvoice> invs = invDao.fetch(invNum);
@@ -591,7 +592,8 @@ public class SubscrResource {
 			inv = invs.get(0);
 			inv.setCancelled(true);
 			invDao.updateInvoice(inv);
-			Long k = inv.getId();
+			SubscriptionInvoiceCreator.cancelInvoice(dao, inv);
+//			Long k = inv.getId();
 			List<PosInvoice> x = jpaDao.findByNumber(invNum);
 			if (x.isEmpty()) {
 				jpaDao.create(inv);
@@ -599,9 +601,8 @@ public class SubscrResource {
 				inv.setId(x.get(0).getId());
 				jpaDao.update(inv);
 			}
-			inv.setId(k);
+//			inv.setId(k);
 		}
-		SubscriptionInvoiceCreator.cancelInvoice(dao, inv);
 		// TODO - stornorechnung erzeugen
 //		recordUserChange(dao, "master", inv.getId(), "invoice", null, null, "C");
 		return new InvoicesView(dao, invDao);
