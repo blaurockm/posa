@@ -527,8 +527,14 @@ public class SubscrResource {
 		}
 		SubscriptionInvoiceCreator.fakturiereInvoice(dao, invDao, inv);
 		Long k = inv.getId();
-		inv.setId(null);
-		jpaDao.create(inv);
+		List<PosInvoice> x = jpaDao.findByNumber(inv.getNumber());
+		if (x.isEmpty()) {
+			inv.setId(null);
+			jpaDao.create(inv);
+		} else {
+			inv.setId(x.get(0).getId());
+			jpaDao.update(inv);
+		}
 		inv.setId(k);
 //		recordUserChange(dao, "master", inv.getId(), "invoice", null, null, "F");
 		return new InvoicesView(dao, invDao);
