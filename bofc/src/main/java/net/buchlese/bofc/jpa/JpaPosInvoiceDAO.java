@@ -36,4 +36,10 @@ public class JpaPosInvoiceDAO extends AbstractDAO<PosInvoice> {
 		return list(c);
 	}
 
+	public List<PosInvoice> findByDebitorNumber(int debitor) {
+		Criteria c = criteria().add(Restrictions.eq("debitorId", debitor));
+		return list(c);
+	}
+	
+	
 }

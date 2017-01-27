@@ -80,6 +80,7 @@ import net.buchlese.bofc.view.subscr.SubscriptionAddView;
 import net.buchlese.bofc.view.subscr.SubscriptionDetailView;
 
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.SessionFactory;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.Period;
@@ -116,6 +117,7 @@ public class SubscrResource {
 	private final JpaSubscrDeliveryDAO jpaSubscrDeliveryDao;
 	private final JpaSubscrIntervalDAO jpaSubscrIntervalDao;
 	private final JpaSubscrIntervalDeliveryDAO jpaSubscrIntervalDeliveryDao;
+	private final SessionFactory sessFact;
 
 	private final NumberGenerator numGen;
 	
@@ -134,7 +136,7 @@ public class SubscrResource {
 	@Inject
 	public SubscrResource(PosInvoiceDAO invd, SubscrDAO sdao, NumberGenerator g,
 			JpaSubscriberDAO j1, JpaSubscriptionDAO j2, JpaSubscrProductDAO j3, JpaSubscrArticleDAO j4,
-			JpaSubscrDeliveryDAO j5, JpaSubscrIntervalDAO j6, JpaSubscrIntervalDeliveryDAO j7, JpaPosInvoiceDAO j8) {
+			JpaSubscrDeliveryDAO j5, JpaSubscrIntervalDAO j6, JpaSubscrIntervalDeliveryDAO j7, JpaPosInvoiceDAO j8, SessionFactory sessFact) {
 		super();
 		this.invDao = invd;
 		this.dao = sdao;
@@ -147,6 +149,7 @@ public class SubscrResource {
 		this.jpaSubscrIntervalDao = j6;
 		this.jpaSubscrIntervalDeliveryDao = j7;
 		this.jpaDao = j8;
+		this.sessFact = sessFact;
 	}
 
 	@GET
@@ -832,7 +835,7 @@ public class SubscrResource {
 	@Produces({"text/html"})
 	public View showSubscriber(@PathParam("sub") String subdIdP) {
 		long subId = Long.parseLong(subdIdP);
-		return new SubscriberDetailView(dao, invDao, dao.getSubscriber(subId));
+		return new SubscriberDetailView(dao, invDao, dao.getSubscriber(subId), sessFact);
 	}
 
 	@GET
@@ -840,7 +843,7 @@ public class SubscrResource {
 	@Produces({"text/html"})
 	public View showSubscription(@PathParam("sub") String subdIdP) {
 		long subId = Long.parseLong(subdIdP);
-		return new SubscriptionDetailView(dao, invDao, dao.getSubscription(subId));
+		return new SubscriptionDetailView(dao, dao.getSubscription(subId), sessFact);
 	}
 	
 	@GET

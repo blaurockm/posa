@@ -1,8 +1,11 @@
 package net.buchlese.bofc.view.subscr;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
+
+import org.hibernate.SessionFactory;
+import org.hibernate.context.internal.ManagedSessionContext;
+import org.joda.time.LocalDate;
 
 import net.buchlese.bofc.api.bofc.PosInvoice;
 import net.buchlese.bofc.api.bofc.PosIssueSlip;
@@ -12,21 +15,22 @@ import net.buchlese.bofc.api.subscr.Subscriber;
 import net.buchlese.bofc.api.subscr.Subscription;
 import net.buchlese.bofc.jdbi.bofc.PosInvoiceDAO;
 import net.buchlese.bofc.jdbi.bofc.SubscrDAO;
+import net.buchlese.bofc.jpa.JpaPosInvoiceDAO;
 import net.buchlese.bofc.view.AbstractBofcView;
-
-import org.joda.time.LocalDate;
 
 public class SubscriberDetailView extends AbstractBofcView{
 
 	private final Subscriber sub;
 	private final SubscrDAO dao;
 	private final PosInvoiceDAO invDao;
+	private final SessionFactory sessFact;
 
-	public SubscriberDetailView(SubscrDAO dao, PosInvoiceDAO invd, Subscriber s ) {
+	public SubscriberDetailView(SubscrDAO dao, PosInvoiceDAO invd, Subscriber s, SessionFactory sessFact ) {
 		super("subscriberdetail.ftl");
 		this.dao = dao;
 		this.sub = s;
 		this.invDao = invd;
+		this.sessFact = sessFact;
 	}
 
 
@@ -66,14 +70,14 @@ public class SubscriberDetailView extends AbstractBofcView{
 	}
 	
 	public List<PosInvoice> getInvoices() {
-		Collection<String> invNums = dao.getInvoiceNumsForSubscription(sub.getId());
+		org.hibernate.Session s = sessFact.openSession();
+		ManagedSessionContext.bind(s);
+		JpaPosInvoiceDAO jpaDao = new JpaPosInvoiceDAO(sessFact);
 		List<PosInvoice> invs = new ArrayList<PosInvoice>();
-		for (String num : invNums) {
-			invs.addAll(invDao.fetch(num));
-		}
 		if (sub.getDebitorId() > 0) {
-			invs.addAll(dao.getSubscriberInvoices(sub.getDebitorId()));
+			invs.addAll(jpaDao.findByDebitorNumber(sub.getDebitorId()));
 		}
+		s.close();
 		return invs;
 	}
 

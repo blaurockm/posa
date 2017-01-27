@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.hibernate.SessionFactory;
+import org.hibernate.context.internal.ManagedSessionContext;
+
 import net.buchlese.bofc.api.bofc.PosInvoice;
 import net.buchlese.bofc.api.subscr.SubscrArticle;
 import net.buchlese.bofc.api.subscr.SubscrDelivery;
@@ -12,15 +15,14 @@ import net.buchlese.bofc.api.subscr.SubscrIntervalDelivery;
 import net.buchlese.bofc.api.subscr.SubscrProduct;
 import net.buchlese.bofc.api.subscr.Subscriber;
 import net.buchlese.bofc.api.subscr.Subscription;
-import net.buchlese.bofc.jdbi.bofc.PosInvoiceDAO;
 import net.buchlese.bofc.jdbi.bofc.SubscrDAO;
+import net.buchlese.bofc.jpa.JpaPosInvoiceDAO;
 import net.buchlese.bofc.view.AbstractBofcView;
 
 public class SubscriptionDetailView extends AbstractBofcView{
 
 	private final Subscription sub;
 	private final SubscrDAO dao;
-	private final PosInvoiceDAO invDao;
 	private final SubscrProduct prod;
 	private final SubscrDelivery lastDeliv;
 	private final SubscrArticle newestArticle;
@@ -30,12 +32,12 @@ public class SubscriptionDetailView extends AbstractBofcView{
 	private final List<SubscrIntervalDelivery> payedIntDelivs;
 	private final SubscrIntervalDelivery lastIntDeliv;
 	private final SubscrInterval newestInterval;
+	private final SessionFactory sessFact;
+
 	
-	
-	public SubscriptionDetailView(SubscrDAO dao, PosInvoiceDAO invd, Subscription s ) {
+	public SubscriptionDetailView(SubscrDAO dao, Subscription s, SessionFactory sessFact ) {
 		super("subscriptiondetail.ftl");
 		this.dao = dao;
-		this.invDao = invd;
 		this.sub = s;
 		this.prod =  dao.getSubscrProduct(sub.getProductId());
 		this.lastDeliv = dao.getLastDeliveryForSubscription(s.getId());
@@ -46,6 +48,7 @@ public class SubscriptionDetailView extends AbstractBofcView{
 		this.payedDelivs = dao.getDeliveriesForSubscriptionPayflag(sub.getId(), true);
 		this.unpayedIntDelivs = dao.getIntervalDeliveriesForSubscriptionPayflag(sub.getId(), false);
 		this.payedIntDelivs = dao.getIntervalDeliveriesForSubscriptionPayflag(sub.getId(), true);
+		this.sessFact = sessFact;
 	}
 
 
@@ -110,11 +113,19 @@ public class SubscriptionDetailView extends AbstractBofcView{
 
 
 	public List<PosInvoice> getInvoices() {
+		org.hibernate.Session s = sessFact.openSession();
+		ManagedSessionContext.bind(s);
+		JpaPosInvoiceDAO jpaDao = new JpaPosInvoiceDAO(sessFact);
 		Collection<String> invNums = dao.getInvoiceNumsForSubscription(sub.getId());
 		List<PosInvoice> invs = new ArrayList<PosInvoice>();
 		for (String num : invNums) {
-			invs.addAll(invDao.fetch(num));
+			invs.addAll(jpaDao.findByNumber(num));
 		}
+		invNums = dao.getInvoiceNumsForSubscriptionIntervals(sub.getId());
+		for (String num : invNums) {
+			invs.addAll(jpaDao.findByNumber(num));
+		}
+		s.close();
 		return invs;
 
 	}
