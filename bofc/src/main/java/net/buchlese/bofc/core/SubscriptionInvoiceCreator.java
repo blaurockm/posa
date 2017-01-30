@@ -1,5 +1,6 @@
 package net.buchlese.bofc.core;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
@@ -235,7 +236,12 @@ public class SubscriptionInvoiceCreator {
 		LocalDate from = null;
 		LocalDate till = null;
 		// details per Delivery;
+		List<SubscrDelivery> recordedDeliveries = new ArrayList<>();
 		for (SubscrDelivery deliv : deliveries) {
+			if (deliv.getTotal() == 0) {
+				// Deliveries mit Preis 0 werden ignoriert)
+				continue;
+			}
 			inv.addInvoiceDetail(createInvoiceDetailForDelivery(deliv,dao.getSubscrArticle(deliv.getArticleId())));
 			// Versandkosten
 			if (deliv.getShipmentCost() > 0) {
@@ -247,13 +253,16 @@ public class SubscriptionInvoiceCreator {
 			if (till == null || deliv.getDeliveryDate().isAfter(till)) {
 				till = deliv.getDeliveryDate();
 			}
+			recordedDeliveries.add(deliv);
 		}
-		iad.setAgreementId(sub.getId());
-		iad.setPayType(sub.getPaymentType());
-		iad.setDeliveryFrom(from);
-		iad.setDeliveryTill(till.dayOfMonth().withMaximumValue());  // immer der letzte des Monats
-		iad.setDeliveryIds(deliveries.stream().mapToLong(SubscrDelivery::getId).boxed().collect(Collectors.toList()));
-		inv.addAgreementDetail(iad);
+		if (recordedDeliveries.isEmpty() == false) {
+			iad.setAgreementId(sub.getId());
+			iad.setPayType(sub.getPaymentType());
+			iad.setDeliveryFrom(from);
+			iad.setDeliveryTill(till.dayOfMonth().withMaximumValue());  // immer der letzte des Monats
+			iad.setDeliveryIds(recordedDeliveries.stream().mapToLong(SubscrDelivery::getId).boxed().collect(Collectors.toList()));
+			inv.addAgreementDetail(iad);
+		}
 		return newDetail;
 	}
 

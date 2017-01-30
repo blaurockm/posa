@@ -89,7 +89,7 @@ public class ReportPdfCreatorTest {
 		inv.setCancelled(false);
 		
 		inv.setDetails(new ArrayList<>(sett.getDetails()));
-		inv.setAgreementDetails(new HashSet<>(sett.getAgreementDetails()));
+		inv.setAgreementDetails(new ArrayList<>(sett.getAgreementDetails()));
 		
 		inv.setPointid(sett.getPointid());
     	

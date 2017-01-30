@@ -1,7 +1,6 @@
 package net.buchlese.verw.core;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 
 import javax.transaction.Transactional;
 
@@ -83,7 +82,7 @@ public class InvoiceCreator {
 		inv.setCancelled(false);
 		
 		inv.setDetails(new ArrayList<>(sett.getDetails()));
-		inv.setAgreementDetails(new HashSet<>(sett.getAgreementDetails()));
+		inv.setAgreementDetails(new ArrayList<>(sett.getAgreementDetails()));
 		
 		inv.setPointid(sett.getPointid());
 		

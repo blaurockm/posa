@@ -1,11 +1,7 @@
 package net.buchlese.bofc.api.bofc;
 
-import io.dropwizard.jackson.Jackson;
-
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -24,6 +20,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import io.dropwizard.jackson.Jackson;
 
 @Entity
 @Table( name = "posinvoice")
@@ -106,7 +104,7 @@ public class PosInvoice {
 	@JsonProperty
 	@OneToMany(cascade=CascadeType.ALL)
 	@JoinColumn(name="invoice_id",nullable=false)
-	private Set<InvoiceAgrDetail> agreementDetails;
+	private List<InvoiceAgrDetail> agreementDetails; // kein Set weil id für hashcode nicht gefüllt
 
 	@JsonProperty
 	private LocalDate deliveryFrom;
@@ -140,7 +138,7 @@ public class PosInvoice {
 			return null;
 		}
 		if (getAgreementDetails() == null) {
-			setAgreementDetails(new HashSet<InvoiceAgrDetail>());
+			setAgreementDetails(new ArrayList<InvoiceAgrDetail>());
 		}
 		getAgreementDetails().add(detail);
 		if (deliveryFrom == null || deliveryFrom.isAfter(detail.getDeliveryFrom())) {
@@ -352,11 +350,11 @@ public class PosInvoice {
 		this.nettoFull = nettoFull;
 	}
 
-	public Set<InvoiceAgrDetail> getAgreementDetails() {
+	public List<InvoiceAgrDetail> getAgreementDetails() {
 		return agreementDetails;
 	}
 
-	public void setAgreementDetails(Set<InvoiceAgrDetail> agreementDetails) {
+	public void setAgreementDetails(List<InvoiceAgrDetail> agreementDetails) {
 		this.agreementDetails = agreementDetails;
 	}
 

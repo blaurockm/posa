@@ -250,7 +250,11 @@ public class SettlementCreator {
 		java.sql.Date from = null;
 		java.sql.Date till = null;
 		// details per Delivery;
+		List<SubscrDelivery> recordedDeliv = new ArrayList<>();
 		for (SubscrDelivery deliv : deliveries) {
+			if (deliv.getTotal() == 0L) {
+				continue;
+			}
 			SubscrArticle art = deliv.getArticle();
 			inv.addInvoiceDetail(createInvoiceDetailForDelivery(deliv,art));
 			// Versandkosten
@@ -264,10 +268,13 @@ public class SettlementCreator {
 				till = deliv.getDeliveryDate();
 			}
 			deliv.setSettDetail(iad);
+			recordedDeliv.add(deliv);
 		}
-		iad.setDeliveryFrom(from);
-		iad.setDeliveryTill(java.sql.Date.valueOf(till.toLocalDate().withDayOfMonth(till.toLocalDate().lengthOfMonth())));  // immer der letzte des Monats
-		inv.addAgreementDetail(iad);
+		if (recordedDeliv.isEmpty() == false) {
+			iad.setDeliveryFrom(from);
+			iad.setDeliveryTill(java.sql.Date.valueOf(till.toLocalDate().withDayOfMonth(till.toLocalDate().lengthOfMonth())));  // immer der letzte des Monats
+			inv.addAgreementDetail(iad);
+		}
 		return newDetail;
 	}
 

@@ -4,9 +4,7 @@ package net.buchlese.bofc.api.bofc;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -103,7 +101,7 @@ public class PosInvoice {
 	@JsonProperty
 	@OneToMany(cascade=CascadeType.ALL)
 	@JoinColumn(name="invoice_id")
-	private Set<InvoiceAgrDetail> agreementDetails;
+	private List<InvoiceAgrDetail> agreementDetails;
 
 	@JsonProperty
 	private java.sql.Date deliveryFrom;
@@ -155,7 +153,7 @@ public class PosInvoice {
 			return null;
 		}
 		if (getAgreementDetails() == null) {
-			setAgreementDetails(new HashSet<InvoiceAgrDetail>());
+			setAgreementDetails(new ArrayList<InvoiceAgrDetail>());
 		}
 		getAgreementDetails().add(detail);
 		if (deliveryFrom == null || deliveryFrom.after(detail.getDeliveryFrom())) {
@@ -342,11 +340,11 @@ public class PosInvoice {
 		this.nettoFull = nettoFull;
 	}
 
-	public Set<InvoiceAgrDetail> getAgreementDetails() {
+	public List<InvoiceAgrDetail> getAgreementDetails() {
 		return agreementDetails;
 	}
 
-	public void setAgreementDetails(Set<InvoiceAgrDetail> agreementDetails) {
+	public void setAgreementDetails(List<InvoiceAgrDetail> agreementDetails) {
 		this.agreementDetails = agreementDetails;
 	}
 
