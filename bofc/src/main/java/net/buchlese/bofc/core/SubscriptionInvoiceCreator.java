@@ -216,7 +216,7 @@ public class SubscriptionInvoiceCreator {
 	private static String addDeliveriesToInvoice(SubscrDAO dao, Subscription sub, PosInvoice inv, List<SubscrDelivery> deliveries, String lastDetailinfo) {
 		if (deliveries.isEmpty()) {
 			// es gibt nix zu adden - back
-			return null;
+			return lastDetailinfo;
 		}
 		InvoiceAgrDetail iad = new InvoiceAgrDetail();
 		String newDetail = addDeliveryInfo(inv, sub, lastDetailinfo);
@@ -283,7 +283,7 @@ public class SubscriptionInvoiceCreator {
 	private static String addIntervalDeliveriesToInvoice(SubscrDAO dao, Subscription sub, PosInvoice inv, List<SubscrIntervalDelivery> deliveries, String lastDetailinfo) {
 		if (deliveries.isEmpty()) {
 			// es gibt nix zu adden - back
-			return null;
+			return lastDetailinfo;
 		}
 		InvoiceAgrDetail iad = new InvoiceAgrDetail();
 		String newDetail = addDeliveryInfo(inv, sub, lastDetailinfo);
