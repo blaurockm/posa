@@ -29,22 +29,16 @@ public class SubscriptionInvoiceCreator {
 	private  static class InvoiceSubComparator implements Comparator<Subscription> {
 		@Override
 		public int compare(Subscription o1, Subscription o2) {
-			String di1sub1 = o1.getDeliveryInfo1();
-			String di1sub2 = o2.getDeliveryInfo1();
-			int idCompare = (int) (o1.getId() - o2.getId());
-			if (di1sub1 == null) {
-				return di1sub2 != null ? -1 : idCompare;
-			} else if (di1sub1.equals(di1sub2)) {
-				// compare second di
-				String di2sub1 = o1.getDeliveryInfo2();
-				String di2sub2 = o2.getDeliveryInfo2();
-				if (di2sub1 == null) {
-					return di2sub2 != null ? -1 : idCompare;
-				} else if (di2sub1.equals(di2sub2)) {
-					return idCompare;
+			String di1sub1 = SubscriptionInvoiceCreator.normalizeString(o1.getDeliveryInfo1());
+			String di1sub2 = SubscriptionInvoiceCreator.normalizeString(o2.getDeliveryInfo1());
+			if (di1sub1.equals(di1sub2)) {
+				String di2sub1 = SubscriptionInvoiceCreator.normalizeString(o1.getDeliveryInfo2());
+				String di2sub2 = SubscriptionInvoiceCreator.normalizeString(o2.getDeliveryInfo2());
+				if (di2sub1.equals(di2sub2)) {
+					return (int) (o1.getId() - o2.getId());
 				} 
 				return di2sub1.compareTo(di2sub2);
-			} 
+			}
 			return di1sub1.compareTo(di1sub2);
 		}
 
@@ -225,14 +219,7 @@ public class SubscriptionInvoiceCreator {
 			return null;
 		}
 		InvoiceAgrDetail iad = new InvoiceAgrDetail();
-		String newDetail = null;
-		if (sub.getDeliveryInfo1() != null) {
-			newDetail = sub.getDeliveryInfo1() + sub.getDeliveryInfo2();
-		}
-		if ( lastDetailinfo == null || lastDetailinfo.equals(newDetail) == false) {
-			addTextDetail(inv, sub.getDeliveryInfo1());
-			addTextDetail(inv, sub.getDeliveryInfo2());
-		}
+		String newDetail = addDeliveryInfo(inv, sub, lastDetailinfo);
 		LocalDate from = null;
 		LocalDate till = null;
 		// details per Delivery;
@@ -266,6 +253,25 @@ public class SubscriptionInvoiceCreator {
 		return newDetail;
 	}
 
+	private static String addDeliveryInfo(PosInvoice inv, Subscription sub, String lastinfo) {
+		String newDetail = null;
+		if (sub.getDeliveryInfo1() != null) {
+			newDetail = normalizeString(sub.getDeliveryInfo1()) + normalizeString(sub.getDeliveryInfo2());
+		}
+		if ( lastinfo == null || lastinfo.equals(newDetail) == false) {
+			addTextDetail(inv, sub.getDeliveryInfo1());
+			addTextDetail(inv, sub.getDeliveryInfo2());
+		}
+		return newDetail;
+	}
+	
+	private static String normalizeString(String s) {
+		if (s == null) {
+			return "---";
+		}
+		return s.trim();
+	}
+	
 	/**
 	 * fügt die Lieferung eines Artikel zur Rechnung hinzu
 	 * @param dao
@@ -280,14 +286,7 @@ public class SubscriptionInvoiceCreator {
 			return null;
 		}
 		InvoiceAgrDetail iad = new InvoiceAgrDetail();
-		String newDetail = null;
-		if (sub.getDeliveryInfo1() != null) {
-			newDetail = sub.getDeliveryInfo1() + sub.getDeliveryInfo2();
-		}
-		if ( lastDetailinfo == null || lastDetailinfo.equals(newDetail) == false) {
-			addTextDetail(inv, sub.getDeliveryInfo1());
-			addTextDetail(inv, sub.getDeliveryInfo2());
-		}
+		String newDetail = addDeliveryInfo(inv, sub, lastDetailinfo);
 		LocalDate from = null;
 		LocalDate till = null;
 		// details per Delivery;
