@@ -130,7 +130,7 @@ public class SubscrResource {
 		uc.setNewValue(newValue);
 		uc.setAction(StringUtils.left(action, 1));
 		uc.setModDate(DateTime.now());
-		dao.insert(uc);
+//		dao.insert(uc);
 	}
 	
 	@Inject
@@ -190,6 +190,7 @@ public class SubscrResource {
 	@POST
 	@Path("/customerCreate")
 	@Consumes("application/x-www-form-urlencoded")
+	@UnitOfWork
 	public View addCustomer(MultivaluedMap<String, String> par) {
 		Subscriber s = new Subscriber();
 		s.setName(par.getFirst("name"));
@@ -225,6 +226,7 @@ public class SubscrResource {
 			s.setInvoiceAddress(a);
 		}
 		dao.insertSubscriber(s);
+		jpaSubscriberDao.create(s);
 		recordUserChange(dao, "master", s.getCustomerId(), "customer", null, null, "N");
 		return new SubscrCustomerView(dao);
 	}
@@ -232,6 +234,7 @@ public class SubscrResource {
 	@POST
 	@Path("/subscriptionCreate")
 	@Consumes("application/x-www-form-urlencoded")
+	@UnitOfWork
 	public void addSubscription(MultivaluedMap<String, String> par) {
 		Subscription s = new Subscription();
 		if (par.containsKey("subscriberId") && par.getFirst("subscriberId").isEmpty() == false) {
@@ -289,6 +292,7 @@ public class SubscrResource {
 			a.setCity(par.getFirst("deliveryAddress.city"));
 		}
 		dao.insertSubscription(s);
+		jpaSubscriptionDao.create(s);
 		recordUserChange(dao, "master", s.getId(), "subscription", null, null, "N");
 	}
 
@@ -296,6 +300,7 @@ public class SubscrResource {
 	@POST
 	@Path("/productCreate")
 	@Consumes("application/x-www-form-urlencoded")
+	@UnitOfWork
 	public View addSubscrProduct(MultivaluedMap<String, String> par) {
 		SubscrProduct p = new SubscrProduct();
 		p.setAbbrev(par.getFirst("abbrev"));
@@ -339,10 +344,12 @@ public class SubscrResource {
 			p.setHalfPercentage(1d);
 		}
 		long pid = dao.insertSubscrProduct(p);
+		jpaSubscrProductDao.create(p);
 		recordUserChange(dao, "master", pid, "subscrProduct", null, null, "N");
 		SubscrArticle art = p.createNextArticle(LocalDate.now());
 		art.setProductId(pid);
 		long aid = dao.insertArticle(art);
+		jpaSubscrArticleDao.create(art);
 		recordUserChange(dao, "master", aid, "subscrArticle", null, null, "N");
 		return new SubscrProductDetailView(dao, p, Collections.emptyList());
 	}
@@ -368,6 +375,7 @@ public class SubscrResource {
 	@GET
 	@Path("/deliverycreate/{sub}/{art}/{date}")
 	@Produces({"application/json"})
+	@UnitOfWork
 	public SubscrDelivery createDelivery(@PathParam("sub") String subIdP,@PathParam("art") String artIdP,@PathParam("date") String dateP ) {
 		long subId = Long.parseLong(subIdP);
 		long artId = Long.parseLong(artIdP);
@@ -396,18 +404,21 @@ public class SubscrResource {
 		d.setSlipped(subscriber.isNeedsDeliveryNote() == false);
 
 		dao.insertDelivery(d);
+		jpaSubscrDeliveryDao.create(d);
 		recordUserChange(dao, "master", d.getId(), "subscrDelivery", null, null, "N");
 		p.setLastDelivery(deliveryDate);
 		if (p.getPeriod() != null) {
 			p.setNextDelivery(deliveryDate.plus(p.getPeriod()));
 		}
 		dao.updateSubscrProduct(p);
+		jpaSubscrProductDao.update(p);
 		return d;
 	}
 
 	@GET
 	@Path("/intervaldeliverycreate/{sub}/{art}/{date}")
 	@Produces({"application/json"})
+	@UnitOfWork
 	public SubscrIntervalDelivery createIntervalDelivery(@PathParam("sub") String subIdP,@PathParam("art") String artIdP,@PathParam("date") String dateP ) {
 		long subId = Long.parseLong(subIdP);
 		long artId = Long.parseLong(artIdP);
@@ -432,6 +443,7 @@ public class SubscrResource {
 		d.setCreationDate(DateTime.now());
 
 		dao.insertIntervalDelivery(d);
+		jpaSubscrIntervalDeliveryDao.create(d);
 		recordUserChange(dao, "master", d.getId(), "subscrIntervalDelivery", null, null, "N");
 		return d;
 	}
@@ -456,6 +468,7 @@ public class SubscrResource {
 	@GET
 	@Path("/subscrarticlecreate/{prod}")
 	@Produces({"application/json"})
+	@UnitOfWork
 	public View createSubscrArticle(@PathParam("prod") String prodIdP) {
 		long prodId = Long.parseLong(prodIdP);
 		SubscrProduct product = dao.getSubscrProduct(prodId);
@@ -466,7 +479,9 @@ public class SubscrResource {
 	private SubscrArticle createNewArticle(SubscrProduct product) {
 		SubscrArticle art = product.createNextArticle(LocalDate.now());
 		dao.insertArticle(art);
+		jpaSubscrArticleDao.create(art);
 		dao.updateSubscrProduct(product);
+		jpaSubscrProductDao.update(product);
 		recordUserChange(dao, "master", art.getId(), "subscrArticle", null, null, "N");
 		return art;
 	}
@@ -474,6 +489,7 @@ public class SubscrResource {
 	@GET
 	@Path("/subscrintervalcreate/{prod}")
 	@Produces({"application/json"})
+	@UnitOfWork
 	public View createSubscrInterval(@PathParam("prod") String prodIdP) {
 		long prodId = Long.parseLong(prodIdP);
 		SubscrProduct product = dao.getSubscrProduct(prodId);
@@ -484,7 +500,9 @@ public class SubscrResource {
 	private SubscrInterval createNewInterval(SubscrProduct product) {
 		SubscrInterval art = product.createNextInterval(LocalDate.now());
 		dao.insertInterval(art);
+		jpaSubscrIntervalDao.create(art);
 		dao.updateSubscrProduct(product);
+		jpaSubscrProductDao.update(product);
 		recordUserChange(dao, "master", art.getId(), "subscrInterval", null, null, "N");
 		return art;
 	}
@@ -492,6 +510,7 @@ public class SubscrResource {
 	@GET
 	@Path("/deliverydelete/{id}")
 	@Produces({"text/html"})
+	@UnitOfWork
 	public View deleteDelivery(@PathParam("id") String deliIdP) {
 		long delId = Long.parseLong(deliIdP);
 		SubscrDelivery del = dao.getSubscrDelivery(delId);
@@ -504,7 +523,9 @@ public class SubscrResource {
 			p.setLastDelivery(null);
 		}
 		dao.updateSubscrProduct(p);
+		jpaSubscrProductDao.update(p);
 		dao.deleteDelivery(delId);
+		jpaSubscrDeliveryDao.delete(del);
 		recordUserChange(dao, "master", delId, "subscrDelivery", null, null, "D");
 		return new SubscrDashboardView(dao, LocalDate.now());
 	}
@@ -512,9 +533,12 @@ public class SubscrResource {
 	@GET
 	@Path("/intervaldeliverydelete/{id}")
 	@Produces({"text/html"})
+	@UnitOfWork
 	public View deleteIntervalDelivery(@PathParam("id") String deliIdP) {
 		long delId = Long.parseLong(deliIdP);
 		dao.deleteIntervalDelivery(delId);
+		SubscrIntervalDelivery del = jpaSubscrIntervalDeliveryDao.findById(delId);
+		jpaSubscrIntervalDeliveryDao.delete(del);
 		recordUserChange(dao, "master", delId, "subscrIntervalDelivery", null, null, "D");
 		return new SubscrDashboardView(dao, LocalDate.now());
 	}
@@ -859,28 +883,29 @@ public class SubscrResource {
 	@POST
 	@Path("/update")
 	@Produces({"application/json"})
+	@UnitOfWork
 	public UpdateResult updateMaping( @FormParam("pk") String pk, @FormParam("name") String fieldname, @FormParam("value") String value) {
 		UpdateResult res = null;
 		if (fieldname.startsWith("article")) {
-			res = new SubscrArticleUpdateHelper(dao).update(pk, fieldname, value);
+			res = new SubscrArticleUpdateHelper(dao, jpaSubscrArticleDao).update(pk, fieldname, value);
 		}
 		if (fieldname.startsWith("intervalDelivery")) {
-			res = new SubscrIntervalDeliveryUpdateHelper(dao).update(pk, fieldname, value);
+			res = new SubscrIntervalDeliveryUpdateHelper(dao, jpaSubscrIntervalDeliveryDao).update(pk, fieldname, value);
 		}
 		if (fieldname.startsWith("interval.")) {
-			res = new SubscrIntervalUpdateHelper(dao).update(pk, fieldname, value);
+			res = new SubscrIntervalUpdateHelper(dao, jpaSubscrIntervalDao).update(pk, fieldname, value);
 		}
 		if (fieldname.startsWith("subscriber")) {
-			res = new SubscriberUpdateHelper(dao).update(pk, fieldname, value);
+			res = new SubscriberUpdateHelper(dao, jpaSubscriberDao).update(pk, fieldname, value);
 		}
 		if (fieldname.startsWith("subscription")) {
-			res = new SubscriptionUpdateHelper(dao).update(pk, fieldname, value);
+			res = new SubscriptionUpdateHelper(dao, jpaSubscriptionDao).update(pk, fieldname, value);
 		}
 		if (fieldname.startsWith("product")) {
-			res = new SubscrProductUpdateHelper(dao).update(pk, fieldname, value);
+			res = new SubscrProductUpdateHelper(dao, jpaSubscrProductDao).update(pk, fieldname, value);
 		}
 		if (fieldname.startsWith("delivery")) {
-			res = new SubscrDeliveryUpdateHelper(dao).update(pk, fieldname, value);
+			res = new SubscrDeliveryUpdateHelper(dao, jpaSubscrDeliveryDao).update(pk, fieldname, value);
 		}
 		if (fieldname.startsWith("issueSlip")) {
 			res = new IssueSlipUpdateHelper(invDao).update(pk, fieldname, value);

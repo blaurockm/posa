@@ -31,6 +31,10 @@ public class JpaSubscrDeliveryDAO extends AbstractDAO<SubscrDelivery> {
         currentSession().saveOrUpdate(person);
     }
 
+    public void delete(SubscrDelivery person) {
+        currentSession().delete(person);
+    }
+
 	public List<SubscrDelivery> findByIdNr(long belegnr) {
 		Criteria c = criteria().add(Restrictions.eq("id", belegnr ));
 		return list(c);

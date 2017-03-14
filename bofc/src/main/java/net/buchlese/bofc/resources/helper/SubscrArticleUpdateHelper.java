@@ -3,6 +3,7 @@ package net.buchlese.bofc.resources.helper;
 import net.buchlese.bofc.api.subscr.SubscrArticle;
 import net.buchlese.bofc.api.subscr.SubscrProduct;
 import net.buchlese.bofc.jdbi.bofc.SubscrDAO;
+import net.buchlese.bofc.jpa.JpaSubscrArticleDAO;
 
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
@@ -10,13 +11,13 @@ import org.joda.time.format.DateTimeFormat;
 public class SubscrArticleUpdateHelper {
 
 	private final SubscrDAO dao;
+	private final JpaSubscrArticleDAO jpaSubscrArticleDao;
 
-	public SubscrArticleUpdateHelper(SubscrDAO dao) {
+	public SubscrArticleUpdateHelper(SubscrDAO dao, JpaSubscrArticleDAO jpaSubscrArticleDao) {
 		super();
 		this.dao = dao;
+		this.jpaSubscrArticleDao = jpaSubscrArticleDao;
 	}
-	
-	
 	
 	
 	public UpdateResult update(String pk, String fieldname, String value) {
@@ -70,6 +71,7 @@ public class SubscrArticleUpdateHelper {
 		}
 		if (res.success) {
 			dao.updateArticle(art);
+			jpaSubscrArticleDao.update(art);
 		}
 		return res;
 	}

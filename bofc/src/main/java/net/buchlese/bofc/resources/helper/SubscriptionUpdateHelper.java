@@ -5,6 +5,7 @@ import net.buchlese.bofc.api.subscr.PayIntervalType;
 import net.buchlese.bofc.api.subscr.ShipType;
 import net.buchlese.bofc.api.subscr.Subscription;
 import net.buchlese.bofc.jdbi.bofc.SubscrDAO;
+import net.buchlese.bofc.jpa.JpaSubscriptionDAO;
 
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
@@ -12,14 +13,13 @@ import org.joda.time.format.DateTimeFormat;
 public class SubscriptionUpdateHelper {
 
 	private final SubscrDAO dao;
+	private final JpaSubscriptionDAO jpaSubscriptionDao;
 
-	public SubscriptionUpdateHelper(SubscrDAO dao) {
+	public SubscriptionUpdateHelper(SubscrDAO dao, JpaSubscriptionDAO jpaSubscriptionDao) {
 		super();
 		this.dao = dao;
+		this.jpaSubscriptionDao = jpaSubscriptionDao;
 	}
-	
-	
-	
 	
 	public UpdateResult update(String pk, String fieldname, String value) {
 		UpdateResult res = new UpdateResult();
@@ -121,6 +121,7 @@ public class SubscriptionUpdateHelper {
 		if (res.success) {
 			res.newValue = value;
 			dao.updateSubscription(art);
+			jpaSubscriptionDao.update(art);
 		}
 		return res;
 	}

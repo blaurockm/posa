@@ -3,14 +3,17 @@ package net.buchlese.bofc.resources.helper;
 import net.buchlese.bofc.api.subscr.SubscrInterval;
 import net.buchlese.bofc.api.subscr.SubscrIntervalDelivery;
 import net.buchlese.bofc.jdbi.bofc.SubscrDAO;
+import net.buchlese.bofc.jpa.JpaSubscrIntervalDeliveryDAO;
 
 public class SubscrIntervalDeliveryUpdateHelper {
 
 	private final SubscrDAO dao;
+	private final JpaSubscrIntervalDeliveryDAO jpaSubscrIntervalDeliveryDao;
 
-	public SubscrIntervalDeliveryUpdateHelper(SubscrDAO dao) {
+	public SubscrIntervalDeliveryUpdateHelper(SubscrDAO dao, JpaSubscrIntervalDeliveryDAO jpaSubscrIntervalDeliveryDao) {
 		super();
 		this.dao = dao;
+		this.jpaSubscrIntervalDeliveryDao = jpaSubscrIntervalDeliveryDao;
 	}
 	
 	public UpdateResult update(String pk, String fieldname, String value) {
@@ -48,6 +51,7 @@ public class SubscrIntervalDeliveryUpdateHelper {
 		}
 		if (res.success) {
 			dao.updateIntervalDelivery(art);
+			jpaSubscrIntervalDeliveryDao.update(art);
 		}
 		return res;
 	}

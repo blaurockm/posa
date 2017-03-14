@@ -36,4 +36,8 @@ public class JpaSubscrIntervalDeliveryDAO extends AbstractDAO<SubscrIntervalDeli
 		return list(c);
 	}
 
+	public void delete(SubscrIntervalDelivery del) {
+        currentSession().delete(del);
+	}
+
 }

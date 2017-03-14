@@ -6,14 +6,17 @@ import net.buchlese.bofc.api.subscr.Address;
 import net.buchlese.bofc.api.subscr.ShipType;
 import net.buchlese.bofc.api.subscr.Subscriber;
 import net.buchlese.bofc.jdbi.bofc.SubscrDAO;
+import net.buchlese.bofc.jpa.JpaSubscriberDAO;
 
 public class SubscriberUpdateHelper {
 
 	private final SubscrDAO dao;
+	private final JpaSubscriberDAO jpaSubscriberDao;
 
-	public SubscriberUpdateHelper(SubscrDAO dao) {
+	public SubscriberUpdateHelper(SubscrDAO dao, JpaSubscriberDAO jpaSubscriberDao) {
 		super();
 		this.dao = dao;
+		this.jpaSubscriberDao = jpaSubscriberDao;
 	}
 	
 	public UpdateResult update(String pk, String fieldname, String value) {
@@ -91,6 +94,7 @@ public class SubscriberUpdateHelper {
 		}
 		if (res.success) {
 			dao.updateSubscriber(art);
+			jpaSubscriberDao.update(art);
 		}
 		return res;
 	}

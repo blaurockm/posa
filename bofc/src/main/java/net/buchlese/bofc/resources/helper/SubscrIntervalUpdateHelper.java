@@ -4,6 +4,7 @@ import net.buchlese.bofc.api.subscr.PayIntervalType;
 import net.buchlese.bofc.api.subscr.SubscrInterval;
 import net.buchlese.bofc.api.subscr.SubscrProduct;
 import net.buchlese.bofc.jdbi.bofc.SubscrDAO;
+import net.buchlese.bofc.jpa.JpaSubscrIntervalDAO;
 
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
@@ -11,10 +12,12 @@ import org.joda.time.format.DateTimeFormat;
 public class SubscrIntervalUpdateHelper {
 
 	private final SubscrDAO dao;
+	private final JpaSubscrIntervalDAO jpaSubscrIntervalDao;
 
-	public SubscrIntervalUpdateHelper(SubscrDAO dao) {
+	public SubscrIntervalUpdateHelper(SubscrDAO dao, JpaSubscrIntervalDAO jpaSubscrIntervalDao) {
 		super();
 		this.dao = dao;
+		this.jpaSubscrIntervalDao = jpaSubscrIntervalDao;
 	}
 	
 	
@@ -76,6 +79,7 @@ public class SubscrIntervalUpdateHelper {
 		if (res.success) {
 			res.name = art.getName();
 			dao.updateInterval(art);
+			jpaSubscrIntervalDao.update(art);
 		}
 		return res;
 	}

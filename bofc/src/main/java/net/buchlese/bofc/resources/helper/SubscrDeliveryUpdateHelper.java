@@ -3,14 +3,17 @@ package net.buchlese.bofc.resources.helper;
 import net.buchlese.bofc.api.subscr.SubscrArticle;
 import net.buchlese.bofc.api.subscr.SubscrDelivery;
 import net.buchlese.bofc.jdbi.bofc.SubscrDAO;
+import net.buchlese.bofc.jpa.JpaSubscrDeliveryDAO;
 
 public class SubscrDeliveryUpdateHelper {
 
 	private final SubscrDAO dao;
+	private final JpaSubscrDeliveryDAO jpaSubscrDeliveryDao;
 
-	public SubscrDeliveryUpdateHelper(SubscrDAO dao) {
+	public SubscrDeliveryUpdateHelper(SubscrDAO dao, JpaSubscrDeliveryDAO jpaSubscrDeliveryDao) {
 		super();
 		this.dao = dao;
+		this.jpaSubscrDeliveryDao = jpaSubscrDeliveryDao;
 	}
 	
 	public UpdateResult update(String pk, String fieldname, String value) {
@@ -52,6 +55,7 @@ public class SubscrDeliveryUpdateHelper {
 		}
 		if (res.success) {
 			dao.updateDelivery(art);
+			jpaSubscrDeliveryDao.update(art);
 		}
 		return res;
 	}
