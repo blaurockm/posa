@@ -94,6 +94,22 @@ public class PosInvoice implements SendableObject {
 	@JsonSerialize(using=LocalDateSerializer.class)
 	private LocalDate deliveryTill;
 
+
+	@JsonProperty
+	private double rebate;
+	
+	@JsonProperty
+	private long rebateAmount;
+	
+	@JsonProperty
+	private String vorText;
+	
+	@JsonProperty
+	private String schlussText;
+	
+	@JsonProperty
+	private String zahlText;
+	
 	
 	public long getId() {
 		return id;
@@ -291,6 +307,7 @@ public class PosInvoice implements SendableObject {
 	public void setDeliveryTill(LocalDate deliveryTill) {
 		this.deliveryTill = deliveryTill;
 	}
+	
 	public PosInvoiceDetail addDetail(PosInvoiceDetail detail) {
 		if (detail == null) {
 			return null;
@@ -324,6 +341,36 @@ public class PosInvoice implements SendableObject {
 			return b;
 		}
 		return Long.valueOf(a + b);
+	}
+	public double getRebate() {
+		return rebate;
+	}
+	public void setRebate(double rebate) {
+		this.rebate = rebate;
+	}
+	public long getRebateAmount() {
+		return rebateAmount;
+	}
+	public void setRebateAmount(long rebateAmount) {
+		this.rebateAmount = rebateAmount;
+	}
+	public String getVorText() {
+		return vorText;
+	}
+	public void setVorText(String vorText) {
+		this.vorText = vorText;
+	}
+	public String getSchlussText() {
+		return schlussText;
+	}
+	public void setSchlussText(String schlussText) {
+		this.schlussText = schlussText;
+	}
+	public String getZahlText() {
+		return zahlText;
+	}
+	public void setZahlText(String zahlText) {
+		this.zahlText = zahlText;
 	}
 
 }

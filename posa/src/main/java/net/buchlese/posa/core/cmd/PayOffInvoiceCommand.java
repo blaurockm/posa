@@ -25,26 +25,26 @@ public class PayOffInvoiceCommand extends AbstractCommand {
 	@Override
 	public String execute(Command req) {
 		if (req.param1 == null) {
-			return "falsche Anzahl an Parametern. Erwartet: gutscheinnummer";
+			return "falsche Anzahl an Parametern. Erwartet: rechnungsnummer";
 		}
-		String gutsch = req.getParam1();
-	    Boolean bezahlt = posDb.createQuery("select erledigt from [dbo].kasse_gutschriften where gutschriftnr = '" + gutsch + "'").first(Boolean.class);
+		String rechnr = req.getParam1();
+	    Boolean bezahlt = posDb.createQuery("select Bezahlt from [dbo].kleinteilKopf where rechnungNummer = '" + rechnr + "'").first(Boolean.class);
 
 	    if (bezahlt == null) {
-	    	return "Gutschein " + gutsch + " gibt es nicht!";
+	    	return "Rechnung " + rechnr + " gibt es nicht!";
 	    }
 	    	
 	    if (bezahlt == Boolean.TRUE) {
-	    	return "ACHTUNG! Gutschein " + gutsch + " ist schon als bezahlt merkiert!";
+	    	return "ACHTUNG! Rechnung " + rechnr + " ist schon als bezahlt merkiert!";
 	    }
 
-	    BigDecimal betrag = posDb.createQuery("select betrag from [dbo].kasse_gutschriften where gutschriftnr = '" + gutsch + "'").first(BigDecimal.class);
+	    BigDecimal betrag = posDb.createQuery("select RechnungsBetrag from [dbo].kleinteilKopf where rechnungNummer = '" + rechnr + "'").first(BigDecimal.class);
 
-		int c = posDb.update("update [dbo].kasse_gutschriften set erledigt = true where gutschriftnr = ? and erledigt = false", gutsch);
-		if (c == 1) {
-			return "erfolreich markiert, betrag = " + betrag;
+		int c = posDb.update("update [dbo].kleinteilKopf set Bezahlt = true, Wie_Bezahlt = 'per Überweisung' where rechnungNummer = ? and bezahlt = false", rechnr);
+		if (c >= 1) {
+			return "erfolreich markiert, betrag = " + betrag + " anzahl=" + c;
 		}
-		return "Gutschein nicht aktualisiert";
+		return "Rechnung nicht aktualisiert";
 	}
 
 }

@@ -114,6 +114,22 @@ public class PosInvoice {
 	@JsonProperty
 	private boolean exported;
 	
+	@JsonProperty
+	private double rebate;
+	
+	@JsonProperty
+	private long rebateAmount;
+	
+	@JsonProperty
+	private String vorText;
+	
+	@JsonProperty
+	private String schlussText;
+	
+	@JsonProperty
+	private String zahlText;
+	
+	
 	public void export(AccountingInvoiceExport x) {
 		if (exported || x == null) {
 			return;
@@ -434,6 +450,46 @@ public class PosInvoice {
 
 	public Date getDate() {
 		return date;
+	}
+
+	public double getRebate() {
+		return rebate;
+	}
+
+	public void setRebate(double rebate) {
+		this.rebate = rebate;
+	}
+
+	public long getRebateAmount() {
+		return rebateAmount;
+	}
+
+	public void setRebateAmount(long rebateAmount) {
+		this.rebateAmount = rebateAmount;
+	}
+
+	public String getVorText() {
+		return vorText;
+	}
+
+	public void setVorText(String vorText) {
+		this.vorText = vorText;
+	}
+
+	public String getSchlussText() {
+		return schlussText;
+	}
+
+	public void setSchlussText(String schlussText) {
+		this.schlussText = schlussText;
+	}
+
+	public String getZahlText() {
+		return zahlText;
+	}
+
+	public void setZahlText(String zahlText) {
+		this.zahlText = zahlText;
 	}
 
 }
