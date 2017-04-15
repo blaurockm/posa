@@ -5,6 +5,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.time.LocalDate;
 
 import net.buchlese.bofc.api.sys.SequenceGen;
+
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +28,7 @@ public class SequenceGeneratorTest {
     @Autowired 
     private SequenceGenerator generator;
     
+    @Ignore
     @Test
     public void testInitSequence() throws Exception {
     	generator.initSequence("testKey", 666, LocalDate.now());
@@ -35,6 +38,7 @@ public class SequenceGeneratorTest {
     	assertThat(x.getSeqKey()).isEqualTo("testKey");
     }
 
+    @Ignore
     @Test
     public void testSequenceNext() throws Exception {
     	generator.initSequence("testKey2", 666, LocalDate.now());
