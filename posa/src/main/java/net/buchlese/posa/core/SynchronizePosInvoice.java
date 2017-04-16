@@ -164,12 +164,15 @@ public class SynchronizePosInvoice extends AbstractSynchronizer {
 		inv.setDate(rech.getRechnungsDatum().toLocalDate());
 		inv.setCustomerId(rech.getKundenNummer());
 		updDate(inv::setPrintTime, inv.getPrintTime(), rech.getDruckDatum());
-
+		inv.setPrinted(inv.getPrintTime() != null);
+		
 		updStr(inv::setName1, inv.getName1(), rech.getName1());
 		updStr(inv::setName2, inv.getName2(), rech.getName2());
 		updStr(inv::setName3, inv.getName3(), rech.getName3());
 		updStr(inv::setStreet, inv.getStreet(), rech.getStrasse());
 		updStr(inv::setCity, inv.getCity(), rech.getOrt());
+		updStr(inv::setVorText, inv.getVorText(), rech.getVorText());
+		updStr(inv::setSchlussText, inv.getSchlussText(), rech.getSchlussText());
 		
 		List<KleinteilElement> elems = rechnungsDAO.fetchElemente(rech.getId());
 		List<PosInvoiceDetail> details = inv.getDetails() != null ? inv.getDetails() : Collections.emptyList();
@@ -204,6 +207,7 @@ public class SynchronizePosInvoice extends AbstractSynchronizer {
 		inv.setDate(rech.getRechnungsDatum().toLocalDate());
 		inv.setCustomerId(rech.getKundenNummer());
 		updDate(inv::setPrintTime, inv.getPrintTime(), rech.getDruckDatum());
+		inv.setPrinted(inv.getPrintTime() != null);
 
 		updStr(inv::setName1, inv.getName1(), rech.getName1());
 		updStr(inv::setName2, inv.getName2(), rech.getName2());

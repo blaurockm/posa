@@ -53,6 +53,10 @@ public class KleinteilKopf {
 	private Boolean bezahlt;
 	@JsonProperty
 	private int art;  // 0 = angebot, 1 = rechnung, 2, lieferschein, 8, gutschrift, 10, storno-rech, 12 = remission
+	@JsonProperty
+	private String vorText;
+	@JsonProperty
+	private String schlussText;
 	
 	@JsonProperty
 	private BigDecimal zeitmarke;
@@ -232,6 +236,22 @@ public class KleinteilKopf {
 
 	public void setArt(int art) {
 		this.art = art;
+	}
+
+	public String getVorText() {
+		return vorText;
+	}
+
+	public void setVorText(String vorText) {
+		this.vorText = vorText;
+	}
+
+	public String getSchlussText() {
+		return schlussText;
+	}
+
+	public void setSchlussText(String schlussText) {
+		this.schlussText = schlussText;
 	}
 
 }

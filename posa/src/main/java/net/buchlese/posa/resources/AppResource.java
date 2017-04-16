@@ -9,14 +9,14 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import com.google.inject.Inject;
-
 import net.buchlese.posa.PosAdapterConfiguration;
 import net.buchlese.posa.jdbi.bofc.PosCashBalanceDAO;
 import net.buchlese.posa.jdbi.bofc.PosInvoiceDAO;
-import net.buchlese.posa.view.AppView;
-import net.buchlese.posa.view.MobileView;
-import net.buchlese.posa.view.TechnicsView;
+import net.buchlese.posa.view.DataView;
+import net.buchlese.posa.view.IndexView;
+import net.buchlese.posa.view.LogfilesView;
+
+import com.google.inject.Inject;
 
 @Path("/")
 @Produces(MediaType.TEXT_HTML)
@@ -40,27 +40,27 @@ public class AppResource {
 		if (userAgent.contains("Android") ||
 			userAgent.contains("iPhone") ||
 			userAgent.contains("iPad")) {
-			return getMobile();
+			return getDesktop();
 		}
 		return getDesktop();
 	}
 
 	@GET
-	@Path("/mobile")
-	public View getMobile() {
-		return new MobileView(cfg);
-	}
-
-	@GET
-	@Path("/app")
+	@Path("/index")
 	public View getDesktop() {
-		return new AppView(cfg, dao, daoInv);
+		return new IndexView(cfg, dao, daoInv, env);
 	}
 	
 	@GET
-	@Path("/technics")
-	public View getTechnics() {
-		return new TechnicsView(cfg, env);
+	@Path("/data")
+	public View getData() {
+		return new DataView(cfg, dao, daoInv);
+	}
+
+	@GET
+	@Path("/logfiles")
+	public View getLogfiles() {
+		return new LogfilesView(cfg, dao, daoInv, env);
 	}
 
 }

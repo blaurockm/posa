@@ -5,6 +5,7 @@ import java.sql.SQLException;
 
 import net.buchlese.posa.api.pos.Artikel;
 
+import org.joda.time.DateTime;
 import org.skife.jdbi.v2.StatementContext;
 import org.skife.jdbi.v2.tweak.ResultSetMapper;
 
@@ -20,6 +21,10 @@ public class ArtikelMapper implements ResultSetMapper<Artikel> {
 		vorg.setBestand(rs.getInt("bestand"));
 		vorg.setvK(rs.getBigDecimal("vk"));
 		vorg.seteK(rs.getBigDecimal("ek"));
+		vorg.setAutor(rs.getString("Autor"));
+		vorg.setVerlag(rs.getString("Verlag"));
+		vorg.setLetztesEinkaufsdatum(new DateTime(rs.getTimestamp("letztesEKDatum")));
+		vorg.setLetztesVerkaufsdatum(new DateTime(rs.getTimestamp("letztesVKDatum")));
 		vorg.setmWSt(rs.getString("mwst") != null ? rs.getString("mwst").charAt(0) : null);
 		vorg.setWarGrIndex(rs.getString("WarGrIndex") != null ? rs.getString("WarGrIndex").charAt(0) : null);
 		return vorg;

@@ -1,10 +1,6 @@
 package net.buchlese.posa.core;
 
-import io.dropwizard.jdbi.args.JodaDateTimeMapper;
-
-import java.math.BigDecimal;
 import java.net.MalformedURLException;
-import java.util.List;
 import java.util.TimerTask;
 import java.util.concurrent.locks.Lock;
 
@@ -22,12 +18,10 @@ import net.buchlese.posa.jdbi.pos.KassenBelegDAO;
 import net.buchlese.posa.jdbi.pos.KassenVorgangDAO;
 import net.buchlese.posa.jdbi.pos.KleinteilDAO;
 
-import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.exceptions.UnableToObtainConnectionException;
-import org.skife.jdbi.v2.util.BigDecimalMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,7 +67,6 @@ public class SyncTimer extends TimerTask {
 	private final PosStateGatherer psg;
 	private final ServerStateGatherer ssg;
 	private final PosAdapterConfiguration config;
-	private volatile BulkLoadDetails bulkLoad; 
 	
 	public static long lastRun;
 	public static long lastRunWithDbConnection;
@@ -90,17 +83,7 @@ public class SyncTimer extends TimerTask {
 		this.ssg = ssg;
 		this.config = config;
 		logger = LoggerFactory.getLogger(SyncTimer.class);
-	}
-
-	public void setBulkLoad(BulkLoadDetails det) {
-		syncLock.lock();
-		try {
-			this.bulkLoad = det;
-		} finally {
-			syncLock.unlock();
-		}
-	}
-	
+	}	
 	
 	@Override
 	public void run() {
@@ -119,80 +102,32 @@ public class SyncTimer extends TimerTask {
     	    PosCashBalanceDAO posCashBalanceDao =  bofc.attach(PosCashBalanceDAO.class);
 
     	    PosInvoiceDAO posInvoiceDao =  bofc.attach(PosInvoiceDAO.class);
-    	    DateTime lastSync = DateTime.now().minusMinutes(30); // Änderungen der letzten 30 minuten
-    	    List<DateTime> lastRuns = bofc.createQuery("select value from dynamicstate where key='lastsyncrun'").map(new JodaDateTimeMapper()).list();
-    	    
-    	    if (lastRuns.isEmpty()) {
-    	    	bofc.execute("insert into dynamicstate (key, value) values('lastsyncrun', ?)", lastSync);
-    	    } else {
-    	    	lastSync = lastRuns.get(0);
-    	    	bofc.execute("update dynamicstate set value = ? where key = 'lastsyncrun'", DateTime.now());
-    	    }
 
-    	    BigDecimal balRowVer = null;
-    	    List<BigDecimal> balRowVers = bofc.createQuery("select bigvalue from dynamicstate where key='balRowver'").map(new BigDecimalMapper()).list();
+    	    SyncStateUtils.recordSyncRun(bofc);
     	    
-    	    if (balRowVers.isEmpty()) {
-    	    	bofc.execute("insert into dynamicstate (key, bigvalue) values('balRowver', 0)");
-    	    } else {
-    	    	balRowVer = balRowVers.get(0);
-    	    }
-
-    	    BigDecimal invRowVer = null;
-    	    List<BigDecimal> invRowVers = bofc.createQuery("select bigvalue from dynamicstate where key='invRowver'").map(new BigDecimalMapper()).list();
-    	    
-    	    if (invRowVers.isEmpty()) {
-    	    	bofc.execute("insert into dynamicstate (key, bigvalue) values('invRowver', 0)");
-    	    } else {
-    	    	invRowVer = invRowVers.get(0);
-    	    }
-
-    	    BigDecimal issRowVer = null;
-    	    List<BigDecimal> issRowVers = bofc.createQuery("select bigvalue from dynamicstate where key='issRowver'").map(new BigDecimalMapper()).list();
-    	    
-    	    if (issRowVers.isEmpty()) {
-    	    	bofc.execute("insert into dynamicstate (key, bigvalue) values('issRowver', 0)");
-    	    } else {
-    	    	issRowVer = issRowVers.get(0);
-    	    }
-
     	    Integer limit = config.getDaysBack();
-	    	SynchronizePosCashBalance syncBalance = new SynchronizePosCashBalance(posCashBalanceDao, posTicketDao, posTxDao, abschlussDao, belegDao, vorgangDao, limit);
-	    	SynchronizePosInvoice syncInvoice = new SynchronizePosInvoice(posInvoiceDao, kleinteilDao, limit);
+    	    SynchronizePosCashBalance syncBalance = new SynchronizePosCashBalance(posCashBalanceDao, posTicketDao, posTxDao, abschlussDao, belegDao, vorgangDao, limit);
+    	    SynchronizePosInvoice syncInvoice = new SynchronizePosInvoice(posInvoiceDao, kleinteilDao, limit);
+    	    SyncStateUtils.synchronize(bofc, "balRowver", syncBalance::fetchNewBalances );
+    	    SyncStateUtils.synchronize(bofc, "invRowver", syncInvoice::fetchNewAndChangedInvoices );
+    	    SyncStateUtils.synchronize(bofc, "issRowver", syncInvoice::fetchNewAndChangedIssueSlips );
 	    	
-	    	if (bulkLoad != null) {
-	    		// wir wollen einen Haufen Daten rumschaufeln
-	    		syncBalance.doBulkLoad(bulkLoad);
-	    		bulkLoad = null; // wir löschen wieder
-	    	} else {
-	    		// ein normaler Aktualisierungslauf
-	    		psg.gatherData();
-	    		ssg.delayedGatherData();
-	    		
-	    		// hole neue Abschlüsse
-	    		balRowVer = syncBalance.fetchNewBalances(balRowVer);
-    	    	bofc.execute("update dynamicstate set bigvalue = ? where key = 'balRowver'", balRowVer);
-	    		
-	    		invRowVer = syncInvoice.fetchNewAndChangedInvoices(invRowVer);
-    	    	bofc.execute("update dynamicstate set bigvalue = ? where key = 'invRowver'", invRowVer);
-	    		
-	    		issRowVer = syncInvoice.fetchNewAndChangedIssueSlips(issRowVer);
-    	    	bofc.execute("update dynamicstate set bigvalue = ? where key = 'issRowver'", issRowVer);
-	    		
-	    		// sollen welche neu synchronisiertwerden? dann mach das jetzt
-	    		if (PosAdapterApplication.resyncQueue.isEmpty() == false) {
-	    			PosAdapterApplication.resyncQueue.forEach(syncBalance);
-	    			PosAdapterApplication.resyncQueue.clear();
-	    		}
+    		psg.gatherData();
+    		ssg.delayedGatherData();
+    		    		
+    		// sollen welche neu synchronisiertwerden? dann mach das jetzt
+    		if (PosAdapterApplication.resyncQueue.isEmpty() == false) {
+    			PosAdapterApplication.resyncQueue.forEach(syncBalance);
+    			PosAdapterApplication.resyncQueue.clear();
+    		}
 
-	    		AbstractCommand chain = new PayOffCouponCommand(config, pos);
-	    		chain = chain.concat(new PayOffInvoiceCommand(config, pos));
+    		AbstractCommand chain = new PayOffCouponCommand(config, pos);
+    		chain = chain.concat(new PayOffInvoiceCommand(config, pos));
 
-	    		if (PosAdapterApplication.commandQueue.isEmpty() == false) {
-	    			PosAdapterApplication.commandQueue.forEach(chain);
-	    			PosAdapterApplication.commandQueue.clear();
-	    		}
-	    	}
+    		if (PosAdapterApplication.commandQueue.isEmpty() == false) {
+    			PosAdapterApplication.commandQueue.forEach(chain);
+    			PosAdapterApplication.commandQueue.clear();
+    		}
 
 	    	long dur = System.currentTimeMillis()-lastRun;
 	    	if (dur > maxDuration) maxDuration = dur;

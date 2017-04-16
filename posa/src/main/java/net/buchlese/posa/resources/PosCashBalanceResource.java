@@ -1,7 +1,5 @@
 package net.buchlese.posa.resources;
 
-import io.dropwizard.views.View;
-
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
@@ -20,7 +18,6 @@ import net.buchlese.posa.core.CashBalance;
 import net.buchlese.posa.core.Validator;
 import net.buchlese.posa.jdbi.bofc.PosCashBalanceDAO;
 import net.buchlese.posa.jdbi.bofc.PosTicketDAO;
-import net.buchlese.posa.view.CashBalView;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -56,7 +53,7 @@ public class PosCashBalanceResource {
 	@Produces({"text/html"})
 	@GET
 	@Path("/view/{date}")
-	public View fetchViewForDate(@PathParam("date") String abschlussId)  {
+	public PosCashBalance fetchViewForDate(@PathParam("date") String abschlussId)  {
 		PosCashBalance cb = dao.fetchForDate(abschlussId);
 		if (cb == null) {
 			// es gibt den zu resyncenden abschluss noch gar nicht. einen leeren anlegen
@@ -64,13 +61,13 @@ public class PosCashBalanceResource {
 			cb = balComp.createBalance(null, null);
 			cb.setAbschlussId(abschlussId);
 		}
-		return new CashBalView(cb);
+		return cb;
 	}
 
 	@Produces({"text/html"})
 	@GET
 	@Path("/resync/{date}")
-	public View resyncBalanceForDate(@PathParam("date") String abschlussId)  {
+	public PosCashBalance resyncBalanceForDate(@PathParam("date") String abschlussId)  {
 		PosCashBalance cb = dao.fetchForDate(abschlussId);
 		if (cb == null) {
 			// es gibt den zu resyncenden abschluss noch gar nicht. einen leeren anlegen, der rest macht das resync
@@ -79,16 +76,16 @@ public class PosCashBalanceResource {
 			cb.setAbschlussId(abschlussId);
 		}
 		PosAdapterApplication.resyncQueue.offer(cb);
-		return new CashBalView(cb);
+		return cb;
 	}
 
 	@Produces({"text/html"})
 	@GET
 	@Path("/sendbof/{date}")
-	public View sendAgainBalanceForDate(@PathParam("date") String date)  {
+	public PosCashBalance sendAgainBalanceForDate(@PathParam("date") String date)  {
 		PosCashBalance cb = dao.fetchForDate(date);
 		PosAdapterApplication.homingQueue.offer(cb);
-		return new CashBalView(cb);
+		return cb;
 	}
 
 	

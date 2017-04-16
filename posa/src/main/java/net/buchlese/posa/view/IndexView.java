@@ -1,32 +1,53 @@
 package net.buchlese.posa.view;
 
+import freemarker.ext.beans.BeanModel;
+import freemarker.template.TemplateMethodModelEx;
+import freemarker.template.TemplateModelException;
+import freemarker.template.TemplateNumberModel;
+import io.dropwizard.setup.Environment;
+import io.dropwizard.views.View;
+
 import java.text.DecimalFormat;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.joda.time.DateTime;
-import org.joda.time.Duration;
-
-import com.codahale.metrics.Gauge;
-import com.codahale.metrics.Timer;
-
-import io.dropwizard.setup.Environment;
-import io.dropwizard.views.View;
 import net.buchlese.posa.PosAdapterApplication;
 import net.buchlese.posa.PosAdapterConfiguration;
 import net.buchlese.posa.core.CommandTimer;
 import net.buchlese.posa.core.SendTimer;
 import net.buchlese.posa.core.SyncTimer;
+import net.buchlese.posa.jdbi.bofc.PosCashBalanceDAO;
+import net.buchlese.posa.jdbi.bofc.PosInvoiceDAO;
 
-public class TechnicsView extends View {
+import org.joda.time.DateTime;
+import org.joda.time.Duration;
 
-	private final Environment app;
+import com.codahale.metrics.Gauge;
+
+public class IndexView extends View {
+
 	private final PosAdapterConfiguration cfg;
-	
-	public TechnicsView( PosAdapterConfiguration cfg, Environment app) {
-		super("technics.ftl");
+	@SuppressWarnings("unused")
+	private final PosCashBalanceDAO dao;
+	@SuppressWarnings("unused")
+	private final PosInvoiceDAO daoInv;
+	private final Environment app;
+
+
+	public IndexView(PosAdapterConfiguration config, PosCashBalanceDAO dao, PosInvoiceDAO daoInv, Environment app) {
+		super("index.ftl");
 		this.app = app;
-		this.cfg = cfg;
+		this.cfg = config;
+		this.dao = dao;
+		this.daoInv = daoInv;
+}
+
+	public String getPosName() {
+		return cfg.getName();
+	}
+
+	public String getPointId() {
+		return String.valueOf(cfg.getPointOfSaleId());
 	}
 
 	public String getJvmVersion() {
@@ -41,15 +62,6 @@ public class TechnicsView extends View {
 		Gauge<?> max = app.metrics().getGauges().get("jvm.memory.total.max");
 		double maxval = ((Number)max.getValue()).doubleValue() / 1024 / 1024; // in Megabytes please
 		return DecimalFormat.getNumberInstance().format(usedval) + " MB / " + DecimalFormat.getNumberInstance().format(comitval) + " MB / " +  DecimalFormat.getNumberInstance().format(maxval) + " MB";
-	}
-
-	public String getMobileViewAvg() {
-		Timer g = app.metrics().getTimers().get("net.buchlese.posa.view.MobileView.rendering");
-		if (g == null || g.getCount() <= 0) {
-			return "--";
-		}
-		double val = g.getSnapshot().getMean() / 1000000000; // in seconds, not nanos
-		return DecimalFormat.getNumberInstance().format(val) + " s";
 	}
 
 	public List<String> getHomingQueue() {
@@ -85,19 +97,23 @@ public class TechnicsView extends View {
 	}
 	
 	
-	public String getDeskViewAvg() {
-		Timer g = app.metrics().getTimers().get("net.buchlese.posa.view.AppView.rendering");
-		if (g == null || g.getCount() <= 0) {
-			return "--";
-		}
-		double val = g.getSnapshot().getMean() / 1000000000; // in seconds, not nanos;
-		return DecimalFormat.getNumberInstance().format(val) + " s";
-	}
+//	public String getDeskViewAvg() {
+//		Timer g = app.metrics().getTimers().get("net.buchlese.posa.view.AppView.rendering");
+//		if (g == null || g.getCount() <= 0) {
+//			return "--";
+//		}
+//		double val = g.getSnapshot().getMean() / 1000000000; // in seconds, not nanos;
+//		return DecimalFormat.getNumberInstance().format(val) + " s";
+//	}
 
 	public String getSyncTimeMax() {
 		return new Duration(SyncTimer.maxDuration).toString();
 	}
 
+	public PosAdapterConfiguration getConfig() {
+		return cfg;
+	}
+	
 	public int getPointid() {
 		return cfg.getPointOfSaleId();
 	}
@@ -109,5 +125,37 @@ public class TechnicsView extends View {
 	public String getDbconfigBofc() {
 		return cfg.getBackOfficeDB().getUrl();
 	}
+	
+	public TemplateMethodModelEx getMoney() {
+    	return new TemplateMethodModelEx() {
+			@SuppressWarnings("rawtypes")
+			@Override
+			public Object exec(List args) throws TemplateModelException {
+				if (args.size() != 1) {
+					throw new TemplateModelException("nur ein int als Argument");
+				}
+				if (args.get(0) == null) {
+					return "0,00 EUR";
+				}
+				if (args.get(0) instanceof TemplateNumberModel) {
+					return String.format("%,.2f EUR", ((TemplateNumberModel)args.get(0)).getAsNumber().intValue() / 100.0d);
+				}
+				return "";
+			}
+		};
+    }
+	
+    public TemplateMethodModelEx getLocalDate() {
+    	return new TemplateMethodModelEx() {
+			@SuppressWarnings("rawtypes")
+			@Override
+			public Object exec(List args) throws TemplateModelException {
+				if (args.size() != 1) {
+					throw new TemplateModelException("nur ein DateTime als Argument");
+				}
+				return ((DateTime)((BeanModel)args.get(0)).getWrappedObject()).toLocalDate();
+			}
+		};
+    }
 
 }
