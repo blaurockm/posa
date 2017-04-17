@@ -154,5 +154,31 @@
          <column name="bigvalue" type="bigint"/>
      </createTable>
    </changeSet>
+
+   <changeSet id="articleI" author="mblaurock">
+      <createTable tableName="posarticle">
+         <column name="id" type="bigint" autoIncrement="true">
+            <constraints primaryKey="true" nullable="false" />
+         </column>
+         <column name="ident" type="bigint">
+            <constraints nullable="false" />
+         </column>
+         <column name="lastPurDate" type="DATETIME"/>
+         <column name="lastSelDate" type="DATETIME"/>
+         <column name="purchaseprice" type="bigint"/>
+         <column name="sellingprice" type="bigint"/>
+         <column name="artikelnummer" type="varchar(40)" />
+         <column name="isbn" type="varchar(20)" />
+         <column name="ean" type="varchar(40)" />
+         <column name="matchcode" type="varchar(40)" />
+         <column name="bezeichnung" type="varchar(80)" />
+         <column name="author" type="varchar(50)" />
+         <column name="publisher" type="varchar(50)" />
+         <column name="stock" type="int"/>
+         <column name="tax" type="varchar(2)" />
+         <column name="grpidx" type="varchar(2)" />
+      </createTable>
+   </changeSet>
+
    
 </databaseChangeLog>

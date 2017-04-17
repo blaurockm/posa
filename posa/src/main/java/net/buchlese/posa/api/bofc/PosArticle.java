@@ -1,10 +1,12 @@
 package net.buchlese.posa.api.bofc;
 
+import org.joda.time.DateTime;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Article {
+public class PosArticle implements SendableObject {
 		@JsonProperty
 		private long id;
 
@@ -12,7 +14,7 @@ public class Article {
 		private int pointid;
 
 		@JsonProperty
-		private long artikelIdent;
+		private Long artikelIdent;
 		
 		@JsonProperty
 		private String artikelnummer;
@@ -45,34 +47,34 @@ public class Article {
 		private String auflage;
 
 		@JsonProperty
-		private long weight;
+		private Long weight;
 
 		@JsonProperty
-		private long purchasePrice;
+		private Long purchasePrice;
 		
 		@JsonProperty
-		private long sellingPrice;
+		private Long sellingPrice;
 		
 		@JsonProperty
 		private boolean bundle;
 		
 		@JsonProperty
-		private long sellingPrice_full;
+		private Long sellingPrice_full;
 
 		@JsonProperty
-		private long sellingPrice_half;
+		private Long sellingPrice_half;
 		
 		@JsonProperty
-		private java.sql.Date lastPurchaseDate;
+		private DateTime lastPurchaseDate;
 
 		@JsonProperty
-		private java.sql.Date lastSellingDate;
+		private DateTime lastSellingDate;
 		
 		@JsonProperty
 		private Tax tax;
 
 		@JsonProperty
-		private int availableStock;
+		private Integer availableStock;
 
 		public long getId() {
 			return id;
@@ -178,27 +180,27 @@ public class Article {
 			this.auflage = auflage;
 		}
 
-		public long getWeight() {
+		public Long getWeight() {
 			return weight;
 		}
 
-		public void setWeight(long weight) {
+		public void setWeight(Long weight) {
 			this.weight = weight;
 		}
 
-		public long getPurchasePrice() {
+		public Long getPurchasePrice() {
 			return purchasePrice;
 		}
 
-		public void setPurchasePrice(long purchasePrice) {
+		public void setPurchasePrice(Long purchasePrice) {
 			this.purchasePrice = purchasePrice;
 		}
 
-		public long getSellingPrice() {
+		public Long getSellingPrice() {
 			return sellingPrice;
 		}
 
-		public void setSellingPrice(long sellingPrice) {
+		public void setSellingPrice(Long sellingPrice) {
 			this.sellingPrice = sellingPrice;
 		}
 
@@ -210,35 +212,35 @@ public class Article {
 			this.bundle = bundle;
 		}
 
-		public long getSellingPrice_full() {
+		public Long getSellingPrice_full() {
 			return sellingPrice_full;
 		}
 
-		public void setSellingPrice_full(long sellingPrice_full) {
+		public void setSellingPrice_full(Long sellingPrice_full) {
 			this.sellingPrice_full = sellingPrice_full;
 		}
 
-		public long getSellingPrice_half() {
+		public Long getSellingPrice_half() {
 			return sellingPrice_half;
 		}
 
-		public void setSellingPrice_half(long sellingPrice_half) {
+		public void setSellingPrice_half(Long sellingPrice_half) {
 			this.sellingPrice_half = sellingPrice_half;
 		}
 
-		public java.sql.Date getLastPurchaseDate() {
+		public DateTime getLastPurchaseDate() {
 			return lastPurchaseDate;
 		}
 
-		public void setLastPurchaseDate(java.sql.Date lastPurchaseDate) {
+		public void setLastPurchaseDate(DateTime lastPurchaseDate) {
 			this.lastPurchaseDate = lastPurchaseDate;
 		}
 
-		public java.sql.Date getLastSellingDate() {
+		public DateTime getLastSellingDate() {
 			return lastSellingDate;
 		}
 
-		public void setLastSellingDate(java.sql.Date lastSellingDate) {
+		public void setLastSellingDate(DateTime lastSellingDate) {
 			this.lastSellingDate = lastSellingDate;
 		}
 
@@ -250,11 +252,11 @@ public class Article {
 			this.tax = tax;
 		}
 
-		public int getAvailableStock() {
+		public Integer getAvailableStock() {
 			return availableStock;
 		}
 
-		public void setAvailableStock(int availableStock) {
+		public void setAvailableStock(Integer availableStock) {
 			this.availableStock = availableStock;
 		}
 

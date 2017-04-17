@@ -18,15 +18,16 @@ public class ArtikelMapper implements ResultSetMapper<Artikel> {
 		vorg.setArtikelnummer(rs.getString("artikelNummer"));
 		vorg.setMatchcode(rs.getString("matchCode"));
 		vorg.setBezeichnung(rs.getString("Bezeichnung"));
-		vorg.setBestand(rs.getInt("bestand"));
+		vorg.setBestand(rs.getBigDecimal("bestand"));
 		vorg.setvK(rs.getBigDecimal("vk"));
 		vorg.seteK(rs.getBigDecimal("ek"));
 		vorg.setAutor(rs.getString("Autor"));
 		vorg.setVerlag(rs.getString("Verlag"));
-		vorg.setLetztesEinkaufsdatum(new DateTime(rs.getTimestamp("letztesEKDatum")));
-		vorg.setLetztesVerkaufsdatum(new DateTime(rs.getTimestamp("letztesVKDatum")));
+		vorg.setLetztesEinkaufsdatum(new DateTime(rs.getTimestamp("LetztEKDatum")));
+		vorg.setLetztesVerkaufsdatum(new DateTime(rs.getTimestamp("LetztVKDatum")));
 		vorg.setmWSt(rs.getString("mwst") != null ? rs.getString("mwst").charAt(0) : null);
 		vorg.setWarGrIndex(rs.getString("WarGrIndex") != null ? rs.getString("WarGrIndex").charAt(0) : null);
+		vorg.setZeitmarke(rs.getBigDecimal("MyZeitmarke"));
 		return vorg;
 	}
 

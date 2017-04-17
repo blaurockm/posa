@@ -1,19 +1,22 @@
 package net.buchlese.posa;
 
+import io.dropwizard.jdbi.DBIFactory;
+import io.dropwizard.setup.Environment;
+
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import io.dropwizard.jdbi.DBIFactory;
-import io.dropwizard.setup.Environment;
 import net.buchlese.posa.jdbi.bofc.JodaLocalDateArgumentFactory;
 import net.buchlese.posa.jdbi.bofc.JodaLocalDateMapper;
 import net.buchlese.posa.jdbi.bofc.PayMethArgumentFactory;
+import net.buchlese.posa.jdbi.bofc.PosArticleDAO;
 import net.buchlese.posa.jdbi.bofc.PosCashBalanceDAO;
 import net.buchlese.posa.jdbi.bofc.PosInvoiceDAO;
 import net.buchlese.posa.jdbi.bofc.PosTicketDAO;
 import net.buchlese.posa.jdbi.bofc.PosTxDAO;
 import net.buchlese.posa.jdbi.bofc.TaxArgumentFactory;
 import net.buchlese.posa.jdbi.bofc.TxTypeArgumentFactory;
+import net.buchlese.posa.jdbi.pos.ArtikelDAO;
 import net.buchlese.posa.jdbi.pos.KassenAbschlussDAO;
 import net.buchlese.posa.jdbi.pos.KassenBelegDAO;
 import net.buchlese.posa.jdbi.pos.KassenVorgangDAO;
@@ -92,6 +95,11 @@ public class PosAdapterModule extends AbstractModule {
 	public PosInvoiceDAO providePosInvoiceDao(@Named("bofcdb")DBI posDBI) {
 		return posDBI.onDemand(PosInvoiceDAO.class);
 	}
+	
+	@Provides @Inject
+	public PosArticleDAO providePosArticleDao(@Named("bofcdb")DBI posDBI) {
+		return posDBI.onDemand(PosArticleDAO.class);
+	}
 
 	@Provides @Inject
 	public KassenVorgangDAO provideVorgangsDao(@Named("posdb")DBI posDBI) {
@@ -101,6 +109,11 @@ public class PosAdapterModule extends AbstractModule {
 	@Provides @Inject
 	public KassenBelegDAO provideBelegDao(@Named("posdb")DBI posDBI) {
 		return posDBI.onDemand(KassenBelegDAO.class);
+	}
+
+	@Provides @Inject
+	public ArtikelDAO provideArtikelDao(@Named("posdb")DBI posDBI) {
+		return posDBI.onDemand(ArtikelDAO.class);
 	}
 
 	@Provides @Inject

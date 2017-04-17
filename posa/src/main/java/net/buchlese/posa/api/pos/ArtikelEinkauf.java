@@ -18,6 +18,9 @@ public class ArtikelEinkauf {
 	@JsonProperty
 	private DateTime letzterEintrag;
 
+	@JsonProperty
+	private BigDecimal zeitmarke;
+
 	public int getArtikelident() {
 		return artikelident;
 	}
@@ -40,6 +43,14 @@ public class ArtikelEinkauf {
 
 	public void setLetzterEintrag(DateTime letzterEintrag) {
 		this.letzterEintrag = letzterEintrag;
+	}
+
+	public BigDecimal getZeitmarke() {
+		return zeitmarke;
+	}
+
+	public void setZeitmarke(BigDecimal zeitmarke) {
+		this.zeitmarke = zeitmarke;
 	}
 
 }

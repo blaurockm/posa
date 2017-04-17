@@ -20,6 +20,7 @@ public class ArtikelBestandBuchungMapper implements ResultSetMapper<ArtikelBesta
 		vorg.setBestandNeu(rs.getInt("BestandNeu"));
 		vorg.setBemerkung(rs.getString("Bemerkung"));
 		vorg.setDatum(new DateTime(rs.getTimestamp("Datum")));
+		vorg.setZeitmarke(rs.getBigDecimal("MyZeitmarke"));
 		return vorg;
 	}
 

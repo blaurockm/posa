@@ -1,5 +1,7 @@
 package net.buchlese.posa.api.pos;
 
+import java.math.BigDecimal;
+
 import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.DateTime;
 
@@ -28,6 +30,9 @@ public class ArtikelBestandBuchung {
 
 	@JsonProperty
 	private DateTime datum;
+
+	@JsonProperty
+	private BigDecimal zeitmarke;
 
 	public int getId() {
 		return id;
@@ -83,6 +88,14 @@ public class ArtikelBestandBuchung {
 
 	public void setDatum(DateTime datum) {
 		this.datum = datum;
+	}
+
+	public BigDecimal getZeitmarke() {
+		return zeitmarke;
+	}
+
+	public void setZeitmarke(BigDecimal zeitmarke) {
+		this.zeitmarke = zeitmarke;
 	}
 
 }

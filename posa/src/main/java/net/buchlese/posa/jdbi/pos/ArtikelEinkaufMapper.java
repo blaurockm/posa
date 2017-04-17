@@ -16,6 +16,7 @@ public class ArtikelEinkaufMapper implements ResultSetMapper<ArtikelEinkauf> {
 		vorg.setArtikelident(rs.getInt("artikelident"));
 		vorg.seteK(rs.getBigDecimal("ek"));
 		vorg.setLetzterEintrag(new DateTime(rs.getBigDecimal("LetzterEintrag")));
+		vorg.setZeitmarke(rs.getBigDecimal("MyZeitmarke"));
 		return vorg;
 	}
 

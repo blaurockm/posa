@@ -47,7 +47,7 @@ public class Artikel {
 	private Character warGrIndex;
 	
 	@JsonProperty
-	private int bestand;
+	private BigDecimal bestand;
 
 	@JsonProperty
 	private DateTime letztesEinkaufsdatum;
@@ -131,11 +131,11 @@ public class Artikel {
 		this.warGrIndex = warGrIndex;
 	}
 
-	public int getBestand() {
+	public BigDecimal getBestand() {
 		return bestand;
 	}
 
-	public void setBestand(int bestand) {
+	public void setBestand(BigDecimal bestand) {
 		this.bestand = bestand;
 	}
 

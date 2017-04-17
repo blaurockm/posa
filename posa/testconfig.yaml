@@ -18,11 +18,11 @@ posDb:
   driverClass: net.sourceforge.jtds.jdbc.Driver
 
   # the username 
-  user: sa
-  password: master
+#  user: sa
+#  password: master
 
-#  user: fibu
-#  password: kasse2fibu
+  user: fibu
+  password: kasse2fibu
   
   # the JDBC URL
   #####  lokale datenbank
@@ -52,12 +52,12 @@ name: Test-Kasse
 
 pointOfSaleId: 6
 
-syncOffset: 2
-sendOffset: 1
+syncOffset: 1
+sendOffset: 9
 syncInterval: 2
 sendInterval: 2
-commandOffset: 1
-commandInterval: 1
+commandOffset: 5
+commandInterval: 2
 
 #homeUrl: http://localhost:7896/
 homeUrl: http://localhost:8082/

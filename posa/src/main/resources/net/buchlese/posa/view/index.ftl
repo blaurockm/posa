@@ -119,6 +119,9 @@
   		<tr><td>POS-Datenbank</td><td>${dbconfigPosa}</td></tr>
   		<tr><td>BOFC-Datenbank</td><td>${dbconfigBofc}</td></tr>
   		<tr><td>Days Back</td><td>${config.daysBack}</td></tr>
+  		<tr><td>Sync</td><td>${config.syncOffset} / ${config.syncInterval}</td></tr>
+  		<tr><td>Send</td><td>${config.sendOffset} / ${config.sendInterval}</td></tr>
+  		<tr><td>Command</td><td>${config.commandOffset} / ${config.commandInterval}</td></tr>
   	    </tbody>
   	  </table>
    </div>
