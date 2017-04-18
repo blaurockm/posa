@@ -257,6 +257,7 @@ public class SynchronizePosInvoice extends AbstractSynchronizer {
 		case "LZ" : pd.setText("    "); pd.setTextonly(true); return pd;
 		default: pd.setText("unbekannte Kennziffer " + e.getKennziffer());  pd.setTextonly(true); return pd;
 		}
+		updInt(pd::setArticleId, pd.getArticleId(), e.getArtikelident());   
 		updInt(pd::setQuantity, pd.getQuantity(), e.getMenge());
 		BigDecimal betrag = e.getBruttoEinzel();
 		if (betrag == null || betrag.intValue() == 0) {

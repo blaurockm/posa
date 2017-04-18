@@ -37,6 +37,9 @@ public class PosInvoiceDetail {
 	private int quantity;
 
 	@JsonProperty
+	private int articleId;
+
+	@JsonProperty
 	private long rebate;  // rabatt mit bis zu 5 Nachkommastellen
 
 	@JsonProperty
@@ -176,6 +179,14 @@ public class PosInvoiceDetail {
 
 	public void setLfdNr(Long lfdNr) {
 		this.lfdNr = lfdNr;
+	}
+
+	public int getArticleId() {
+		return articleId;
+	}
+
+	public void setArticleId(int articleId) {
+		this.articleId = articleId;
 	}
 
 }

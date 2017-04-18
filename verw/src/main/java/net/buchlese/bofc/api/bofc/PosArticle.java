@@ -12,9 +12,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
-@Table( name = "article" )
+@Table( name = "posarticle" )
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Article {
+public class PosArticle {
 		@Id
 		@GeneratedValue(strategy=GenerationType.AUTO)
 		@JsonProperty

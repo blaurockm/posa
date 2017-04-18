@@ -88,8 +88,7 @@ public class SynchronizePosArticle extends AbstractSynchronizer {
 	
 	public PosArticle createArticle(Artikel rech) {
 		PosArticle inv = new PosArticle();
-		inv.setArtikelIdent(rech.getArtikelident());
-		inv.setArtikelnummer(rech.getArtikelnummer());
+		inv.setArtikelIdent(rech.getArtikelident()); // der darf sich net verändern..
 		return updateArticle(inv, rech);
 	}
 	
@@ -104,6 +103,7 @@ public class SynchronizePosArticle extends AbstractSynchronizer {
 		updStr(part::setAuthor, part.getAuthor(), artikel.getAutor());
 		updStr(part::setBezeichnung, part.getBezeichnung(), artikel.getBezeichnung());
 		updStr(part::setPublisher, part.getPublisher(), artikel.getVerlag());
+		updStr(part::setArtikelnummer, part.getArtikelnummer(), artikel.getArtikelnummer());
 
 		updInt(part::setAvailableStock, part.getAvailableStock(), artikel.getBestand());
 		

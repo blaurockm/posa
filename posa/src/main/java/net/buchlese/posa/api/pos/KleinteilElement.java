@@ -25,6 +25,9 @@ public class KleinteilElement {
 	private String matchCode;
 
 	@JsonProperty
+	private BigDecimal artikelident;
+
+	@JsonProperty
 	private String bezeichnung;
 
 	@JsonProperty
@@ -167,6 +170,14 @@ public class KleinteilElement {
 
 	public void setLaufendeNummer(int laufendeNummer) {
 		this.laufendeNummer = laufendeNummer;
+	}
+
+	public BigDecimal getArtikelident() {
+		return artikelident;
+	}
+
+	public void setArtikelident(BigDecimal artikelident) {
+		this.artikelident = artikelident;
 	}
 
 
