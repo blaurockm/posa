@@ -1,40 +1,69 @@
 package net.buchlese.posa.jdbi.bofc;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
+
+import javax.validation.Valid;
+
+import org.skife.jdbi.v2.sqlobject.Bind;
+import org.skife.jdbi.v2.sqlobject.BindBean;
+import org.skife.jdbi.v2.sqlobject.SqlBatch;
+import org.skife.jdbi.v2.sqlobject.SqlQuery;
+import org.skife.jdbi.v2.sqlobject.SqlUpdate;
+import org.skife.jdbi.v2.sqlobject.customizers.BatchChunkSize;
+import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 
 import net.buchlese.posa.api.bofc.PosArticle;
 
-public class PosArticleDAO {
+@RegisterMapper(PosArticleMapper.class)
+public interface PosArticleDAO {
 
-	public static Map<Long, PosArticle> store = new HashMap<>();
+// <column name="id" type="bigint" autoIncrement="true">
+// <column name="ident" type="bigint">
+// <column name="lastPurDate" type="DATETIME"/>
+// <column name="lastSelDate" type="DATETIME"/>
+// <column name="purchaseprice" type="bigint"/>
+// <column name="sellingprice" type="bigint"/>
+// <column name="artikelnummer" type="varchar(40)" />
+// <column name="isbn" type="varchar(20)" />
+// <column name="ean" type="varchar(40)" />
+// <column name="matchcode" type="varchar(40)" />
+// <column name="bezeichnung" type="varchar(80)" />
+// <column name="author" type="varchar(50)" />
+// <column name="publisher" type="varchar(50)" />
+// <column name="stock" type="int"/>
+// <column name="tax" type="varchar(2)" />
+// <column name="grpidx" type="varchar(2)" />
 	
-	public Integer getLastErfasst() {
-		return null;
-	}
+	@SqlQuery("select max(ident) from posarticle")
+	Integer getLastErfasst();
+	
+	@SqlUpdate("insert into posarticle (ident,lastPurDate,lastSelDate,purchaseprice, sellingprice, " + 
+	            "artikelnummer, isbn, ean, matchcode, bezeichnung, author, publisher, stock, tax, grpidx) " +
+		    " values (:artikelIdent, :lastPurchaseDate, :lastSellingDate, :purchasePrice, :sellingPrice, " + 
+	            ":artikelnummer, :isbn, :ean, :matchcode, :bezeichnung, :author, :publisher, :availableStock, :tax, :wargrindex)")
+    void insert(@BindBean PosArticle art);
 
-	public void insertAll(Iterator<PosArticle> iterator) {
-		while (iterator.hasNext()) {
-			PosArticle x = iterator.next();
-			store.put(x.getArtikelIdent(), x);
-		}
-	}
+	
+	@SqlBatch("insert into posarticle (ident,lastPurDate,lastSelDate,purchaseprice, sellingprice, " + 
+            "artikelnummer, isbn, ean, matchcode, bezeichnung, author, publisher, stock, tax, grpidx) " +
+	    " values (:artikelIdent, :lastPurchaseDate, :lastSellingDate, :purchasePrice, :sellingPrice, " + 
+            ":artikelnummer, :isbn, :ean, :matchcode, :bezeichnung, :author, :publisher, :availableStock, :tax, :wargrindex)")
+	@BatchChunkSize(100)
+	void insertAll(@Valid @BindBean Iterator<PosArticle> art);
 
-	public List<PosArticle> fetchArticle(int artikelident) {
-		return Arrays.asList(store.get(artikelident));
-	}
+	@SqlUpdate("update into posarticle (lastPurDate,lastSelDate,purchaseprice, sellingprice, " + 
+            "artikelnummer, isbn, ean, matchcode, bezeichnung, author, publisher, stock, tax, grpidx) " +
+	    " values (:lastPurchaseDate, :lastSellingDate, :purchasePrice, :sellingPrice, " + 
+            ":artikelnummer, :isbn, :ean, :matchcode, :bezeichnung, :author, :publisher, :availableStock, :tax, :wargrindex)" +
+		    " where  id = :id ")
+	void updateArticle(@BindBean PosArticle art);
 
-	public void updateArticle(PosArticle x) {
-		store.put(x.getArtikelIdent(), x);		
-	}
+	@SqlQuery("select * from posarticle where ident >= :ident ")
+	List<PosArticle> fetchArticle(@Bind("ident") Integer artikelident);
 
-	public List<PosArticle> fetchArticles() {
-		return new ArrayList<PosArticle>(store.values());
-	}
+	@SqlQuery("select * from posarticle ")
+	List<PosArticle> fetchArticles();
 
 
 }

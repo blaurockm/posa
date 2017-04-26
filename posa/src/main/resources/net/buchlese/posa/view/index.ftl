@@ -14,7 +14,7 @@
 
 <link rel="icon"       type="image/x-icon" href="/assets/posa/images/favicon.ico">
 </head>
-<body  class="code-snippets-visible">
+<body>
 
    <div class="container">
        <h2 class="title">Kasse ${pointId} : ${posName?html}</h2>
@@ -39,7 +39,7 @@
                   <a class="popover-link" href="data">Lieferscheine</a>
                 </li>
                 <li class="popover-item">
-                  <a class="popover-link" href="data">Artikel</a>
+                  <a class="popover-link" href="articles">Artikel</a>
                 </li>
               </ul>
             </div>
@@ -50,81 +50,91 @@
     </nav>
    <div class="navbar-spacer"></div>
    
-   <div class="docs-section">
-      <h6 class="docs-header">Resync-Warteschlange</h6>
-      <div class="docs-example">
-	  <ol>
-	    <#list resyncQueue as sy>
-	 	   <li>${sy}</li>
-	 	 </#list>
-	  </ol>
-	  </div>
+   <div class="container">
+   
+    <div class="row">
+      <div class="one-half column">
+        <h6 class="docs-header">Resync-Warteschlange</h6>
+  	    <ol>
+  	      <#list resyncQueue as sy>
+  	 	   <li>${sy}</li>
+  	 	  </#list>
+  	     </ol>
+      </div>
+       <div class="one-half column">
+          <h6 class="docs-header">Konfiguration</h6>
+        <table>
+          <tbody>
+              <tr><td>Point-ID</td><td>${pointid}</td></tr>
+              <tr><td>POS-Datenbank</td><td>${dbconfigPosa}</td></tr>
+              <tr><td>BOFC-Datenbank</td><td>${dbconfigBofc}</td></tr>
+              <tr><td>Days Back</td><td>${config.daysBack}</td></tr>
+              <tr><td>Homing base</td><td>${config.homeUrl}</td></tr>
+              <tr><td>Sync</td><td>${config.syncOffset} / ${config.syncInterval}</td></tr>
+              <tr><td>Send</td><td>${config.sendOffset} / ${config.sendInterval}</td></tr>
+              <tr><td>Command</td><td>${config.commandOffset} / ${config.commandInterval}</td></tr>
+            </tbody>
+          </table>
+       </div>
+    </div>  
+    <div class="row">
+      <div class="six columns">
+        <h6 class="docs-header">Command-Warteschlange</h6>
+        <ol>
+          <#list commandQueue as sy>
+       	   <li>${sy}</li>
+          </#list>
+        </ol>
+      </div>
+       <div class="six columns">
+          <h6 class="docs-header">Performance</h6>
+        <table>
+          <tbody>
+          <tr><td>Sync-Max</td><td>${syncTimeMax}</td></tr>
+          <tr><td>letzter Homing-Lauf</td><td>${lastHomingRun}</td></tr>
+          <tr><td>letzter Sync-Lauf</td><td>${lastSyncRun}</td></tr>
+          <tr><td>letzter Sync-Lauf mit DB-Verbindung</td><td>${lastSyncRunWithDbConnection}</td></tr>
+            <tr><td>letzter Command-Get-Lauf</td><td>${lastCommandRun}</td></tr>
+            </tbody>
+          </table>
+       </div>
+    </div>
+    <div class="row">
+      <div class="six columns">
+        <h6 class="docs-header">Homing-Warteschlange</h6>
+        <ol>
+          <#list homingQueue as ho>
+           <li>${ho}</li>
+         </#list>
+        </ol>
+      </div>
+       <div class="six columns">
+          <h6 class="docs-header">JVM-Daten</h6>
+        <table>
+          <tbody>
+            <tr><td>JVM</td><td>${jvmVersion}</td></tr>
+            <tr><td>Memory</td><td>${jvmMemory}</td></tr>
+            </tbody>
+          </table>
+       </div>
+    </div>      
+    <div class="row">
+      <div class="one-half column">
+        <h6 class="docs-header">Nachrichten</h6>
+        <ol>
+           <#list problems as probl>
+           <li>${probl}</li>
+           </#list>
+        </ol>
+      </div>
+      <div class="one-half column">
+         <h6 class="docs-header">Sync-Versions</h6>
+      </div>
+    </div>    
    </div>
-	  
-   <div class="docs-section">
-      <h6 class="docs-header">Command-Warteschlange</h6>
-	  <ol>
-	    <#list commandQueue as sy>
-	 	   <li>${sy}</li>
-	 	 </#list>
-	  </ol>
-   </div>
+   
 
-   <div class="docs-section">
-      <h6 class="docs-header">Homing-Warteschlange</h6>
-	  <ol>
-	    <#list homingQueue as ho>
-	 	   <li>${ho}</li>
-	 	 </#list>
-	  </ol>
-   </div>
 
-   <div class="docs-section">
-      <h6 class="docs-header">Nachrichten</h6>
-	  <ol>
-	    <#list problems as probl>
-	 	   <li>${probl}</li>
-	 	 </#list>
-	  </ol>
-   </div>
-
-   <div class="docs-section">
-      <h6 class="docs-header">JVM-Daten</h6>
- 	  <table>
- 	    <tbody>
-  	    <tr><td>JVM</td><td>${jvmVersion}</td></tr>
-  	    <tr><td>Memory</td><td>${jvmMemory}</td></tr>
-  	    </tbody>
-  	  </table>
-   </div>
-
-   <div class="docs-section">
-      <h6 class="docs-header">Performance</h6>
- 	  <table>
- 	    <tbody>
-  		<tr><td>Sync-Max</td><td>${syncTimeMax}</td></tr>
-  		<tr><td>letzter Homing-Lauf</td><td>${lastHomingRun}</td></tr>
-  		<tr><td>letzter Sync-Lauf</td><td>${lastSyncRun}</td></tr>
-   		<tr><td>letzter Sync-Lauf mit DB-Verbindung</td><td>${lastSyncRunWithDbConnection}</td></tr>
-        <tr><td>letzter Command-Get-Lauf</td><td>${lastCommandRun}</td></tr>
-  	    </tbody>
-  	  </table>
-   </div>
-
-   <div class="docs-section">
-      <h6 class="docs-header">Konfiguration</h6>
- 	  <table>
- 	    <tbody>
-  		<tr><td>Point-ID</td><td>${pointid}</td></tr>
-  		<tr><td>POS-Datenbank</td><td>${dbconfigPosa}</td></tr>
-  		<tr><td>BOFC-Datenbank</td><td>${dbconfigBofc}</td></tr>
-  		<tr><td>Days Back</td><td>${config.daysBack}</td></tr>
-  		<tr><td>Sync</td><td>${config.syncOffset} / ${config.syncInterval}</td></tr>
-  		<tr><td>Send</td><td>${config.sendOffset} / ${config.sendInterval}</td></tr>
-  		<tr><td>Command</td><td>${config.commandOffset} / ${config.commandInterval}</td></tr>
-  	    </tbody>
-  	  </table>
-   </div>
 
 </body>
 </html>

@@ -1,22 +1,23 @@
 package net.buchlese.posa.resources;
 
-import io.dropwizard.setup.Environment;
-import io.dropwizard.views.View;
-
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import com.google.inject.Inject;
+
+import io.dropwizard.setup.Environment;
+import io.dropwizard.views.View;
 import net.buchlese.posa.PosAdapterConfiguration;
+import net.buchlese.posa.jdbi.bofc.PosArticleDAO;
 import net.buchlese.posa.jdbi.bofc.PosCashBalanceDAO;
 import net.buchlese.posa.jdbi.bofc.PosInvoiceDAO;
+import net.buchlese.posa.view.ArticlesView;
 import net.buchlese.posa.view.DataView;
 import net.buchlese.posa.view.IndexView;
 import net.buchlese.posa.view.LogfilesView;
-
-import com.google.inject.Inject;
 
 @Path("/")
 @Produces(MediaType.TEXT_HTML)
@@ -26,13 +27,15 @@ public class AppResource {
 	private final Environment env;
 	private final PosCashBalanceDAO dao;
 	private final PosInvoiceDAO daoInv;
+	private final PosArticleDAO daoArt;
 
 	@Inject
-	public AppResource(PosAdapterConfiguration config, Environment env, PosCashBalanceDAO dao, PosInvoiceDAO daoInv) {
+	public AppResource(PosAdapterConfiguration config, Environment env, PosCashBalanceDAO dao, PosInvoiceDAO daoInv, PosArticleDAO daoArt) {
 		this.cfg = config;
 		this.env = env;
 		this.dao = dao;
 		this.daoInv = daoInv;
+		this.daoArt = daoArt;
 	}
 
 	@GET
@@ -57,6 +60,12 @@ public class AppResource {
 		return new DataView(cfg, dao, daoInv);
 	}
 
+	@GET
+	@Path("/articles")
+	public View getArticles() {
+		return new ArticlesView(cfg, daoArt);
+	}
+	
 	@GET
 	@Path("/logfiles")
 	public View getLogfiles() {
