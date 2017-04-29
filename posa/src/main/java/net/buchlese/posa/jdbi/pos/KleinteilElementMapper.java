@@ -19,7 +19,6 @@ public class KleinteilElementMapper implements ResultSetMapper<KleinteilElement>
 		vorg.setIsbn(rs.getString("isbn"));
 //		[ArtikelNummer] [nvarchar](30) NULL,
 		vorg.setArtikelNummer(rs.getString("artikelNummer"));
-		vorg.setArtikelident(rs.getBigDecimal("artikelIdent"));
 //		[MatchCode] [varchar](70) NULL,
 		vorg.setMatchCode(rs.getString("matchCode"));
 		vorg.setBezeichnung(rs.getString("bezeichnung"));

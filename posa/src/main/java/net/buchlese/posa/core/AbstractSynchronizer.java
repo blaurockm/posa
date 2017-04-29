@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.function.Consumer;
 
+import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
 
 public abstract class AbstractSynchronizer {
@@ -37,6 +38,22 @@ public abstract class AbstractSynchronizer {
 		}
 		if (val1 != null && val2 != null && val1.equals(val2) == false) {
 			l.accept(val2);
+			return true;
+		}
+		return false;
+	}
+
+	protected boolean updStr(Consumer<String> l, String val1, String val2, int len) {
+		if (val1 == null && val2 != null ) {
+			l.accept(StringUtils.left(val2, len));
+			return true;
+		}
+		if (val1 != null && val2 == null ) {
+			l.accept(StringUtils.left(val2, len));
+			return true;
+		}
+		if (val1 != null && val2 != null && val1.equals(val2) == false) {
+			l.accept(StringUtils.left(val2, len));
 			return true;
 		}
 		return false;

@@ -23,7 +23,7 @@ public interface ArtikelDAO {
 
 //	@SqlQuery("select *, convert(bigint, zeitmarke) as MyZeitmarke from [dbo].Artikel where artikelident > :indent and LetztVKDatum > current_timestamp - :limd")
 	@RegisterMapper(ArtikelMapper.class)
-	@SqlQuery("select *, convert(bigint, zeitmarke) as MyZeitmarke from [dbo].Artikel where bestand > 50 ")
+	@SqlQuery("select top 1000 *, convert(bigint, zeitmarke) as MyZeitmarke from [dbo].Artikel where artikelident > :ident ")
 	List<Artikel> fetchAllArtikelAfter(@Bind("ident") Integer or,@Bind("limd") Integer limit);
 	
 	@RegisterMapper(ArtikelMapper.class)

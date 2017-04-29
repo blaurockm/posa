@@ -44,7 +44,7 @@ public class SynchronizePosInvoice extends AbstractSynchronizer {
 		createNewInvoices(rechs);
 		if (rechs.isEmpty() == false) {
 			res = rechs.get(rechs.size()-1).getZeitmarke();
-			if (rowver == null) {
+			if (rowver == null || rowver.intValue() == 0) {
 				rowver = res;
 			}
 		}
@@ -75,7 +75,7 @@ public class SynchronizePosInvoice extends AbstractSynchronizer {
 		createNewIssueSlips(isss);
 		if (isss.isEmpty() == false) {
 			res = isss.get(isss.size()-1).getZeitmarke();
-			if (rowver == null) {
+			if (rowver == null || rowver.intValue() == 0) {
 				rowver = res;
 			}
 		}
@@ -257,7 +257,11 @@ public class SynchronizePosInvoice extends AbstractSynchronizer {
 		case "LZ" : pd.setText("    "); pd.setTextonly(true); return pd;
 		default: pd.setText("unbekannte Kennziffer " + e.getKennziffer());  pd.setTextonly(true); return pd;
 		}
-		updInt(pd::setArticleId, pd.getArticleId(), e.getArtikelident());   
+		if (e.getArtikelNummer() != null) {
+			updInt(pd::setArticleId, pd.getArticleId(), new BigDecimal(e.getArtikelNummer()));
+		} else {
+			updInt(pd::setArticleId, pd.getArticleId(), new BigDecimal(0));
+		}
 		updInt(pd::setQuantity, pd.getQuantity(), e.getMenge());
 		BigDecimal betrag = e.getBruttoEinzel();
 		if (betrag == null || betrag.intValue() == 0) {

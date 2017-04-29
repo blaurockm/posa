@@ -52,9 +52,9 @@ public interface PosArticleDAO {
 	@BatchChunkSize(100)
 	void insertAll(@Valid @BindBean Iterator<PosArticle> art);
 
-	@SqlUpdate("update into posarticle (lastPurDate,lastSelDate,purchaseprice, sellingprice, " + 
+	@SqlUpdate("update posarticle set (lastPurDate,lastSelDate,purchaseprice, sellingprice, " + 
             "artikelnummer, isbn, ean, matchcode, bezeichnung, author, publisher, stock, tax, grpidx) " +
-	    " values (:lastPurchaseDate, :lastSellingDate, :purchasePrice, :sellingPrice, " + 
+	    " = (:lastPurchaseDate, :lastSellingDate, :purchasePrice, :sellingPrice, " + 
             ":artikelnummer, :isbn, :ean, :matchcode, :bezeichnung, :author, :publisher, :availableStock, :tax, :wargrindex)" +
 		    " where  id = :id ")
 	void updateArticle(@BindBean PosArticle art);

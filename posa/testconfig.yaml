@@ -27,9 +27,9 @@ posDb:
   # the JDBC URL
   #####  lokale datenbank
 #  url: jdbc:jtds:sqlserver://localhost:1433/librasbak
-  ##### im gschaeft Sulz, Schramberg
+  ##### im gschaeft 
   url: jdbc:jtds:sqlserver://localhost:7891/libras
-  ##### im gschaeft Dornhan
+  ##### alt
 #  url: jdbc:jtds:sqlserver://localhost:7890/libras
 
 
@@ -52,12 +52,13 @@ name: Test-Kasse
 
 pointOfSaleId: 6
 
-syncOffset: 1
+syncOffset: 0
 sendOffset: 9
 syncInterval: 2
 sendInterval: 2
 commandOffset: 5
 commandInterval: 2
+daysBack: 14
 
 #homeUrl: http://localhost:7896/
 homeUrl: http://localhost:8082/

@@ -170,14 +170,17 @@
          <column name="artikelnummer" type="varchar(40)" />
          <column name="isbn" type="varchar(20)" />
          <column name="ean" type="varchar(40)" />
-         <column name="matchcode" type="varchar(40)" />
-         <column name="bezeichnung" type="varchar(80)" />
-         <column name="author" type="varchar(50)" />
-         <column name="publisher" type="varchar(50)" />
+         <column name="matchcode" type="varchar(70)" />
+         <column name="bezeichnung" type="varchar(255)" />
+         <column name="author" type="varchar(70)" />
+         <column name="publisher" type="varchar(70)" />
          <column name="stock" type="int"/>
          <column name="tax" type="varchar(2)" />
          <column name="grpidx" type="varchar(2)" />
       </createTable>
+      <createIndex indexName="art_idx" tableName="posarticle">
+        <column name="ident" />
+      </createIndex>
    </changeSet>
 
    

@@ -6,6 +6,7 @@ import java.util.List;
 
 import net.buchlese.posa.PosAdapterApplication;
 import net.buchlese.posa.api.bofc.PosArticle;
+import net.buchlese.posa.api.bofc.Tax;
 import net.buchlese.posa.api.pos.Artikel;
 import net.buchlese.posa.jdbi.bofc.PosArticleDAO;
 import net.buchlese.posa.jdbi.pos.ArtikelDAO;
@@ -19,9 +20,9 @@ public class SynchronizePosArticle extends AbstractSynchronizer {
 	private final ArtikelDAO artikelDAO;
 	private final Integer limit;
 
-	public SynchronizePosArticle(PosArticleDAO cashBalanceDAO, ArtikelDAO ticketDAO, Integer limit) {
-		this.artDAO = cashBalanceDAO;
-		this.artikelDAO = ticketDAO;
+	public SynchronizePosArticle(PosArticleDAO artDao, ArtikelDAO artikelDao, Integer limit) {
+		this.artDAO = artDao;
+		this.artikelDAO = artikelDao;
 		this.limit = limit;
 	}
 	
@@ -36,11 +37,11 @@ public class SynchronizePosArticle extends AbstractSynchronizer {
 		BigDecimal res = rowver;
 		Optional<Integer> maxId = Optional.fromNullable(artDAO.getLastErfasst());
 
-		List<Artikel> rechs = artikelDAO.fetchAllArtikelAfter(maxId.or(1160000), limit);
+		List<Artikel> rechs = artikelDAO.fetchAllArtikelAfter(maxId.or(0), limit);
 		createNewArticles(rechs);
 		if (rechs.isEmpty() == false) {
 			res = rechs.get(rechs.size()-1).getZeitmarke();
-			if (rowver == null) {
+			if (rowver == null || rowver.intValue() == 0) {
 				rowver = res;
 			}
 		}
@@ -101,7 +102,7 @@ public class SynchronizePosArticle extends AbstractSynchronizer {
 		updStr(part::setIsbn, part.getIsbn(), artikel.getIsbn());
 		updStr(part::setMatchcode, part.getMatchcode(), artikel.getMatchcode());
 		updStr(part::setAuthor, part.getAuthor(), artikel.getAutor());
-		updStr(part::setBezeichnung, part.getBezeichnung(), artikel.getBezeichnung());
+		updStr(part::setBezeichnung, part.getBezeichnung(), artikel.getBezeichnung(), 255);
 		updStr(part::setPublisher, part.getPublisher(), artikel.getVerlag());
 		updStr(part::setArtikelnummer, part.getArtikelnummer(), artikel.getArtikelnummer());
 
@@ -109,6 +110,8 @@ public class SynchronizePosArticle extends AbstractSynchronizer {
 		
 		updMoney(part::setPurchasePrice, part.getPurchasePrice(), artikel.geteK());
 		updMoney(part::setSellingPrice, part.getSellingPrice(), artikel.getvK());
+		updEnum(part::setTax, part.getTax(), Tax.mappingFrom(artikel.getmWSt()));
+		updStr(part::setWargrindex, part.getWargrindex(), String.valueOf(artikel.getWarGrIndex()));
 
 		return part;
 	}

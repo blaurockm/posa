@@ -63,10 +63,10 @@
    <tbody>
    <#list articles as art>
      <tr>
-      <td>${art.ident}</td>
-      <td><#if inv.date??>${inv.lastSellingDate.toString("dd.MM.yyyy")}<#else> kein Datum?</#if>  </td> 
-      <td>${art.bezeichnung}</td>
-   	  <td align="right" style="padding-left:10mm">${money(inv.sellingPrice)}</td>
+      <td>${art.artikelIdent}</td>
+      <td><#if art.lastSellingDate??>${art.lastSellingDate.toString("dd.MM.yyyy")}<#else> kein Datum?</#if>  </td> 
+      <td>${art.bezeichnung!}</td>
+   	  <td align="right" style="padding-left:10mm">${money(art.sellingPrice)}</td>
 	 </tr>   
    </#list>
    </tbody>

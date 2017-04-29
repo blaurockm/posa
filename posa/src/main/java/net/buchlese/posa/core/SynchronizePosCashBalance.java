@@ -70,7 +70,7 @@ public class SynchronizePosCashBalance extends AbstractSynchronizer implements C
 		PosAdapterApplication.homingQueue.addAll(pcb); // sync the new ones back home
 		if (belege.isEmpty() == false) {
 			res = belege.get(belege.size()-1).getZeitmarke();
-			if (rowver == null) {
+			if (rowver == null || rowver.intValue() == 0) {
 				rowver = res;
 			}
 		}
