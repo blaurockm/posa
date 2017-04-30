@@ -333,6 +333,11 @@ public class SubscriptionInvoiceCreator {
 		inv.setCollective(false);
 		inv.setType("subscr");
 		inv.setTemporary(false);
+		inv.setRebate(0);
+		inv.setRebateAmount(0);
+		inv.setVorText("");
+		inv.setSchlussText("");
+		inv.setZahlText("");
 		
 		// Rechnungsadresse
 		inv.setName1(subscri.getInvoiceAddress().getName1());

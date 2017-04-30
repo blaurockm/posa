@@ -48,6 +48,8 @@ public class PosInvoiceMapper implements ResultSetMapper<PosInvoice> {
 		inv.setPayed(rs.getBoolean("payed"));
 		inv.setCancelled(rs.getBoolean("cancelled"));
 		inv.setActionum(rs.getInt("actionum"));
+		inv.setRebate(0d);
+		inv.setRebateAmount(0L);
 		return inv;
 	}
 
