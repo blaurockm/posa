@@ -46,14 +46,18 @@ public class SynchronizePosArticle extends AbstractSynchronizer {
 			}
 		}
 		
-		List<Artikel> rechsChg = artikelDAO.fetchAllChangedArtikelAfter(rowver);
-		if (rechsChg.isEmpty() == false) {
-			BigDecimal newRes = rechsChg.get(rechsChg.size()-1).getZeitmarke();
-			if (newRes.compareTo(res) > 0) {
-				res = newRes;
+		if (rechs.size() != 1000) {
+			// wenn es genau 1000 sind, dann hat vermutlich das limit in dem SQL-Statement zugeschlagen, dann
+			// gibt es beim nächsten durchlauf noch mehr. Änderungen sind erst sinnvoll, wenn alle übertragen wurden
+			List<Artikel> rechsChg = artikelDAO.fetchAllChangedArtikelAfter(rowver);
+			if (rechsChg.isEmpty() == false) {
+				BigDecimal newRes = rechsChg.get(rechsChg.size()-1).getZeitmarke();
+				if (newRes.compareTo(res) > 0) {
+					res = newRes;
+				}
 			}
+			updateArticles(rechsChg);
 		}
-		updateArticles(rechsChg);
 		return res;
 	}
 

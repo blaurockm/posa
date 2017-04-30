@@ -10,6 +10,7 @@ import java.util.TimerTask;
 import net.buchlese.posa.PosAdapterApplication;
 import net.buchlese.posa.PosAdapterConfiguration;
 import net.buchlese.posa.api.bofc.SendableObject;
+import net.buchlese.posa.jdbi.bofc.PosArticleDAO;
 import net.buchlese.posa.jdbi.bofc.PosCashBalanceDAO;
 import net.buchlese.posa.jdbi.bofc.PosInvoiceDAO;
 
@@ -25,17 +26,19 @@ public class SendTimer extends TimerTask {
 	private final PosAdapterConfiguration config;
 	private final PosCashBalanceDAO cashBalDao;
 	private final PosInvoiceDAO invoiceDao;
+	private final PosArticleDAO articleDao;
 	private final URL baseUrl;
 	
 	private static final org.slf4j.Logger log = LoggerFactory.getLogger(SendTimer.class);
 
 	@Inject
-	public SendTimer(PosAdapterConfiguration config, PosCashBalanceDAO balDao, PosInvoiceDAO invDAO) throws MalformedURLException {
+	public SendTimer(PosAdapterConfiguration config, PosCashBalanceDAO balDao, PosArticleDAO artDao, PosInvoiceDAO invDAO) throws MalformedURLException {
 		super();
 		this.baseUrl = new URL(config.getSendHomeUrl());
 		this.config = config;
 		this.cashBalDao = balDao;
 		this.invoiceDao = invDAO;
+		this.articleDao = artDao;
 	}
 
 	public static long lastHomingRun;
@@ -57,6 +60,7 @@ public class SendTimer extends TimerTask {
 					sender = sender.addSender(new SendPosInvoice(config, invoiceDao, log, httpClient));
 					sender = sender.addSender(new SendPosIssueSlip(config, invoiceDao, log, httpClient));
 					sender = sender.addSender(new SendCommandAnswer(config, log, httpClient));
+					sender = sender.addSender(new SendArticle(config, articleDao,  log, httpClient));
 
 					toDo.forEach(sender);
 				} catch (JSchException e1) {

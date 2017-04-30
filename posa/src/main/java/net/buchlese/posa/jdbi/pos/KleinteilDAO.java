@@ -16,7 +16,7 @@ public interface KleinteilDAO {
 	@RegisterMapper(KleinteilKopfMapper.class)
 	List<KleinteilKopf> fetch(@Bind("nr") String nr);
 
-	@SqlQuery("select *, convert(bigint, zeitmarke) as MyZeitmarke from [dbo].KleinteilKopf where rechnungNummer = :nr")
+	@SqlQuery("select *, convert(bigint, zeitmarke) as MyZeitmarke from [dbo].KleinteilKopf where lieferscheinnummer = :nr")
 	@RegisterMapper(KleinteilKopfLieferscheinMapper.class)
 	List<KleinteilKopf> fetchLieferschein(@Bind("nr") String nr);
 

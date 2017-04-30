@@ -52,10 +52,10 @@ name: Test-Kasse
 
 pointOfSaleId: 6
 
-syncOffset: 0
-sendOffset: 9
-syncInterval: 2
-sendInterval: 2
+syncOffset: 6
+sendOffset: 0
+syncInterval: 5
+sendInterval: 1
 commandOffset: 5
 commandInterval: 2
 daysBack: 14

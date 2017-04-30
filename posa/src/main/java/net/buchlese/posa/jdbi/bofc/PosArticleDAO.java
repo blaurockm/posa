@@ -59,7 +59,7 @@ public interface PosArticleDAO {
 		    " where  id = :id ")
 	void updateArticle(@BindBean PosArticle art);
 
-	@SqlQuery("select * from posarticle where ident >= :ident ")
+	@SqlQuery("select * from posarticle where ident = :ident ")
 	List<PosArticle> fetchArticle(@Bind("ident") Integer artikelident);
 
 	@SqlQuery("select * from posarticle ")

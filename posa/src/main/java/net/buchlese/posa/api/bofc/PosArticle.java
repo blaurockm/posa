@@ -260,5 +260,11 @@ public class PosArticle implements SendableObject {
 			this.availableStock = availableStock;
 		}
 
+		@Override
+		public String toString() {
+			return "PosArticle [artikelIdent=" + artikelIdent + ", matchcode="
+					+ matchcode + "]";
+		}
+
 		
 }
