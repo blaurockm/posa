@@ -93,6 +93,9 @@ public class PosAdapterConfiguration extends Configuration {
     private String articleResource = "article/acceptArticle";
 
     @JsonProperty
+    private String stockChangeResource = "article/acceptStockChange";
+
+    @JsonProperty
     private String issueSlipResource = "invoice/acceptIssueSlip";
 
     @JsonProperty
@@ -226,6 +229,10 @@ public class PosAdapterConfiguration extends Configuration {
 
 	public String getArticleResource() {
 		return articleResource;
+	}
+
+	public String getStockChangeResource() {
+		return stockChangeResource;
 	}
 
 	public String getIssueSlipResource() {

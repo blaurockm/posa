@@ -183,5 +183,24 @@
       </createIndex>
    </changeSet>
 
+   <changeSet id="articleII" author="mblaurock">
+      <createTable tableName="posstockchange">
+         <column name="id" type="bigint" autoIncrement="true">
+            <constraints primaryKey="true" nullable="false" />
+         </column>
+         <column name="ident" type="bigint">
+            <constraints nullable="false" />
+         </column>
+         <column name="changeDate" type="DATETIME"/>
+         <column name="stockBefore" type="int"/>
+         <column name="stockAfter" type="int"/>
+         <column name="stockChange" type="int"/>
+         <column name="comment" type="varchar(255)" />
+ 	  </createTable>
+      <createIndex indexName="art_idx2" tableName="posstockchange">
+        <column name="ident" />
+      </createIndex>
+   </changeSet>
+ 	  
    
 </databaseChangeLog>

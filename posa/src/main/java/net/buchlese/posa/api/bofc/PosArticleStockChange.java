@@ -1,12 +1,14 @@
 package net.buchlese.posa.api.bofc;
 
+import org.joda.time.DateTime;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PosArticleStockChange implements SendableObject {
 		@JsonProperty
-		private long id;
+		private Long id;
 
 		@JsonProperty
 		private int pointid;
@@ -15,16 +17,16 @@ public class PosArticleStockChange implements SendableObject {
 		private long artikelIdent;
 		
 		@JsonProperty
-		private java.sql.Timestamp changeDate;
+		private DateTime changeDate;
 
 		@JsonProperty
-		private int stockChange;
+		private Integer stockChange;
 		
 		@JsonProperty
-		private int stockBefore;
+		private Integer stockBefore;
 
 		@JsonProperty
-		private int stockAfter;
+		private Integer stockAfter;
 
 		@JsonProperty
 		private String comment;
@@ -45,35 +47,35 @@ public class PosArticleStockChange implements SendableObject {
 			this.artikelIdent = artikelIdent;
 		}
 
-		public java.sql.Timestamp getChangeDate() {
+		public DateTime getChangeDate() {
 			return changeDate;
 		}
 
-		public void setChangeDate(java.sql.Timestamp changeDate) {
+		public void setChangeDate(DateTime changeDate) {
 			this.changeDate = changeDate;
 		}
 
-		public int getStockChange() {
+		public Integer getStockChange() {
 			return stockChange;
 		}
 
-		public void setStockChange(int stockChange) {
+		public void setStockChange(Integer stockChange) {
 			this.stockChange = stockChange;
 		}
 
-		public int getStockBefore() {
+		public Integer getStockBefore() {
 			return stockBefore;
 		}
 
-		public void setStockBefore(int stockBefore) {
+		public void setStockBefore(Integer stockBefore) {
 			this.stockBefore = stockBefore;
 		}
 
-		public int getStockAfter() {
+		public Integer getStockAfter() {
 			return stockAfter;
 		}
 
-		public void setStockAfter(int stockAfter) {
+		public void setStockAfter(Integer stockAfter) {
 			this.stockAfter = stockAfter;
 		}
 
@@ -85,11 +87,11 @@ public class PosArticleStockChange implements SendableObject {
 			this.comment = comment;
 		}
 
-		public long getId() {
+		public Long getId() {
 			return id;
 		}
 
-		public void setId(long id) {
+		public void setId(Long id) {
 			this.id = id;
 		}
 

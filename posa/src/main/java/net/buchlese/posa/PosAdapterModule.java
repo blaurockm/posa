@@ -6,6 +6,7 @@ import io.dropwizard.setup.Environment;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import net.buchlese.posa.jdbi.bofc.DynamicStateDAO;
 import net.buchlese.posa.jdbi.bofc.JodaLocalDateArgumentFactory;
 import net.buchlese.posa.jdbi.bofc.JodaLocalDateMapper;
 import net.buchlese.posa.jdbi.bofc.PayMethArgumentFactory;
@@ -95,7 +96,12 @@ public class PosAdapterModule extends AbstractModule {
 	public PosInvoiceDAO providePosInvoiceDao(@Named("bofcdb")DBI posDBI) {
 		return posDBI.onDemand(PosInvoiceDAO.class);
 	}
-	
+
+	@Provides @Inject
+	public DynamicStateDAO provideDynamicStateDao(@Named("bofcdb")DBI posDBI) {
+		return posDBI.onDemand(DynamicStateDAO.class);
+	}
+
 	@Provides @Inject
 	public PosArticleDAO providePosArticleDao(@Named("bofcdb")DBI posDBI) {
 		return posDBI.onDemand(PosArticleDAO.class);

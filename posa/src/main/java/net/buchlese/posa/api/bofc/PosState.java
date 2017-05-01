@@ -1,15 +1,16 @@
 package net.buchlese.posa.api.bofc;
 
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
+
+import net.buchlese.posa.xml.LocalDateSerializer;
 
 import org.joda.time.Instant;
 import org.joda.time.LocalDate;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-
-import net.buchlese.posa.xml.LocalDateSerializer;
 
 public class PosState implements SendableObject {
 
@@ -31,6 +32,9 @@ public class PosState implements SendableObject {
 
 	@JsonProperty
 	private Map<PaymentMethod, Long> paymentMethodBalance = new EnumMap<PaymentMethod, Long>(PaymentMethod.class);
+
+	@JsonProperty
+	private List<PosSyncState> syncStates;
 
 	public Instant getTimest() {
 		return timest;
@@ -77,7 +81,10 @@ public class PosState implements SendableObject {
 		return pointid;
 	}
 
-	public void setPointid(int pointid) {
+	public void setPointid(final int pointid) {
+		if (syncStates != null) {
+			syncStates.forEach(x -> x.setPointid(pointid));
+		}
 		this.pointid = pointid;
 	}
 
@@ -85,5 +92,14 @@ public class PosState implements SendableObject {
 	public String toString() {
 		return "PosState [timest=" + timest + "]";
 	}
+
+	public List<PosSyncState> getSyncStates() {
+		return syncStates;
+	}
+
+	public void setSyncStates(List<PosSyncState> syncStates) {
+		this.syncStates = syncStates;
+	}
+
 	
 }

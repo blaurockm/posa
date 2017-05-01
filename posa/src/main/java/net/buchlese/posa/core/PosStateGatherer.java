@@ -6,6 +6,7 @@ import net.buchlese.posa.PosAdapterApplication;
 import net.buchlese.posa.api.bofc.PosState;
 import net.buchlese.posa.api.bofc.PosTx;
 import net.buchlese.posa.api.pos.KassenVorgang;
+import net.buchlese.posa.jdbi.bofc.DynamicStateDAO;
 import net.buchlese.posa.jdbi.bofc.PosTxDAO;
 import net.buchlese.posa.jdbi.pos.KassenVorgangDAO;
 
@@ -17,16 +18,14 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 @Singleton
-public class PosStateGatherer extends AbstractGatherer {
+public class PosStateGatherer {
 
 	@Inject private PosTxDAO txDAO;
-//	@Inject private PosTicketDAO ticketDAO;
 	@Inject private KassenVorgangDAO vorgangDao;
-//	@Inject private KassenBelegDAO belegDao;
+	@Inject private DynamicStateDAO stateDao;
 	
 	private PosState lastState = new PosState();
 	
-	@Override
 	public void gatherData() {
 		// jetzt die Tx neu Synchronisieren
 		SynchronizePosTx syncTx = new SynchronizePosTx(txDAO, vorgangDao);
@@ -43,7 +42,8 @@ public class PosStateGatherer extends AbstractGatherer {
 		lastState.setStateDate(LocalDate.now());
 		lastState.setRevenue(posTxs.stream().filter(x -> x.getTotal() != null).mapToLong(PosTx::getTotal).sum());
 		lastState.setProfit(posTxs.stream().filter(x -> x.getTotal() != null && x.getArticleGroup() != null && x.getArticleGroup().getMarge() != null).mapToLong(x -> Long.valueOf((long)(x.getTotal()*x.getArticleGroup().getMarge()))   ).sum());
-
+		lastState.setSyncStates(stateDao.getSyncStates());
+		
 		PosAdapterApplication.homingQueue.offer(lastState); // sync back home
 	}
 

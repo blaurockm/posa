@@ -52,12 +52,15 @@ name: Test-Kasse
 
 pointOfSaleId: 6
 
-syncOffset: 6
-sendOffset: 0
-syncInterval: 5
-sendInterval: 1
+syncOffset: 1
+syncInterval: 4
+
+sendOffset: 4
+sendInterval: 2
+
 commandOffset: 5
 commandInterval: 2
+
 daysBack: 14
 
 #homeUrl: http://localhost:7896/

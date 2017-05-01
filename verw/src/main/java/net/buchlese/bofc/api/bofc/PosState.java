@@ -1,6 +1,7 @@
 package net.buchlese.bofc.api.bofc;
 
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -25,6 +26,9 @@ public class PosState  {
 	@JsonProperty
 	private Map<PaymentMethod, Long> paymentMethodBalance = new EnumMap<PaymentMethod, Long>(PaymentMethod.class);
 
+	@JsonProperty
+	private List<PosSyncState> syncStates;
+	
 	public java.sql.Timestamp getTimest() {
 		return timest;
 	}
@@ -73,5 +77,14 @@ public class PosState  {
 	public void setPointid(int pointid) {
 		this.pointid = pointid;
 	}
+
+	public List<PosSyncState> getSyncStates() {
+		return syncStates;
+	}
+
+	public void setSyncStates(List<PosSyncState> syncStates) {
+		this.syncStates = syncStates;
+	}
+
 	
 }

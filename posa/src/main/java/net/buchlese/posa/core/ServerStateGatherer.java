@@ -16,7 +16,7 @@ import net.buchlese.posa.api.bofc.ServerState;
 import net.buchlese.posa.jdbi.bofc.PosCashBalanceDAO;
 
 @Singleton
-public class ServerStateGatherer extends AbstractGatherer {
+public class ServerStateGatherer  {
 
 	@Inject private PosCashBalanceDAO cashbalDao;
 	private ServerState lastServerState = new ServerState();
@@ -31,7 +31,6 @@ public class ServerStateGatherer extends AbstractGatherer {
 		count++;
 	}
 
-	@Override
 	public void gatherData() {
 		lastServerState = new ServerState();
 		try {

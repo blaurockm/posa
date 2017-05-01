@@ -113,10 +113,12 @@ public class SyncTimer extends TimerTask {
     	    SynchronizePosCashBalance syncBalance = new SynchronizePosCashBalance(posCashBalanceDao, posTicketDao, posTxDao, abschlussDao, belegDao, vorgangDao, limit);
     	    SynchronizePosInvoice syncInvoice = new SynchronizePosInvoice(posInvoiceDao, kleinteilDao, limit);
     	    SynchronizePosArticle syncArticle = new SynchronizePosArticle(posArticleDao, artikelDAO, limit);
+    	    SynchronizePosArticleStockChange syncStockChange = new SynchronizePosArticleStockChange(posArticleDao, artikelDAO, limit);
     	    SyncStateUtils.synchronize(bofc, "balRowver", syncBalance::fetchNewBalances );
     	    SyncStateUtils.synchronize(bofc, "invRowver", syncInvoice::fetchNewAndChangedInvoices );
     	    SyncStateUtils.synchronize(bofc, "issRowver", syncInvoice::fetchNewAndChangedIssueSlips );
     	    SyncStateUtils.synchronize(bofc, "artRowver", syncArticle::fetchNewAndChangedArticles );
+    	    SyncStateUtils.synchronize(bofc, "schRowver", syncStockChange::fetchNewAndChangedStockChanges );
 
     		psg.gatherData();
     		ssg.delayedGatherData();

@@ -37,6 +37,6 @@ public class SyncStateUtils {
 	    }
 
 		balRowVer = syncmethod.apply(balRowVer);
-    	bofc.execute("update dynamicstate set bigvalue = ? where key = ?", balRowVer, key);
+    	bofc.execute("update dynamicstate set bigvalue = ?, value = current_timestamp where key = ?", balRowVer, key);
 	}
 }

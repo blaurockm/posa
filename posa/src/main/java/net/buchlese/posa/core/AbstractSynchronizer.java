@@ -58,6 +58,14 @@ public abstract class AbstractSynchronizer {
 		}
 		return false;
 	}
+	
+	protected boolean updInt(Consumer<Integer> c, Integer val1, int val2) {
+		if (val1 == null || val1.intValue() != val2) {
+			c.accept(val2);
+			return true;
+		}
+		return false;
+	}
 
 	protected boolean updInt(Consumer<Integer> c, Integer val1, BigDecimal val2) {
 		if (val2 == null && val1 != null) {

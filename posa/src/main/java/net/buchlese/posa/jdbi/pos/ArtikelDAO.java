@@ -7,6 +7,7 @@ import net.buchlese.posa.api.pos.Artikel;
 import net.buchlese.posa.api.pos.ArtikelBestandBuchung;
 import net.buchlese.posa.api.pos.ArtikelEinkauf;
 
+import org.joda.time.DateTime;
 import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
@@ -43,8 +44,8 @@ public interface ArtikelDAO {
 	List<ArtikelBestandBuchung> fetchBestandsbuchungen(@Bind("ident") Long ident);
 
 	@RegisterMapper(ArtikelBestandBuchungMapper.class)
-	@SqlQuery("select *, convert(bigint, zeitmarke) as MyZeitmarke from [dbo].Artikel_BestandBuchungen where datum > current_timestamp - :limd")
-	List<ArtikelBestandBuchung> fetchBestandsbuchungenAfter(@Bind("limd") Integer limit);
+	@SqlQuery("select top 1000 *, convert(bigint, zeitmarke) as MyZeitmarke from [dbo].Artikel_BestandBuchungen where datum > :chdat and datum > current_timestamp - :limd")
+	List<ArtikelBestandBuchung> fetchBestandsbuchungenAfter(@Bind("chdat") DateTime chdat, @Bind("limd") Integer limit);
 
 	@RegisterMapper(ArtikelBestandBuchungMapper.class)
 	@SqlQuery("select *, convert(bigint, zeitmarke) as MyZeitmarke from [dbo].Artikel_BestandBuchungen where convert(bigint, zeitmarke) > :dat")
