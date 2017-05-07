@@ -115,7 +115,11 @@ public class SynchronizePosArticle extends AbstractSynchronizer {
 		updMoney(part::setPurchasePrice, part.getPurchasePrice(), artikel.geteK());
 		updMoney(part::setSellingPrice, part.getSellingPrice(), artikel.getvK());
 		updEnum(part::setTax, part.getTax(), Tax.mappingFrom(artikel.getmWSt()));
-		updStr(part::setWargrindex, part.getWargrindex(), String.valueOf(artikel.getWarGrIndex()));
+		if (artikel.getWarGrIndex() != null) {
+			updStr(part::setWargrindex, part.getWargrindex(), String.valueOf(artikel.getWarGrIndex()));
+		} else {
+			updStr(part::setWargrindex, part.getWargrindex(), null);
+		}
 
 		return part;
 	}
