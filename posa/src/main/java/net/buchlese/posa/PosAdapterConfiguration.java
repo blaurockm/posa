@@ -41,6 +41,13 @@ public class PosAdapterConfiguration extends Configuration {
     private long idNumRangeStart;
 
     @JsonProperty
+    private String emailUser;
+
+    @JsonProperty
+    private String emailPass;
+    
+    
+    @JsonProperty
     private String homeUrl;
 
     @JsonProperty
@@ -265,6 +272,14 @@ public class PosAdapterConfiguration extends Configuration {
 
 	public int getGuiDaysBack() {
 		return guiDaysBack;
+	}
+
+	public String getEmailUser() {
+		return emailUser;
+	}
+
+	public String getEmailPass() {
+		return emailPass;
 	}
     
 }

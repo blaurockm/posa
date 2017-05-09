@@ -77,6 +77,8 @@ public class PosAdapterApplication extends Application<PosAdapterConfiguration> 
 		ArticleGroup.injectMappings(config.getArticleGroupMappings());
 		posName = config.getName();
 		EmailNotification.herkunft = posName;
+		EmailNotification.emailUser = config.getEmailUser();
+		EmailNotification.emailPass = config.getEmailPass();
 		
 	    syncTimer = new ScheduledThreadPoolExecutor(10);
 		SyncTimer syncTimerTask = guiceBundle.getInjector().getInstance(SyncTimer.class);
