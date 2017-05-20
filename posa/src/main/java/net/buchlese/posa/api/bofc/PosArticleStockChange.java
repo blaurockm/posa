@@ -95,4 +95,11 @@ public class PosArticleStockChange implements SendableObject {
 			this.id = id;
 		}
 
+		@Override
+		public String toString() {
+			return "PosArticleStockChange [artikelIdent=" + artikelIdent
+					+ ", changeDate=" + changeDate + ", stockChange="
+					+ stockChange + "]";
+		}
+
 }
