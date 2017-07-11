@@ -36,6 +36,7 @@ public enum TxType {
 		case '1' : return SELL; // es wurde was verkauft
 		case '7' : return CASHOUT; // es wurde was ausbezahlt 
 		case '8' : return CASHIN; // es wurde was einbezahlt
+		case '6' : return CASHIN; // es wurde was einbezahlt, als anzahlung
 		case '0' : return DEBITPAY; // es wurde eine (Kassen-)Rechnung bezahlt
 		case '4' : return TRADEIN; // es fand ein Tausch statt (gutscheine) bezahlt m. Gutschein
 		case '9' : return TRADEOUT; // es fand ein Tausch statt (gutschein) verkaufter gutschein
