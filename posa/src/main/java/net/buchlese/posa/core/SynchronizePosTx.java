@@ -144,7 +144,7 @@ public class SynchronizePosTx extends AbstractSynchronizer {
 					// der Gutschein ist teil eines belges, es wurde was damit bezahlt
 					BigDecimal gutschBetrag = vorg.getGesamt().abs();
 					if (sumWarenBetrag.compareTo(gutschBetrag) <0  &&  amountPayed.movePointRight(2).setScale(0,RoundingMode.HALF_UP).longValue() == 0l) {
-						OptionalInt maxGutschIdx = allVorgs.stream().filter(v -> (v.getIsbn() != null && v.getIsbn().startsWith("Gutschein"))).mapToInt(KassenVorgang::getLfdNummer).max(); // die IndexNummer des letzten Gutscheins im Beleg
+						OptionalInt maxGutschIdx = allVorgs.stream().filter(v -> (v.getMatchCode() != null && v.getMatchCode().startsWith("Gutschein"))).mapToInt(KassenVorgang::getLfdNummer).max(); // die IndexNummer des letzten Gutscheins im Beleg
 						// es wurde nichts ausbezahlt, wir haben nur einen Teil des Gutscheins eingelöst.
 						if (maxGutschIdx.isPresent() && vorg.getLfdNummer() == maxGutschIdx.getAsInt()) {
 							// und wir sind der letzte Gutschein des Belegs, unser Betrag wird modifiziert
