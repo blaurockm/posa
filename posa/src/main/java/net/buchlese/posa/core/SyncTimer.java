@@ -9,12 +9,10 @@ import net.buchlese.posa.PosAdapterConfiguration;
 import net.buchlese.posa.core.cmd.AbstractCommand;
 import net.buchlese.posa.core.cmd.PayOffCouponCommand;
 import net.buchlese.posa.core.cmd.PayOffInvoiceCommand;
-import net.buchlese.posa.jdbi.bofc.PosArticleDAO;
 import net.buchlese.posa.jdbi.bofc.PosCashBalanceDAO;
 import net.buchlese.posa.jdbi.bofc.PosInvoiceDAO;
 import net.buchlese.posa.jdbi.bofc.PosTicketDAO;
 import net.buchlese.posa.jdbi.bofc.PosTxDAO;
-import net.buchlese.posa.jdbi.pos.ArtikelDAO;
 import net.buchlese.posa.jdbi.pos.KassenAbschlussDAO;
 import net.buchlese.posa.jdbi.pos.KassenBelegDAO;
 import net.buchlese.posa.jdbi.pos.KassenVorgangDAO;
@@ -98,26 +96,26 @@ public class SyncTimer extends TimerTask {
     	    KassenAbschlussDAO abschlussDao = pos.attach(KassenAbschlussDAO.class);
 
     	    KleinteilDAO kleinteilDao = pos.attach(KleinteilDAO.class);
-    	    ArtikelDAO artikelDAO = pos.attach(ArtikelDAO.class);
+//    	    ArtikelDAO artikelDAO = pos.attach(ArtikelDAO.class);
 
     	    PosTxDAO posTxDao = bofc.attach(PosTxDAO.class);
     	    PosTicketDAO posTicketDao =  bofc.attach(PosTicketDAO.class);
     	    PosCashBalanceDAO posCashBalanceDao =  bofc.attach(PosCashBalanceDAO.class);
 
     	    PosInvoiceDAO posInvoiceDao =  bofc.attach(PosInvoiceDAO.class);
-    	    PosArticleDAO posArticleDao =  bofc.attach(PosArticleDAO.class);
+//    	    PosArticleDAO posArticleDao =  bofc.attach(PosArticleDAO.class);
 
     	    SyncStateUtils.recordSyncRun(bofc);
     	    
     	    Integer limit = config.getDaysBack();
     	    SynchronizePosCashBalance syncBalance = new SynchronizePosCashBalance(posCashBalanceDao, posTicketDao, posTxDao, abschlussDao, belegDao, vorgangDao, limit);
     	    SynchronizePosInvoice syncInvoice = new SynchronizePosInvoice(posInvoiceDao, kleinteilDao, limit);
-    	    SynchronizePosArticle syncArticle = new SynchronizePosArticle(posArticleDao, artikelDAO, limit);
-    	    SynchronizePosArticleStockChange syncStockChange = new SynchronizePosArticleStockChange(posArticleDao, artikelDAO, limit);
+//    	    SynchronizePosArticle syncArticle = new SynchronizePosArticle(posArticleDao, artikelDAO, limit);
+//    	    SynchronizePosArticleStockChange syncStockChange = new SynchronizePosArticleStockChange(posArticleDao, artikelDAO, limit);
     	    SyncStateUtils.synchronize(bofc, "balRowver", syncBalance::fetchNewBalances );
     	    SyncStateUtils.synchronize(bofc, "invRowver", syncInvoice::fetchNewAndChangedInvoices );
-    	    SyncStateUtils.synchronize(bofc, "issRowver", syncInvoice::fetchNewAndChangedIssueSlips );
-    	    SyncStateUtils.synchronize(bofc, "artRowver", syncArticle::fetchNewAndChangedArticles );
+//    	    SyncStateUtils.synchronize(bofc, "issRowver", syncInvoice::fetchNewAndChangedIssueSlips );
+//    	    SyncStateUtils.synchronize(bofc, "artRowver", syncArticle::fetchNewAndChangedArticles );
 //    	    SyncStateUtils.synchronize(bofc, "schRowver", syncStockChange::fetchNewAndChangedStockChanges );
 
     		psg.gatherData();
