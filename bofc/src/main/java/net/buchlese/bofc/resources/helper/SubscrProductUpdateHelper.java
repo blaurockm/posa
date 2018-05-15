@@ -2,12 +2,9 @@ package net.buchlese.bofc.resources.helper;
 
 import net.buchlese.bofc.api.subscr.PayIntervalType;
 import net.buchlese.bofc.api.subscr.SubscrProduct;
+import net.buchlese.bofc.core.DateUtils;
 import net.buchlese.bofc.jdbi.bofc.SubscrDAO;
 import net.buchlese.bofc.jpa.JpaSubscrProductDAO;
-
-import org.joda.time.LocalDate;
-import org.joda.time.Period;
-import org.joda.time.format.DateTimeFormat;
 
 public class SubscrProductUpdateHelper {
 
@@ -61,19 +58,15 @@ public class SubscrProductUpdateHelper {
 			res.success = true;
 		}
 		if ("startDate".equals(field)) {
-			art.setStartDate(LocalDate.parse(value, DateTimeFormat.forPattern("dd.MM.yyyy") ));
+			art.setStartDate(DateUtils.parse(value ));
 			res.success = true;
 		}
 		if ("endDate".equals(field)) {
-			art.setEndDate(LocalDate.parse(value, DateTimeFormat.forPattern("dd.MM.yyyy") ));
+			art.setEndDate(DateUtils.parse(value ));
 			res.success = true;
 		}
 		if ("lastInterval".equals(field)) {
-			art.setLastInterval(LocalDate.parse(value, DateTimeFormat.forPattern("dd.MM.yyyy") ));
-			res.success = true;
-		}
-		if ("period".equals(field)) {
-			art.setPeriod(Period.parse(value));
+			art.setLastInterval(DateUtils.parse(value));
 			res.success = true;
 		}
 		if ("payPerDelivery".equals(field)) {

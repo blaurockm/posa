@@ -3,11 +3,9 @@ package net.buchlese.bofc.resources.helper;
 import net.buchlese.bofc.api.subscr.PayIntervalType;
 import net.buchlese.bofc.api.subscr.SubscrInterval;
 import net.buchlese.bofc.api.subscr.SubscrProduct;
+import net.buchlese.bofc.core.DateUtils;
 import net.buchlese.bofc.jdbi.bofc.SubscrDAO;
 import net.buchlese.bofc.jpa.JpaSubscrIntervalDAO;
-
-import org.joda.time.LocalDate;
-import org.joda.time.format.DateTimeFormat;
 
 public class SubscrIntervalUpdateHelper {
 
@@ -54,26 +52,26 @@ public class SubscrIntervalUpdateHelper {
 			res.success = true;
 		}
 		if ("startDate".equals(field)) {
-			art.setStartDate(LocalDate.parse(value, DateTimeFormat.forPattern("dd.MM.yyyy") ));
-			SubscrProduct p = dao.getSubscrProduct(art.getProductId());
+			art.setStartDate(DateUtils.parse(value ));
+			SubscrProduct p = art.getProduct();
 			art.setName(art.initializeName(p.getNamePattern()));
 			res.success = true;
 		}
 		if ("endDate".equals(field)) {
-			art.setEndDate(LocalDate.parse(value, DateTimeFormat.forPattern("dd.MM.yyyy") ));
-			SubscrProduct p = dao.getSubscrProduct(art.getProductId());
+			art.setEndDate(DateUtils.parse(value ));
+			SubscrProduct p = art.getProduct();
 			art.setName(art.initializeName(p.getNamePattern()));
 			res.success = true;
 		}
 		if ("intervalType".equals(field)) {
 			res.oldValue = String.valueOf(art.getIntervalType());
 			art.setIntervalType(PayIntervalType.valueOf(value));
-			SubscrProduct p = dao.getSubscrProduct(art.getProductId());
+			SubscrProduct p = art.getProduct();
 			art.updateEndDate();
 			p.setLastInterval(art.getEndDate());
 			art.setName(art.initializeName(p.getNamePattern()));
 			dao.updateSubscrProduct(p);
-			res.endDate = art.getEndDate().toString("dd.MM.yyyy");
+			res.endDate = DateUtils.format(art.getEndDate());
 			res.success = true;
 		}
 		if (res.success) {

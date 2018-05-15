@@ -1,33 +1,32 @@
 package net.buchlese.bofc.api.bofc;
 
-import io.dropwizard.jackson.Jackson;
 
+import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Entity
 @Table( name = "posissueslip" )
-@XmlRootElement(name = "issueslip")
+@XmlRootElement(name = "deliverynote")
 public class PosIssueSlip {
 	@Id
+	@GeneratedValue(strategy=GenerationType.AUTO)
 	@JsonProperty
-	private long id;
+	private Long id;
 	@JsonProperty
 	private int pointid;
 	@JsonProperty
@@ -62,11 +61,11 @@ public class PosIssueSlip {
 	@JsonProperty
 	private Boolean cancelled;
 	@JsonProperty
-	private DateTime creationTime;
+	private java.sql.Timestamp creationTime;
 	@JsonProperty
-	private LocalDate date;
+	private java.sql.Date date;
 	@JsonProperty
-	private DateTime printTime;
+	private java.sql.Timestamp printTime;
 	@JsonProperty
 	private boolean printed;
 
@@ -82,15 +81,20 @@ public class PosIssueSlip {
 	private List<PosInvoiceDetail> details;
 
 	@JsonProperty
-	private LocalDate deliveryFrom;
+	@OneToMany(cascade=CascadeType.ALL)
+	@JoinColumn(name="issueslip_id")
+	private List<PosIssueSlipDetail> deliveryDetails;
+
 	@JsonProperty
-	private LocalDate deliveryTill;
+	private Date deliveryFrom;
+	@JsonProperty
+	private Date deliveryTill;
 
 	
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 	public int getPointid() {
@@ -165,22 +169,17 @@ public class PosIssueSlip {
 	public void setAmountNone(Long amountNone) {
 		this.amountNone = amountNone;
 	}
-	public DateTime getCreationTime() {
+	public Timestamp getCreationTime() {
 		return creationTime;
 	}
-	public void setCreationTime(DateTime creationTime) {
+	public void setCreationTime(Timestamp creationTime) {
 		this.creationTime = creationTime;
 	}
-	public LocalDate getDate() {
-		return date;
-	}
-	public void setDate(LocalDate date) {
-		this.date = date;
-	}
-	public DateTime getPrintTime() {
+	
+	public Timestamp getPrintTime() {
 		return printTime;
 	}
-	public void setPrintTime(DateTime printTime) {
+	public void setPrintTime(Timestamp printTime) {
 		this.printTime = printTime;
 	}
 	public String getNumber() {
@@ -191,7 +190,7 @@ public class PosIssueSlip {
 	}
 
 	public String toString() {
-		return "PosInvoice " + number + " of " + String.valueOf(date) + (amount != null ? (" amount " + String.valueOf(amount / 100)) : "n.bek."); 
+		return "PosIssueSlip " + number + " of " + String.valueOf(date) + (amount != null ? (" amount " + String.valueOf(amount / 100)) : "n.bek."); 
 	}
 	public Boolean getCancelled() {
 		return cancelled;
@@ -229,16 +228,22 @@ public class PosIssueSlip {
 	public void setDetails(List<PosInvoiceDetail> details) {
 		this.details = details;
 	}
-	public LocalDate getDeliveryFrom() {
+	public List<PosIssueSlipDetail> getDeliveryDetails() {
+		return deliveryDetails;
+	}
+	public void setDeliveryDetails(List<PosIssueSlipDetail> details) {
+		this.deliveryDetails = details;
+	}
+	public Date getDeliveryFrom() {
 		return deliveryFrom;
 	}
-	public void setDeliveryFrom(LocalDate deliveryFrom) {
+	public void setDeliveryFrom(Date deliveryFrom) {
 		this.deliveryFrom = deliveryFrom;
 	}
-	public LocalDate getDeliveryTill() {
+	public Date getDeliveryTill() {
 		return deliveryTill;
 	}
-	public void setDeliveryTill(LocalDate deliveryTill) {
+	public void setDeliveryTill(Date deliveryTill) {
 		this.deliveryTill = deliveryTill;
 	}
 	public PosInvoiceDetail addDetail(PosInvoiceDetail detail) {
@@ -255,12 +260,17 @@ public class PosIssueSlip {
 		return detail;
 	}
 
-	// sich selber als json-object ausgeben
-	@JsonIgnore
-	public String getComplJson() throws JsonProcessingException {
-		ObjectMapper om = Jackson.newObjectMapper();
-		return om.writeValueAsString(this);
+	public PosIssueSlipDetail addDetail(PosIssueSlipDetail detail) {
+		if (detail == null) {
+			return null;
+		}
+		if (getDeliveryDetails() == null) {
+			setDeliveryDetails(new ArrayList<PosIssueSlipDetail>());
+		}
+		getDeliveryDetails().add(detail);
+		return detail;
 	}
+
 
 	@JsonIgnore
 	private Long safeAdd(Long a, Long b) {
@@ -280,6 +290,12 @@ public class PosIssueSlip {
 	}
 	public void setIncludeOnInvoice(boolean includeOnInvoice) {
 		this.includeOnInvoice = includeOnInvoice;
+	}
+	public java.sql.Date getDate() {
+		return date;
+	}
+	public void setDate(java.sql.Date date) {
+		this.date = date;
 	}
 
 }

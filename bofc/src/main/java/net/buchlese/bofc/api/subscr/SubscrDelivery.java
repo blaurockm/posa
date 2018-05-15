@@ -1,36 +1,38 @@
 package net.buchlese.bofc.api.subscr;
 
-import io.dropwizard.jackson.Jackson;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.PostLoad;
 import javax.persistence.Table;
-
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
+import javax.xml.bind.annotation.XmlTransient;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+
+import net.buchlese.bofc.api.bofc.InvoiceAgrDetail;
+
 
 @Entity
 @Table( name = "subscrdelivery" )
 public class SubscrDelivery implements Comparable<SubscrDelivery> {
+	@GeneratedValue(strategy=GenerationType.AUTO)
 	@Id
 	@JsonProperty
-	private long id;
+	private Long id;
 
+//	@DateTimeFormat(pattern="dd.MM.yyyy")
 	@JsonProperty
-	private LocalDate deliveryDate;
+	private java.sql.Date deliveryDate;
 	@JsonProperty
 	private int quantity;
-	@JsonProperty
-	private long subscriptionId;
-	@JsonProperty
-	private long subscriberId;
-	@JsonProperty
-	private long articleId;
 	@JsonProperty
 	private String articleName;
 	@JsonProperty
@@ -48,45 +50,43 @@ public class SubscrDelivery implements Comparable<SubscrDelivery> {
 	@JsonProperty
 	private String slipNumber;
 	@JsonProperty
-	private DateTime creationDate;
+	private java.sql.Timestamp creationDate;
 	@JsonProperty
 	private long shipmentCost;
+	@JsonProperty
+	private String subscriberName;
 
-	@JsonIgnore
-	public String subscriberName;
 
-	// not for transfer
-//	@JsonIgnore
-//	@ManyToOne
-//	@JoinColumn(name = "article_id",
-//	foreignKey = @ForeignKey(name = "ARTICLE_ID_FK")
-//)
-//	private SubscrArticle article;
-//
-//	@JsonIgnore
-//	@ManyToOne
-//	@JoinColumn(name = "subscriber_id",
-//	foreignKey = @ForeignKey(name = "CUSTOMER_ID_FK")
-//)
-//	private Subscriber subscriber;
-//
-//	@JsonIgnore
-//	@ManyToOne
-//	@JoinColumn(name = "subscription_id",
-//    			foreignKey = @ForeignKey(name = "SUBSCRIPTION_ID_FK")
-//    )
-//	private Subscription subscription;
-
-	@JsonIgnore
-	public String getSubscriberName() {
-		return subscriberName;
-	}
+	@ManyToOne(fetch=FetchType.LAZY, cascade = CascadeType.ALL)
+	@JoinColumn(name = "settdetail_id",
+	foreignKey = @ForeignKey(name = "SETTDETAIL1_ID_FK")
+)
+	private InvoiceAgrDetail settDetail;
 	
-	// sich selber als json-object ausgeben
+	@ManyToOne(fetch=FetchType.LAZY)
+	@JoinColumn(name = "article_id",
+	foreignKey = @ForeignKey(name = "ARTICLE_ID_FK")
+)
+	private SubscrArticle article;
+
+	@ManyToOne
+	@JoinColumn(name = "subscriber_id",
+	foreignKey = @ForeignKey(name = "CUSTOMER_ID_FK")
+)
+	private Subscriber subscriber;
+
 	@JsonIgnore
-	public String getComplJson() throws JsonProcessingException {
-		ObjectMapper om = Jackson.newObjectMapper();
-		return om.writeValueAsString(this);
+	@ManyToOne(fetch=FetchType.LAZY)
+	@JoinColumn(name = "subscription_id",
+    			foreignKey = @ForeignKey(name = "SUBSCRIPTION_ID_FK")
+    )
+	private Subscription subscription;
+	
+	@PostLoad
+	public void initDelivery() {
+		if (getSubscriberName() == null) {
+			setSubscriberName(getSubscriber().getName());
+		}
 	}
 
 	@JsonIgnore
@@ -108,18 +108,16 @@ public class SubscrDelivery implements Comparable<SubscrDelivery> {
 		totalHalf = total - totalFull;
 	}
 
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
-	public LocalDate getDeliveryDate() {
+	public java.sql.Date getDeliveryDate() {
 		return deliveryDate;
 	}
-	public void setDeliveryDate(LocalDate deliveryDate) {
-		this.deliveryDate = deliveryDate;
-	}
+	
 	public int getQuantity() {
 		return quantity;
 	}
@@ -144,29 +142,11 @@ public class SubscrDelivery implements Comparable<SubscrDelivery> {
 	public void setPayed(boolean payed) {
 		this.payed = payed;
 	}
-	public DateTime getCreationDate() {
+	public java.sql.Timestamp getCreationDate() {
 		return creationDate;
 	}
-	public void setCreationDate(DateTime creationDate) {
+	public void setCreationDate(java.sql.Timestamp creationDate) {
 		this.creationDate = creationDate;
-	}
-	public void setSubscriptionId(long subcriptionId) {
-		this.subscriptionId = subcriptionId;
-	}
-	public long getSubscriberId() {
-		return subscriberId;
-	}
-	public long getArticleId() {
-		return articleId;
-	}
-	public void setArticleId(long articleId) {
-		this.articleId = articleId;
-	}
-	public long getSubscriptionId() {
-		return subscriptionId;
-	}
-	public void setSubscriberId(long subscriberId) {
-		this.subscriberId = subscriberId;
 	}
 	public long getTotalFull() {
 		return totalFull;
@@ -215,11 +195,43 @@ public class SubscrDelivery implements Comparable<SubscrDelivery> {
 		this.slipNumber = slipNumber;
 	}
 
+
+	public SubscrArticle getArticle() {
+		return article;
+	}
+
+
+	public void setArticle(SubscrArticle article) {
+		this.article = article;
+	}
+
+
+	@XmlTransient
+	public Subscriber getSubscriber() {
+		return subscriber;
+	}
+
+
+	public void setSubscriber(Subscriber subscriber) {
+		this.subscriber = subscriber;
+	}
+
+
+	@XmlTransient
+	public Subscription getSubscription() {
+		return subscription;
+	}
+
+
+	public void setSubscription(Subscription subscription) {
+		this.subscription = subscription;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + (int) (id ^ (id >>> 32));
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		return result;
 	}
 
@@ -232,9 +244,42 @@ public class SubscrDelivery implements Comparable<SubscrDelivery> {
 		if (getClass() != obj.getClass())
 			return false;
 		SubscrDelivery other = (SubscrDelivery) obj;
-		if (id != other.id)
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
 			return false;
 		return true;
 	}
+
+	public InvoiceAgrDetail getSettDetail() {
+		return settDetail;
+	}
+
+	public void setSettDetail(InvoiceAgrDetail settDetail) {
+		if (settDetail != null) {
+			settDetail.addSubscrDelivery(this);
+		} else {
+			if (this.settDetail != null) {
+				this.settDetail.removeSubscrDelivery(this);
+			}
+		}
+		this.settDetail = settDetail;
+		this.payed = settDetail != null;
+	}
+
+	public void setDeliveryDate(java.sql.Date deliveryDate) {
+		this.deliveryDate = deliveryDate;
+	}
+
+	public String getSubscriberName() {
+		return subscriberName;
+	}
+
+	public void setSubscriberName(String subscriberName) {
+		this.subscriberName = subscriberName;
+	}
+
+
 	
 }

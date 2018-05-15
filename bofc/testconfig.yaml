@@ -11,14 +11,19 @@ bofcDb:
 
 jpamysql:
   driverClass: com.mysql.jdbc.Driver
-  user: bofc
-  password: bofc
-  url: jdbc:mysql://localhost:3306/bofc
+  user: bofc_test
+  password: JXADqS1FxBN2wxmB
+#  user: bofc
+#  password: bofc
+#  url: jdbc:mysql://localhost:3306/bofc
+  url: jdbc:mysql://sql444.your-server.de:3306/buchlese_test
+  
   properties:
     charSet: UTF-8
     useSSL: false
     hibernate.dialect: org.hibernate.dialect.MySQL5Dialect
-    hibernate.hbm2ddl.auto: update
+    hibernate.hbm2ddl.auto: none
+#    hibernate.hbm2ddl.auto: update
     hibernate.ejb.naming_strategy: org.hibernate.cfg.ImprovedNamingStrategy
 
   

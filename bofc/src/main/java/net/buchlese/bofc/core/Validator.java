@@ -11,13 +11,11 @@ import java.util.Map;
 import net.buchlese.bofc.api.bofc.PosCashBalance;
 import net.buchlese.bofc.api.bofc.PosTicket;
 import net.buchlese.bofc.api.bofc.PosTx;
-import net.buchlese.bofc.jdbi.bofc.PosTicketDAO;
-import net.buchlese.bofc.jdbi.bofc.PosTxDAO;
 
 public class Validator {
 	private PosCashBalance balance;
 	
-	public Validator(PosCashBalance balance, PosTicketDAO ticketDAO, PosTxDAO txDAO) {
+	public Validator(PosCashBalance balance) {
 		this.balance = balance;
 	}
 

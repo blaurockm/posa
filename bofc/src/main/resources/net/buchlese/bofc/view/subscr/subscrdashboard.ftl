@@ -13,7 +13,6 @@
   <li><a data-toggle="tab" href="#intervalle">unbezahlte Intervalle <span class="label label-pill label-default">${intervalDeliveries?size}</span></a></li>
   <li><a data-toggle="tab" href="#abosMemo">Abos mit Memo <span class="label label-pill label-default">${subscriptionsWithMemo?size}</span></a></li>
   <li><a data-toggle="tab" href="#abos">abzurechnende Abos <span class="label label-pill label-default">${subscriptions?size}</span></a></li>
-  <li><a data-toggle="tab" href="#rechnungen">unbestätigte Rechnungen <span class="label label-pill label-default">${invoices?size}</span></a></li>
 </ul>
 
 <div class="tab-content">
@@ -33,14 +32,14 @@
 	<tbody>
 		<#list deliveries as d>
 		<tr>
-			<td>${d.subscriberName!} ${abo(d).deliveryInfo1!} ${abo(d).deliveryInfo2!}</td>
+			<td>${d.subscriber.name!} ${d.subscription.deliveryInfo1!} ${d.subscription.deliveryInfo2!}</td>
 			<td>${d.articleName}</td>
 			<td>${d.quantity}</td>
 			<td>${abo(d).shipmentType.text}</td>
 			<td align="right">${money(d.total)}</td>
-			<td>${(d.deliveryDate.toString("dd.MM.yy"))!}</td>
+			<td>${(d.deliveryDate)!}</td>
 			<td><a href="#subscrDelivery/${d.id?c}" data-toggle="tooltip" title="Details" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span></a>
-            <a href="#subscription/${d.subscriptionId?c}" data-toggle="tooltip" title="Abo" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
+            <a href="#subscription/${d.subscription.id?c}" data-toggle="tooltip" title="Abo" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
 			<a href="/subscr/deliverynote/${d.id?c}" data-toggle="tooltip" title="Lieferschein" class="btn btn-default btn-sm" target="_blank"><span class="glyphicon glyphicon-folder-open" aria-hidden="true" alt="Lieferschein"></span></a>
 			<a href="#deliverydelete/${d.id?c}" data-toggle="tooltip" title="Löschen" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></td>
 		</tr>
@@ -64,14 +63,14 @@
 	<tbody>
 		<#list unslippedDeliveries as d>
 		<tr>
-			<td>${d.subscriberName!} ${abo(d).deliveryInfo1!} ${abo(d).deliveryInfo2!}</td>
+			<td>${d.subscriber.name!} ${d.subscription.deliveryInfo1!} ${d.subscription.deliveryInfo2!}</td>
 			<td>${d.articleName}</td>
 			<td>${d.quantity}</td>
-			<td>${abo(d).shipmentType.text}</td>
+			<td>${d.subscription.shipmentType.text}</td>
 			<td align="right">${money(d.total)}</td>
-			<td>${(d.deliveryDate.toString("dd.MM.yy"))!}</td>
+			<td>${d.deliveryDate!}</td>
 			<td><a href="#subscrDelivery/${d.id?c}" data-toggle="tooltip" title="Details" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span></a>
-            <a href="#subscription/${d.subscriptionId?c}" data-toggle="tooltip" title="Abo" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
+            <a href="#subscription/${d.subscription.id?c}" data-toggle="tooltip" title="Abo" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
 			<a href="/subscr/deliverynote/${d.id?c}" data-toggle="tooltip" title="Lieferschein" class="btn btn-default btn-sm" target="_blank"><span class="glyphicon glyphicon-folder-open" aria-hidden="true" alt="Lieferschein"></span></a>
 			<a href="#deliverydelete/${d.id?c}" data-toggle="tooltip" title="Löschen" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></td>
 		</tr>
@@ -103,8 +102,8 @@
 			<td>${s.deliveryInfo1!} ${s.deliveryInfo2!}</td>
 			<td>${s.paymentType.text}</td>
 			<td>${s.shipmentType.text}</td>
-			<td>${(s.payedUntil.toString("dd.MM.yy"))!}</td>
-			<td>${(s.lastInvoiceDate.toString("dd.MM.yy"))!}</td>
+			<td>${(s.payedUntil)!}</td>
+			<td>${(s.lastInvoiceDate)!}</td>
 			<td><a href="#subscription/${s.id?c}" data-toggle="tooltip" title="Details" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span></a> </td>
 		</tr>
 		</#list>
@@ -134,7 +133,7 @@
 			<td align="right">${money(d.total)}</td>
 			<td>${d.payed?string("ja","")}</td>
 			<td><a href="#subscrIntervalDelivery/${d.id?c}" data-toggle="tooltip" title="Details" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span></a>
-            <a href="#subscription/${d.subscriptionId?c}" data-toggle="tooltip" title="Abo" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
+            <a href="#subscription/${d.subscription.id?c}" data-toggle="tooltip" title="Abo" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
 			<a href="#intervaldeliverydelete/${d.id?c}" data-toggle="tooltip" title="Löschen" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></td>
 		</tr>
 		</#list>
@@ -165,40 +164,9 @@
 			<td>${s.deliveryInfo1!} ${s.deliveryInfo2!}</td>
 			<td>${s.paymentType.text}</td>
 			<td>${s.shipmentType.text}</td>
-			<td>${(s.payedUntil.toString("dd.MM.yy"))!}</td>
-			<td>${(s.lastInvoidDate.toString("dd.MM.yy"))!}</td>
+			<td>${(s.payedUntil)!}</td>
+			<td>${(s.lastInvoiceDate)!}</td>
 			<td><a href="#subscription/${s.id?c}" data-toggle="tooltip" title="Details" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span></a> </td>
-		</tr>
-		</#list>
-	</tbody>
-</table>
-  </div>
-  <div id="rechnungen" class="tab-pane fade">
-<table class="table table-striped">
-	<thead>
-		<tr>
-			<th>Rechnr</th>
-			<th>Datum</th>
-			<th>Kunde</th>
-			<th>LieferVon</th>
-			<th>LieferBis</th>
-			<th>Betrag</th>
-			<th></th>
-		</tr>
-	</thead>
-	<tbody>
-		<#list invoices as inv>
-		<tr>
-			<td>${inv.number}</td>
-			<td>${(inv.date.toString("dd.MM.yy"))!}</td>
-			<td>${inv.name1!}</td>
-			<td>${(inv.deliveryFrom.toString("dd.MM.yy"))!}</td>
-			<td>${(inv.deliveryTill.toString("dd.MM.yy"))!}</td>
-			<td>${money(inv.amount)}</td>
-			<td><a href="#invoiceRecord/${inv.number}" data-toggle="tooltip" title="Fakturieren" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span></a>
-                <a href="/subscr/invoiceView/${inv.number}" data-toggle="tooltip" title="Anschauen" class="btn btn-default btn-sm" target="_blank"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span></a>
-                <a href="#invoiceCancel/${inv.number}" data-toggle="tooltip" title="löschen" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a>
-			 </td>
 		</tr>
 		</#list>
 	</tbody>

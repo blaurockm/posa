@@ -1,23 +1,22 @@
 package net.buchlese.bofc.api.bofc;
 
+import java.sql.Date;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import net.buchlese.bofc.api.subscr.Address;
 import net.buchlese.bofc.api.subscr.SubscrArticle;
 import net.buchlese.bofc.api.subscr.Subscriber;
 import net.buchlese.bofc.api.subscr.Subscription;
 
-import org.joda.time.LocalDate;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 @XmlRootElement(name = "deliveryProtocol")
 public class ReportDeliveryProtocol {
 
 	@JsonProperty
-	public LocalDate protocolDate;
+	public Date protocolDate;
 	
 	
 	@JsonProperty

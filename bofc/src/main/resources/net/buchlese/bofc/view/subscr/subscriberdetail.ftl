@@ -61,7 +61,6 @@
 					<th>Seit</th>
 					<th>Versandart</th>
 					<th>Zahlungweise</th>
-					<th>abrechenbar</th>
 					<th></th>
 				</tr>
 			</thead>
@@ -69,11 +68,10 @@
 				<#list subscriptions as s>
 					<tr>
 						<td>${s.id} <a href="#subscription/${s.id?c}" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span></a></td>
-						<td>${product(s)}  <a href="#subscrProduct/${s.productId?c}" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span></a></td>
-						<td>${(s.startDate.toString("dd.MM.yyyy"))!}</td>
+						<td>${product(s)}  <a href="#subscrProduct/${s.product.id?c}" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span></a></td>
+						<td>${(s.startDate)!}</td>
 					    <td>${s.shipmentType.text}</td>
 					    <td>${s.paymentType.text}</td>
-					    <td>${willBeSettled(s)?string("ja","")}</td>					
 					</tr>
 				</#list>
 			</tbody>
@@ -95,7 +93,7 @@
 				<#list invoices as inv>
 					<tr>
 						<td>${inv.number}</td>
-						<td><#if inv.date??>${inv.date.toString("dd.MM.yyyy")}<#else>kein Datum!</#if></td>
+						<td><#if inv.date??>${inv.date}<#else>kein Datum!</#if></td>
 						<td align="right">${money(inv.amount)}</td>
 						<td align="center">${inv.payed?string("bez.","")}</td>
 						<td align="center">${inv.cancelled?string("bez.","")}</td>
@@ -120,7 +118,7 @@
 				<#list issueSlips as inv>
 					<tr>
 						<td>${inv.number}</td>
-						<td><#if inv.date??>${inv.date.toString("dd.MM.yyyy")}<#else>kein Datum!</#if></td>
+						<td><#if inv.date??>${inv.date}<#else>kein Datum!</#if></td>
 						<td align="right">${money(inv.amount)}</td>
 						<td align="center">${inv.payed?string("bez","")}</td>
 						<td align="center"><input type="checkbox" ${inv.includeOnInvoice?string('checked','')} onChange="switchIssueSlip('${inv.number}','issueSlip.includeOnInvoice', this.checked)"></td>

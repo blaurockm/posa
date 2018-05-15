@@ -1,11 +1,6 @@
 package net.buchlese.bofc.view.subscr;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-
-import org.hibernate.SessionFactory;
-import org.hibernate.context.internal.ManagedSessionContext;
 
 import net.buchlese.bofc.api.bofc.PosInvoice;
 import net.buchlese.bofc.api.subscr.SubscrArticle;
@@ -16,13 +11,11 @@ import net.buchlese.bofc.api.subscr.SubscrProduct;
 import net.buchlese.bofc.api.subscr.Subscriber;
 import net.buchlese.bofc.api.subscr.Subscription;
 import net.buchlese.bofc.jdbi.bofc.SubscrDAO;
-import net.buchlese.bofc.jpa.JpaPosInvoiceDAO;
 import net.buchlese.bofc.view.AbstractBofcView;
 
 public class SubscriptionDetailView extends AbstractBofcView{
 
 	private final Subscription sub;
-	private final SubscrDAO dao;
 	private final SubscrProduct prod;
 	private final SubscrDelivery lastDeliv;
 	private final SubscrArticle newestArticle;
@@ -32,23 +25,23 @@ public class SubscriptionDetailView extends AbstractBofcView{
 	private final List<SubscrIntervalDelivery> payedIntDelivs;
 	private final SubscrIntervalDelivery lastIntDeliv;
 	private final SubscrInterval newestInterval;
-	private final SessionFactory sessFact;
+	private final List<PosInvoice> invs;
 
 	
-	public SubscriptionDetailView(SubscrDAO dao, Subscription s, SessionFactory sessFact ) {
+	public SubscriptionDetailView(SubscrDAO dao, Subscription s) {
 		super("subscriptiondetail.ftl");
-		this.dao = dao;
 		this.sub = s;
-		this.prod =  dao.getSubscrProduct(sub.getProductId());
-		this.lastDeliv = dao.getLastDeliveryForSubscription(s.getId());
-		this.newestArticle = dao.getNewestArticleOfProduct(s.getProductId());
-		this.lastIntDeliv = dao.getLastIntervalDeliveryForSubscription(s.getId());
-		this.newestInterval = dao.getNewestIntervalOfProduct(s.getProductId());
-		this.unpayedDelivs = dao.getDeliveriesForSubscriptionPayflag(sub.getId(),false);
-		this.payedDelivs = dao.getDeliveriesForSubscriptionPayflag(sub.getId(), true);
-		this.unpayedIntDelivs = dao.getIntervalDeliveriesForSubscriptionPayflag(sub.getId(), false);
-		this.payedIntDelivs = dao.getIntervalDeliveriesForSubscriptionPayflag(sub.getId(), true);
-		this.sessFact = sessFact;
+		this.prod =  sub.getProduct();
+		this.lastDeliv = dao.getLastDeliveryForSubscription(s);
+		this.newestArticle = dao.getNewestArticleOfProduct(this.prod);
+		this.lastIntDeliv = dao.getLastIntervalDeliveryForSubscription(s);
+		this.newestInterval = dao.getNewestIntervalOfProduct(this.prod);
+		this.unpayedDelivs = dao.getDeliveriesForSubscriptionPayflag(sub,false);
+		this.payedDelivs = dao.getDeliveriesForSubscriptionPayflag(sub, true);
+		this.unpayedIntDelivs = dao.getIntervalDeliveriesForSubscriptionPayflag(sub, false);
+		this.payedIntDelivs = dao.getIntervalDeliveriesForSubscriptionPayflag(sub, true);
+		this.invs = dao.getInvoicesForDetails(sub);
+		invs.addAll(dao.getInvoicesForIntervalDetails(sub));
 	}
 
 
@@ -113,29 +106,25 @@ public class SubscriptionDetailView extends AbstractBofcView{
 
 
 	public List<PosInvoice> getInvoices() {
-		org.hibernate.Session s = sessFact.openSession();
-		ManagedSessionContext.bind(s);
-		JpaPosInvoiceDAO jpaDao = new JpaPosInvoiceDAO(sessFact);
-		Collection<String> invNums = dao.getInvoiceNumsForSubscription(sub.getId());
-		List<PosInvoice> invs = new ArrayList<PosInvoice>();
-		for (String num : invNums) {
-			invs.addAll(jpaDao.findByNumber(num));
-		}
-		invNums = dao.getInvoiceNumsForSubscriptionIntervals(sub.getId());
-		for (String num : invNums) {
-			invs.addAll(jpaDao.findByNumber(num));
-		}
-		s.close();
+//		org.hibernate.Session s = sessFact.openSession();
+//		ManagedSessionContext.bind(s);
+//		JpaPosInvoiceDAO jpaDao = new JpaPosInvoiceDAO(sessFact);
+//		Collection<String> invNums = dao.getInvoiceNumsForSubscription(sub.getId());
+//		List<PosInvoice> invs = new ArrayList<PosInvoice>();
+//		for (String num : invNums) {
+//			invs.addAll(jpaDao.findByNumber(num));
+//		}
+//		invNums = dao.getInvoiceNumsForSubscriptionIntervals(sub.getId());
+//		for (String num : invNums) {
+//			invs.addAll(jpaDao.findByNumber(num));
+//		}
+//		s.close();
 		return invs;
 
 	}
 
 	public Subscriber kunde() {
-		if (sub.getSubscriberId() > 0) {
-			Subscriber x = dao.getSubscriber(sub.getSubscriberId());
-			return x;
-		}
-		return null;
+		return sub.getSubscriber();
 	}
 
 

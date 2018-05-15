@@ -1,29 +1,33 @@
 package net.buchlese.bofc.api.subscr;
 
 
-import io.dropwizard.jackson.Jackson;
+import java.sql.Date;
+import java.time.Period;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-
-import org.joda.time.LocalDate;
-import org.joda.time.Period;
+import javax.xml.bind.annotation.XmlTransient;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+
 
 @Entity
 @Table( name = "subscrproduct" )
 public class SubscrProduct {
 	@Id
+	@GeneratedValue(strategy=GenerationType.AUTO)
 	@JsonProperty
-	private long id;
+	private Long id;
 
 	@JsonProperty
 	private String abbrev;
@@ -43,13 +47,13 @@ public class SubscrProduct {
 	@Transient
 	private Period period;
 	@JsonProperty
-	private LocalDate lastDelivery;
+	private Date lastDelivery;
 	@JsonProperty
-	private LocalDate nextDelivery;
+	private Date nextDelivery;
 	@JsonProperty
-	private LocalDate startDate;
+	private Date startDate;
 	@JsonProperty
-	private LocalDate endDate;
+	private Date endDate;
 	@JsonProperty
 	private int quantity;
 	@JsonProperty
@@ -68,77 +72,31 @@ public class SubscrProduct {
 	private boolean payPerDelivery; // vorausbezahlt: bei Abos, Fortsetzungen bezahlt pro Lieferung
 
 	@JsonProperty
-	private LocalDate lastInterval;
+	private Date lastInterval;
 
 	@JsonProperty
 	@Enumerated(EnumType.STRING)
 	private PayIntervalType intervalType;
 
-//	@JsonIgnore
-//	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-//	private Set<SubscrInterval> intervals;
-//
-//	@JsonIgnore
-//	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-//	private Set<SubscrArticle> articles;
-//
-//	@JsonIgnore
-//	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-//	private Set<Subscription> subscriptions;
+	@JsonIgnore
+	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+	@XmlTransient
+	private Set<SubscrInterval> intervals;
 
 	@JsonIgnore
-	public SubscrArticle createNextArticle(LocalDate erschTag) {
-		SubscrArticle na = new SubscrArticle();
-		na.setProductId(getId());
-		if (halfPercentage <= 0.0001d) {
-			na.setHalfPercentage(1d);
-		} else {
-			na.setHalfPercentage(halfPercentage);
-		}
-		na.updateBrutto(baseBrutto);
-		na.setErschTag(LocalDate.now());
-		na.setIssueNo(++count);
-		na.setName(na.initializeName(namePattern));
-		return na;
-	}
+	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+	@XmlTransient
+	private Set<SubscrArticle> articles;
 
 	@JsonIgnore
-	public SubscrInterval createNextInterval(LocalDate erschTag) {
-		SubscrInterval na = new SubscrInterval();
-		na.setProductId(getId());
-		if (getIntervalType() == null) {
-			na.setIntervalType(PayIntervalType.YEARLY);
-		} else {
-			na.setIntervalType(getIntervalType());
-		}
-		if (halfPercentage <= 0.0001d) {
-			na.setHalfPercentage(1d);
-		} else {
-			na.setHalfPercentage(halfPercentage);
-		}
-		na.updateBrutto(baseBrutto);
-		if (getLastInterval() != null) {
-			na.setStartDate(getLastInterval().plusDays(1));
-		} else {
-			na.setStartDate(erschTag);
-		}
-		na.updateEndDate();
-		setLastInterval(na.getEndDate());
-		na.setName(na.initializeName(intervalPattern != null ? intervalPattern: namePattern));
-		return na;
-	}
-	
-	// sich selber als json-object ausgeben
-	@JsonIgnore
-	public String getComplJson() throws JsonProcessingException {
-		ObjectMapper om = Jackson.newObjectMapper();
-		return om.writeValueAsString(this);
-	}
+	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+	@XmlTransient
+	private Set<Subscription> subscriptions;
 
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 	public String getAbbrev() {
@@ -164,24 +122,6 @@ public class SubscrProduct {
 	}
 	public void setPeriod(Period period) {
 		this.period = period;
-	}
-	public LocalDate getLastDelivery() {
-		return lastDelivery;
-	}
-	public void setLastDelivery(LocalDate lastDelivery) {
-		this.lastDelivery = lastDelivery;
-	}
-	public LocalDate getNextDelivery() {
-		return nextDelivery;
-	}
-	public void setNextDelivery(LocalDate nextDelivery) {
-		this.nextDelivery = nextDelivery;
-	}
-	public LocalDate getStartDate() {
-		return startDate;
-	}
-	public void setStartDate(LocalDate startDate) {
-		this.startDate = startDate;
 	}
 	public int getQuantity() {
 		return quantity;
@@ -224,14 +164,6 @@ public class SubscrProduct {
 		this.baseBrutto = baseBrutto;
 	}
 
-	public LocalDate getEndDate() {
-		return endDate;
-	}
-
-	public void setEndDate(LocalDate endDate) {
-		this.endDate = endDate;
-	}
-
 	public boolean isPayPerDelivery() {
 		return payPerDelivery;
 	}
@@ -246,14 +178,6 @@ public class SubscrProduct {
 
 	public void setPublisherId(long publisherId) {
 		this.publisherId = publisherId;
-	}
-
-	public LocalDate getLastInterval() {
-		return lastInterval;
-	}
-
-	public void setLastInterval(LocalDate lastInterval) {
-		this.lastInterval = lastInterval;
 	}
 
 	public PayIntervalType getIntervalType() {
@@ -296,11 +220,38 @@ public class SubscrProduct {
 		this.intervalPattern = intervalPattern;
 	}
 
+	@XmlTransient
+	public Set<SubscrArticle> getArticles() {
+		return articles;
+	}
+
+	public void setArticles(Set<SubscrArticle> articles) {
+		this.articles = articles;
+	}
+
+	@XmlTransient
+	public Set<Subscription> getSubscriptions() {
+		return subscriptions;
+	}
+
+	public void setSubscriptions(Set<Subscription> subscriptions) {
+		this.subscriptions = subscriptions;
+	}
+
+	@XmlTransient
+	public Set<SubscrInterval> getIntervals() {
+		return intervals;
+	}
+
+	public void setIntervals(Set<SubscrInterval> intervals) {
+		this.intervals = intervals;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + (int) (id ^ (id >>> 32));
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		return result;
 	}
 
@@ -313,10 +264,54 @@ public class SubscrProduct {
 		if (getClass() != obj.getClass())
 			return false;
 		SubscrProduct other = (SubscrProduct) obj;
-		if (id != other.id)
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
 			return false;
 		return true;
 	}
 
-	
+	public Date getLastDelivery() {
+		return lastDelivery;
+	}
+
+	public void setLastDelivery(Date lastDelivery) {
+		this.lastDelivery = lastDelivery;
+	}
+
+	public Date getNextDelivery() {
+		return nextDelivery;
+	}
+
+	public void setNextDelivery(Date nextDelivery) {
+		this.nextDelivery = nextDelivery;
+	}
+
+	public Date getStartDate() {
+		return startDate;
+	}
+
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
+	}
+
+	public Date getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
+	}
+
+	public Date getLastInterval() {
+		return lastInterval;
+	}
+
+	public void setLastInterval(Date lastInterval) {
+		this.lastInterval = lastInterval;
+	}
+
+
+
 }

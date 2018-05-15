@@ -4,11 +4,9 @@ import net.buchlese.bofc.api.subscr.Address;
 import net.buchlese.bofc.api.subscr.PayIntervalType;
 import net.buchlese.bofc.api.subscr.ShipType;
 import net.buchlese.bofc.api.subscr.Subscription;
+import net.buchlese.bofc.core.DateUtils;
 import net.buchlese.bofc.jdbi.bofc.SubscrDAO;
 import net.buchlese.bofc.jpa.JpaSubscriptionDAO;
-
-import org.joda.time.LocalDate;
-import org.joda.time.format.DateTimeFormat;
 
 public class SubscriptionUpdateHelper {
 
@@ -56,17 +54,17 @@ public class SubscriptionUpdateHelper {
 		}
 		if ("startDate".equals(field)) {
 			res.oldValue = String.valueOf(art.getStartDate());
-			art.setStartDate(LocalDate.parse(value, DateTimeFormat.forPattern("dd.MM.yyyy") ));
+			art.setStartDate(DateUtils.parse(value));
 			res.success = true;
 		}
 		if ("endDate".equals(field)) {
 			res.oldValue = String.valueOf(art.getEndDate());
-			art.setEndDate(LocalDate.parse(value, DateTimeFormat.forPattern("dd.MM.yyyy") ));
+			art.setEndDate(DateUtils.parse(value));
 			res.success = true;
 		}
 		if ("payedUntil".equals(field)) {
 			res.oldValue = String.valueOf(art.getPayedUntil());
-			art.setPayedUntil(LocalDate.parse(value, DateTimeFormat.forPattern("MM/yyyy") ));
+			art.setPayedUntil(DateUtils.parseMonth(value));
 			res.success = true;
 		}
 		if ("needsAttention".equals(field)) {

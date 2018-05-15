@@ -1,43 +1,59 @@
 package net.buchlese.bofc.api.bofc;
 
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
-import org.joda.time.LocalDate;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import net.buchlese.bofc.api.subscr.PayIntervalType;
+import net.buchlese.bofc.api.subscr.SubscrDelivery;
+import net.buchlese.bofc.api.subscr.SubscrIntervalDelivery;
+import net.buchlese.bofc.api.subscr.Subscription;
+
 
 @Entity
 @Table(name="posinvoice_agrdetail")
 public class InvoiceAgrDetail {
+	public enum TYPE { SUBSCR, ISSUESLIP };	
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@GeneratedValue(strategy=GenerationType.AUTO)
 	@JsonProperty
 	private Long id;
-	public enum TYPE { SUBSCR, ISSUESLIP };	
+
+	@ManyToOne
+	@JoinColumn(name = "settled_agreement_id")
+	private Subscription settledAgreement;
+	
+	@ManyToOne 
+	@JoinColumn(name = "settled_delivery_note_id")
+	private PosIssueSlip settledDeliveryNote;
 	
 	@JsonProperty
-	private long agreementId;
+	private java.sql.Date deliveryFrom;
 
 	@JsonProperty
-	private LocalDate deliveryFrom;
+	private java.sql.Date deliveryTill;
 
-	@JsonProperty
-	private LocalDate deliveryTill;
+	@JsonIgnore
+	@OneToMany(mappedBy="settDetail",cascade = CascadeType.ALL)
+	private Set<SubscrDelivery> deliveries;
 
-	@JsonProperty
-	@Transient
-	private List<Long> deliveryIds;
+	@JsonIgnore
+	@OneToMany(mappedBy="settDetail",cascade = CascadeType.ALL )
+	private Set<SubscrIntervalDelivery> intervalDeliveries;
 
 	@JsonProperty
 	@Enumerated(EnumType.STRING)
@@ -47,38 +63,6 @@ public class InvoiceAgrDetail {
 	@Enumerated(EnumType.STRING)
 	private PayIntervalType payType;
 
-	
-	public long getAgreementId() {
-		return agreementId;
-	}
-
-	public void setAgreementId(long agreementId) {
-		this.agreementId = agreementId;
-	}
-
-	public LocalDate getDeliveryFrom() {
-		return deliveryFrom;
-	}
-
-	public void setDeliveryFrom(LocalDate deliveryFrom) {
-		this.deliveryFrom = deliveryFrom;
-	}
-
-	public LocalDate getDeliveryTill() {
-		return deliveryTill;
-	}
-
-	public void setDeliveryTill(LocalDate deliveryTill) {
-		this.deliveryTill = deliveryTill;
-	}
-
-	public List<Long> getDeliveryIds() {
-		return deliveryIds;
-	}
-
-	public void setDeliveryIds(List<Long> deliveryIds) {
-		this.deliveryIds = deliveryIds;
-	}
 
 	public TYPE getType() {
 		return type;
@@ -94,6 +78,14 @@ public class InvoiceAgrDetail {
 
 	public void setPayType(PayIntervalType payType) {
 		this.payType = payType;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	@Override
@@ -121,12 +113,80 @@ public class InvoiceAgrDetail {
 		return true;
 	}
 
-	public Long getId() {
-		return id;
+	public Set<SubscrDelivery> getDeliveries() {
+		return deliveries;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
+	public void addSubscrDelivery(SubscrDelivery d) {
+		if (deliveries == null) {
+			deliveries = new HashSet<>();
+		}
+		deliveries.add(d);
+	}
+
+	public void removeSubscrDelivery(SubscrDelivery d) {
+		if (deliveries == null) {
+			deliveries = new HashSet<>();
+		}
+		deliveries.remove(d);
+	}
+
+	public void setDeliveries(Set<SubscrDelivery> deliveries) {
+		this.deliveries = deliveries;
+	}
+
+	public Set<SubscrIntervalDelivery> getIntervalDeliveries() {
+		return intervalDeliveries;
+	}
+
+	public void setIntervalDeliveries(Set<SubscrIntervalDelivery> intervalDeliveries) {
+		this.intervalDeliveries = intervalDeliveries;
+	}
+
+	public void addIntervalDelivery(SubscrIntervalDelivery d) {
+		if (intervalDeliveries == null) {
+			intervalDeliveries = new HashSet<>();
+		}
+		intervalDeliveries.add(d);
+	}
+
+	public void removeIntervalDelivery(SubscrIntervalDelivery d) {
+		if (intervalDeliveries == null) {
+			intervalDeliveries = new HashSet<>();
+		}
+		intervalDeliveries.remove(d);
+	}
+
+	public Subscription getSettledAgreement() {
+		return settledAgreement;
+	}
+
+	public void setSettledAgreement(Subscription settledAgreement) {
+		this.settledAgreement = settledAgreement;
+	}
+
+	public PosIssueSlip getSettledDeliveryNote() {
+		return settledDeliveryNote;
+	}
+
+	public void setSettledDeliveryNote(PosIssueSlip settledDeliveryNote) {
+		this.settledDeliveryNote = settledDeliveryNote;
+	}
+
+	public java.sql.Date getDeliveryFrom() {
+		return deliveryFrom;
+	}
+
+	public void setDeliveryFrom(java.sql.Date deliveryFrom) {
+		this.deliveryFrom = deliveryFrom;
+	}
+
+	public java.sql.Date getDeliveryTill() {
+		return deliveryTill;
+	}
+
+	public void setDeliveryTill(java.sql.Date deliveryTill) {
+		this.deliveryTill = deliveryTill;
 	}
 	
 }

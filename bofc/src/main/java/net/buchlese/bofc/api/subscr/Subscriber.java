@@ -1,25 +1,30 @@
 package net.buchlese.bofc.api.subscr;
 
-import io.dropwizard.jackson.Jackson;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlTransient;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+
 
 @Entity
 @Table( name = "customer" )
 public class Subscriber {
 	@Id
+	@GeneratedValue(strategy=GenerationType.AUTO)
 	@JsonProperty
-	private long id;
+	private Long id;
 	@JsonProperty
 	private int pointid;
 
@@ -43,18 +48,12 @@ public class Subscriber {
 	@JsonProperty
 	@Enumerated(EnumType.STRING)
 	private ShipType shipmentType;
-	
-//	@JsonIgnore
-//	@OneToMany(mappedBy = "subscriber", cascade = CascadeType.ALL, orphanRemoval = true)
-//	private Set<Subscription> subscriptions;
 
-	// sich selber als json-object ausgeben
 	@JsonIgnore
-	public String getComplJson() throws JsonProcessingException {
-		ObjectMapper om = Jackson.newObjectMapper();
-		return om.writeValueAsString(this);
-	}
-
+	@OneToMany(mappedBy = "subscriber", orphanRemoval = true)
+	private Set<Subscription> subscriptions;
+	
+	
 	@JsonIgnore
 	public String getName1() {
 		if (getInvoiceAddress() != null) {
@@ -71,10 +70,10 @@ public class Subscriber {
 		return null;
 	}
 
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 	public int getPointid() {
@@ -138,11 +137,35 @@ public class Subscriber {
 		this.email = email;
 	}
 
+	@XmlTransient
+	public Set<Subscription> getSubscriptions() {
+		return subscriptions;
+	}
+
+	public void setSubscriptions(Set<Subscription> subscriptions) {
+		this.subscriptions = subscriptions;
+	}
+
+
+	public void addSubscription(Subscription sub) {
+		if (subscriptions == null) {
+			subscriptions = new HashSet<>();
+		}
+		subscriptions.add(sub);
+	}
+
+	public void removeSubscription(Subscription sub) {
+		if (subscriptions == null) {
+			subscriptions = new HashSet<>();
+		}
+		subscriptions.add(sub);
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + (int) (id ^ (id >>> 32));
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		return result;
 	}
 
@@ -155,7 +178,10 @@ public class Subscriber {
 		if (getClass() != obj.getClass())
 			return false;
 		Subscriber other = (Subscriber) obj;
-		if (id != other.id)
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
 			return false;
 		return true;
 	}

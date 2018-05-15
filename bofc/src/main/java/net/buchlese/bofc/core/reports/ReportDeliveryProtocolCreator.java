@@ -1,5 +1,6 @@
 package net.buchlese.bofc.core.reports;
 
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,19 +11,17 @@ import net.buchlese.bofc.api.subscr.Subscriber;
 import net.buchlese.bofc.api.subscr.Subscription;
 import net.buchlese.bofc.jdbi.bofc.SubscrDAO;
 
-import org.joda.time.LocalDate;
-
 public class ReportDeliveryProtocolCreator {
 
-	public static ReportDeliveryProtocol create(SubscrDAO dao, LocalDate date) {
+	public static ReportDeliveryProtocol create(SubscrDAO dao, Date date) {
 		ReportDeliveryProtocol rep = new ReportDeliveryProtocol();
 		rep.protocolDate = date;
 		List<ReportDeliveryProtocol.ProtocolDetail> dets = new ArrayList<>();
 		for (SubscrDelivery del : dao.getDeliveries(date)) {
 			ReportDeliveryProtocol.ProtocolDetail det = new ReportDeliveryProtocol.ProtocolDetail();
-			det.article = dao.getSubscrArticle(del.getArticleId());
-			Subscription sub = dao.getSubscription(del.getSubscriptionId());
-			Subscriber s = dao.getSubscriber(del.getSubscriberId());
+			det.article = del.getArticle();
+			Subscription sub = del.getSubscription();
+			Subscriber s = del.getSubscriber();
 			if (sub.getDeliveryAddress() != null) {
 				det.deliveryAddress = sub.getDeliveryAddress();
 			} else {

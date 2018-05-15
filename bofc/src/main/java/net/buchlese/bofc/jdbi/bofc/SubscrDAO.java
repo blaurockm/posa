@@ -1,9 +1,19 @@
 package net.buchlese.bofc.jdbi.bofc;
 
-import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import javax.validation.Valid;
+
+import java.sql.Date;
+import java.time.LocalDate;
+import org.skife.jdbi.v2.sqlobject.Bind;
+import org.skife.jdbi.v2.sqlobject.BindBean;
+import org.skife.jdbi.v2.sqlobject.GetGeneratedKeys;
+import org.skife.jdbi.v2.sqlobject.SqlBatch;
+import org.skife.jdbi.v2.sqlobject.SqlQuery;
+import org.skife.jdbi.v2.sqlobject.SqlUpdate;
+import org.skife.jdbi.v2.sqlobject.customizers.Mapper;
 
 import net.buchlese.bofc.api.bofc.PosInvoice;
 import net.buchlese.bofc.api.bofc.PosIssueSlip;
@@ -16,15 +26,6 @@ import net.buchlese.bofc.api.subscr.SubscrProduct;
 import net.buchlese.bofc.api.subscr.Subscriber;
 import net.buchlese.bofc.api.subscr.Subscription;
 
-import org.joda.time.LocalDate;
-import org.skife.jdbi.v2.sqlobject.Bind;
-import org.skife.jdbi.v2.sqlobject.BindBean;
-import org.skife.jdbi.v2.sqlobject.GetGeneratedKeys;
-import org.skife.jdbi.v2.sqlobject.SqlBatch;
-import org.skife.jdbi.v2.sqlobject.SqlQuery;
-import org.skife.jdbi.v2.sqlobject.SqlUpdate;
-import org.skife.jdbi.v2.sqlobject.customizers.Mapper;
-
 public interface SubscrDAO {
 
 	@SqlUpdate("delete from subscrDelivery where id = :id")
@@ -33,40 +34,42 @@ public interface SubscrDAO {
 	@SqlUpdate("delete from subscrIntervalDelivery where id = :id")
 	void deleteIntervalDelivery(@Bind("id") long delId);
 
-	@SqlUpdate("delete from tempInvoices where num = :invNumber ")
-	void deleteTempInvoice(@Bind("invNumber") String invNumber);
+//	@SqlUpdate("delete from tempInvoices where num = :invNumber ")
+//	void deleteTempInvoice(@Bind("invNumber") String invNumber);
 
 	@Mapper(SubscrArticleMapper.class)
 	@SqlQuery("select * from subscrArticle where productId = :prodid order by id asc")
+	@Deprecated
 	List<SubscrArticle> getArticlesOfProduct(@Bind("prodid") long prodid);
 
 	@Mapper(SubscrIntervalMapper.class)
 	@SqlQuery("select * from subscrInterval where productId = :prodid order by id asc")
-	List<SubscrInterval> getIntervalsOfProduct(@Bind("prodid") long prodid);
+	@Deprecated
+	List<SubscrInterval> getIntervalsOfProduct(SubscrProduct prodid);
 
 	@Mapper(SubscrDeliveryMapper.class)
 	@SqlQuery("select * from subscrDelivery where deliveryDate = :dd")
-	List<SubscrDelivery> getDeliveries(@Bind("dd") LocalDate now);
+	List<SubscrDelivery> getDeliveries(@Bind("dd") Date now);
 
 	@Mapper(SubscrDeliveryMapper.class)
 	@SqlQuery("select * from subscrDelivery where subscriptionId = :subid")
-	List<SubscrDelivery> getDeliveriesForSubscription(@Bind("subid") long id);
+	List<SubscrDelivery> getDeliveriesForSubscription(Subscription id);
 
 	@Mapper(SubscrIntervalDeliveryMapper.class)
 	@SqlQuery("select * from subscrIntervalDelivery where subscriptionId = :subid")
-	List<SubscrIntervalDelivery> getIntervalDeliveriesForSubscription(@Bind("subid") long id);
+	List<SubscrIntervalDelivery> getIntervalDeliveriesForSubscription(Subscription id);
 
 	@Mapper(SubscrDeliveryMapper.class)
 	@SqlQuery("select * from subscrDelivery where subscriptionId = :subid and deliveryDate between :from and :till")
-	List<SubscrDelivery> getDeliveriesForSubscription(@Bind("subid") long id, @Bind("from") LocalDate from,	@Bind("till")LocalDate till);
+	List<SubscrDelivery> getDeliveriesForSubscription(Subscription id, @Bind("from") LocalDate from,	@Bind("till")LocalDate till);
 
 	@Mapper(SubscrIntervalDeliveryMapper.class)
 	@SqlQuery("select * from subscrIntervalDelivery where subscriptionId = :subid and startDate between :from and :till")
-	List<SubscrIntervalDelivery> getIntervalDeliveriesForSubscription(@Bind("subid") long id, @Bind("from") LocalDate from,	@Bind("till")LocalDate till);
+	List<SubscrIntervalDelivery> getIntervalDeliveriesForSubscription(Subscription id, @Bind("from") LocalDate from,	@Bind("till")LocalDate till);
 
 	@Mapper(SubscrIntervalDeliveryMapper.class)
 	@SqlQuery("select * from subscrIntervalDelivery where subscriptionId = :subid and payed = :py")
-	List<SubscrIntervalDelivery> getIntervalDeliveriesForSubscriptionPayflag(@Bind("subid") long id, @Bind("py") boolean payed);
+	List<SubscrIntervalDelivery> getIntervalDeliveriesForSubscriptionPayflag(Subscription id, @Bind("py") boolean payed);
 
 	@Mapper(SubscrIntervalDeliveryMapper.class)
 	@SqlQuery("select * from subscrIntervalDelivery where payed = false")
@@ -74,15 +77,15 @@ public interface SubscrDAO {
 
 	@Mapper(SubscrDeliveryMapper.class)
 	@SqlQuery("select * from subscrDelivery where subscriptionId = :subid and payed = :py")
-	List<SubscrDelivery> getDeliveriesForSubscriptionPayflag(@Bind("subid") long id, @Bind("py") boolean payed);
+	List<SubscrDelivery> getDeliveriesForSubscriptionPayflag(Subscription id, @Bind("py") boolean payed);
 
 	@Mapper(SubscrDeliveryMapper.class)
 	@SqlQuery("select * from subscrDelivery where subscriptionId = :subid and slipped = :sl")
-	List<SubscrDelivery> getDeliveriesForSubscriptionSlipflag(@Bind("subid") long id, @Bind("sl") boolean slipped);
+	List<SubscrDelivery> getDeliveriesForSubscriptionSlipflag(Subscription id, @Bind("sl") boolean slipped);
 
 	@Mapper(SubscrDeliveryMapper.class)
 	@SqlQuery("select * from subscrDelivery where subscriberId = :subid and deliveryDate = :dd and slipped = :sl")
-	List<SubscrDelivery> getDeliveriesForSubscriberSlipflag(@Bind("subid") long id, @Bind("dd") LocalDate now, @Bind("sl") boolean slipped);
+	List<SubscrDelivery> getDeliveriesForSubscriberSlipflag(Subscriber id, @Bind("dd") Date now, @Bind("sl") boolean slipped);
 
 	@Mapper(SubscrDeliveryMapper.class)
 	@SqlQuery("select * from subscrDelivery where payed = :py")
@@ -93,10 +96,10 @@ public interface SubscrDAO {
 	List<SubscrDelivery> getDeliveriesSlipflag(@Bind("sl") boolean slipped);
 
 	@SqlQuery("select invoiceNumber from subscrDelivery where subscriptionId = :subid and invoiceNumber is not null")
-	Collection<String> getInvoiceNumsForSubscription(@Bind("subid") long id);
+	List<PosInvoice> getInvoicesForDetails(Subscription id);
 
 	@SqlQuery("select invoiceNumber from subscrIntervalDelivery where subscriptionId = :subid and invoiceNumber is not null")
-	Collection<String> getInvoiceNumsForSubscriptionIntervals(@Bind("subid") long id);
+	List<PosInvoice> getInvoicesForIntervalDetails(Subscription id);
 
 	@Mapper(PosInvoiceMapper.class)
 	@SqlQuery("select * from posInvoice where pointid = :pointid and invDate > :date order by number asc")
@@ -106,21 +109,25 @@ public interface SubscrDAO {
 	@SqlQuery("select * from posInvoice where debitor = :debitorId order by number desc")
 	List<PosInvoice> getSubscriberInvoices(@Bind("debitorId") int debId);
 
+	@Mapper(PosIssueSlipMapper.class)
+	@SqlQuery("select * from posIssueSlip where debitor = :debitorId order by number desc")
+	List<PosIssueSlip> getSubscriberIssueSlips(@Bind("debitorId") int debId);
+
 	@Mapper(SubscrDeliveryMapper.class)
 	@SqlQuery("select * from subscrDelivery where subscriptionId = :subid and deliveryDate = (select max(deliveryDate) from subscrDelivery where subscriptionId = :subid)")
-	SubscrDelivery getLastDeliveryForSubscription(@Bind("subid") long id);
+	SubscrDelivery getLastDeliveryForSubscription(Subscription id);
 
 	@Mapper(SubscrIntervalDeliveryMapper.class)
 	@SqlQuery("select * from subscrIntervalDelivery where id = (select max(id) from subscrIntervalDelivery where subscriptionId = :subid)")
-	SubscrIntervalDelivery getLastIntervalDeliveryForSubscription(@Bind("subid") long id);
+	SubscrIntervalDelivery getLastIntervalDeliveryForSubscription(Subscription id);
 
 	@Mapper(SubscrArticleMapper.class)
 	@SqlQuery("select * from subscrArticle where id = (select max(id) from subscrArticle where productId = :subid)")
-	SubscrArticle getNewestArticleOfProduct(@Bind("subid") long prodid);
+	SubscrArticle getNewestArticleOfProduct(SubscrProduct prodid);
 
 	@Mapper(SubscrIntervalMapper.class)
 	@SqlQuery("select * from subscrInterval where id = (select max(id) from subscrInterval where productId = :subid)")
-	SubscrInterval getNewestIntervalOfProduct(@Bind("subid") long prodid);
+	SubscrInterval getNewestIntervalOfProduct(SubscrProduct prodid);
 
 	@Mapper(SubscrProductMapper.class)
 	@SqlQuery("select * from subscrProduct where nextDelivery between :from and :till order by name")
@@ -164,10 +171,12 @@ public interface SubscrDAO {
 
 	@Mapper(SubscriptionMapper.class)
 	@SqlQuery("select * from subscription where productId = :id ")
+	@Deprecated
 	List<Subscription> getSubscriptionsForProduct(@Bind("id") long productId);
 
 	@Mapper(SubscriptionMapper.class)
 	@SqlQuery("select * from subscription where subscriberId = :id ")
+	@Deprecated
 	List<Subscription> getSubscriptionsForSubscriber(@Bind("id") long id);
 
 	@Mapper(SubscriptionMapper.class)
@@ -182,13 +191,13 @@ public interface SubscrDAO {
 	@SqlQuery("select * from subscrProduct order by name")
 	List<SubscrProduct> getSubscrProducts();
 
-	@Mapper(TempInvoiceMapper.class)
-	@SqlQuery("select * from tempInvoices ")
-	List<PosInvoice> getTempInvoices();
-
-	@Mapper(TempInvoiceMapper.class)
-	@SqlQuery("select * from tempInvoices where num = :invNum ")
-	PosInvoice getTempInvoice(@Bind("invNum") String invNUm);
+//	@Mapper(TempInvoiceMapper.class)
+//	@SqlQuery("select * from tempInvoices ")
+//	List<PosInvoice> getTempInvoices();
+//
+//	@Mapper(TempInvoiceMapper.class)
+//	@SqlQuery("select * from tempInvoices where num = :invNum ")
+//	PosInvoice getTempInvoice(@Bind("invNum") String invNUm);
 
 	@GetGeneratedKeys
 	@SqlUpdate("insert into subscrArticle (complJson, productId, erschTag) " +
@@ -223,9 +232,9 @@ public interface SubscrDAO {
 		    " values (:complJson, :startDate, :endDate, :nextDelivery, :name)")
 	long insertSubscrProduct(@BindBean SubscrProduct p);
 	
-	@SqlUpdate("insert into tempInvoices (complJson, num) " +
-		    " values (:complJson, :number)")
-	void insertTempInvoice(@BindBean PosInvoice ti); // should be moved to PosInvoiceDAO
+//	@SqlUpdate("insert into tempInvoices (complJson, num) " +
+//		    " values (:complJson, :number)")
+//	void insertTempInvoice(@BindBean PosInvoice ti); // should be moved to PosInvoiceDAO
 
 	@Mapper(SubscriberMapper.class)
 	@SqlQuery("select * from subscriber where name1 like :q or name2 like :q or to_char(customerId) like :q order by name1")
@@ -236,22 +245,22 @@ public interface SubscrDAO {
 	List<SubscrProduct> querySubscrProducts(@Bind("q") String query);
 
 	@SqlBatch("update subscrDelivery set invoiceNumber = :invNum, payed = true where id = :id")
-	void recordDetailsOnInvoice(@Bind("id") List<Long> deliveryIds, @Bind("invNum") String invNumber);
+	void recordDetailsOnInvoice(@Bind("id") Set<SubscrDelivery> deliveryIds, @Bind("invNum") String invNumber);
 
 	@SqlBatch("update subscrDelivery set invoiceNumber = null, payed = false where id = :id")
-	void resetDetailsOfInvoice(@Bind("id") List<Long> deliveryIds);
+	void resetDetailsOfInvoice(@Bind("id") Set<SubscrDelivery> deliveryIds);
 
 	@SqlBatch("update subscrDelivery set slipNumber = :invNum, slipped = true where id = :id")
-	void recordDetailsOnSlip(@Bind("id") List<Long> deliveryIds, @Bind("invNum") String invNumber);
+	void recordDetailsOnSlip(@Bind("id") Set<SubscrDelivery> deliveryIds, @Bind("invNum") String invNumber);
 
 	@SqlBatch("update subscrDelivery set slipNumber = null, slipped = false where id = :id")
-	void resetDetailsOfSlip(@Bind("id") List<Long> deliveryIds);
+	void resetDetailsOfSlip(@Bind("id") Set<SubscrDelivery> deliveryIds);
 
 	@SqlBatch("update subscrIntervalDelivery set invoiceNumber = :invNum, payed = true where id = :id")
-	void recordIntervalDetailsOnInvoice(@Bind("id") List<Long> deliveryIds, @Bind("invNum") String invNumber);
+	void recordIntervalDetailsOnInvoice(@Bind("id") Set<SubscrIntervalDelivery> deliveryIds, @Bind("invNum") String invNumber);
 
 	@SqlBatch("update subscrIntervalDelivery set invoiceNumber = null, payed = false where id = :id")
-	void resetIntervalDetailsOfInvoice(@Bind("id") List<Long> deliveryIds);
+	void resetIntervalDetailsOfInvoice(@Bind("id") Set<SubscrIntervalDelivery> deliveryIds);
 
 	@SqlUpdate("update subscrArticle set (complJson, productId, erschTag) " +
 		    " = (:complJson, :productId, :erschTag) where id = :id")
@@ -288,7 +297,7 @@ public interface SubscrDAO {
 
 	@Mapper(PosIssueSlipMapper.class)
 	@SqlQuery("select * from posissueslip where debitor = :debId and payed = 0 order by number asc")
-	List<PosIssueSlip> findIssueSlipsToAdd(@Bind("debId") long id);
+	List<PosIssueSlip> findIssueSlipsToAdd(@Bind("debId") int id);
 
 	@Mapper(PosIssueSlipMapper.class)
 	@SqlQuery("select * from posissueslip where id = :num")
@@ -297,6 +306,8 @@ public interface SubscrDAO {
 	@SqlUpdate("update posissueslip set (customer, debitor, invDate, complJson, name1, name2, name3,  street, city, payed) " +
 	" = (:customerId, :debitorId, :date, :complJson,  :name1, :name2, :name3, :street, :city, :payed )  where id = :id")
 	void updateIssueSlip(@Valid @BindBean PosIssueSlip inv);
+
+	void createInvoice(PosInvoice inv);
 
 
 }

@@ -1,34 +1,33 @@
 package net.buchlese.bofc.api.subscr;
 
-import io.dropwizard.jackson.Jackson;
 
+import java.time.format.DateTimeFormatter;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
-
-import org.joda.time.LocalDate;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Entity
 @Table( name = "subscrarticle" )
 public class SubscrArticle implements Comparable<SubscrArticle> {
+	@GeneratedValue(strategy=GenerationType.AUTO)
 	@Id
 	@JsonProperty
-	private long id;
+	private Long id;
 
 	@JsonProperty
 	private String name;
-
-	@JsonProperty
-	private long productId;
 
 	@JsonProperty
 	private String isbn;
@@ -42,21 +41,20 @@ public class SubscrArticle implements Comparable<SubscrArticle> {
 	private double halfPercentage =1d; // prozentuale Anteil am Gesamtpreis , halber Steuersatz, 0 < x < 1
 	
 	@JsonProperty
-	private LocalDate erschTag;
+	private java.sql.Date erschTag;
 	
 	@JsonProperty
 	private int issueNo =1;
 
 	@JsonIgnore
 	@ManyToOne
+	@JoinColumn(name = "product_id")
 	private SubscrProduct product;
 
-	// sich selber als json-object ausgeben
 	@JsonIgnore
-	public String getComplJson() throws JsonProcessingException {
-		ObjectMapper om = Jackson.newObjectMapper();
-		return om.writeValueAsString(this);
-	}
+	@OneToMany(mappedBy="article")
+	private Set<SubscrDelivery> deliveries;
+
 
 	@JsonIgnore
 	public String initializeName(String namePattern) {
@@ -67,7 +65,7 @@ public class SubscrArticle implements Comparable<SubscrArticle> {
 		Matcher m = p.matcher(name);
 		if (m.find() && erschTag != null) {
 			String datePattern = m.group(1);
-			String dateString = erschTag.toString(datePattern);
+			String dateString = erschTag.toLocalDate().format(DateTimeFormatter.ofPattern(datePattern));
 			name = name.replaceFirst(dp, dateString);
 		}
 		return name;
@@ -102,11 +100,11 @@ public class SubscrArticle implements Comparable<SubscrArticle> {
 	}
 
 
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
@@ -164,22 +162,6 @@ public class SubscrArticle implements Comparable<SubscrArticle> {
 		return getErschTag().compareTo(o.getErschTag());
 	}
 
-	public long getProductId() {
-		return productId;
-	}
-
-	public void setProductId(long productId) {
-		this.productId = productId;
-	}
-
-	public LocalDate getErschTag() {
-		return erschTag;
-	}
-
-	public void setErschTag(LocalDate erschTag) {
-		this.erschTag = erschTag;
-	}
-
 	public int getIssueNo() {
 		return issueNo;
 	}
@@ -188,11 +170,19 @@ public class SubscrArticle implements Comparable<SubscrArticle> {
 		this.issueNo = issueNo;
 	}
 
+	public SubscrProduct getProduct() {
+		return product;
+	}
+
+	public void setProduct(SubscrProduct subscrProduct) {
+		this.product = subscrProduct;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + (int) (id ^ (id >>> 32));
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		return result;
 	}
 
@@ -205,10 +195,21 @@ public class SubscrArticle implements Comparable<SubscrArticle> {
 		if (getClass() != obj.getClass())
 			return false;
 		SubscrArticle other = (SubscrArticle) obj;
-		if (id != other.id)
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
 			return false;
 		return true;
 	}
 
-	
+	public java.sql.Date getErschTag() {
+		return erschTag;
+	}
+
+	public void setErschTag(java.sql.Date erschTag) {
+		this.erschTag = erschTag;
+	}
+
+
 }

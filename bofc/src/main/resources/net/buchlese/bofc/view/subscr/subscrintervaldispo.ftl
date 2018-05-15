@@ -14,15 +14,15 @@
   <div class="panel panel-info">
     <div class="panel-heading">weiterzuberechnendes Intervall <span id="artid">${art.id?c}</span>
     <#if showArticlePlusEins>
-    <a id="articlepluseins" class="btn btn-primary" href="#subscrintervalcreate/${art.productId?c}">Interval +1</a>
+    <a id="articlepluseins" class="btn btn-primary" href="#subscrintervalcreate/${art.product.id?c}">Interval +1</a>
     </#if>
     </div>
     <div class="panel-body">
     <dl class="dl-horizontal">
       <dt>Name</dt><dd><a href="#" id="artname" class="editable" data-type="text"  data-name="interval.name"  data-title="Intervallbezeichnung">${art.name}</a></dd>
       <dt>Type</dt><dd><a href="#" id="paytype"></a></dd>
-      <dt>Startdatum</dt><dd><a href="#" id="artstart" class="namechangerfield" data-type="date" data-format="dd.mm.yyyy" data-name="interval.startDate"  data-title="Anfang" >${art.startDate.toString("dd.MM.yyyy")}</a></dd>
-      <dt>Enddatum</dt><dd><a href="#" id="artend" class="namechangerfield" data-type="date" data-format="dd.mm.yyyy" data-name="interval.endDate"  data-title="Ende" >${art.endDate.toString("dd.MM.yyyy")}</a></dd>
+      <dt>Startdatum</dt><dd><a href="#" id="artstart" class="namechangerfield" data-type="date" data-format="dd.mm.yyyy" data-name="interval.startDate"  data-title="Anfang" >${art.startDate}</a></dd>
+      <dt>Enddatum</dt><dd><a href="#" id="artend" class="namechangerfield" data-type="date" data-format="dd.mm.yyyy" data-name="interval.endDate"  data-title="Ende" >${art.endDate}</a></dd>
     </dl>
     </div>
     <div class="panel-footer">
@@ -69,14 +69,14 @@
 <#list subscriptions as sub>
 		<tr>
 			<td>${sub.id?c} <a href="#subscription/${sub.id?c}" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span></a></td>
-			<td>${kunde(sub)} ${sub.deliveryInfo1!""}, ${sub.deliveryInfo2!""} <a href="#subscriber/${sub.subscriberId?c}" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span></a></td>
+			<td>${kunde(sub)} ${sub.deliveryInfo1!""}, ${sub.deliveryInfo2!""} <a href="#subscriber/${sub.subscriber.id?c}" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span></a></td>
 			<td>${sub.quantity}</td>
 			<td></td>
 			<td>${sub.shipmentType.text}</td>
 			<td>${sub.paymentType.text}</td>
 			<td>
 			<#if sub.paymentType != 'EACHDELIVERY' >
-			<#assign deli = delivery(sub, art)!"hh" >
+			<#assign deli = delivery(sub)!"hh" >
 			<#if deli != "hh" >
    	  	  	   <a href="#subscrIntervalDelivery/${deli.id?c}" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span></a>
 			<#else>

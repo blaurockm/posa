@@ -14,7 +14,7 @@ ${d.articleName!}
 am 
 </div>
 <div class="col-md-5">
-${d.deliveryDate.toString("dd.MM.yyyy")}
+${d.deliveryDate}
 </div>
 </div>
 
@@ -23,7 +23,7 @@ ${d.deliveryDate.toString("dd.MM.yyyy")}
 an
 </div>
 <div class="col-md-5">
-${kunde(d)}
+${kunde(d)!}
 </div>
 </div>
 

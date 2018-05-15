@@ -1,40 +1,41 @@
 package net.buchlese.bofc.api.subscr;
 
-import io.dropwizard.jackson.Jackson;
+import java.sql.Date;
+import java.util.Set;
 
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.ForeignKey;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.PostLoad;
 import javax.persistence.Table;
-
-import org.joda.time.LocalDate;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Entity
 @Table( name = "subscription" )
 public class Subscription {
 	@Id
+	@GeneratedValue(strategy=GenerationType.AUTO)
 	@JsonProperty
-	private long id;
+	private Long id;
 	@JsonProperty
 	private int pointid;
 
 	@JsonProperty
-	private long subscriberId;
-	@JsonProperty
-	private long productId;
-	@JsonProperty
 	private int quantity;
 	@JsonProperty
-	private LocalDate startDate;
+	private Date startDate;
 	@JsonProperty
-	private LocalDate endDate;
+	private Date endDate;
 	@Embedded
 	@JsonProperty
 	private Address deliveryAddress;
@@ -47,15 +48,47 @@ public class Subscription {
 	@Enumerated(EnumType.STRING)
 	private ShipType shipmentType;
 
+	@ManyToOne
+	@JoinColumn(name = "subscriber_id")
+	private Subscriber subscriber;
+	
+	public Subscriber getSubscriber() {
+		return subscriber;
+	}
+	public void setSubscriber(Subscriber s) {
+		if (s != null) {
+			s.addSubscription(this);
+		} else {
+			if (this.subscriber != null) {
+			 this.subscriber.removeSubscription(this);
+			}
+		}
+		this.subscriber = s;
+	}
+
+	@ManyToOne
+	@JoinColumn(name = "product_id",
+	foreignKey = @ForeignKey(name = "PRODUCT_ID_FK23")
+)	private SubscrProduct product;
+
+	
+	@JsonIgnore
+	@OneToMany(mappedBy="subscription")
+	private Set<SubscrDelivery> articleDeliveries;
+
+	@JsonIgnore
+	@OneToMany(mappedBy="subscription")
+	private Set<SubscrIntervalDelivery> intervalDeliveries;
+
 	@JsonProperty
 	@Enumerated(EnumType.STRING)
 	private PayIntervalType paymentType;
 
 	@JsonProperty
-	private LocalDate payedUntil;
+	private Date payedUntil;
 
 	@JsonProperty
-	private LocalDate lastInvoiceDate;
+	private Date lastInvoiceDate;
 	
 	@JsonProperty
 	private boolean needsAttention;
@@ -63,27 +96,18 @@ public class Subscription {
 	@JsonProperty
 	private String memo;
 
-	// in verw we need this, not for transfer
-//	@ManyToOne
-//	@JoinColumn(name = "subscriber_id")
-//	private Subscriber subscriber;
-//
-//	@ManyToOne
-//	@JoinColumn(name = "product_id",
-//	foreignKey = @ForeignKey(name = "PRODUCT_ID_FK23")
-//)	private SubscrProduct product;
-
-	// sich selber als json-object ausgeben
-	@JsonIgnore
-	public String getComplJson() throws JsonProcessingException {
-		ObjectMapper om = Jackson.newObjectMapper();
-		return om.writeValueAsString(this);
+	@PostLoad
+	public void initDelivery() {
+//		if (getSubscriber()!= null) {
+//			setSubscriberId(getSubscriber().getId());
+//		}
+//		setProductId(product.getId());
 	}
 
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 	public int getPointid() {
@@ -92,35 +116,11 @@ public class Subscription {
 	public void setPointid(int pointid) {
 		this.pointid = pointid;
 	}
-	public long getSubscriberId() {
-		return subscriberId;
-	}
-	public void setSubscriberId(long subscriberId) {
-		this.subscriberId = subscriberId;
-	}
-	public long getProductId() {
-		return productId;
-	}
-	public void setProductId(long productId) {
-		this.productId = productId;
-	}
 	public int getQuantity() {
 		return quantity;
 	}
 	public void setQuantity(int quantity) {
 		this.quantity = quantity;
-	}
-	public LocalDate getStartDate() {
-		return startDate;
-	}
-	public void setStartDate(LocalDate startDate) {
-		this.startDate = startDate;
-	}
-	public LocalDate getEndDate() {
-		return endDate;
-	}
-	public void setEndDate(LocalDate endDate) {
-		this.endDate = endDate;
 	}
 	public Address getDeliveryAddress() {
 		return deliveryAddress;
@@ -152,16 +152,16 @@ public class Subscription {
 	public void setPaymentType(PayIntervalType paymentType) {
 		this.paymentType = paymentType;
 	}
-	public LocalDate getPayedUntil() {
+	public Date getPayedUntil() {
 		return payedUntil;
 	}
-	public void setPayedUntil(LocalDate payedUntil) {
+	public void setPayedUntil(Date payedUntil) {
 		this.payedUntil = payedUntil;
 	}
-	public LocalDate getLastInvoiceDate() {
+	public Date getLastInvoiceDate() {
 		return lastInvoiceDate;
 	}
-	public void setLastInvoiceDate(LocalDate lastInvoiceDate) {
+	public void setLastInvoiceDate(Date lastInvoiceDate) {
 		this.lastInvoiceDate = lastInvoiceDate;
 	}
 
@@ -180,15 +180,31 @@ public class Subscription {
 	public void setMemo(String memo) {
 		this.memo = memo;
 	}
-
+	public SubscrProduct getProduct() {
+		return product;
+	}
+	public void setProduct(SubscrProduct subscrProduct) {
+		this.product = subscrProduct;
+	}
+	public Set<SubscrDelivery> getArticleDeliveries() {
+		return articleDeliveries;
+	}
+	public void setArticleDeliveries(Set<SubscrDelivery> articleDeliveries) {
+		this.articleDeliveries = articleDeliveries;
+	}
+	public Set<SubscrIntervalDelivery> getIntervalDeliveries() {
+		return intervalDeliveries;
+	}
+	public void setIntervalDeliveries(Set<SubscrIntervalDelivery> intervalDeliveries) {
+		this.intervalDeliveries = intervalDeliveries;
+	}
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + (int) (id ^ (id >>> 32));
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		return result;
 	}
-
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -198,9 +214,24 @@ public class Subscription {
 		if (getClass() != obj.getClass())
 			return false;
 		Subscription other = (Subscription) obj;
-		if (id != other.id)
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
 			return false;
 		return true;
+	}
+	public Date getStartDate() {
+		return startDate;
+	}
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
+	}
+	public Date getEndDate() {
+		return endDate;
+	}
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
 	}
 	
 }

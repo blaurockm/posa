@@ -1,15 +1,13 @@
 package net.buchlese.bofc.resources.helper;
 
-import java.util.List;
-
 import net.buchlese.bofc.api.bofc.PosIssueSlip;
-import net.buchlese.bofc.jdbi.bofc.PosInvoiceDAO;
+import net.buchlese.bofc.jpa.JpaPosIssueSlipDAO;
 
 public class IssueSlipUpdateHelper {
 
-	private final PosInvoiceDAO dao;
+	private final JpaPosIssueSlipDAO dao;
 
-	public IssueSlipUpdateHelper(PosInvoiceDAO dao) {
+	public IssueSlipUpdateHelper(JpaPosIssueSlipDAO dao) {
 		super();
 		this.dao = dao;
 	}
@@ -20,17 +18,16 @@ public class IssueSlipUpdateHelper {
 		if (fieldname.contains(".")) {
 			field = fieldname.substring(fieldname.indexOf(".")+1);
 		}
-		List<PosIssueSlip> arts = dao.fetchIssueSlip(pk);
-		if (arts.isEmpty()) {
+		PosIssueSlip art = dao.findById(Long.valueOf(pk));
+		if (art == null) {
 			return res;
 		}
-		PosIssueSlip art = arts.get(0);
 		if ("includeOnInvoice".equals(field)) {
 			art.setIncludeOnInvoice(Boolean.valueOf(value));
 			res.success = true;
 		}
 		if (res.success) {
-			dao.updateIssueSlip(art);
+			dao.update(art);
 		}
 		return res;
 	}

@@ -1,16 +1,16 @@
 package net.buchlese.bofc.jpa;
 
-import io.dropwizard.hibernate.AbstractDAO;
-
 import java.util.List;
 
 import javax.inject.Inject;
 
-import net.buchlese.bofc.api.subscr.Subscriber;
-
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+
+import io.dropwizard.hibernate.AbstractDAO;
+import net.buchlese.bofc.api.subscr.Subscriber;
 
 public class JpaSubscriberDAO extends AbstractDAO<Subscriber> {
 
@@ -23,8 +23,8 @@ public class JpaSubscriberDAO extends AbstractDAO<Subscriber> {
         return get(id);
     }
 
-    public void create(Subscriber person) {
-        currentSession().save(person);
+    public Long create(Subscriber person) {
+        return (Long) currentSession().save(person);
     }
 
     public void update(Subscriber person) {
@@ -36,4 +36,15 @@ public class JpaSubscriberDAO extends AbstractDAO<Subscriber> {
 		return list(c);
 	}
 
+	public List<Subscriber> findAll() {
+		Criteria c = criteria();
+		return list(c);
+	}
+
+//	@SqlQuery("select * from subscriber where name1 like :q or name2 like :q or to_char(customerId) like :q order by name1")
+	public List<Subscriber> querySubscribers(String query) {
+		Criteria c = criteria().add(Restrictions.like("name1", query)).addOrder(Order.asc("name1"));
+		return list(c);
+	}
+	
 }

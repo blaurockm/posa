@@ -29,12 +29,9 @@ public class SubscrProductsView extends AbstractBofcView {
 	}
 
 	public String kunde(SubscrDelivery d) {
-		if (d.getSubscriberId() > 0) {
-			Subscriber x = dao.getSubscriber(d.getSubscriberId());
-			if (x != null) {
-				return x.getName();
-			}
-			return "not found " + d.getSubscriberId();
+		Subscriber x = d.getSubscriber();
+		if (x != null) {
+			return x.getName();
 		}
 		return "keine subId";
 	}

@@ -2,37 +2,36 @@ package net.buchlese.bofc.view.subscr;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import net.buchlese.bofc.api.bofc.PosInvoice;
 import net.buchlese.bofc.api.subscr.SubscrArticle;
 import net.buchlese.bofc.api.subscr.SubscrDelivery;
 import net.buchlese.bofc.api.subscr.SubscrInterval;
 import net.buchlese.bofc.api.subscr.SubscrProduct;
-import net.buchlese.bofc.api.subscr.Subscriber;
 import net.buchlese.bofc.api.subscr.Subscription;
 import net.buchlese.bofc.jdbi.bofc.SubscrDAO;
 import net.buchlese.bofc.view.AbstractBofcView;
 
-import org.joda.time.LocalDate;
-
 public class SubscrProductDetailView extends AbstractBofcView{
 
 	private final SubscrProduct p;
-	private final List<Subscription> subscriptions;
-	private final List<SubscrArticle> articles;
-	private final List<SubscrInterval> intervals;
+	private final Set<Subscription> subscriptions;
+	private final Set<SubscrArticle> articles;
+	private final Set<SubscrInterval> intervals;
 	private final SubscrArticle lastArticle;
 	private final SubscrInterval lastInterval;
 	private final SubscrDAO dao;
 	
-	public SubscrProductDetailView(SubscrDAO dao, SubscrProduct p, List<Subscription> subs) {
+	public SubscrProductDetailView(SubscrDAO dao, SubscrProduct p) {
 		super("productdetail.ftl");
 		this.dao = dao;
-		this.subscriptions = subs;
-		this.articles = dao.getArticlesOfProduct(p.getId());
-		this.intervals = dao.getIntervalsOfProduct(p.getId());
-		this.lastArticle = articles.isEmpty() ? null : articles.get(articles.size()-1);
-		this.lastInterval = intervals.isEmpty() ? null : intervals.get(intervals.size()-1);
+		this.subscriptions = p.getSubscriptions();
+		this.subscriptions.forEach(s -> s.getDeliveryInfo1());
+		this.articles = p.getArticles();
+		this.intervals = p.getIntervals(); 
+		this.lastArticle = articles.isEmpty() ? null : articles.iterator().next();
+		this.lastInterval = intervals.isEmpty() ? null : intervals.iterator().next();
 		this.p = p;
 	}
 
@@ -49,46 +48,28 @@ public class SubscrProductDetailView extends AbstractBofcView{
 		return lastInterval;
 	}
 
-	public List<Subscription> getSubscriptions() {
+	public Set<Subscription> getSubscriptions() {
 		return subscriptions;
 	}
 
-	public List<SubscrArticle> getArticles() {
+	public Set<SubscrArticle> getArticles() {
 		return articles;
 	}
 	
-	public List<SubscrInterval> getIntervals() {
+	public Set<SubscrInterval> getIntervals() {
 		return intervals;
 	}
 	
 	public List<SubscrDelivery> deliveries(Subscription s) {
-		return dao.getDeliveriesForSubscription(s.getId());
+		return dao.getDeliveriesForSubscription(s);
 	}
 
 	public List<PosInvoice> invoices() {
 		return Collections.emptyList();
 	}
 
-	public boolean willBeSettled(Subscription s) {
-		switch (s.getPaymentType()) {
-		case EACHDELIVERY : return hasUnpayedDeliveries(s);
-			default : return s.getPayedUntil() == null || s.getPayedUntil().isBefore(LocalDate.now());
-		}
-	}
-
-	private boolean hasUnpayedDeliveries(Subscription s) {
-		return dao.getDeliveriesForSubscriptionPayflag(s.getId(), false).isEmpty() == false;
-	}
-
 	public String kunde(Subscription s) {
-		if (s.getSubscriberId() > 0) {
-			Subscriber x = dao.getSubscriber(s.getSubscriberId());
-			if (x != null) {
-				return x.getName();
-			}
-			return "not found " + s.getSubscriberId();
-		}
-		return "keine subId";
+		return s.getSubscriber().getName();
 	}
 
 

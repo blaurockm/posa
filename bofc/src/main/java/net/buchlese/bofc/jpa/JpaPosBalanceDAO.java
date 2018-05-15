@@ -1,16 +1,15 @@
 package net.buchlese.bofc.jpa;
 
-import io.dropwizard.hibernate.AbstractDAO;
-
 import java.util.List;
 
 import javax.inject.Inject;
 
-import net.buchlese.bofc.api.bofc.PosCashBalance;
-
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
+
+import io.dropwizard.hibernate.AbstractDAO;
+import net.buchlese.bofc.api.bofc.PosCashBalance;
 
 public class JpaPosBalanceDAO extends AbstractDAO<PosCashBalance> {
 

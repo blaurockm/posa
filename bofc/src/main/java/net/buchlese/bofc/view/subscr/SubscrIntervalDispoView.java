@@ -1,33 +1,37 @@
 package net.buchlese.bofc.view.subscr;
 
-import java.util.List;
+import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import net.buchlese.bofc.api.subscr.SubscrInterval;
 import net.buchlese.bofc.api.subscr.SubscrIntervalDelivery;
 import net.buchlese.bofc.api.subscr.SubscrProduct;
-import net.buchlese.bofc.api.subscr.Subscriber;
 import net.buchlese.bofc.api.subscr.Subscription;
 import net.buchlese.bofc.jdbi.bofc.SubscrDAO;
 import net.buchlese.bofc.view.AbstractBofcView;
 
-import org.joda.time.LocalDate;
-
 public class SubscrIntervalDispoView extends AbstractBofcView{
 
 	private final SubscrProduct p;
-	private final List<Subscription> subscriptions;
-	private final SubscrDAO dao;
-	private final SubscrInterval article;
+	private final Set<Subscription> subscriptions;
+	private final SubscrInterval interval;
 	private final LocalDate dispoDate;
+	private final Map<Subscription, SubscrIntervalDelivery> deliveries;
 
 
 	public SubscrIntervalDispoView(SubscrDAO dao, SubscrProduct p, SubscrInterval art, LocalDate dispoDate) {
 		super("subscrintervaldispo.ftl");
-		this.dao = dao;
 		this.p = p;
-		this.subscriptions = dao.getSubscriptionsForProduct(p.getId());
-		this.article = art;
+		this.subscriptions = p.getSubscriptions();
+		this.interval = art;
 		this.dispoDate = dispoDate;
+		deliveries = new HashMap<>();
+		for (Subscription sub : subscriptions) {
+			deliveries.put(sub, dao.getIntervalDeliveriesForSubscription(sub).stream().filter(d -> d.getInterval().getId() == interval.getId()).findFirst().orElse(null));
+		}
 	}
 
 	public LocalDate getDispoDate() {
@@ -39,33 +43,22 @@ public class SubscrIntervalDispoView extends AbstractBofcView{
 	}
 
 	public SubscrInterval getArt() {
-		return article;
+		return interval;
 	}
 
-	public List<Subscription> getSubscriptions() {
+	public Set<Subscription> getSubscriptions() {
 		return subscriptions;
 	}
 
-	public List<SubscrIntervalDelivery> deliveries(Subscription s) {
-		return dao.getIntervalDeliveriesForSubscriptionPayflag(s.getId(), false);
-	}
-
-	public SubscrIntervalDelivery delivery(Subscription sub, SubscrInterval art) {
-		return dao.getIntervalDeliveriesForSubscription(sub.getId()).stream().filter(d -> d.getIntervalId() == art.getId()).findFirst().orElse(null);
+	public SubscrIntervalDelivery delivery(Subscription sub) {
+		return  deliveries.get(sub);
 	}
 	
 	public String kunde(Subscription s) {
-		if (s.getSubscriberId() > 0) {
-			Subscriber x = dao.getSubscriber(s.getSubscriberId());
-			if (x != null) {
-				return x.getName();
-			}
-			return "not found " + s.getSubscriberId();
-		}
-		return "keine subId";
+		return s.getSubscriber().getName();
 	}
 
 	public boolean isShowArticlePlusEins() {
-		return article.getEndDate().isAfter(dispoDate) == false;
+		return interval.getEndDate().getTime() > System.currentTimeMillis() - TimeUnit.DAYS.toMillis(30);
 	}
 }

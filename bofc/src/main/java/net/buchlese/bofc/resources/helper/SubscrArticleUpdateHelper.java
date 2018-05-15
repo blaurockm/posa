@@ -2,11 +2,9 @@ package net.buchlese.bofc.resources.helper;
 
 import net.buchlese.bofc.api.subscr.SubscrArticle;
 import net.buchlese.bofc.api.subscr.SubscrProduct;
+import net.buchlese.bofc.core.DateUtils;
 import net.buchlese.bofc.jdbi.bofc.SubscrDAO;
 import net.buchlese.bofc.jpa.JpaSubscrArticleDAO;
-
-import org.joda.time.LocalDate;
-import org.joda.time.format.DateTimeFormat;
 
 public class SubscrArticleUpdateHelper {
 
@@ -53,8 +51,8 @@ public class SubscrArticleUpdateHelper {
 			res.success = true;
 		}
 		if ("erschTag".equals(field)) {
-			art.setErschTag(LocalDate.parse(value, DateTimeFormat.forPattern("dd.MM.yyyy") ));
-			SubscrProduct p = dao.getSubscrProduct(art.getProductId());
+			art.setErschTag(DateUtils.parse(value ));
+			SubscrProduct p = art.getProduct();
 			art.setName(art.initializeName(p.getNamePattern()));
 			res.name = art.getName();
 			res.success = true;
@@ -62,7 +60,7 @@ public class SubscrArticleUpdateHelper {
 		if ("issueNo".equals(field)) {
 			int count = Integer.parseInt(value);
 			art.setIssueNo(count);
-			SubscrProduct p = dao.getSubscrProduct(art.getProductId());
+			SubscrProduct p = art.getProduct();
 			p.setCount(count);
 			art.setName(art.initializeName(p.getNamePattern()));
 			dao.updateSubscrProduct(p);

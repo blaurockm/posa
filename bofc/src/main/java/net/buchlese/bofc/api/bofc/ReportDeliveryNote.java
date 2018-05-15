@@ -1,10 +1,10 @@
 package net.buchlese.bofc.api.bofc;
 
+import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
-
-import org.joda.time.LocalDate;
 
 import net.buchlese.bofc.api.subscr.Address;
 
@@ -17,7 +17,7 @@ public class ReportDeliveryNote {
 	public Address deliveryAddress;
 	
 	@JsonProperty
-	public LocalDate deliveryDate;
+	public Date deliveryDate;
 	
 	@JsonProperty
 	public long delivNum;
@@ -29,7 +29,7 @@ public class ReportDeliveryNote {
 	public List<ReportDeliveryNoteDetail> details;
 
 	@JsonProperty
-	public LocalDate creationTime;
+	public Timestamp creationTime;
 
 	@JsonProperty
 	public int pointId;

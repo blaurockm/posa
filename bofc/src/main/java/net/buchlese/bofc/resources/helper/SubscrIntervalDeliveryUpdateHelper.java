@@ -25,7 +25,7 @@ public class SubscrIntervalDeliveryUpdateHelper {
 		long id = Long.parseLong(pk);
 		SubscrIntervalDelivery art = dao.getSubscrIntervalDelivery(id);
 		if ("total".equals(field)) {
-			SubscrInterval artH = dao.getSubscrInterval(art.getIntervalId());
+			SubscrInterval artH = art.getInterval();
 			art.updateBrutto(Long.parseLong(value), artH.getHalfPercentage());
 			res.initializeMoneyFieldsFromArticle(art);
 			res.success = true;

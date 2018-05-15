@@ -12,9 +12,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @Table( name = "posinvoice_detail")
 public class PosInvoiceDetail {
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@GeneratedValue(strategy=GenerationType.AUTO)
 	@JsonProperty
 	private Long id;
+
 	@JsonProperty
 	private Long amount;     // Positionsbetrag gesamt
 	@JsonProperty
@@ -33,19 +34,23 @@ public class PosInvoiceDetail {
 	private boolean textonly;
 
 	@JsonProperty
-	private int quantity;
+	private Integer quantity;
 
 	@JsonProperty
-	private long rebate;  // rabatt mit bis zu 5 Nachkommastellen
+	private Integer articleId;
 
 	@JsonProperty
-	private long singlePrice; // einzelpreis, unrabattiert
+	private Long rebate;  // rabatt in prozent mit bis zu 5 Nachkommastellen
 
 	@JsonProperty
-	private long rebatePrice; // einzelpreis rabattiert
+	private Long singlePrice; // einzelpreis, unrabattiert
+
+	@JsonProperty
+	private Long rebatePrice; // einzelpreis rabattiert
 	
 	@JsonProperty
-	private boolean inclTax = true;
+	private Boolean inclTax = true;
+	
 
 	public Long getAmount() {
 		return amount;
@@ -95,35 +100,35 @@ public class PosInvoiceDetail {
 		this.textonly = textonly;
 	}
 
-	public int getQuantity() {
+	public Integer getQuantity() {
 		return quantity;
 	}
 
-	public void setQuantity(int quantity) {
+	public void setQuantity(Integer quantity) {
 		this.quantity = quantity;
 	}
 
-	public long getRebate() {
+	public Long getRebate() {
 		return rebate;
 	}
 
-	public void setRebate(long rebate) {
+	public void setRebate(Long rebate) {
 		this.rebate = rebate;
 	}
 
-	public long getSinglePrice() {
+	public Long getSinglePrice() {
 		return singlePrice;
 	}
 
-	public void setSinglePrice(long singlePrice) {
+	public void setSinglePrice(Long singlePrice) {
 		this.singlePrice = singlePrice;
 	}
 
-	public long getRebatePrice() {
+	public Long getRebatePrice() {
 		return rebatePrice;
 	}
 
-	public void setRebatePrice(long rebatePrice) {
+	public void setRebatePrice(Long rebatePrice) {
 		this.rebatePrice = rebatePrice;
 	}
 
@@ -174,6 +179,14 @@ public class PosInvoiceDetail {
 
 	public void setLfdNr(Long lfdNr) {
 		this.lfdNr = lfdNr;
+	}
+
+	public Integer getArticleId() {
+		return articleId;
+	}
+
+	public void setArticleId(Integer articleId) {
+		this.articleId = articleId;
 	}
 
 }

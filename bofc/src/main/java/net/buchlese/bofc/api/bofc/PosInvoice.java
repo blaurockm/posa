@@ -1,5 +1,8 @@
 package net.buchlese.bofc.api.bofc;
 
+
+import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,23 +16,16 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import io.dropwizard.jackson.Jackson;
 
 @Entity
 @Table( name = "posinvoice")
 @XmlRootElement(name = "invoice")
 public class PosInvoice {
 	@Id
+	@GeneratedValue(strategy=GenerationType.AUTO)
 	@JsonProperty
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
 	@JsonProperty
 	private int pointid;
@@ -79,11 +75,12 @@ public class PosInvoice {
 	@JsonProperty
 	private Boolean cancelled;
 	@JsonProperty
-	private DateTime creationTime;
+	private Timestamp creationTime;
 	@JsonProperty
-	private LocalDate date;
+//	@DateTimeFormat(pattern="dd.MM.yyyy")
+	private Date date;
 	@JsonProperty
-	private DateTime printTime;
+	private Timestamp printTime;
 
 	@JsonProperty
 	private boolean printed;
@@ -103,20 +100,20 @@ public class PosInvoice {
 
 	@JsonProperty
 	@OneToMany(cascade=CascadeType.ALL)
-	@JoinColumn(name="invoice_id",nullable=false)
-	private List<InvoiceAgrDetail> agreementDetails; // kein Set weil id für hashcode nicht gefüllt
+	@JoinColumn(name="invoice_id")
+	private List<InvoiceAgrDetail> agreementDetails;
 
 	@JsonProperty
-	private LocalDate deliveryFrom;
+	private java.sql.Date deliveryFrom;
 	@JsonProperty
-	private LocalDate deliveryTill;
+	private java.sql.Date deliveryTill;
 
 	@JsonProperty
-	private DateTime exportDate;
+	private java.sql.Timestamp exportDate;
 
 	@JsonProperty
 	private boolean exported;
-
+	
 	@JsonProperty
 	private double rebate;
 	
@@ -157,20 +154,13 @@ public class PosInvoice {
 			setAgreementDetails(new ArrayList<InvoiceAgrDetail>());
 		}
 		getAgreementDetails().add(detail);
-		if (deliveryFrom == null || deliveryFrom.isAfter(detail.getDeliveryFrom())) {
+		if (deliveryFrom == null || deliveryFrom.after(detail.getDeliveryFrom())) {
 			setDeliveryFrom(detail.getDeliveryFrom());
 		}
-		if (deliveryTill == null || deliveryTill.isBefore(detail.getDeliveryTill())) {
+		if (deliveryTill == null || deliveryTill.before(detail.getDeliveryTill())) {
 			setDeliveryTill(detail.getDeliveryTill());
 		}
 		return detail;
-	}
-
-	// sich selber als json-object ausgeben
-	@JsonIgnore
-	public String getComplJson() throws JsonProcessingException {
-		ObjectMapper om = Jackson.newObjectMapper();
-		return om.writeValueAsString(this);
 	}
 
 	@JsonIgnore
@@ -265,24 +255,6 @@ public class PosInvoice {
 	public void setAmountNone(Long amountNone) {
 		this.amountNone = amountNone;
 	}
-	public DateTime getCreationTime() {
-		return creationTime;
-	}
-	public void setCreationTime(DateTime creationTime) {
-		this.creationTime = creationTime;
-	}
-	public LocalDate getDate() {
-		return date;
-	}
-	public void setDate(LocalDate date) {
-		this.date = date;
-	}
-	public DateTime getPrintTime() {
-		return printTime;
-	}
-	public void setPrintTime(DateTime printTime) {
-		this.printTime = printTime;
-	}
 	public String getNumber() {
 		return number;
 	}
@@ -374,19 +346,19 @@ public class PosInvoice {
 		this.agreementDetails = agreementDetails;
 	}
 
-	public LocalDate getDeliveryFrom() {
+	public Date getDeliveryFrom() {
 		return deliveryFrom;
 	}
 
-	public void setDeliveryFrom(LocalDate deliveryFrom) {
+	public void setDeliveryFrom(Date deliveryFrom) {
 		this.deliveryFrom = deliveryFrom;
 	}
 
-	public LocalDate getDeliveryTill() {
+	public Date getDeliveryTill() {
 		return deliveryTill;
 	}
 
-	public void setDeliveryTill(LocalDate deliveryTill) {
+	public void setDeliveryTill(Date deliveryTill) {
 		this.deliveryTill = deliveryTill;
 	}
 
@@ -422,11 +394,11 @@ public class PosInvoice {
 		this.type = type;
 	}
 
-	public DateTime getExportDate() {
+	public Timestamp getExportDate() {
 		return exportDate;
 	}
 
-	public void setExportDate(DateTime exportDate) {
+	public void setExportDate(Timestamp exportDate) {
 		this.exportDate = exportDate;
 	}
 
@@ -436,6 +408,30 @@ public class PosInvoice {
 
 	public void setExported(boolean exported) {
 		this.exported = exported;
+	}
+
+	public void setCreationTime(Timestamp creationTime) {
+		this.creationTime = creationTime;
+	}
+
+	public void setDate(Date date) {
+		this.date = date;
+	}
+
+	public Timestamp getPrintTime() {
+		return printTime;
+	}
+
+	public void setPrintTime(Timestamp printTime) {
+		this.printTime = printTime;
+	}
+
+	public Timestamp getCreationTime() {
+		return creationTime;
+	}
+
+	public Date getDate() {
+		return date;
 	}
 
 	public double getRebate() {

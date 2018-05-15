@@ -1,11 +1,12 @@
 package net.buchlese.bofc.core;
 
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import net.buchlese.bofc.api.bofc.InvoiceAgrDetail;
 import net.buchlese.bofc.api.bofc.PosInvoice;
@@ -18,11 +19,7 @@ import net.buchlese.bofc.api.subscr.SubscrInterval;
 import net.buchlese.bofc.api.subscr.SubscrIntervalDelivery;
 import net.buchlese.bofc.api.subscr.Subscriber;
 import net.buchlese.bofc.api.subscr.Subscription;
-import net.buchlese.bofc.jdbi.bofc.PosInvoiceDAO;
 import net.buchlese.bofc.jdbi.bofc.SubscrDAO;
-
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
 
 public class SubscriptionInvoiceCreator {
 
@@ -52,7 +49,7 @@ public class SubscriptionInvoiceCreator {
 	 */
 	public static PosInvoice createCollectiveSubscription(SubscrDAO dao, Subscriber subscriber, NumberGenerator numgen) {
 		List<PosIssueSlip> issueSlips = dao.findIssueSlipsToAdd(subscriber.getDebitorId());
-		PosInvoice inv = createTemporaryInvoice(dao, subscriber, dao.getSubscriptionsForSubscriber(subscriber.getId()), issueSlips, numgen);
+		PosInvoice inv = createTemporaryInvoice(dao, subscriber, new ArrayList<>(subscriber.getSubscriptions()), issueSlips, numgen);
 		inv.setCollective(true);
 		return inv;
 	}
@@ -64,7 +61,7 @@ public class SubscriptionInvoiceCreator {
 	 * @return
 	 */
 	public static PosInvoice createSubscription(SubscrDAO dao, Subscription sub, NumberGenerator numgen) {
-		return createTemporaryInvoice(dao, dao.getSubscriber(sub.getSubscriberId()), Arrays.asList(sub), null, numgen);
+		return createTemporaryInvoice(dao, sub.getSubscriber(), Arrays.asList(sub), null, numgen);
 	}
 
 	/**
@@ -76,32 +73,20 @@ public class SubscriptionInvoiceCreator {
 	private static void recordInvoiceOnAgreements(SubscrDAO dao, PosInvoice inv) {
 		for (InvoiceAgrDetail iad : inv.getAgreementDetails()) {
 			if (InvoiceAgrDetail.TYPE.SUBSCR.equals(iad.getType())) {
-				Subscription sub = dao.getSubscription(iad.getAgreementId());
+				Subscription sub = iad.getSettledAgreement();
 				sub.setPayedUntil(iad.getDeliveryTill());
 				if (iad.getPayType() != null && iad.getPayType().equals(PayIntervalType.EACHDELIVERY)) {
-					dao.recordDetailsOnInvoice(iad.getDeliveryIds(), inv.getNumber());
+					dao.recordDetailsOnInvoice(iad.getDeliveries(), inv.getNumber());
 				} else {
-					dao.recordIntervalDetailsOnInvoice(iad.getDeliveryIds(), inv.getNumber());
+					dao.recordIntervalDetailsOnInvoice(iad.getIntervalDeliveries(), inv.getNumber());
 				}
 				dao.updateSubscription(sub);
 			} else {
-				PosIssueSlip slip = dao.getIssueSlip(iad.getAgreementId());
+				PosIssueSlip slip = iad.getSettledDeliveryNote();
 				slip.setPayed(Boolean.TRUE);
 				dao.updateIssueSlip(slip);  // TODO wir sollten den auch im Libras als bezahlt markieren
 			}
 		}
-	}
-
-	/**
-	 * festschreiben einer Rechnung
-	 * @param dao
-	 * @param invDao
-	 * @param inv
-	 */
-	public static void fakturiereInvoice(SubscrDAO dao, PosInvoiceDAO invDao, PosInvoice inv) {
-		inv.setTemporary(false);
-		invDao.insert(inv);
-		dao.deleteTempInvoice(inv.getNumber());
 	}
 
 	/**
@@ -113,16 +98,16 @@ public class SubscriptionInvoiceCreator {
 	public static void cancelInvoice(SubscrDAO dao, PosInvoice inv) {
 		for (InvoiceAgrDetail iad : inv.getAgreementDetails()) {
 			if (InvoiceAgrDetail.TYPE.SUBSCR.equals(iad.getType())) {
-				Subscription sub = dao.getSubscription(iad.getAgreementId());
-				sub.setPayedUntil(iad.getDeliveryFrom().minusDays(1));
+				Subscription sub = iad.getSettledAgreement();
+//				sub.setPayedUntil(DateUtils.minusOne(iad.getDeliveryFrom()));
 				if (iad.getPayType() != null && iad.getPayType().equals(PayIntervalType.EACHDELIVERY)) {
-					dao.resetDetailsOfInvoice(iad.getDeliveryIds());
+					dao.resetDetailsOfInvoice(iad.getDeliveries());
 				} else {
-					dao.resetIntervalDetailsOfInvoice(iad.getDeliveryIds());
+					dao.resetIntervalDetailsOfInvoice(iad.getIntervalDeliveries());
 				}
 				dao.updateSubscription(sub);
 			} else {
-				PosIssueSlip slip = dao.getIssueSlip(iad.getAgreementId());
+				PosIssueSlip slip = iad.getSettledDeliveryNote();
 				slip.setPayed(Boolean.FALSE);
 				dao.updateIssueSlip(slip); // TODO wir sollten den auch im Libras als unbezahlt markieren
 			}
@@ -148,9 +133,9 @@ public class SubscriptionInvoiceCreator {
 		String lastDetailInfo = null;
 		for(Subscription sub : subs) {
 			if (PayIntervalType.EACHDELIVERY.equals(sub.getPaymentType())) {
-				lastDetailInfo = addDeliveriesToInvoice(dao, sub, inv, dao.getDeliveriesForSubscriptionPayflag(sub.getId(), false), lastDetailInfo);
+				lastDetailInfo = addDeliveriesToInvoice(dao, sub, inv, dao.getDeliveriesForSubscriptionPayflag(sub, false), lastDetailInfo);
 			} else {
-				lastDetailInfo = addIntervalDeliveriesToInvoice(dao, sub, inv, dao.getIntervalDeliveriesForSubscriptionPayflag(sub.getId(), false), lastDetailInfo);
+				lastDetailInfo = addIntervalDeliveriesToInvoice(dao, sub, inv, dao.getIntervalDeliveriesForSubscriptionPayflag(sub, false), lastDetailInfo);
 			}
 		}
 		if (issueSlips != null) {
@@ -159,9 +144,8 @@ public class SubscriptionInvoiceCreator {
 		
 		updateTaxValues(inv);
 		
-		inv.setTemporary(true);
 		inv.setNumber(numgen.getNextInvoiceNumber(inv.getPointid()));
-		dao.insertTempInvoice(inv);
+		dao.createInvoice(inv);
 		
 		recordInvoiceOnAgreements(dao, inv);
 		return inv;
@@ -194,9 +178,9 @@ public class SubscriptionInvoiceCreator {
 			return null;
 		}
 		InvoiceAgrDetail iad = new InvoiceAgrDetail();
-		iad.setAgreementId(slip.getId());
+		iad.setSettledDeliveryNote(slip);
 		iad.setType(InvoiceAgrDetail.TYPE.ISSUESLIP);
-		addTextDetail(inv, "Artikel des Lieferscheins " + slip.getNumber() + " vom " + slip.getDate().toString("dd.MM.yyyy"));
+		addTextDetail(inv, "Artikel des Lieferscheins " + slip.getNumber() + " vom " + DateUtils.format(slip.getDate()));
 		for (PosInvoiceDetail detail : slip.getDetails()) {
 			inv.addInvoiceDetail(detail);
 		}
@@ -220,8 +204,8 @@ public class SubscriptionInvoiceCreator {
 		}
 		InvoiceAgrDetail iad = new InvoiceAgrDetail();
 		String newDetail = addDeliveryInfo(inv, sub, lastDetailinfo);
-		LocalDate from = null;
-		LocalDate till = null;
+		Date from = null;
+		Date till = null;
 		// details per Delivery;
 		List<SubscrDelivery> recordedDeliveries = new ArrayList<>();
 		for (SubscrDelivery deliv : deliveries) {
@@ -229,25 +213,26 @@ public class SubscriptionInvoiceCreator {
 				// Deliveries mit Preis 0 werden ignoriert)
 				continue;
 			}
-			inv.addInvoiceDetail(createInvoiceDetailForDelivery(deliv,dao.getSubscrArticle(deliv.getArticleId())));
+			inv.addInvoiceDetail(createInvoiceDetailForDelivery(deliv,deliv.getArticle()));
 			// Versandkosten
 			if (deliv.getShipmentCost() > 0) {
 				addShipmentCostDetail(inv, deliv.getShipmentCost());
 			}
-			if (from == null || deliv.getDeliveryDate().isBefore(from)) {
+			if (from == null || deliv.getDeliveryDate().before(from)) {
 				from = deliv.getDeliveryDate();
 			}
-			if (till == null || deliv.getDeliveryDate().isAfter(till)) {
+			if (till == null || deliv.getDeliveryDate().after(till)) {
 				till = deliv.getDeliveryDate();
 			}
 			recordedDeliveries.add(deliv);
 		}
 		if (recordedDeliveries.isEmpty() == false) {
-			iad.setAgreementId(sub.getId());
+			iad.setSettledAgreement(sub);
 			iad.setPayType(sub.getPaymentType());
 			iad.setDeliveryFrom(from);
-			iad.setDeliveryTill(till.dayOfMonth().withMaximumValue());  // immer der letzte des Monats
-			iad.setDeliveryIds(recordedDeliveries.stream().mapToLong(SubscrDelivery::getId).boxed().collect(Collectors.toList()));
+			java.time.LocalDate till2 = till.toLocalDate();
+			iad.setDeliveryTill(java.sql.Date.valueOf(till2.withDayOfMonth(till2.lengthOfMonth())));  // immer der letzte des Monats
+			iad.setDeliveries(new HashSet<>(recordedDeliveries)); //  Ids(recordedDeliveries.stream().mapToLong(SubscrDelivery::getId).boxed().collect(Collectors.toList()));
 			inv.addAgreementDetail(iad);
 		}
 		return newDetail;
@@ -287,29 +272,30 @@ public class SubscriptionInvoiceCreator {
 		}
 		InvoiceAgrDetail iad = new InvoiceAgrDetail();
 		String newDetail = addDeliveryInfo(inv, sub, lastDetailinfo);
-		LocalDate from = null;
-		LocalDate till = null;
+		Date from = null;
+		Date till = null;
 		// details per Delivery;
 		for (SubscrIntervalDelivery deliv : deliveries) {
-			SubscrInterval interval = dao.getSubscrInterval(deliv.getIntervalId());
+			SubscrInterval interval = deliv.getInterval();
 			inv.addInvoiceDetail(createInvoiceDetailForInterval(deliv, interval));
 			// Versandkosten
 			if (deliv.getShipmentCost() > 0) {
 				addShipmentCostDetail(inv, deliv.getShipmentCost());
 			}
-			if (from == null || interval.getStartDate().isBefore(from)) {
+			if (from == null || interval.getStartDate().before(from)) {
 				from = interval.getStartDate();
 			}
-			if (till == null || interval.getEndDate().isAfter(till)) {
+			if (till == null || interval.getEndDate().after(till)) {
 				till = interval.getEndDate();
 			}
 		}
 		sub.setPayedUntil(till);
-		iad.setAgreementId(sub.getId());
+		iad.setSettledAgreement(sub);
 		iad.setPayType(sub.getPaymentType());
 		iad.setDeliveryFrom(from);
-		iad.setDeliveryTill(till.dayOfMonth().withMaximumValue());  // immer der letzte des Monats
-		iad.setDeliveryIds(deliveries.stream().mapToLong(SubscrIntervalDelivery::getId).boxed().collect(Collectors.toList()));
+		java.time.LocalDate till2 = till.toLocalDate();
+		iad.setDeliveryTill(java.sql.Date.valueOf(till2.withDayOfMonth(till2.lengthOfMonth())));  // immer der letzte des Monats
+		iad.setIntervalDeliveries(new HashSet<>(deliveries)); // .stream().mapToLong(SubscrIntervalDelivery::getId).boxed().collect(Collectors.toList()));
 		inv.addAgreementDetail(iad);
 		return newDetail;
 	}
@@ -318,8 +304,8 @@ public class SubscriptionInvoiceCreator {
 		PosInvoice inv = new PosInvoice();
 		
 		// formalia
-		inv.setDate(LocalDate.now());
-		inv.setCreationTime(DateTime.now());
+		inv.setDate(new java.sql.Date(System.currentTimeMillis()));
+		inv.setCreationTime(new java.sql.Timestamp(System.currentTimeMillis()));
 		inv.setCustomerId(subscri.getCustomerId());
 		inv.setDebitorId(subscri.getDebitorId());
 		inv.setCancelled(false);

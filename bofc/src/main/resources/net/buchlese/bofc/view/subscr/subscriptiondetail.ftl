@@ -1,13 +1,13 @@
 <div class="container">
-<h1>Abonnement ${sub.id} <a href="#subscrDispo/${sub.productId?c}" class="btn btn-primary">Dispo</a>
+<h1>Abonnement ${sub.id} <a href="#subscrDispo/${sub.product.id?c}" class="btn btn-primary">Dispo</a>
 <#if needsInvoice() ><a href="/subscr/pdfcreateInvoice/${sub.id?c}" class="btn btn-primary" target="_blank">Rechnungsvorschau</a></#if>
 </h1>
 
   <h4>Periodikum ${p.name}  <a href="#subscrProduct/${p.id?c}" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span></a></h4>
-  <h4>Abonnent ${kunde().name}   <a href="#subscriber/${sub.subscriberId?c}" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span></a> </h4>
+  <h4>Abonnent ${kunde().name}   <a href="#subscriber/${sub.subscriber.id?c}" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span></a> </h4>
 <div class="row">
   <div class="col-md-2">Letzte Lieferung</div>
-  <div class="col-md-4">${(lastDelivery.articleName)!} am ${(lastDelivery.deliveryDate.toString("dd.MM.yyyy"))!}</div>
+  <div class="col-md-4">${(lastDelivery.articleName)!} am ${(lastDelivery.deliveryDate)!}</div>
 </div>
 <div class="row">
   <div class="col-md-2">Letztes Intervall </div>
@@ -15,7 +15,7 @@
 </div>
 <div class="row">
   <div class="col-md-2">Letzte Rechnung am</div>
-<div class="col-md-4">${(sub.lastInvoiceDate.toString("dd.MM.yyyy"))!}</div>
+<div class="col-md-4">${(sub.lastInvoiceDate)!}</div>
 </div>
 
 
@@ -35,8 +35,8 @@
 <div class="card card-block">
  	<h3 class="card-title">Berechnung</h3>
     <ul class="list-group list-group-flush">
-    	<li class="list-group-item">Start <a href="#" class="editable" data-type="date" data-format="dd.mm.yyyy" data-mode="popup" data-name="subscription.startDate">${(sub.startDate.toString("dd.MM.YYYY"))!}</a></li>
-    	<li class="list-group-item">Ende <a href="#" class="editable" data-type="date" data-format="dd.mm.yyyy" data-mode="popup" data-name="subscription.endDate">${(sub.endDate.toString("dd.MM.YYYY"))!}</a></li>
+    	<li class="list-group-item">Start <a href="#" class="editable" data-type="date" data-format="dd.mm.yyyy" data-mode="popup" data-name="subscription.startDate">${(sub.startDate)!}</a></li>
+    	<li class="list-group-item">Ende <a href="#" class="editable" data-type="date" data-format="dd.mm.yyyy" data-mode="popup" data-name="subscription.endDate">${(sub.endDate)!}</a></li>
     	<li class="list-group-item">Menge <a href="#" class="editable" data-type="text" data-name="subscription.quantity">${sub.quantity}</a></li>
     	<li class="list-group-item">Zahlungsintervall <a href="#" id="paytype"></a></li>
     	<li class="list-group-item">Bezahlt bis <a href="#" class="editable" data-type="date" data-format="mm/yyyy" data-mode="popup" data-name="subscription.payedUntil">${sub.payedUntil!}</a></li>
@@ -87,7 +87,7 @@
 			<tbody>
 				<#list deliveriesWithout as d>
 					<tr>
-						<td>${d.deliveryDate.toString("dd.MM.yy")}</td>
+						<td>${d.deliveryDate}</td>
 						<td>${d.articleName!}</td>
 						<td>${money(d.total)}</td>
 						<td>  <a href="#subscrDelivery/${d.id?c}">see</a> </td>
@@ -109,7 +109,7 @@
 			<tbody>
 				<#list deliveriesWith as d>
 					<tr>
-						<td>${d.deliveryDate.toString("dd.MM.yy")}</td>
+						<td>${d.deliveryDate}</td>
 						<td>${d.articleName!}</td>
 						<td>${money(d.total)}</td>
 						<td>  <a href="#subscrDelivery/${d.id?c}">see</a> </td>
@@ -173,7 +173,7 @@
 				<#list invoices as inv>
 					<tr>
 						<td>${inv.number}</td>
-						<td><#if inv.date??>${inv.date.toString("dd.MM.yyyy")}<#else>kein Datum!</#if></td>
+						<td><#if inv.date??>${inv.date}<#else>kein Datum!</#if></td>
 						<td align="right">${money(inv.amount)}</td>
 						<td align="right">${money(inv.payed)}</td>
 						<td>  <a href="/invoice/${inv.number}" target="_blank">view</a> </td>
@@ -193,7 +193,7 @@
 	}
 
 	 $('.editableSub').editable({
-	    url: '/subscr/update', pk:'${sub.subscriberId?c}',
+	    url: '/subscr/update', pk:'${sub.subscriber.id?c}',
 	    success: function(res, newValue) {
 	        if(!res.success) return res.msg;
 	    }

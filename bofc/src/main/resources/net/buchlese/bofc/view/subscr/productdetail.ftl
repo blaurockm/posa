@@ -38,11 +38,10 @@
   </div>
   <dl class="dl-horizontal">
     <dt>Ausgabenzähler</dt><dd><a href="#" class="editable" data-type="text" data-name="product.count">${p.count!"1"}</a></dd>
-    <dt>Periodizität</dt><dd><a href="#" class="editable" data-type="text" data-name="product.period">${p.period}</a></dd>
     <dt>Artikel-Namensmuster</dt><dd><a href="#" class="editable" data-type="text" data-name="product.namePattern">${p.namePattern}</a></dd>
   </dl>
   <div class="panel-footer">
-	Letzte Lieferung  ${(lastArticle.name)!} am ${(lastArticle.erschTag.toString("dd.MM.yy"))!}
+	Letzte Lieferung  ${(lastArticle.name)!} am ${(lastArticle.erschTag)!}
   </div>
   </div>
 </div>
@@ -59,7 +58,7 @@
     <dt>Zahlung pro Lieferung</dt><dd><input type="checkbox" ${p.payPerDelivery?string('checked','')} onChange="switchCheckbox('product.payPerDelivery', this.checked)"></dd>
     <dt>Intervall Namensmuster</dt><dd><a href="#" class="editable" data-type="text" data-name="product.intervalPattern">${p.intervalPattern!}</a></dd>
     <dt>Rechnungstellung</dt><dd><a href="#" id="paytype"></a></dd>
-    <dt>Rechnung bis</dt><dd><a href="#" class="editable" data-type="date" data-format="dd.mm.yyyy" data-mode="popup" data-name="product.lastInterval">${(p.lastInterval.toString("dd.MM.YYYY"))!}</a></dd>
+    <dt>Rechnung bis</dt><dd><a href="#" class="editable" data-type="date" data-format="dd.mm.yyyy" data-mode="popup" data-name="product.lastInterval">${(p.lastInterval)!}</a></dd>
     <dt>Proz Print-Anteil</dt><dd><a href="#" class="editable" data-type="text" data-name="product.halfPercent">${p.halfPercentage!"1"}</a></dd>
   </dl>
   <div class="panel-footer">
@@ -78,8 +77,8 @@
   </div>
   <dl class="dl-horizontal">
     <dt>Bestellte Menge</dt><dd><a href="#" class="editable" data-type="text" data-name="product.quantity">${p.quantity!"1"}</a></dd>
-    <dt>Bezug seit</dt><dd><a href="#" class="editable" data-type="date" data-format="dd.mm.yyyy" data-mode="popup" data-name="product.startDate">${(p.startDate.toString("dd.MM.YYYY"))!}</a></dd>
-    <dt>Bezug bis</dt><dd><a href="#" class="editable" data-type="date" data-format="dd.mm.yyyy" data-mode="popup" data-name="product.endDate">${(p.endDate.toString("dd.MM.YYYY"))!}</a></dd>
+    <dt>Bezug seit</dt><dd><a href="#" class="editable" data-type="date" data-format="dd.mm.yyyy" data-mode="popup" data-name="product.startDate">${(p.startDate)!}</a></dd>
+    <dt>Bezug bis</dt><dd><a href="#" class="editable" data-type="date" data-format="dd.mm.yyyy" data-mode="popup" data-name="product.endDate">${(p.endDate)!}</a></dd>
     <dt>Memo</dt><dd><a href="#" class="editable" data-type="textarea" data-mode="popup" data-name="product.memo">${p.memo!}</a></dd>
   </dl>
   <div class="panel-footer">
@@ -109,7 +108,6 @@
 					<th>Seit</th>
 					<th>Versandart</th>
 					<th>Zahlungweise</th>
-					<th>abrechenbar</th>
 					<th></th>
 				</tr>
 			</thead>
@@ -117,11 +115,10 @@
 				<#list subscriptions as s>
 					<tr>
 						<td>${s.id} <a href="#subscription/${s.id?c}" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span></a></td>
-						<td>${kunde(s)}  <a href="#subscriber/${s.subscriberId?c}" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span></a></td>
-						<td>${(s.startDate.toString("dd.MM.yyyy"))!}</td>
+						<td>${kunde(s)}  <a href="#subscriber/${s.subscriber.id?c}" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span></a></td>
+						<td>${(s.startDate)!}</td>
 					    <td>${s.shipmentType.text}</td>
 					    <td>${s.paymentType.text}</td>
-					    <td>${willBeSettled(s)?string("ja","")}</td>					
 					</tr>
 				</#list>
 			</tbody>
@@ -141,7 +138,7 @@
 					<tr>
 						<td>${a.id}</td>
 						<td>${a.name}</td>
-						<td>${(a.erschTag.toString("dd.MM.yyyy"))!}</td>
+						<td>${(a.erschTag)!}</td>
 					</tr>	
 				</#list>
 			</tbody>
@@ -163,8 +160,8 @@
 					<tr>
 						<td>${a.id}</td>
 						<td>${a.name}</td>
-						<td>${(a.startDate.toString("dd.MM.yyyy"))!}</td>
-						<td>${(a.endDate.toString("dd.MM.yyyy"))!}</td>
+						<td>${(a.startDate)!}</td>
+						<td>${(a.endDate)!}</td>
 						<td>${a.intervalType.text}</td>
 					</tr>	
 				</#list>

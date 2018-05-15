@@ -25,7 +25,7 @@ public class SubscrDeliveryUpdateHelper {
 		long id = Long.parseLong(pk);
 		SubscrDelivery art = dao.getSubscrDelivery(id);
 		if ("total".equals(field)) {
-			SubscrArticle artH = dao.getSubscrArticle(art.getArticleId());
+			SubscrArticle artH = art.getArticle();
 			art.updateBrutto(Long.parseLong(value), artH.getHalfPercentage());
 			res.initializeMoneyFieldsFromArticle(art);
 			res.success = true;

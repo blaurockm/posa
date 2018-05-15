@@ -2,12 +2,11 @@ package net.buchlese.bofc.core.reports;
 
 import java.util.ArrayList;
 
-import org.joda.time.LocalDate;
-
 import net.buchlese.bofc.api.bofc.ReportDeliveryNote;
 import net.buchlese.bofc.api.subscr.SubscrDelivery;
 import net.buchlese.bofc.api.subscr.Subscriber;
 import net.buchlese.bofc.api.subscr.Subscription;
+import net.buchlese.bofc.core.DateUtils;
 import net.buchlese.bofc.core.NumberGenerator;
 import net.buchlese.bofc.jdbi.bofc.SubscrDAO;
 
@@ -16,19 +15,19 @@ public class ReportDeliveryNoteCreator {
 	public static ReportDeliveryNote create(SubscrDAO dao, NumberGenerator numgen, long deliveryId) {
 		ReportDeliveryNote rep = new ReportDeliveryNote();
 		SubscrDelivery fdeli = dao.getSubscrDelivery(deliveryId);
-		Subscriber s = dao.getSubscriber(fdeli.getSubscriberId());
-		Subscription sub1 = dao.getSubscription(fdeli.getSubscriptionId());
+		Subscriber s = fdeli.getSubscriber();
+		Subscription sub1 = fdeli.getSubscription();
 		rep.customerId = s.getCustomerId();
 		rep.details = new ArrayList<ReportDeliveryNote.ReportDeliveryNoteDetail>();
 		
 		rep.deliveryAddress = sub1.getDeliveryAddress() != null ? sub1.getDeliveryAddress() : s.getInvoiceAddress();
 		rep.deliveryDate = fdeli.getDeliveryDate();
 		rep.delivNum  = numgen.getNextNumber();
-		rep.creationTime = LocalDate.now();
+		rep.creationTime = DateUtils.nowTime();
 		rep.pointId = s.getPointid();
 		for (SubscrDelivery deli : dao.getDeliveries(fdeli.getDeliveryDate())) {
-			if (deli.getSubscriberId() == fdeli.getSubscriberId()) {
-				Subscription sub = dao.getSubscription(deli.getSubscriptionId());
+			if (deli.getSubscriber().getId() == fdeli.getSubscriber().getId()) {
+				Subscription sub = deli.getSubscription();
 				if (sub.getDeliveryInfo1() != null & sub.getDeliveryInfo1().isEmpty() == false) {
 					ReportDeliveryNote.ReportDeliveryNoteDetail det = new  ReportDeliveryNote.ReportDeliveryNoteDetail();
 					det.textonly = true;

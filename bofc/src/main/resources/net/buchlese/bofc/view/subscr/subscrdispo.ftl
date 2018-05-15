@@ -5,7 +5,7 @@
 <div class="col-md-6">von ${p.publisher}</div>
 </div>
 <div class="row">
-<div class="col-md-6">für den ${dispoDate.toString("dd.MM.yy")}</div>
+<div class="col-md-6">für den ${dispoDate}</div>
 </div>
 <div class="row">
 <div class="col-md-6">Bestellte Menge ${p.quantity}</div>
@@ -18,12 +18,12 @@
   <div class="panel panel-info">
     <div class="panel-heading">auszuliefernder Artikel <span id="artid">${art.id?c}</span>
     <#if showArticlePlusEins>
-    <a id="articlepluseins" class="btn btn-primary" href="#subscrarticlecreate/${art.productId?c}">Artikel +1</a>
+    <a id="articlepluseins" class="btn btn-primary" href="#subscrarticlecreate/${art.product.id?c}">Artikel +1</a>
     </#if>
     </div>
      <dl class="dl-horizontal">
       <dt>Name</dt><dd> <a href="#" id="artname" class="editable" data-type="text"  data-name="article.name"  data-title="Artikelbezeichnung">${art.name}</a></dd>
-      <dt>Erscheinungsdatum</dt><dd> <a href="#" id="artersch" class="namechangerfield" data-type="date" data-format="dd.mm.yyyy" data-name="article.erschTag"  data-title="Erscheinungstag" >${art.erschTag.toString("dd.MM.yyyy")}</a></dd>
+      <dt>Erscheinungsdatum</dt><dd> <a href="#" id="artersch" class="namechangerfield" data-type="date" data-format="dd.mm.yyyy" data-name="article.erschTag"  data-title="Erscheinungstag" >${art.erschTag}</a></dd>
       <dt>Ausgabe</dt><dd> <a href="#" id="artcount" class="namechangerfield" data-type="number"  data-name="article.issueNo"  data-title="Ausgabennummer">${art.issueNo}</a></dd>
     </dl>
     <div class="panel-footer">
@@ -73,14 +73,14 @@
 <#list subscriptions as sub>
 		<tr>
 			<td>${sub.id?c} <a href="#subscription/${sub.id?c}" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span></a></td>
-			<td>${kunde(sub)} ${sub.deliveryInfo1!""}, ${sub.deliveryInfo2!""} <a href="#subscriber/${sub.subscriberId?c}" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span></a></td>
+			<td>${kunde(sub)} ${sub.deliveryInfo1!""}, ${sub.deliveryInfo2!""} <a href="#subscriber/${sub.subscriber.id?c}" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span></a></td>
 			<td>${sub.quantity}</td>
 			<td></td>
 			<td>${sub.shipmentType.text}</td>
 			<td>${sub.paymentType.text}</td>
 			<td>
 			<#if sub.shipmentType != 'PUBLISHER' >
-			<#assign deli = delivery(sub, art)!"hh" >
+			<#assign deli = delivery(sub)!"hh" >
 			<#if deli != "hh" >
    	  	  	   <a href="#subscrDelivery/${deli.id?c}" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span></a>
 			<#else>
