@@ -93,7 +93,6 @@ public class SubscriberUpdateHelper {
 			}
 		}
 		if (res.success) {
-			dao.updateSubscriber(art);
 			jpaSubscriberDao.update(art);
 		}
 		return res;

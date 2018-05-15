@@ -48,11 +48,13 @@ public class InvoiceAgrDetail {
 	private java.sql.Date deliveryTill;
 
 	@JsonIgnore
-	@OneToMany(mappedBy="settDetail",cascade = CascadeType.ALL)
+	@OneToMany(cascade = CascadeType.ALL)
+	@JoinColumn(name = "settdetail_id")
 	private Set<SubscrDelivery> deliveries;
 
 	@JsonIgnore
-	@OneToMany(mappedBy="settDetail",cascade = CascadeType.ALL )
+	@OneToMany(cascade = CascadeType.ALL )
+	@JoinColumn(name = "settdetail_id")
 	private Set<SubscrIntervalDelivery> intervalDeliveries;
 
 	@JsonProperty

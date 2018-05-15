@@ -98,7 +98,6 @@ public class SubscrProductUpdateHelper {
 			res.success = true;
 		}
 		if (res.success) {
-			dao.updateSubscrProduct(art);
 			jpaSubscrProductDao.update(art);
 		}
 		return res;

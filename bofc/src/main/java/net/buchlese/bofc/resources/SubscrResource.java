@@ -215,7 +215,7 @@ public class SubscrResource {
 			a.setCity(par.getFirst("invoiceAddress.city"));
 			s.setInvoiceAddress(a);
 		}
-		dao.insertSubscriber(s);
+		jpaSubscriberDao.create(s);
 		return new SubscrCustomerView(dao);
 	}
 
@@ -269,7 +269,7 @@ public class SubscrResource {
 			a.setPostalcode(par.getFirst("deliveryAddress.postalcode"));
 			a.setCity(par.getFirst("deliveryAddress.city"));
 		}
-		dao.insertSubscription(s);
+		jpaSubscriptionDao.create(s);
 	}
 
 
@@ -283,6 +283,7 @@ public class SubscrResource {
 		p.setName(par.getFirst("name"));
 		p.setPublisher(par.getFirst("publisher"));
 		p.setNamePattern(par.getFirst("namePattern"));
+		p.setPayPerDelivery(false);
 		if (par.containsKey("quantity") && par.getFirst("quantity").isEmpty() == false) {
 			try {
 				p.setQuantity(Integer.parseInt(par.getFirst("quantity")));
@@ -310,9 +311,9 @@ public class SubscrResource {
 		} else {
 			p.setHalfPercentage(1d);
 		}
-		dao.insertSubscrProduct(p);
+		jpaSubscrProductDao.create(p);
 		SubscrArticle art = CreationUtils.createArticle(p);
-		dao.insertArticle(art);
+		jpaSubscrArticleDao.create(art);
 		return new SubscrProductDetailView(dao, p);
 	}
 
@@ -342,7 +343,7 @@ public class SubscrResource {
 		long subId = Long.parseLong(subIdP);
 		long artId = Long.parseLong(artIdP);
 		Date deliveryDate = new DateParam(dateP).getDate();
-		Subscription subscription = dao.getSubscription(subId);
+		Subscription subscription = jpaSubscriptionDao.findById(subId);
 		SubscrArticle article = dao.getSubscrArticle(artId);
 		SubscrDelivery d = new SubscrDelivery();
 		SubscrProduct p = subscription.getProduct();
@@ -364,9 +365,9 @@ public class SubscrResource {
 		d.setPayed(p.isPayPerDelivery() == false);
 		d.setSlipped(subscriber.isNeedsDeliveryNote() == false);
 
-		dao.insertDelivery(d);
+		jpaSubscrDeliveryDao.create(d);
 		p.setLastDelivery(deliveryDate);
-		dao.updateSubscrProduct(p);
+		jpaSubscrProductDao.update(p);
 		return d;
 	}
 
@@ -378,7 +379,7 @@ public class SubscrResource {
 		long subId = Long.parseLong(subIdP);
 		long artId = Long.parseLong(artIdP);
 		Date deliveryDate = new DateParam(dateP).getDate();
-		Subscription subscription = dao.getSubscription(subId);
+		Subscription subscription = jpaSubscriptionDao.findById(subId);
 		SubscrInterval article = dao.getSubscrInterval(artId);
 		SubscrIntervalDelivery d = new SubscrIntervalDelivery();
 		d.setIntervalName(article.getName());
@@ -397,7 +398,7 @@ public class SubscrResource {
 		}
 		d.setCreationDate(DateUtils.nowTime());
 
-		dao.insertIntervalDelivery(d);
+		jpaSubscrIntervalDeliveryDao.create(d);
 		return d;
 	}
 
@@ -407,7 +408,7 @@ public class SubscrResource {
 	@UnitOfWork
 	public PosInvoice createInvoice(@PathParam("sub") String subIdP) {
 		long subId = Long.parseLong(subIdP);
-		PosInvoice inv =  SubscriptionInvoiceCreator.createSubscription(dao, dao.getSubscription(subId), numGen);
+		PosInvoice inv =  SubscriptionInvoiceCreator.createSubscription(dao, jpaSubscriptionDao.findById(subId), numGen);
 		return inv;
 	}
 
@@ -433,8 +434,8 @@ public class SubscrResource {
 
 	private SubscrArticle createNewArticle(SubscrProduct product) {
 		SubscrArticle art = CreationUtils.createArticle(product);
-		dao.insertArticle(art);
-		dao.updateSubscrProduct(product);
+		jpaSubscrArticleDao.create(art);
+		jpaSubscrProductDao.update(product);
 		return art;
 	}
 
@@ -451,8 +452,8 @@ public class SubscrResource {
 
 	private SubscrInterval createNewInterval(SubscrProduct product) {
 		SubscrInterval art = CreationUtils.createInterval(product);
-		dao.insertInterval(art);
-		dao.updateSubscrProduct(product);
+		jpaSubscrIntervalDao.create(art);
+		jpaSubscrProductDao.update(product);
 		return art;
 	}
 
@@ -466,8 +467,8 @@ public class SubscrResource {
 		Subscription s = del.getSubscription();
 		SubscrProduct p = s.getProduct();
 		p.setLastDelivery(null);
-		dao.updateSubscrProduct(p);
-		dao.deleteDelivery(delId);
+		jpaSubscrProductDao.update(p);
+		jpaSubscrDeliveryDao.delete(del);
 		return new SubscrDashboardView(dao, LocalDate.now());
 	}
 
@@ -477,7 +478,7 @@ public class SubscrResource {
 	@UnitOfWork
 	public View deleteIntervalDelivery(@PathParam("id") String deliIdP) {
 		long delId = Long.parseLong(deliIdP);
-		dao.deleteIntervalDelivery(delId);
+		jpaSubscrIntervalDeliveryDao.delete(jpaSubscrIntervalDeliveryDao.findById(delId));
 		return new SubscrDashboardView(dao, LocalDate.now());
 	}
 
@@ -550,7 +551,7 @@ public class SubscrResource {
 		if (query.isPresent() && query.get().isEmpty() == false) {
 			return dao.querySubscrProducts("%" + query.get() + "%");
 		}
-		return dao.getSubscrProducts();
+		return jpaSubscrProductDao.findAll();
 	}
 
 	@GET
@@ -769,7 +770,7 @@ public class SubscrResource {
 	@Produces({"text/html"})
 	@UnitOfWork
 	public View showProducts() {
-		return new SubscrProductsView(dao, dao.getSubscrProducts());
+		return new SubscrProductsView(dao, jpaSubscrProductDao.findAll());
 	}
 
 
@@ -788,7 +789,7 @@ public class SubscrResource {
 	@UnitOfWork
 	public View showSubscription(@PathParam("sub") String subdIdP) {
 		long subId = Long.parseLong(subdIdP);
-		return new SubscriptionDetailView(dao, dao.getSubscription(subId));
+		return new SubscriptionDetailView(dao, jpaSubscriptionDao.findById(subId));
 	}
 	
 	@GET

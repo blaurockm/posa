@@ -12,6 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.PostLoad;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlTransient;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -204,6 +205,7 @@ public class SubscrIntervalDelivery implements Comparable<SubscrIntervalDelivery
 	}
 
 
+	@XmlTransient
 	public InvoiceAgrDetail getSettDetail() {
 		return settDetail;
 	}

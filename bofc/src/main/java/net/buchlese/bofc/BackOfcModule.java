@@ -13,7 +13,6 @@ import io.dropwizard.hibernate.ScanningHibernateBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import net.buchlese.bofc.core.NumberGenerator;
-import net.buchlese.bofc.jdbi.SubscrCachedJpaDAO;
 import net.buchlese.bofc.jdbi.bofc.SubscrDAO;
 import net.buchlese.bofc.jpa.JpaPosInvoiceDAO;
 import net.buchlese.bofc.jpa.JpaPosIssueSlipDAO;
@@ -79,12 +78,12 @@ public class BackOfcModule extends AbstractModule {
 		return new JpaPosTicketDAO(sf);
 	}
 	
-	private SubscrCachedJpaDAO cache;
+	private SubscrDAO cache;
 	
 	@Provides @Inject
 	public synchronized SubscrDAO provideSubscrDAO(SessionFactory sf) {
 		if (cache == null) {
-			cache = new SubscrCachedJpaDAO(new JpaSubscriberDAO(sf), new JpaSubscriptionDAO(sf), new JpaSubscrProductDAO(sf), new JpaSubscrArticleDAO(sf),
+			cache = new SubscrDAO(new JpaSubscriberDAO(sf), new JpaSubscriptionDAO(sf), new JpaSubscrProductDAO(sf), new JpaSubscrArticleDAO(sf),
 					new JpaSubscrDeliveryDAO(sf), new JpaSubscrIntervalDAO(sf), new JpaSubscrIntervalDeliveryDAO(sf), new JpaPosInvoiceDAO(sf), 
 					new JpaPosIssueSlipDAO(sf));
 		}

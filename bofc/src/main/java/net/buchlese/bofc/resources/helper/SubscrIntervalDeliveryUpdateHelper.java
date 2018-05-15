@@ -50,7 +50,6 @@ public class SubscrIntervalDeliveryUpdateHelper {
 			res.success = true;
 		}
 		if (res.success) {
-			dao.updateIntervalDelivery(art);
 			jpaSubscrIntervalDeliveryDao.update(art);
 		}
 		return res;

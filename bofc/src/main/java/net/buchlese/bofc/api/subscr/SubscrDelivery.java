@@ -252,6 +252,7 @@ public class SubscrDelivery implements Comparable<SubscrDelivery> {
 		return true;
 	}
 
+	@XmlTransient
 	public InvoiceAgrDetail getSettDetail() {
 		return settDetail;
 	}

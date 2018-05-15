@@ -107,7 +107,6 @@ public class JpaSubscrDeliveryDAO extends AbstractDAO<SubscrDelivery> {
 		for (SubscrDelivery d : deliveryIds) {
 			d.setInvoiceNumber(invNumber);
 			d.setPayed(true);
-			currentSession().saveOrUpdate(d);
 		}
 	}
 

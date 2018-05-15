@@ -54,7 +54,6 @@ public class SubscrDeliveryUpdateHelper {
 			res.success = true;
 		}
 		if (res.success) {
-			dao.updateDelivery(art);
 			jpaSubscrDeliveryDao.update(art);
 		}
 		return res;

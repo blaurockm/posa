@@ -10,12 +10,10 @@ import net.buchlese.bofc.jpa.JpaSubscriptionDAO;
 
 public class SubscriptionUpdateHelper {
 
-	private final SubscrDAO dao;
 	private final JpaSubscriptionDAO jpaSubscriptionDao;
 
 	public SubscriptionUpdateHelper(SubscrDAO dao, JpaSubscriptionDAO jpaSubscriptionDao) {
 		super();
-		this.dao = dao;
 		this.jpaSubscriptionDao = jpaSubscriptionDao;
 	}
 	
@@ -26,7 +24,7 @@ public class SubscriptionUpdateHelper {
 			field = fieldname.substring(fieldname.indexOf(".")+1);
 		}
 		long id = Long.parseLong(pk);
-		Subscription art = dao.getSubscription(id);
+		Subscription art = jpaSubscriptionDao.findById(id);
 		if ("deliveryInfo1".equals(field)) {
 			res.oldValue = art.getDeliveryInfo1();
 			art.setDeliveryInfo1(value);
@@ -118,7 +116,6 @@ public class SubscriptionUpdateHelper {
 
 		if (res.success) {
 			res.newValue = value;
-			dao.updateSubscription(art);
 			jpaSubscriptionDao.update(art);
 		}
 		return res;

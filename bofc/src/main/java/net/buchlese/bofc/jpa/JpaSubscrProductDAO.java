@@ -1,5 +1,6 @@
 package net.buchlese.bofc.jpa;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -8,7 +9,6 @@ import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
-import java.time.LocalDate;
 
 import io.dropwizard.hibernate.AbstractDAO;
 import net.buchlese.bofc.api.subscr.SubscrProduct;

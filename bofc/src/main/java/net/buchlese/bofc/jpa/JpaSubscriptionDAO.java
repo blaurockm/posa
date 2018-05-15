@@ -41,16 +41,6 @@ public class JpaSubscriptionDAO extends AbstractDAO<Subscription> {
 		return list(c);
 	}
 
-	public List<Subscription> getSubscriptionsForProduct(long productId) {
-		Criteria c = criteria().add(Restrictions.eq("product_id", productId));
-		return list(c);
-	}
-
-	public List<Subscription> getSubscriptionsForSubscriber(long id) {
-		Criteria c = criteria().add(Restrictions.eq("subscriber_id", id));
-		return list(c);
-	}
-
 //	@SqlQuery("select * from subscription where payedUntil is null or payedUntil < :till")
 	public List<Subscription> getSubscriptionsForTimespan(Date from, Date till) {
 		Criteria c = criteria().add(Restrictions.or(Restrictions.isNull("payedUntil"), Restrictions.le("payedUntil", till)));

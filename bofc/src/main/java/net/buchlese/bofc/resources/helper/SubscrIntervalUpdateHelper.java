@@ -76,7 +76,6 @@ public class SubscrIntervalUpdateHelper {
 		}
 		if (res.success) {
 			res.name = art.getName();
-			dao.updateInterval(art);
 			jpaSubscrIntervalDao.update(art);
 		}
 		return res;

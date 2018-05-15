@@ -6,7 +6,6 @@ import javax.inject.Inject;
 
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 
@@ -39,11 +38,6 @@ public class JpaSubscrIntervalDAO extends AbstractDAO<SubscrInterval> {
 	}
 	public List<SubscrInterval> findAll() {
 		Criteria c = criteria();
-		return list(c);
-	}
-
-	public List<SubscrInterval> getIntervalsOfProduct(SubscrProduct prodid) {
-		Criteria c = criteria().add(Restrictions.eq("product", prodid )).addOrder( Order.asc("id") );
 		return list(c);
 	}
 

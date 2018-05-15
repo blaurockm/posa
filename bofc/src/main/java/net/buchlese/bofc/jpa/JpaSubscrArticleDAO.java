@@ -6,7 +6,6 @@ import javax.inject.Inject;
 
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 
@@ -41,13 +40,6 @@ public class JpaSubscrArticleDAO extends AbstractDAO<SubscrArticle> {
 		Criteria c = criteria();
 		return list(c);
 	}
-
-	public List<SubscrArticle> getArticlesOfProduct(long prodid) {
-		Criteria c = criteria().add(Restrictions.eq("product_id", prodid )).addOrder( Order.asc("id") );
-		return list(c);
-	}
-
-	//	@SqlQuery("select * from subscrArticle where id = (select max(id) from subscrArticle where productId = :subid)")
 
 	public SubscrArticle getNewestArticleOfProduct(SubscrProduct prod) {
 		Long pj = (Long) criteria().setProjection( Projections.projectionList()

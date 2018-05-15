@@ -68,7 +68,6 @@ public class SubscrArticleUpdateHelper {
 			res.success = true;
 		}
 		if (res.success) {
-			dao.updateArticle(art);
 			jpaSubscrArticleDao.update(art);
 		}
 		return res;
