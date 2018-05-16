@@ -5,7 +5,7 @@
    <xsl:output method="xml" version="1.0" indent="yes" encoding="UTF-8" />
    <xsl:param name="name_of_kasse"/>
    <xsl:decimal-format name="euro" decimal-separator=',' grouping-separator='.' />
-   <xsl:template match="/invoice">
+   <xsl:template match="/">
       <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
          <fo:layout-master-set>
             <fo:simple-page-master master-name="titlepage" page-height="29.7cm" page-width="21cm" margin-left="2cm" margin-right="2.5cm" margin-top="0.5cm" margin-bottom="1cm">
@@ -30,7 +30,12 @@
                 </fo:repeatable-page-master-alternatives>
             </fo:page-sequence-master>
          </fo:layout-master-set>
-         <fo:page-sequence master-reference="DIN-A4">
+         <xsl:apply-templates select="lists/invoice" />
+      </fo:root>
+   </xsl:template>
+
+   <xsl:template match="invoice">
+         <fo:page-sequence master-reference="DIN-A4" initial-page-number="1" force-page-count="no-force">
             <!-- <fo:static-content flow-name="header"> </fo:static-content> -->
             <fo:static-content flow-name="header-mAdr">
                <xsl:call-template name="briefkopf" />
@@ -55,7 +60,6 @@
             </fo:flow>
                    
          </fo:page-sequence>
-      </fo:root>
    </xsl:template>
 
    <xsl:template match="details[textonly='true']">
@@ -258,7 +262,7 @@
        </fo:table-body>
       </fo:table>
       <fo:block-container width="152mm" margin-top="5mm">
-      <fo:block id="end">Vielen Dank für Ihren Auftrag. Die Rechnung ist ohne Abzüge sofort fällig.</fo:block>
+      <fo:block id="{creationTime}">Vielen Dank für Ihren Auftrag. Die Rechnung ist ohne Abzüge sofort fällig.</fo:block>
       </fo:block-container>
    </xsl:template>
 
@@ -356,7 +360,7 @@
    
    <xsl:template name="seitenzahl">
       <fo:block font-size="8pt" text-align="right">
-         Seite <fo:page-number/> von <fo:page-number-citation ref-id="end"/> 
+         Seite <fo:page-number/> von <fo:page-number-citation ref-id="{creationTime}"/> 
       </fo:block>
       <xsl:if test="temporary = 'true'">
       <fo:block-container  height="30mm" width="82mm" top="106mm" left="20mm" position="fixed" fox:transform="rotate(-45)">

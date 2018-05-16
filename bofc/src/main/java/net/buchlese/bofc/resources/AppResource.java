@@ -10,7 +10,6 @@ import com.google.inject.Inject;
 
 import io.dropwizard.views.View;
 import net.buchlese.bofc.BackOfcConfiguration;
-import net.buchlese.bofc.view.MobileView;
 import net.buchlese.bofc.view.StartView;
 
 @Path("/")
@@ -26,20 +25,8 @@ public class AppResource {
 
 	@GET
 	public View getApp(@HeaderParam("user-agent") String userAgent ) {
-		if (userAgent.contains("Android") ||
-			userAgent.contains("iPhone") ||
-			userAgent.contains("iPad")) {
-			return getMobile();
-		}
 		return getDesktop();
 	}
-
-	@GET
-	@Path("/mobile")
-	public View getMobile() {
-		return new MobileView(cfg);
-	}
-
 	@GET
 	@Path("/start")
 	public View getDesktop() {

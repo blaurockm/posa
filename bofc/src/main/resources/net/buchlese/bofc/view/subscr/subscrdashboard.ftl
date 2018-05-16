@@ -11,8 +11,6 @@
   <li class="active"><a data-toggle="tab" href="#heutigeRech">unberechnete Lieferungen <span class="label label-pill label-default">${deliveries?size}</span></a></li>
   <li><a data-toggle="tab" href="#heutigeSchein">Lieferung für Lieferschein <span class="label label-pill label-default">${unslippedDeliveries?size}</span></a></li>
   <li><a data-toggle="tab" href="#intervalle">unbezahlte Intervalle <span class="label label-pill label-default">${intervalDeliveries?size}</span></a></li>
-  <li><a data-toggle="tab" href="#abosMemo">Abos mit Memo <span class="label label-pill label-default">${subscriptionsWithMemo?size}</span></a></li>
-  <li><a data-toggle="tab" href="#abos">abzurechnende Abos <span class="label label-pill label-default">${subscriptions?size}</span></a></li>
 </ul>
 
 <div class="tab-content">
@@ -78,38 +76,6 @@
 	</tbody>
 </table>
 </div>
-  <div id="abosMemo" class="tab-pane fade">
-<table class="table table-striped">
-	<thead>
-		<tr>
-			<th>Abonr</th>
-			<th>Periodikum</th>
-			<th>Abonnent</th>
-			<th>Lieferhinweis</th>
-			<th>Zahlweise</th>
-			<th>Versandart</th>
-			<th>Bezahlt bis</th>
-			<th>Letzte Rechnung am</th>
-			<th></th>
-		</tr>
-	</thead>
-	<tbody>
-		<#list subscriptionsWithMemo as s>
-		<tr>
-			<td>${s.id}</td>
-			<td>${product(s)}</td>
-			<td>${kunde(s)}</td>
-			<td>${s.deliveryInfo1!} ${s.deliveryInfo2!}</td>
-			<td>${s.paymentType.text}</td>
-			<td>${s.shipmentType.text}</td>
-			<td>${(s.payedUntil)!}</td>
-			<td>${(s.lastInvoiceDate)!}</td>
-			<td><a href="#subscription/${s.id?c}" data-toggle="tooltip" title="Details" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span></a> </td>
-		</tr>
-		</#list>
-	</tbody>
-</table>
-  </div>
 <div id="intervalle" class="tab-pane fade">
 <table class="table table-striped">
 	<thead>
@@ -140,38 +106,6 @@
 	</tbody>
 </table>
 </div>
-  <div id="abos" class="tab-pane fade">
-<table class="table table-striped">
-	<thead>
-		<tr>
-			<th>Abonr</th>
-			<th>Periodikum</th>
-			<th>Abonnent</th>
-			<th>Lieferhinweis</th>
-			<th>Zahlweise</th>
-			<th>Versandart</th>
-			<th>Bezahlt bis</th>
-			<th>Letzte Rechnung am</th>
-			<th></th>
-		</tr>
-	</thead>
-	<tbody>
-		<#list subscriptions as s>
-		<tr>
-			<td>${s.id}</td>
-			<td>${product(s)}</td>
-			<td>${kunde(s)}</td>
-			<td>${s.deliveryInfo1!} ${s.deliveryInfo2!}</td>
-			<td>${s.paymentType.text}</td>
-			<td>${s.shipmentType.text}</td>
-			<td>${(s.payedUntil)!}</td>
-			<td>${(s.lastInvoiceDate)!}</td>
-			<td><a href="#subscription/${s.id?c}" data-toggle="tooltip" title="Details" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span></a> </td>
-		</tr>
-		</#list>
-	</tbody>
-</table>
-  </div>
 </div>	<!-- end nav-content -->	
 <script>
 $(document).ready(function(){

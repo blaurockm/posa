@@ -6,31 +6,10 @@ function notFound(){
     $("#output .content").html("404 Not Found, diese seite gibt es nicht!");
 }
 
-function setMenu() {
-	if ($("#homebutton").attr("myModule") != "menu") {
-		$("#navbar").load("/menu/navigation");
-		$("#homebutton").attr("myModule", "menu");
-	}
-}        
-
 function setSubscrModule() {
 	if ($("#homebutton").attr("myModule") != "subscr") {
 		$("#navbar").load("/subscr/navigation");
 		$("#homebutton").attr("myModule", "subscr");
-	}
-}
-
-function setAccountingModule() {
-	if ($("#homebutton").attr("myModule") != "accounting") {
-		$("#navbar").load("/pages/navigation");
-		$("#homebutton").attr("myModule", "accounting");
-	}
-}
-
-function setCouponModule() {
-	if ($("#homebutton").attr("myModule") != "coupon") {
-		$("#navbar").load("/coupon/navigation");
-		$("#homebutton").attr("myModule", "coupon");
 	}
 }
 
@@ -45,75 +24,8 @@ function setCouponModule() {
 ///////////////////////////////////////
 ///////////////////////////////////////
 Path.map("#index").to(function(){
-    $("#output .content").load("/menu/index");
-}).enter(setMenu);
-
-///////////////////////////////////////
-///////////////////////////////////////
-///////////////////////////////////////
-///////////////////////////////////////
-Path.map("#coupon").to(function(){
-$("#output .content").load("/coupon/dashboard");
-}).enter(setCouponModule);
-
-Path.map("#couponCust").to(function(){
-	$("#output .content").load("/coupon/customers");
-}).enter(setCouponModule);
-
-Path.map("#coupons").to(function(){
-	$("#output .content").load("/coupon/coupons");
-}).enter(setCouponModule);
-
-Path.map("#couponDetail").to(function(){
-	$("#output .content").load("/coupon/couponDetail/" + this.params["id"]);
-}).enter(setCouponModule);
-
-Path.map("#couponAdd").to(function(){
-	// this is a modal window content
-    $("#entrymodal-output .content").load("/coupon/couponCreateForm");
-    $("#entrymodal-title").text("Neuen Externen Gutschein anlegen");
-    $("#entryModal").modal('show');
+    $("#output .content").load("/subscr/dashboard");
 }).enter(setSubscrModule);
-
-Path.map("#couponCustDetail/:id").to(function(){
-    $("#output .content").load("/coupon/couponCustDetail/" + this.params["id"]);
-}).enter(setSubscrModule);
-
-///////////////////////////////////////
-///////////////////////////////////////
-///////////////////////////////////////
-///////////////////////////////////////
-Path.map("#fibu").to(function(){
-    $("#output .content").load("/pages/dashboard");
-}).enter(setAccountingModule);
-
-Path.map("#export").to(function(){
-    $("#output .content").load("/pages/export");
-}).enter(setAccountingModule);
-
-Path.map("#exports").to(function(){
-    $("#output .content").load("/pages/exports");
-}).enter(setAccountingModule);
-
-Path.map("#rechnungen").to(function(){
-    $("#output .content").load("/pages/rechnungen");
-}).enter(setAccountingModule);
-
-Path.map("#commands").to(function(){
-	$("#output .content").load("/pages/commands");
-}).enter(setAccountingModule);
-
-Path.map("#mappings/:pos").to(function(){
-	$("#output .content").load("/pages/mappings?point=" + this.params["pos"]);
-}).enter(setAccountingModule);
-
-Path.map("#mappings").to(function(){
-	$("#output .content").load("/pages/mappings");
-}).enter(setAccountingModule);
-
-Path.map("#technics").to(function(){
-	$("#output .content").load("/pages/technics");
-}).enter(setAccountingModule);
 
 ///////////////////////////////////////
 ///////////////////////////////////////
@@ -135,13 +47,16 @@ Path.map("#subscrInvoices").to(function(){
     $("#output .content").load("/subscr/invoices");
 }).enter(setSubscrModule);
 
-Path.map("#invoiceCancel/:id").to(function(){
-    $("#output .content").load("/subscr/invoiceCancel/" + this.params["id"]);
-    window.history.back();  // in der history einen schritt zurückgehen
+Path.map("#subscrInvoices/:spec").to(function(){
+    $("#output .content").load("/subscr/invoices?spec=" + this.params["spec"]);
 }).enter(setSubscrModule);
 
-Path.map("#invoiceRecord/:id").to(function(){
-    $("#output .content").load("/subscr/invoiceRecord/" + this.params["id"]);
+Path.map("#subscrDeliveryNotes").to(function(){
+    $("#output .content").load("/subscr/deliveryNotes");
+}).enter(setSubscrModule);
+
+Path.map("#invoiceCancel/:id").to(function(){
+    $("#output .content").load("/subscr/invoiceCancel/" + this.params["id"]);
     window.history.back();  // in der history einen schritt zurückgehen
 }).enter(setSubscrModule);
 

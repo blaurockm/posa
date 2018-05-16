@@ -8,7 +8,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -71,6 +70,7 @@ import net.buchlese.bofc.resources.helper.SubscriberUpdateHelper;
 import net.buchlese.bofc.resources.helper.SubscriptionUpdateHelper;
 import net.buchlese.bofc.resources.helper.UpdateResult;
 import net.buchlese.bofc.view.subscr.CustomerAddView;
+import net.buchlese.bofc.view.subscr.DeliveryNotesView;
 import net.buchlese.bofc.view.subscr.InvoicesView;
 import net.buchlese.bofc.view.subscr.NavigationView;
 import net.buchlese.bofc.view.subscr.ProductAddView;
@@ -332,7 +332,7 @@ public class SubscrResource {
 	@UnitOfWork
 	public Response createCollPdfInvoice(@PathParam("sub") String subIdP)  {
 		PosInvoice inv = createCollInvoice(subIdP); 
-		return invoiceResponse(inv);
+		return invoiceResponse(Arrays.asList(inv));
 	}
 
 	@GET
@@ -418,7 +418,7 @@ public class SubscrResource {
 	@UnitOfWork
 	public Response createPdfInvoice(@PathParam("sub") String subIdP)  {
 		PosInvoice inv = createInvoice(subIdP); 
-		return invoiceResponse(inv);
+		return invoiceResponse(Arrays.asList(inv));
 	}
 
 	@GET
@@ -486,17 +486,26 @@ public class SubscrResource {
 	@Path("/invoiceView/{inv}")
 	@Produces({"application/pdf"})
 	@UnitOfWork
-	public Response viewInvoice(@PathParam("inv") String invNum) {
-		List<PosInvoice> invs = jpaPosInvoiceDao.findByNumber(invNum);
-		if (invs.size()>1 || invs.isEmpty()) {
-			throw new WebApplicationException("unable to cancel, more than one or no invoice with this number " + invNum, 500);
+	public Response viewInvoice(@PathParam("inv") String invNum, @QueryParam("mark") Optional<String> mark) {
+		List<PosInvoice> invs = null;
+		if (invNum.equals("unprinted")) {
+			// wir wollen einen Stapeldruck
+			invs = jpaPosInvoiceDao.getSubscrInvoices(3, null, Boolean.FALSE, null, Boolean.FALSE, 50);
+		} else {
+			invs = jpaPosInvoiceDao.findByNumber(invNum);
 		}
-		PosInvoice inv = invs.get(0);
-		return invoiceResponse(inv);
+		
+		Response x = invoiceResponse(invs);
+		
+		if (mark.isPresent()) {
+			jpaPosInvoiceDao.markSubscrInvoicesAsPrinted(3, null, Boolean.FALSE, null, null, 50); // auch die stornierten als gedruckt markieren.
+		}
+		
+		return x;
 	}
 
 	
-	private Response invoiceResponse(PosInvoice inv) {
+	private Response invoiceResponse(List<PosInvoice> inv) {
 		PDFInvoice generator = new PDFInvoice(inv);
 		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		try {
@@ -512,7 +521,11 @@ public class SubscrResource {
 				output.flush();
 			}
 		};	
-		return Response.ok(stream).header("Content-Disposition","attachment; filename=Rechnung_" + inv.getNumber() + ".pdf").build();
+		String num = "viele";
+		if (inv.size() == 1) {
+			num = inv.get(0).getNumber();
+		}
+		return Response.ok(stream).header("Content-Disposition","attachment; filename=Rechnung_" + num + ".pdf").build();
 	}
 	
 	
@@ -529,7 +542,7 @@ public class SubscrResource {
 		inv.setCancelled(true);
 		jpaPosInvoiceDao.update(inv);
 		SubscriptionInvoiceCreator.cancelInvoice(dao, inv);
-		return new InvoicesView(dao);
+		return new InvoicesView(jpaPosInvoiceDao.getSubscrInvoices(3, null, null, null, null, 25));
 	}
 
 	@GET
@@ -574,10 +587,50 @@ public class SubscrResource {
 	@Path("/invoices")
 	@Produces({"text/html"})
 	@UnitOfWork
-	public View showInvoices() {
-		return new InvoicesView(dao);
+	public View showInvoices(@QueryParam("spec") Optional<String> spec) {
+		if (spec.isPresent()) {
+			Boolean printed = null;
+			Boolean payed = null;
+			Boolean exported = null;
+			Boolean cancelled = null;
+			if (spec.get().contains("Pt")) {
+				printed = Boolean.TRUE;
+			}
+			if (spec.get().contains("Pf")) {
+				printed = Boolean.FALSE;
+			}
+			if (spec.get().contains("Yt")) {
+				payed = Boolean.TRUE;
+			}
+			if (spec.get().contains("Yf")) {
+				payed = Boolean.FALSE;
+			}
+			if (spec.get().contains("Et")) {
+				exported = Boolean.TRUE;
+			}
+			if (spec.get().contains("Ef")) {
+				exported = Boolean.FALSE;
+			}
+			if (spec.get().contains("Ct")) {
+				cancelled = Boolean.TRUE;
+			}
+			if (spec.get().contains("Cf")) {
+				cancelled = Boolean.FALSE;
+			}
+			return new InvoicesView(jpaPosInvoiceDao.getSubscrInvoices(3, payed, printed, exported, cancelled, 25));
+		}
+		return new InvoicesView(jpaPosInvoiceDao.getSubscrInvoices(3, null, null, null, null, 25));
 	}
 
+	@GET
+	@Path("/deliveryNotes")
+	@Produces({"text/html"})
+	@UnitOfWork
+	public View showDeliveryNotes() {
+		return new DeliveryNotesView(jpaSubscrDeliveryDao.getDeliveryNotes(3, 25));
+	}
+	
+	
 	@GET
 	@Path("/dashboard")
 	@Produces({"text/html"})
@@ -624,7 +677,7 @@ public class SubscrResource {
 				os.flush();
 			}
 		};
-		return Response.ok(stream).build();
+		return Response.ok(stream).header("Content-Disposition","attachment; filename=Adressprotokoll_" + dateP + ".pdf").build();
 	}
 
 	@GET
@@ -634,10 +687,38 @@ public class SubscrResource {
 	public Response showDeliveryNote(@PathParam("id") String deliveryId) {
 		final long artId = Long.parseLong(deliveryId);
 		final SubscrDelivery deli = dao.getSubscrDelivery(artId);
-		final List<SubscrDelivery> deliveries = dao.getDeliveriesForSubscriberSlipflag(deli.getSubscriber(), deli.getDeliveryDate(), false);
-		dao.recordDetailsOnSlip(new HashSet<>(deliveries), "neu"); //.stream().map(SubscrDelivery::getId).collect(Collectors.toList()), "neu");
-		final ReportDeliveryNote rep = ReportDeliveryNoteCreator.create(dao, numGen,  artId);
+		final List<SubscrDelivery> deliveries = jpaSubscrDeliveryDao.getDeliveriesForSubscriberSlipflag(deli.getSubscriber(), deli.getDeliveryDate(), false);
+		long num = numGen.getNextNumber();
+		final ReportDeliveryNote rep = ReportDeliveryNoteCreator.create(num, deliveries);
+		if (rep == null) {
+			throw new WebApplicationException("keine lieferscheinrelevante Lieferung!");
+		}
+		jpaSubscrDeliveryDao.recordDetailsOnSlip(deliveries, String.valueOf(rep.delivNum));
 		
+		StreamingOutput stream = new StreamingOutput() {
+			@Override
+			public void write(OutputStream os) throws IOException,  WebApplicationException {
+				try {
+					PDFReport generator = new PDFReport(rep, "report/deliveryNote.xsl");
+					generator.generatePDF(os);
+				} catch (Exception e) {
+					e.printStackTrace(System.err);
+					throw new WebApplicationException(e);
+				}
+				os.flush();
+			}
+		};
+		return Response.ok(stream).header("Content-Disposition","attachment; filename=Lieferschein_" + rep.delivNum + ".pdf").build();
+	}
+
+	@GET
+	@Path("/getdeliverynote/{num}")
+	@Produces({"application/pdf"})
+	@UnitOfWork
+	public Response getDeliveryNote(@PathParam("num") String deliveryNoteNum) {
+		final List<SubscrDelivery> deliveries = jpaSubscrDeliveryDao.getDeliveriesForNote(deliveryNoteNum);
+		final ReportDeliveryNote rep = ReportDeliveryNoteCreator.create(Long.parseLong(deliveryNoteNum), deliveries);
+	
 		StreamingOutput stream = new StreamingOutput() {
 			@Override
 			public void write(OutputStream os) throws IOException,  WebApplicationException {
@@ -650,7 +731,7 @@ public class SubscrResource {
 				os.flush();
 			}
 		};
-		return Response.ok(stream).build();
+		return Response.ok(stream).header("Content-Disposition","attachment; filename=Lieferschein_" + rep.delivNum + ".pdf").build();
 	}
 
 	@GET

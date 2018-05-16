@@ -86,13 +86,6 @@ public class SubscrDAO {
 	public List<PosIssueSlip> getSubscriberIssueSlips(int debId) {
 		return jpaPosIssueSlipDao.getSubscriberIssueSlips(debId);
 	}
-
-
-	
-	public List<PosInvoice> getSubscrInvoices(int id, LocalDate num) {
-		return jpaPosInvoiceDao.getSubscrInvoices(id, java.sql.Date.valueOf(num));
-	}
-
 	
 	public SubscrDelivery getLastDeliveryForSubscription(Subscription id) {
 		return jpaSubscrDeliveryDao.getLastDeliveryForSubscription(id);
@@ -162,17 +155,6 @@ public class SubscrDAO {
 	public void resetDetailsOfInvoice(Set<SubscrDelivery> deliveryIds) {
 		jpaSubscrDeliveryDao.resetDetailsOfInvoice(deliveryIds);
 	}
-
-	
-	public void recordDetailsOnSlip(Set<SubscrDelivery> deliveryIds, String invNumber) {
-		jpaSubscrDeliveryDao.recordDetailsOnSlip(deliveryIds, invNumber);
-	}
-
-	
-	public void resetDetailsOfSlip(Set<SubscrDelivery> deliveryIds) {
-		jpaSubscrDeliveryDao.resetDetailsOfSlip(deliveryIds);
-	}
-
 	
 	public void updateSubscription(Subscription art) {
 		jpaSubscriptionDao.update(art);
@@ -267,12 +249,6 @@ public class SubscrDAO {
 	public List<SubscrDelivery> getDeliveriesSlipflag(boolean slipped) {
 		return jpaSubscrDeliveryDao.getDeliveriesSlipflag(slipped);
 	}
-
-	
-	public List<SubscrDelivery> getDeliveriesForSubscriberSlipflag(Subscriber id,	Date n, boolean slipped) {
-		return jpaSubscrDeliveryDao.getDeliveriesForSubscriberSlipflag(id, n, slipped);
-	}
-
 
 	public void createInvoice(PosInvoice inv) {
 		this.jpaPosInvoiceDao.create(inv);

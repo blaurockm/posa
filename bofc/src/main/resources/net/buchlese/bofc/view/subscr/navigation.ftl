@@ -5,5 +5,6 @@
 	<li><a href="#subscrCust">Kunden</a></li>
 	<li><a href="#subscrProd">Periodika</a></li>
 	<li><a href="#subscrInvoices">Rechnungen</a></li>
+	<li><a href="#subscrDeliveryNotes">Lieferscheine</a></li>
 </ul>
 

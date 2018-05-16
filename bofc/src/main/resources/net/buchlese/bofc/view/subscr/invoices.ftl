@@ -1,5 +1,10 @@
 <div class="container">
 
+<a href="#subscrInvoices/Pf" class="btn btn-default">Nicht gedruckte</a>
+<a href="#subscrInvoices/Pt" class="btn btn-default">gedruckte</a>
+<a href="#subscrInvoices/Cf" class="btn btn-default">Nicht stornierte</a>
+<a href="#subscrInvoices/Ct" class="btn btn-default">Stornierte</a>
+
 <h1>Rechnungen</h1>
 <table class="table table-striped">
 	<thead>
@@ -39,6 +44,10 @@
 		</#list>
 	</tbody>
 </table>
+
+<a href="/subscr/invoiceView/unprinted" class="btn btn-default">Stapeldruck der ungedruckten</a>
+
+<a href="/subscr/invoiceView/unprinted?mark=true" class="btn btn-default">Stapeldruck erfolgreich</a>
 
 
 </div>

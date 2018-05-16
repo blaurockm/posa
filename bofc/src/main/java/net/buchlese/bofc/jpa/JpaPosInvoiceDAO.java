@@ -18,6 +18,7 @@ import net.buchlese.bofc.api.bofc.PosInvoice;
 import net.buchlese.bofc.api.subscr.SubscrDelivery;
 import net.buchlese.bofc.api.subscr.SubscrIntervalDelivery;
 import net.buchlese.bofc.api.subscr.Subscription;
+import net.buchlese.bofc.core.DateUtils;
 
 public class JpaPosInvoiceDAO extends AbstractDAO<PosInvoice> {
 
@@ -45,13 +46,35 @@ public class JpaPosInvoiceDAO extends AbstractDAO<PosInvoice> {
 
 //	@SqlQuery("select * from posInvoice where debitor = :debitorId order by number desc")
 	public List<PosInvoice> findByDebitorNumber(int debitor) {
-		Criteria c = criteria().add(Restrictions.eq("debitorId", debitor)).addOrder( Order.desc("number"));
+		Criteria c = criteria().add(Restrictions.eq("debitorId", debitor)).addOrder( Order.desc("creationTime"));
 		return list(c);
 	}
 	
 //	@SqlQuery("select * from posInvoice where pointid = :pointid and invDate > :date order by number asc")
 	public List<PosInvoice> getSubscrInvoices(int id, Date  num) {
-		Criteria c = criteria().add(Restrictions.eq("pointid", id)).add(Restrictions.gt("date", num)).addOrder(Order.asc("number"));
+		Criteria c = criteria().add(Restrictions.eq("pointid", id))
+				.add(Restrictions.eq("type", "subscr"))
+				.add(Restrictions.gt("date", num)).addOrder(Order.desc("creationTime"));
+		return list(c);
+	}
+
+	public List<PosInvoice> getSubscrInvoices(int id, Boolean payed, Boolean printed, Boolean exported, Boolean cancelled, int maxRows) {
+		Criteria c = criteria().add(Restrictions.eq("pointid", id))
+				.add(Restrictions.eq("type", "subscr"))
+				.setMaxResults(maxRows).addOrder(Order.desc("creationTime"));
+		if (printed != null) {
+			c.add(Restrictions.eq("printed", printed));
+		}
+		if (payed != null) {
+			c.add(Restrictions.eq("payed", payed));
+		}
+		if (exported != null) {
+			c.add(Restrictions.eq("exported", exported));
+		}
+		if (cancelled != null) {
+			c.add(Restrictions.eq("cancelled", cancelled));
+		}
+
 		return list(c);
 	}
 
@@ -80,6 +103,30 @@ public class JpaPosInvoiceDAO extends AbstractDAO<PosInvoice> {
 		}					
 		Criteria c = criteria().add(Restrictions.in("number", invNum));
 		return list(c);
+	}
+
+	public void markSubscrInvoicesAsPrinted(int id, Boolean payed, Boolean printed, Boolean exported, Boolean cancelled, int maxRows) {
+		Criteria c = criteria().add(Restrictions.eq("pointid", id))
+				.add(Restrictions.eq("type", "subscr"))
+				.setMaxResults(maxRows).addOrder(Order.desc("creationTime"));
+		if (printed != null) {
+			c.add(Restrictions.eq("printed", printed));
+		}
+		if (payed != null) {
+			c.add(Restrictions.eq("payed", payed));
+		}
+		if (exported != null) {
+			c.add(Restrictions.eq("exported", exported));
+		}
+		if (cancelled != null) {
+			c.add(Restrictions.eq("cancelled", cancelled));
+		}
+
+		for (PosInvoice inv : list(c)) {
+			inv.setPrinted(Boolean.TRUE);
+			inv.setPrintTime(DateUtils.nowTime());
+			currentSession().saveOrUpdate(inv);
+		}
 	}
 
 
