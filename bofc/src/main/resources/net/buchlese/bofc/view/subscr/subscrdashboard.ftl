@@ -53,7 +53,7 @@
 			<th>Artikel</th>
 			<th>Menge</th>
 			<th>Versandart</th>
-			<th align="right">Betrag</th>
+			<th>Zahlweise</th>
 			<th>Datum</th>
 			<th></th>
 		</tr>
@@ -65,7 +65,7 @@
 			<td>${d.articleName}</td>
 			<td>${d.quantity}</td>
 			<td>${d.subscription.shipmentType.text}</td>
-			<td align="right">${money(d.total)}</td>
+			<td>${d.subscription.paymentType.text}</td>
 			<td>${d.deliveryDate!}</td>
 			<td><a href="#subscrDelivery/${d.id?c}" data-toggle="tooltip" title="Details" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span></a>
             <a href="#subscription/${d.subscription.id?c}" data-toggle="tooltip" title="Abo" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>

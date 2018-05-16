@@ -80,7 +80,7 @@
 				<tr>
 					<th>Lieferdatum</th>
 					<th>Artikel</th>
-					<th>Rech</th>
+					<th>Preis</th>
 					<th></th>
 				</tr>
 			</thead>
@@ -102,7 +102,7 @@
 				<tr>
 					<th>Lieferdatum</th>
 					<th>Artikel</th>
-					<th>Rech</th>
+					<th>Preis</th>
 					<th></th>
 				</tr>
 			</thead>
@@ -165,7 +165,6 @@
 					<th>Rechnungsnummer</th>
 					<th>Datum</th>
 					<th>Betrag</th>
-					<th>bezahlt</th>
 					<th></th>
 				</tr>
 			</thead>
@@ -175,7 +174,6 @@
 						<td>${inv.number}</td>
 						<td><#if inv.date??>${inv.date}<#else>kein Datum!</#if></td>
 						<td align="right">${money(inv.amount)}</td>
-						<td align="right">${money(inv.payed)}</td>
 						<td>  <a href="/invoice/${inv.number}" target="_blank">view</a> </td>
 					</tr>
 				</#list>

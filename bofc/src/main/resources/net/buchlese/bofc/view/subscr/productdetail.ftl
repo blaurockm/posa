@@ -95,7 +95,6 @@
   <li class="active"><a data-toggle="tab" href="#abos">Abonnements</a></li>
   <li><a data-toggle="tab" href="#artikel">Artikel</a></li>
   <li><a data-toggle="tab" href="#intervalle">Intervalle</a></li>
-  <li><a data-toggle="tab" href="#rechnungen">Rechnungen</a></li>
 </ul>
 
 <div class="tab-content">
@@ -107,7 +106,7 @@
 					<th>Abonnent</th>
 					<th>Seit</th>
 					<th>Versandart</th>
-					<th>Zahlungweise</th>
+					<th>Zahlweise</th>
 					<th></th>
 				</tr>
 			</thead>
@@ -130,6 +129,7 @@
 				<tr>
 					<th>Artikelnummer</th>
 					<th>Name</th>
+					<th>Preis</th>
 					<th>Erscheinungstag</th>
 				</tr>
 			</thead>
@@ -138,6 +138,7 @@
 					<tr>
 						<td>${a.id}</td>
 						<td>${a.name}</td>
+						<td align="right">${money(a.brutto)}</td>
 						<td>${(a.erschTag)!}</td>
 					</tr>	
 				</#list>
@@ -152,6 +153,7 @@
 					<th>Name</th>
 					<th>Start</th>
 					<th>Ende</th>
+					<th>Preis</th>
 					<th>Typ</th>
 				</tr>
 			</thead>
@@ -162,24 +164,10 @@
 						<td>${a.name}</td>
 						<td>${(a.startDate)!}</td>
 						<td>${(a.endDate)!}</td>
+						<td align="right">${money(a.brutto)}</td>
 						<td>${a.intervalType.text}</td>
 					</tr>	
 				</#list>
-			</tbody>
-		</table>
-  </div>
-  <div id="rechnungen" class="tab-pane fade">
-		<table class="table table-striped">
-			<thead>
-				<tr>
-					<th>Rechnungsnummer</th>
-					<th>Datum</th>
-					<th>Betrag</th>
-					<th>bezahlt</th>
-					<th></th>
-				</tr>
-			</thead>
-			<tbody>
 			</tbody>
 		</table>
   </div>
