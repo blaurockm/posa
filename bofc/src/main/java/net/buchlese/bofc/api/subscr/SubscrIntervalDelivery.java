@@ -180,6 +180,7 @@ public class SubscrIntervalDelivery implements Comparable<SubscrIntervalDelivery
 		this.intervalName = intervalName;
 	}
 
+	@XmlTransient
 	public SubscrInterval getInterval() {
 		return interval;
 	}
@@ -188,6 +189,7 @@ public class SubscrIntervalDelivery implements Comparable<SubscrIntervalDelivery
 		this.interval = interval;
 	}
 
+	@XmlTransient
 	public Subscriber getSubscriber() {
 		return subscriber;
 	}
@@ -196,6 +198,7 @@ public class SubscrIntervalDelivery implements Comparable<SubscrIntervalDelivery
 		this.subscriber = subscriber;
 	}
 
+	@XmlTransient
 	public Subscription getSubscription() {
 		return subscription;
 	}
