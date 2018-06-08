@@ -348,6 +348,7 @@ public class SubscrResource {
 		SubscrDelivery d = new SubscrDelivery();
 		SubscrProduct p = subscription.getProduct();
 		Subscriber subscriber  = subscription.getSubscriber();
+		d.setArticle(article);
 		d.setArticleName(article.getName());
 		d.setDeliveryDate(deliveryDate);
 		d.setSubscription(subscription);
