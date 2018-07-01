@@ -17,7 +17,7 @@ import net.buchlese.bofc.api.subscr.SubscrDelivery;
 @Table( name = "posissueslip_detail")
 public class PosIssueSlipDetail {
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@JsonProperty
 	private Long id;
 

@@ -29,7 +29,7 @@ import net.buchlese.bofc.api.subscr.Subscription;
 public class InvoiceAgrDetail {
 	public enum TYPE { SUBSCR, ISSUESLIP };	
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@JsonProperty
 	private Long id;
 

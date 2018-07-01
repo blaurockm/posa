@@ -14,7 +14,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PosArticleStockChange {
 		@Id
-		@GeneratedValue(strategy=GenerationType.AUTO)
+		@GeneratedValue(strategy=GenerationType.IDENTITY)
 		@JsonProperty
 		private Long id;
 

@@ -24,7 +24,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @XmlRootElement(name = "deliverynote")
 public class PosIssueSlip {
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@JsonProperty
 	private Long id;
 	@JsonProperty
