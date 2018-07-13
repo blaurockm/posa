@@ -26,7 +26,7 @@ public class SubscrIntervalDeliveryView extends AbstractBofcView{
 	}
 
 	public String kunde(SubscrIntervalDelivery s) {
-		return s.getSubscriberName();
+		return s.getSubscriber().getName();
 	}
 	
 

@@ -79,7 +79,11 @@ public class JpaSubscrIntervalDeliveryDAO extends AbstractDAO<SubscrIntervalDeli
 				          .add( Projections.max("deliveryDate"))).add(Restrictions.eq("subscription", id)).uniqueResult();
 
 		Criteria c = criteria().add(Restrictions.eq("subscription", id)).add(Restrictions.eq("deliveryDate", pj));
-		return (SubscrIntervalDelivery) c.uniqueResult();
+		List<SubscrIntervalDelivery> res = list(c);
+		if (res.isEmpty()) {
+			return null;
+		}
+		return res.get(0);
 	}
 
 	

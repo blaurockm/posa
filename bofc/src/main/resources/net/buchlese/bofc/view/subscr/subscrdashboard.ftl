@@ -92,7 +92,7 @@
 	<tbody>
 		<#list intervalDeliveries as d>
 		<tr>
-			<td>${d.subscriberName!} ${abo(d).deliveryInfo1!} ${abo(d).deliveryInfo2!}</td>
+			<td>${d.subscriber.name!} ${abo(d).deliveryInfo1!} ${abo(d).deliveryInfo2!}</td>
 			<td>${d.intervalName}</td>
 			<td>${d.quantity}</td>
 			<td>${abo(d).shipmentType.text}</td>

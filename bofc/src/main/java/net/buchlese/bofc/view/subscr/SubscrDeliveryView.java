@@ -26,7 +26,7 @@ public class SubscrDeliveryView extends AbstractBofcView{
 	}
 
 	public String kunde(SubscrDelivery d) {
-		return d.getSubscriberName();
+		return d.getSubscriber().getName();
 	}
 	
 	public Subscription abo(SubscrDelivery d) {

@@ -23,7 +23,7 @@ ${d.deliveryDate}
 an
 </div>
 <div class="col-md-5">
-${kunde(d)!}
+${d.subscriber.name!}
 </div>
 </div>
 

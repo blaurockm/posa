@@ -59,6 +59,6 @@ public class SubscrIntervalDispoView extends AbstractBofcView{
 	}
 
 	public boolean isShowArticlePlusEins() {
-		return interval.getEndDate().getTime() > System.currentTimeMillis() - TimeUnit.DAYS.toMillis(30);
+		return interval.getEndDate().getTime() < System.currentTimeMillis() + TimeUnit.DAYS.toMillis(30);
 	}
 }
