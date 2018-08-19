@@ -26,12 +26,16 @@ public class SubscrProductDetailView extends AbstractBofcView{
 	public SubscrProductDetailView(SubscrDAO dao, SubscrProduct p) {
 		super("productdetail.ftl");
 		this.dao = dao;
-		this.subscriptions = p.getSubscriptions();
-		this.subscriptions.forEach(s -> s.getDeliveryInfo1());
+		if (p.getSubscriptions() != null && p.getSubscriptions().isEmpty() == false) {
+ 		   this.subscriptions = p.getSubscriptions();
+		   this.subscriptions.forEach(s -> s.getDeliveryInfo1());
+		} else {
+		   this.subscriptions = Collections.emptySet();
+		}
 		this.articles = p.getArticles();
 		this.intervals = p.getIntervals(); 
-		this.lastArticle = articles.isEmpty() ? null : articles.iterator().next();
-		this.lastInterval = intervals.isEmpty() ? null : intervals.iterator().next();
+		this.lastArticle = (articles == null || articles.isEmpty()) ? null : articles.iterator().next();
+		this.lastInterval = (intervals == null || intervals.isEmpty()) ? null : intervals.iterator().next();
 		this.p = p;
 	}
 
