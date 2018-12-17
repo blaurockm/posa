@@ -1,5 +1,6 @@
 package net.buchlese.bofc.view.subscr;
 
+import java.util.Collections;
 import java.util.List;
 
 import net.buchlese.bofc.api.bofc.PosInvoice;
@@ -37,9 +38,13 @@ public class SubscriptionDetailView extends AbstractBofcView{
 		this.lastIntDeliv = dao.getLastIntervalDeliveryForSubscription(s);
 		this.newestInterval = dao.getNewestIntervalOfProduct(this.prod);
 		this.unpayedDelivs = dao.getDeliveriesForSubscriptionPayflag(sub,false);
+		Collections.sort(this.unpayedDelivs, Collections.reverseOrder());
 		this.payedDelivs = dao.getDeliveriesForSubscriptionPayflag(sub, true);
+		Collections.sort(this.payedDelivs, Collections.reverseOrder());
 		this.unpayedIntDelivs = dao.getIntervalDeliveriesForSubscriptionPayflag(sub, false);
+		Collections.sort(this.unpayedIntDelivs, Collections.reverseOrder());
 		this.payedIntDelivs = dao.getIntervalDeliveriesForSubscriptionPayflag(sub, true);
+		Collections.sort(this.payedIntDelivs, Collections.reverseOrder());
 		this.invs = dao.getInvoicesForDetails(sub);
 		invs.addAll(dao.getInvoicesForIntervalDetails(sub));
 	}

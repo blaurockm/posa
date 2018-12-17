@@ -1,5 +1,6 @@
 package net.buchlese.bofc.view.subscr;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -17,8 +18,8 @@ public class SubscrProductDetailView extends AbstractBofcView{
 
 	private final SubscrProduct p;
 	private final Set<Subscription> subscriptions;
-	private final Set<SubscrArticle> articles;
-	private final Set<SubscrInterval> intervals;
+	private final List<SubscrArticle> articles;
+	private final List<SubscrInterval> intervals;
 	private final SubscrArticle lastArticle;
 	private final SubscrInterval lastInterval;
 	private final SubscrDAO dao;
@@ -32,8 +33,10 @@ public class SubscrProductDetailView extends AbstractBofcView{
 		} else {
 		   this.subscriptions = Collections.emptySet();
 		}
-		this.articles = p.getArticles();
-		this.intervals = p.getIntervals(); 
+		this.articles = new ArrayList<>(p.getArticles());
+		Collections.sort(this.articles, Collections.reverseOrder());
+		this.intervals = new ArrayList<>(p.getIntervals()); 
+		Collections.sort(this.intervals, Collections.reverseOrder());
 		this.lastArticle = (articles == null || articles.isEmpty()) ? null : articles.iterator().next();
 		this.lastInterval = (intervals == null || intervals.isEmpty()) ? null : intervals.iterator().next();
 		this.p = p;
@@ -56,11 +59,11 @@ public class SubscrProductDetailView extends AbstractBofcView{
 		return subscriptions;
 	}
 
-	public Set<SubscrArticle> getArticles() {
+	public List<SubscrArticle> getArticles() {
 		return articles;
 	}
 	
-	public Set<SubscrInterval> getIntervals() {
+	public List<SubscrInterval> getIntervals() {
 		return intervals;
 	}
 	

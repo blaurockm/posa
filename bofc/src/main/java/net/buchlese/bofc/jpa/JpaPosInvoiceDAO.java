@@ -88,7 +88,7 @@ public class JpaPosInvoiceDAO extends AbstractDAO<PosInvoice> {
 		if (invNum.isEmpty()) {
 			return new ArrayList<>();
 		}					
-		Criteria c = criteria().add(Restrictions.in("number", invNum));
+		Criteria c = criteria().add(Restrictions.in("number", invNum)).addOrder(Order.desc("creationTime"));
 		return list(c);
 	}
 
@@ -101,7 +101,7 @@ public class JpaPosInvoiceDAO extends AbstractDAO<PosInvoice> {
 		if (invNum.isEmpty()) {
 			return Collections.emptyList();
 		}					
-		Criteria c = criteria().add(Restrictions.in("number", invNum));
+		Criteria c = criteria().add(Restrictions.in("number", invNum)).addOrder(Order.desc("creationTime"));
 		return list(c);
 	}
 
