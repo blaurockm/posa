@@ -47,6 +47,7 @@
 
 <ul class="nav nav-tabs">
   <li class="active"><a data-toggle="tab" href="#abos">Abonnements</a></li>
+  <li><a data-toggle="tab" href="#invabos">Beendete Abos</a></li>
   <li><a data-toggle="tab" href="#rechnungen">Rechnungen</a></li>
   <li><a data-toggle="tab" href="#lieferscheine">Lieferscheine</a></li>
 </ul>
@@ -59,6 +60,7 @@
 					<th>Abonummer</th>
 					<th>Periodikum</th>
 					<th>Seit</th>
+					<th>Menge</th>
 					<th>Versandart</th>
 					<th>Zahlungweise</th>
 					<th></th>
@@ -70,6 +72,34 @@
 						<td>${s.id} <a href="#subscription/${s.id?c}" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span></a></td>
 						<td>${product(s)}  <a href="#subscrProduct/${s.product.id?c}" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span></a></td>
 						<td>${(s.startDate)!}</td>
+						<td>${s.quantity}</td>
+					    <td>${s.shipmentType.text}</td>
+					    <td>${s.paymentType.text}</td>
+					</tr>
+				</#list>
+			</tbody>
+		</table>
+  </div>
+  <div id="invabos" class="tab-pane fade">
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th>Abonummer</th>
+					<th>Periodikum</th>
+					<th>Seit</th>
+					<th>Bis</th>
+					<th>Versandart</th>
+					<th>Zahlungweise</th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+				<#list invalidSubscriptions as s>
+					<tr>
+						<td>${s.id} <a href="#subscription/${s.id?c}" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span></a></td>
+						<td>${product(s)}  <a href="#subscrProduct/${s.product.id?c}" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span></a></td>
+						<td>${(s.startDate)!}</td>
+						<td>${(s.endDate)!}</td>
 					    <td>${s.shipmentType.text}</td>
 					    <td>${s.paymentType.text}</td>
 					</tr>

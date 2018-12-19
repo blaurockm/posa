@@ -13,6 +13,7 @@ public class SubscrProductsView extends AbstractBofcView {
 	public SubscrProductsView(SubscrDAO dao, List<SubscrProduct> products) {
 		super("subscrproducts.ftl");
 		this.products = products;
+//		this.products.forEach(p -> p.getSubscriptionCount());
 	}
 
 

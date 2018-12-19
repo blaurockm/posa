@@ -14,7 +14,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.PostLoad;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -96,12 +95,8 @@ public class Subscription {
 	@JsonProperty
 	private String memo;
 
-	@PostLoad
-	public void initDelivery() {
-//		if (getSubscriber()!= null) {
-//			setSubscriberId(getSubscriber().getId());
-//		}
-//		setProductId(product.getId());
+	public boolean isValid() {
+		return getEndDate() == null || getEndDate().after(new java.util.Date());
 	}
 
 	public Long getId() {

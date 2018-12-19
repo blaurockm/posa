@@ -344,6 +344,9 @@ public class SubscrResource {
 		long artId = Long.parseLong(artIdP);
 		Date deliveryDate = new DateParam(dateP).getDate();
 		Subscription subscription = jpaSubscriptionDao.findById(subId);
+		if (subscription.isValid() == false) {
+			return null;
+		}
 		SubscrArticle article = dao.getSubscrArticle(artId);
 		SubscrDelivery d = new SubscrDelivery();
 		SubscrProduct p = subscription.getProduct();
@@ -381,6 +384,9 @@ public class SubscrResource {
 		long artId = Long.parseLong(artIdP);
 		Date deliveryDate = new DateParam(dateP).getDate();
 		Subscription subscription = jpaSubscriptionDao.findById(subId);
+		if (subscription.isValid() == false) {
+			return null;
+		}
 		SubscrInterval article = dao.getSubscrInterval(artId);
 		SubscrIntervalDelivery d = new SubscrIntervalDelivery();
 		d.setIntervalName(article.getName());

@@ -3,7 +3,6 @@ package net.buchlese.bofc.view.subscr;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 import net.buchlese.bofc.api.bofc.PosInvoice;
 import net.buchlese.bofc.api.subscr.SubscrArticle;
@@ -17,7 +16,8 @@ import net.buchlese.bofc.view.AbstractBofcView;
 public class SubscrProductDetailView extends AbstractBofcView{
 
 	private final SubscrProduct p;
-	private final Set<Subscription> subscriptions;
+	private final List<Subscription> subscriptions;
+	private final List<Subscription> invalidSubscriptions;
 	private final List<SubscrArticle> articles;
 	private final List<SubscrInterval> intervals;
 	private final SubscrArticle lastArticle;
@@ -27,11 +27,16 @@ public class SubscrProductDetailView extends AbstractBofcView{
 	public SubscrProductDetailView(SubscrDAO dao, SubscrProduct p) {
 		super("productdetail.ftl");
 		this.dao = dao;
-		if (p.getSubscriptions() != null && p.getSubscriptions().isEmpty() == false) {
- 		   this.subscriptions = p.getSubscriptions();
-		   this.subscriptions.forEach(s -> s.getDeliveryInfo1());
-		} else {
-		   this.subscriptions = Collections.emptySet();
+		this.subscriptions = new ArrayList<>();
+		this.invalidSubscriptions = new ArrayList<>();
+		if (p.getSubscriptions() != null) {
+			for (Subscription su : p.getSubscriptions()) {
+				if (su.isValid()) {
+					this.subscriptions.add(su);
+				} else {
+					this.invalidSubscriptions.add(su);
+				}
+			}
 		}
 		this.articles = new ArrayList<>(p.getArticles());
 		Collections.sort(this.articles, Collections.reverseOrder());
@@ -55,8 +60,11 @@ public class SubscrProductDetailView extends AbstractBofcView{
 		return lastInterval;
 	}
 
-	public Set<Subscription> getSubscriptions() {
+	public List<Subscription> getSubscriptions() {
 		return subscriptions;
+	}
+	public List<Subscription> getInvalidSubscriptions() {
+		return invalidSubscriptions;
 	}
 
 	public List<SubscrArticle> getArticles() {

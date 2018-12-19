@@ -93,6 +93,14 @@ public class SubscrProduct {
 	@XmlTransient
 	private Set<Subscription> subscriptions;
 
+	
+	public long getSubscriptionCount() {
+		if (getSubscriptions() != null) {
+			return getSubscriptions().stream().filter(Subscription::isValid).count();
+		}
+		return 0;
+	}
+	
 	public Long getId() {
 		return id;
 	}

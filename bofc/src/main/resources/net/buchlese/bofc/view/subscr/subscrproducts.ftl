@@ -14,7 +14,7 @@
 		<tr>
 			<th>Publikation</th>
 			<th>Verlag</th>
-			<th>Abkü</th>
+			<th>Abos</th>
 			<th>Periode</th>
 			<th>Zahlung weise</th>
 			<th>letzer Eingang</th>
@@ -28,7 +28,7 @@
 		<tr>
 			<td><a href="#subscrProduct/${p.id?c}">${p.name}</a></td>
 			<td>${p.publisher}</td>
-			<td>${p.abbrev}</td>
+			<td>?</td>
 			<td>${p.period!}</td>
 			<td>${p.payPerDelivery?string("pro Lieferung", "pro Zeit")}</td>
 			<td>${(p.lastDelivery)!}</td>
