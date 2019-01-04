@@ -8,6 +8,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -315,6 +316,7 @@ public class SubscrResource {
 		SubscrArticle art = CreationUtils.createArticle(p);
 		jpaSubscrArticleDao.create(art);
 		p.addSubscrArticle(art);
+		p.setIntervals(new HashSet<>());
 		return new SubscrProductDetailView(dao, p);
 	}
 
