@@ -314,6 +314,7 @@ public class SubscrResource {
 		jpaSubscrProductDao.create(p);
 		SubscrArticle art = CreationUtils.createArticle(p);
 		jpaSubscrArticleDao.create(art);
+		p.addSubscrArticle(art);
 		return new SubscrProductDetailView(dao, p);
 	}
 

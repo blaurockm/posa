@@ -3,6 +3,7 @@ package net.buchlese.bofc.api.subscr;
 
 import java.sql.Date;
 import java.time.Period;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -320,6 +321,12 @@ public class SubscrProduct {
 		this.lastInterval = lastInterval;
 	}
 
+	public void addSubscrArticle(SubscrArticle d) {
+		if (articles == null) {
+			articles = new HashSet<>();
+		}
+		articles.add(d);
+	}
 
 
 }
