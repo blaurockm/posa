@@ -43,7 +43,7 @@ public class JpaSubscriberDAO extends AbstractDAO<Subscriber> {
 
 //	@SqlQuery("select * from subscriber where name1 like :q or name2 like :q or to_char(customerId) like :q order by name1")
 	public List<Subscriber> querySubscribers(String query) {
-		Criteria c = criteria().add(Restrictions.like("name1", query)).addOrder(Order.asc("name1"));
+		Criteria c = criteria().add(Restrictions.like("name", query)).addOrder(Order.asc("name"));
 		return list(c);
 	}
 	

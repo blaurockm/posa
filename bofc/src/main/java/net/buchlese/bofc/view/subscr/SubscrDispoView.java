@@ -1,9 +1,10 @@
 package net.buchlese.bofc.view.subscr;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import net.buchlese.bofc.api.subscr.SubscrArticle;
 import net.buchlese.bofc.api.subscr.SubscrDelivery;
@@ -15,7 +16,7 @@ import net.buchlese.bofc.view.AbstractBofcView;
 public class SubscrDispoView extends AbstractBofcView{
 
 	private final SubscrProduct p;
-	private final Set<Subscription> subscriptions;
+	private final List<Subscription> subscriptions;
 	private final SubscrArticle article;
 	private final SubscrArticle lastArticle;
 	private final LocalDate dispoDate;
@@ -25,7 +26,14 @@ public class SubscrDispoView extends AbstractBofcView{
 	public SubscrDispoView(SubscrDAO dao, SubscrProduct p, SubscrArticle art, LocalDate dispoDate) {
 		super("subscrdispo.ftl");
 		this.p =  p;
-		this.subscriptions = p.getSubscriptions();
+		this.subscriptions = new ArrayList<>();
+		if (p.getSubscriptions() != null) {
+			for (Subscription su : p.getSubscriptions()) {
+				if (su.isValid()) {
+					this.subscriptions.add(su);
+				}
+			}
+		}
 		this.lastArticle = dao.getNewestArticleOfProduct(p);
 		if (art == null) {
 			this.article = lastArticle;
@@ -51,7 +59,7 @@ public class SubscrDispoView extends AbstractBofcView{
 		return article;
 	}
 
-	public Set<Subscription> getSubscriptions() {
+	public List<Subscription> getSubscriptions() {
 		return subscriptions;
 	}
 

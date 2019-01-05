@@ -44,8 +44,8 @@ public class SubscrProduct {
 	private String memo;
 	@JsonProperty
 	private String url;
-	@JsonProperty
 	@Transient
+	@JsonIgnore
 	private Period period;
 	@JsonProperty
 	private Date lastDelivery;

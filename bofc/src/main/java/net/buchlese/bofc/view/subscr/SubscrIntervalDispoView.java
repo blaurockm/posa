@@ -1,9 +1,10 @@
 package net.buchlese.bofc.view.subscr;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import net.buchlese.bofc.api.subscr.SubscrInterval;
@@ -16,7 +17,7 @@ import net.buchlese.bofc.view.AbstractBofcView;
 public class SubscrIntervalDispoView extends AbstractBofcView{
 
 	private final SubscrProduct p;
-	private final Set<Subscription> subscriptions;
+	private final List<Subscription> subscriptions;
 	private final SubscrInterval interval;
 	private final LocalDate dispoDate;
 	private final Map<Subscription, SubscrIntervalDelivery> deliveries;
@@ -25,7 +26,14 @@ public class SubscrIntervalDispoView extends AbstractBofcView{
 	public SubscrIntervalDispoView(SubscrDAO dao, SubscrProduct p, SubscrInterval art, LocalDate dispoDate) {
 		super("subscrintervaldispo.ftl");
 		this.p = p;
-		this.subscriptions = p.getSubscriptions();
+		this.subscriptions = new ArrayList<>();
+		if (p.getSubscriptions() != null) {
+			for (Subscription su : p.getSubscriptions()) {
+				if (su.isValid()) {
+					this.subscriptions.add(su);
+				}
+			}
+		}
 		this.interval = art;
 		this.dispoDate = dispoDate;
 		deliveries = new HashMap<>();
@@ -46,7 +54,7 @@ public class SubscrIntervalDispoView extends AbstractBofcView{
 		return interval;
 	}
 
-	public Set<Subscription> getSubscriptions() {
+	public List<Subscription> getSubscriptions() {
 		return subscriptions;
 	}
 
